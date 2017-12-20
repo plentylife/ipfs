@@ -1,5 +1,5 @@
 package life.plenty.model
 
-trait Member {
+trait User {
 
 }
