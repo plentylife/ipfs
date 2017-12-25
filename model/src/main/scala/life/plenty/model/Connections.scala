@@ -18,4 +18,4 @@ object DISALLOWED_CHILD extends NodeConnectionType
 object USER_CREATED_INSTANCE_OF extends NodeConnectionType
 
 
-case class Connection[+T](from: T, conType: ConnectionType[T], to: T)
+case class Connection[+T <: Node](from: T, conType: ConnectionType[T], to: T)

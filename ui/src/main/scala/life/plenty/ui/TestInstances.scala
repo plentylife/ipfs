@@ -10,10 +10,10 @@ object TestInstances {
   val firstQuestion = Data("going to bring snacks")
   val secondQuestion = Data("are we doing this at all")
 
-  val connections = Set(
+  val connections = Set[Connection[_]](
     Connection(testSpace, USER_CREATED_INSTANCE_OF, space),
-    Connection(firstQuestion, INSTANCE_OF, question), Connection(firstQuestion, INSIDE_SPACE_OF, testSpace),
-    Connection(secondQuestion, INSTANCE_OF, question), Connection(secondQuestion, INSIDE_SPACE_OF, testSpace)
+    Connection(firstQuestion, USER_CREATED_INSTANCE_OF, who), Connection(firstQuestion, INSIDE_SPACE_OF, testSpace),
+    Connection(secondQuestion, USER_CREATED_INSTANCE_OF, why), Connection(secondQuestion, INSIDE_SPACE_OF, testSpace)
   )
 }
 
