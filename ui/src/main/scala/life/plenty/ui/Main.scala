@@ -1,6 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.ui.display.SpaceDisplay
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.Node
 

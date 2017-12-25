@@ -1,7 +1,8 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.Binding
-import life.plenty.model.{Connection, Data, Node}
+import life.plenty.model.PredefinedGraph._
+import life.plenty.model.{ConnectionSet, Data, Node}
 
 package object display {
 
@@ -9,21 +10,24 @@ package object display {
     SpaceDisplay
   )
 
-  trait Renderer {
-    def canDisplay(node: Node, connectionSet: Set[Connection[_]]): Option[RendersWithPriority]
+  val greatQuestionsOrdered = List(who, why)
 
-    def display(node: Node, connectionSet: Set[Connection[_]]): Binding[org.scalajs.dom.raw.Node]
+  trait Renderer {
+    def canDisplay(node: Node, connectionSet: ConnectionSet): Option[RendersWithPriority]
+
+    /** @note Context of the display can be set by pre-filtering the connections */
+    def display(node: Node, connectionSet: ConnectionSet): Binding[org.scalajs.dom.raw.Node]
   }
 
   trait DataNodeRenderer[T] extends Renderer {
-    override def display(node: Node, connectionSet: Set[Connection[_]]): Binding[org.scalajs.dom.raw.Node] = {
+    override def display(node: Node, connectionSet: ConnectionSet): Binding[org.scalajs.dom.raw.Node] = {
       node match {
         case n: Data[T] ⇒ displayData(n, connectionSet)
         case _ ⇒ null
       }
     }
 
-    def displayData(node: Data[T], connectionSet: Set[Connection[_]]): Binding[org.scalajs.dom.raw.Node]
+    def displayData(node: Data[T], connectionSet: ConnectionSet): Binding[org.scalajs.dom.raw.Node]
   }
 
   trait RendersWithPriority {
