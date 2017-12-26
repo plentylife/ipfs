@@ -25,7 +25,7 @@ object GreatQuestionDisplay extends Renderer {
   @dom
   private def displayChildQuestions(spaceNode: Data[String], connectionSet: ConnectionSet): Binding[org.scalajs.dom.raw
   .Node] = {
-    val questions =
+    val questions = 
       <div class="great-question-inner-box">
 
       </div>

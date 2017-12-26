@@ -1,6 +1,6 @@
 package life.plenty.model.utilities
 
-import life.plenty.model.{Connection, ConnectionType, Node}
+import life.plenty.model.{Connection, ConnectionSet, ConnectionType, Node}
 
 object Traversal {
   type ConSet = Set[Connection[Node]]
@@ -33,4 +33,10 @@ object Traversal {
   = {
     conSet.filter(c ⇒ c.to == connectedTo && c.conType == conType).map(_.from)
   }
+
+  def getNodesAtPointerIntersection(conSet: ConnectionSet): ConSet = {
+
+  }
+
+  def traverseBF(conSet: Connection)
 }

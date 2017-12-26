@@ -20,14 +20,9 @@ object USER_CREATED_INSTANCE_OF extends NodeConnectionType
 
 case class Connection[+F <: Node](from: F, conType: ConnectionType[F], to: Node)
 
-class ConnectionSet(val startingSet: Set[Connection[Node]], startingNode: Node) {
-  private var _pointers: Set[Node] = Set(startingNode)
-  private var _connections: Set[Connection[Node]] = startingSet
+case class ConnectionSet(connections: Set[Connection[Node]], pointers: Set[Node]) {
+  def addPointer(p: Node) = {this.copy(pointers = pointers + p)}
+  def removePointer(p: Node) = {this.copy(pointers = pointers - p)}
 
-  def pointers = _pointers
-  def addPointer(p: Node) = {_pointers += p}
-  def removePointer(p: Node) = {_pointers -= p}
-
-  def connections = _connections
-  def addConnection(c: Connection[Node]) = _connections += c
+  def addConnection(c: Connection[Node]) = this.copy(connections = connections + c)
 }
