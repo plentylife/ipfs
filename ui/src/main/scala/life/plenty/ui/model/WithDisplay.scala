@@ -32,6 +32,16 @@ object DisplayModuleDefinitions {
   //    case class ModuleOverride[T <: DisplayModule[Octopus]](by: DisplayModule[Octopus], what: Class[T])
   case class ModuleOverride(by: DisplayModule[Octopus], what: Class[_])
 
+  class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
+    @dom
+    override protected def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
+      val bindings = withinOctopus.modules.collect { case m: DisplayModule[_] if m != this ⇒ m.display() }
+      <div>
+        {for (b <- bindings) yield b.bind}
+      </div>
+    }
+  }
+
   class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Space] {
     @dom
     override def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
