@@ -1,7 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.ui.display.SpaceDisplay
+import life.plenty.ui.model.SpaceWrapper
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.Node
 
@@ -17,7 +17,8 @@ object Main {
   }
 
   def mainSection: Binding[Node] = {
-    SpaceDisplay.displayData(TestInstances.testSpace, TestInstances.connections)
+    val space = new SpaceWrapper(TestInstances.frenchSpace)
+    space.display
   }
 
 }

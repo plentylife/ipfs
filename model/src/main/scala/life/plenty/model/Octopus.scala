@@ -2,19 +2,24 @@ package life.plenty.model
 
 trait Octopus {
   val partialId: String = ???
-  val modules: Set[Module] = Set()
-  private var _connections: List[Connection[_]] = List()
+  protected var _modules: List[Module[_]] = ModuleRegistry.getModules(this)
+  //  val mandatoryConnections: Set[Class[Connection[_]]]
+  protected var _connections: List[Connection[_]] = List()
 
   def id: String = {???}
 
-  def connections = _connections
+  def modules = _modules
 
+  def connections: List[Connection[_]] = _connections
+
+  def addModule(module: Module[_]) = _modules :+= module
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
     modules.collectFirst { case m: ActionOnGraphTransform ⇒ m.onConnectionAdd(connection) } match {
       case None ⇒ Right()
       case Some(r) ⇒ r
     }
   }
+
 }
 
 trait Connection[T] {
@@ -39,15 +44,11 @@ case class Title(title: String) extends Connection[String] {
 }
 
 
-trait Module {
-  val withinOctopus: Octopus
+trait Module[+T <: Octopus] {
+  val withinOctopus: T
 }
 
-trait DisplayModule[Output] extends Module {
-  def display: Output
-}
-
-trait ActionOnGraphTransform extends Module {
+trait ActionOnGraphTransform extends Module[Octopus] {
   def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit]
 
   def onConnectionRemove(connection: Connection[_]): Either[Exception, Unit]
@@ -55,6 +56,8 @@ trait ActionOnGraphTransform extends Module {
 
 trait Space extends Octopus {
   val title: String
+
+  _connections :+= Title(title)
 }
 
 trait Question extends Space
