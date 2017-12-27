@@ -3,12 +3,17 @@ package life.plenty.ui.model
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model._
-import life.plenty.ui.model.DisplayModuleDefinitions.{DisplayModule, TitleWithNav}
 import org.scalajs.dom.raw.Node
 
 object DisplayModuleDefinitions {
 
-  trait DisplayModule[+T] extends Module[T] {
+  def display(o: Octopus): Binding[Node] = o.modules.collectFirst { case dm: DisplayModule[_] ⇒ dm.display()
+  } getOrElse {noDisplay}
+
+  @dom
+  private def noDisplay: Binding[Node] = <div>This octopus has no display</div>
+
+  trait DisplayModule[+T <: Octopus] extends Module[T] {
     def display(overrides: List[ModuleOverride] = List()): Binding[Node] = {
       overriddenBy(overrides) match {
         case Some(module) ⇒ module.display(overrides)
@@ -20,12 +25,12 @@ object DisplayModuleDefinitions {
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =
       overrides.collectFirst {
-        case ModuleOverride(by, this.getClass) ⇒ by
+        case ModuleOverride(by, cl) if cl == this.getClass ⇒ by
       }
   }
 
-  //  class ModuleOverride[T <: DisplayModule](by: DisplayModule, what: Class[T])
-  case class ModuleOverride(by: DisplayModule[_], what: Class[_])
+  //    case class ModuleOverride[T <: DisplayModule[Octopus]](by: DisplayModule[Octopus], what: Class[T])
+  case class ModuleOverride(by: DisplayModule[Octopus], what: Class[_])
 
   class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Space] {
     @dom
@@ -38,19 +43,4 @@ object DisplayModuleDefinitions {
       </div>
     }
   }
-
-}
-
-trait DisplayWrapper[+T <: Octopus] {
-  val wraps: T
-  val displayModule: DisplayModule[T]
-
-  def display = displayModule.display()
-
-  wraps.addModule(displayModule)
-}
-
-
-class SpaceWrapper(override val wraps: Space) extends DisplayWrapper[Space] {
-  override val displayModule = new TitleWithNav(wraps)
 }

@@ -1,7 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.ui.model.SpaceWrapper
+import life.plenty.ui.model.DisplayModuleDefinitions
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.Node
 
@@ -13,12 +13,14 @@ object Main {
 
   @JSExport
   def main(): Unit = {
+    println("Entry point")
+    initialize()
     dom.render(document.body, mainSection)
   }
 
   def mainSection: Binding[Node] = {
-    val space = new SpaceWrapper(TestInstances.frenchSpace)
-    space.display
+    val space = TestInstances.frenchSpace
+    DisplayModuleDefinitions.display(space)
   }
 
 }

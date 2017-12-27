@@ -1,9 +1,12 @@
 package life.plenty.model
 
 object ModuleRegistry {
-  var _registry: List[PartialFunction[Octopus, Module[_]]] = List()
-  def getModules(octopus: Octopus): List[Module[_]] = {
+  private var _registry: List[PartialFunction[Octopus, Module[Octopus]]] = List()
+  def getModules(octopus: Octopus): List[Module[Octopus]] = {
+    println("getting modules from")
+    println(_registry)
     registry.flatMap(f ⇒ f(octopus))
   }
-  def registry = _registry.map(_.lift)
+  def registry: List[Octopus ⇒ Option[Module[Octopus]]] = _registry.map(_.lift)
+  def add(f: PartialFunction[Octopus, Module[Octopus]]): Unit = _registry = f :: _registry
 }
