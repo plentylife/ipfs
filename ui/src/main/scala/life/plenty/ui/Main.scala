@@ -1,6 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.model.{initialize ⇒ mInit}
 import life.plenty.ui.model.DisplayModuleDefinitions
 import org.scalajs.dom.document
 import org.scalajs.dom.raw.Node
@@ -14,6 +15,7 @@ object Main {
   @JSExport
   def main(): Unit = {
     println("Entry point")
+    mInit()
     initialize()
     dom.render(document.body, mainSection)
   }

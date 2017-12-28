@@ -5,9 +5,12 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model._
 import org.scalajs.dom.raw.Node
 
+import scalaz.std.list._
+
 object DisplayModuleDefinitions {
 
-  def display(o: Octopus): Binding[Node] = o.modules.collectFirst { case dm: DisplayModule[_] ⇒ dm.display()
+  def display(o: Octopus, overrides: List[ModuleOverride] = List()): Binding[Node] =
+    o.modules.collectFirst { case dm: DisplayModule[_] ⇒ dm.display()
   } getOrElse {noDisplay}
 
   @dom
@@ -41,7 +44,21 @@ object DisplayModuleDefinitions {
     }
   }
 
-  class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Space] {
+  trait TitleDisplay extends DisplayModule[Octopus]
+
+  class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
+    @dom
+    override protected def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
+      val bindings = withinOctopus.connections.collect { case Child(c: Octopus) ⇒
+        DisplayModuleDefinitions.display(c, overrides)
+      }
+      <div>
+        {for (b <- bindings) yield b.bind}
+      </div>
+    }
+  }
+
+  class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
     @dom
     override def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
       <div class="nav-bar">
@@ -49,6 +66,18 @@ object DisplayModuleDefinitions {
         <div class="title">
           {Var(withinOctopus.title).bind}
         </div>
+      </div>
+    }
+  }
+
+  class TitleWithInput(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
+    @dom
+    override def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
+      <div class="title-with-input">
+        <div class="title">
+          {Var(withinOctopus.title).bind}
+        </div>
+        <input type="text"/>
       </div>
     }
   }
