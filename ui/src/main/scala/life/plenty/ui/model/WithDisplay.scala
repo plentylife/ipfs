@@ -25,12 +25,11 @@ object DisplayModuleDefinitions {
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =
       overrides.collectFirst {
-        case ModuleOverride(by, cl) if cl == this.getClass ⇒ by
+        case ModuleOverride(by, con) if con(this) ⇒ by
       }
   }
 
-  //    case class ModuleOverride[T <: DisplayModule[Octopus]](by: DisplayModule[Octopus], what: Class[T])
-  case class ModuleOverride(by: DisplayModule[Octopus], what: Class[_])
+  case class ModuleOverride(by: DisplayModule[Octopus], condition: (DisplayModule[Octopus]) ⇒ Boolean)
 
   class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
     @dom
