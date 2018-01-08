@@ -16,13 +16,11 @@ class NoDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octop
 }
 
 class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
+
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     // for some reason flatMap does not work
-    val bindings = Vars[Binding[Node]]()
-    val modules = getSiblingModules(this).reverse.zipWithIndex map { indexed ⇒
-      val (m: DisplayModule[Octopus], i: Int) = indexed
-      m.setUpdater((b) ⇒ bindings.value(i) = b)
+    val bindings = getSiblingModules(this).reverse map { m ⇒
       m.display(overrides)
     } flatten;
 
@@ -36,23 +34,24 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 
 
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
+
+  var children = Vars(getChildren: _*)
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    val children = withinOctopus.connections.collect { case Child(c: Octopus) ⇒
-      c
-    }
-    val childVars = Vars(children: _*)
-    val boundingVars = Vars[Binding[Node]]()
-    for ((v, i) ← childVars.value.zipWithIndex) {
-      val upd = (b: Binding[Node]) ⇒ {boundingVars.value(i); println("child display updater")}: Unit
-      boundingVars.value(i) = DisplayModel.display(v, overrides ::: childOverrides, upd)
-    }
-
+    updateSelf()
     println("child disp of ", withinOctopus, children, withinOctopus.connections)
 
     <div>
-      {for (b <- boundingVars) yield b.bind}
+      {for (c <- children) yield DisplayModel.display(c, overrides ::: childOverrides).bind}
     </div>
+  }
+  override def updateSelf(): Unit = for ((c, i) ← getChildren.zipWithIndex) {
+    println("child display updatding")
+    children.value(i) = c
+  }
+  def getChildren: List[Octopus] = {
+    println("getting children", withinOctopus.connections)
+    withinOctopus.connections.collect({ case Child(c: Octopus) ⇒ c })
   }
   private def childOverrides = getSiblingModules(this) flatMap (_.overrides)
 }

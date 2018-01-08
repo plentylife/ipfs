@@ -1,6 +1,5 @@
 package life.plenty.ui
 
-import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.{initialize ⇒ mInit}
 import life.plenty.ui.model.DisplayModel
@@ -21,13 +20,9 @@ object Main {
     dom.render(document.body, mainSection)
   }
 
-  @dom
   def mainSection: Binding[Node] = {
     val space = TestInstances.getEntry()
-    val inside: Var[Binding[Node]] = Var()
-    inside.value_=(DisplayModel.display(space, List(), (b) ⇒ inside.value_=(b)))
-
-    inside.bind.bind
+    DisplayModel.display(space)
   }
 
 }
