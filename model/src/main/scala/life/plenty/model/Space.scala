@@ -7,16 +7,20 @@ trait Space extends Octopus {
 
   override protected def preConstructor(): Unit = {
     super.preConstructor()
-    //    println("Space constructor")
     addConnection(Title(title))
+  }
+}
+
+class BasicSpace(override val title: String) extends Space {
+  override protected def preConstructor(): Unit = {
+    super.preConstructor()
     addConnection(Marker(FILL_GREAT_QUESTIONS))
   }
-
 }
 
 class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnInitialize[Space] {
   override def onInitialize(): Unit = {
-    //    println("on action initialize")
+    println("adding great questions to ", withinOctopus, withinOctopus.connections)
     //    println(withinOctopus.connections)
     withinOctopus.getTopConnection({ case m@Marker(FILL_GREAT_QUESTIONS) ⇒ m }).foreach(_ ⇒ fill())
   }
@@ -27,6 +31,7 @@ class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnIniti
     val filled = p.exists(_.hasMarker(HAS_FILLED_GREAT_QUESTIONS)) ||
       withinOctopus.hasMarker(HAS_FILLED_GREAT_QUESTIONS)
     if (filled) {
+      println("aborted gq fill")
       return
     }
     withinOctopus addConnection Marker(HAS_FILLED_GREAT_QUESTIONS)

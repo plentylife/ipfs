@@ -1,8 +1,8 @@
 package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.Space
 import life.plenty.model.actions.ActionCreateQuestion
+import life.plenty.model.{GreatQuestion, Parent, Space}
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, TitleDisplay}
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
@@ -43,5 +43,20 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
         a.create(e.srcElement.asInstanceOf[Input].value)
       })
     }
+  }
+}
+
+class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
+  override def doDisplay(): Boolean = !withinOctopus.modules.exists(_.isInstanceOf[TitleWithQuestionInput])
+  @dom
+  override protected def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
+    println("question title display")
+    <div class="question-title">
+      {Var(prefix + withinOctopus.title).bind}
+    </div>
+  }
+  private def prefix = withinOctopus.getTopConnectionData({ case Parent(p: GreatQuestion) ⇒ p }) match {
+    case Some(p) ⇒ p.title + " "
+    case _ ⇒ ""
   }
 }

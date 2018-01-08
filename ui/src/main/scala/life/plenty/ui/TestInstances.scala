@@ -1,12 +1,10 @@
 package life.plenty.ui
 
-import life.plenty.model.Space
+import life.plenty.model.BasicSpace
 
 object TestInstances {
 
-  val frenchSpace = new Space {
-    override val title: String = "learning french"
-  }
+  val frenchSpace = new BasicSpace("learning french")
 
 }
 

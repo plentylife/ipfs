@@ -6,6 +6,6 @@ class ActionCreateQuestion(override val withinOctopus: Question) extends Module[
   def create(title: String) = {
     val q = new BasicQuestion(withinOctopus, title)
     withinOctopus.addConnection(Child(q))
-    println("created question ", q)
+    println("created question ", q, withinOctopus.connections)
   }
 }
