@@ -1,7 +1,7 @@
 package life.plenty
 
 import life.plenty.model._
-import life.plenty.ui.model.DisplayModuleDefinitions.{ChildDisplay, ModularDisplay, TitleWithInput, TitleWithNav}
+import life.plenty.ui.display.{ChildDisplay, ModularDisplay, TitleWithInput, TitleWithNav}
 
 package object ui {
 
