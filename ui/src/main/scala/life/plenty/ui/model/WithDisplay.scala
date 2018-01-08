@@ -5,22 +5,33 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model._
 import org.scalajs.dom.raw.Node
 
+import scala.language.postfixOps
 import scalaz.std.list._
 
 object DisplayModuleDefinitions {
 
-  def display(o: Octopus, overrides: List[ModuleOverride] = List()): Binding[Node] =
-    o.modules.collectFirst { case dm: DisplayModule[_] ⇒ dm.display()
-  } getOrElse {noDisplay}
+  def display(o: Octopus, overrides: List[ModuleOverride] = List()): Binding[Node] = {
+    println("disp function over", o, overrides)
+    o.modules.collectFirst({ case dm: DisplayModule[_] ⇒ dm.display(overrides)
+    }).flatten getOrElse {noDisplay}
+  }
+
+
+  def getSiblingModules(self: DisplayModule[Octopus]): List[DisplayModule[Octopus]] = self.withinOctopus.getModules {
+    case m: DisplayModule[_] if m != self ⇒ m }
 
   @dom
   private def noDisplay: Binding[Node] = <div>This octopus has no display</div>
 
   trait DisplayModule[+T <: Octopus] extends Module[T] {
-    def display(overrides: List[ModuleOverride] = List()): Binding[Node] = {
+    def doDisplay: Boolean = true
+
+    def overrides: List[ModuleOverride] = List()
+
+    def display(overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
       overriddenBy(overrides) match {
         case Some(module) ⇒ module.display(overrides)
-        case _ ⇒ displaySelf(overrides)
+        case _ ⇒ if (doDisplay) Option(displaySelf(overrides)) else None
       }
     }
 
@@ -34,10 +45,19 @@ object DisplayModuleDefinitions {
 
   case class ModuleOverride(by: DisplayModule[Octopus], condition: (DisplayModule[Octopus]) ⇒ Boolean)
 
+  class NoDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
+    override def doDisplay: Boolean = false
+    override protected def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = null
+  }
+
   class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
     @dom
     override protected def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
-      val bindings = withinOctopus.modules.collect { case m: DisplayModule[_] if m != this ⇒ m.display() }
+      println("mod disp", overrides)
+      val bindings: List[Binding[Node]] = getSiblingModules(this) map { m: DisplayModule[Octopus] ⇒
+        m.display(overrides)
+      } flatten;
+
       <div>
         {for (b <- bindings) yield b.bind}
       </div>
@@ -49,18 +69,24 @@ object DisplayModuleDefinitions {
   class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
     @dom
     override protected def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
+      println("child overrieds", childOverrides)
       val bindings = withinOctopus.connections.collect { case Child(c: Octopus) ⇒
-        DisplayModuleDefinitions.display(c, overrides)
+        DisplayModuleDefinitions.display(c, overrides ::: childOverrides)
       }
       <div>
         {for (b <- bindings) yield b.bind}
       </div>
     }
+    private def childOverrides = getSiblingModules(this) flatMap (_.overrides)
   }
 
   class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
+    override def overrides: List[ModuleOverride] = super.overrides ::: List(
+      ModuleOverride(new NoDisplay(withinOctopus), (m) ⇒ m.isInstanceOf[TitleWithNav]))
+
     @dom
     override def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
+      println("octopus titlewithnav", withinOctopus, overrides)
       <div class="nav-bar">
         <div>back</div>
         <div class="title">

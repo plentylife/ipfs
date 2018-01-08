@@ -14,10 +14,18 @@ trait Octopus {
 
   def getTopModule[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): Option[T] =
     _modules.collectFirst(matchBy)
+
+  def getModules[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): List[T] =
+    _modules.collect(matchBy).reverse
   def addModule(module: Module[Octopus]): Unit = _modules = module :: _modules
 
   def getTopConnection[T](f: PartialFunction[Connection[_], Connection[T]]): Option[Connection[T]] =
     connections.collectFirst(f)
+
+  def getTopConnectionData[T](f: PartialFunction[Connection[_], T]): Option[T] =
+    connections.collectFirst(f)
+
+  def hasMarker(marker: MarkerEnum): Boolean = connections.collect { case Marker(m) if m == marker ⇒ true } contains true
 
   def connections: List[Connection[_]] = _connections
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
@@ -34,8 +42,8 @@ trait Octopus {
   /* Constructor */
   preConstructor()
   println("Octopus constructor")
-  getTopModule({ case m: ActionOnInitialize ⇒ m }).foreach({_.onInitialize()})
-  println(connections)
+  getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})
+  //  println(connections)
 
 }
 
@@ -71,7 +79,7 @@ case class Marker(m: MarkerEnum) extends Connection[MarkerEnum] {
 
 object MarkerEnum extends Enumeration {
   type MarkerEnum = Value
-  val FILL_GREAT_QUESTIONS: MarkerEnum = Value
+  val FILL_GREAT_QUESTIONS, HAS_FILLED_GREAT_QUESTIONS = Value
 }
 
 trait Module[+T <: Octopus] {
@@ -84,14 +92,10 @@ trait ActionOnGraphTransform extends Module[Octopus] {
   def onConnectionRemove(connection: Connection[_]): Either[Exception, Unit]
 }
 
-trait ActionOnInitialize extends Module[Space] {
+trait ActionOnInitialize[T <: Octopus] extends Module[T] {
   def onInitialize()
 }
 
-trait WithParent[T <: Octopus] extends Octopus {
-  val parent: T
-  addConnection(Parent(parent))
-}
 
 trait Question extends Space with WithParent[Space]
 
