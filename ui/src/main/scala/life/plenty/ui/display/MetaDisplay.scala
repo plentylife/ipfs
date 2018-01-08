@@ -19,16 +19,17 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     // for some reason flatMap does not work
-    val bindings = getSiblingModules(this).reverse map { m: DisplayModule[Octopus] ⇒
+    val bindings = Vars[Binding[Node]]()
+    val modules = getSiblingModules(this).reverse.zipWithIndex map { indexed ⇒
+      val (m: DisplayModule[Octopus], i: Int) = indexed
+      m.setUpdater((b) ⇒ bindings.value(i) = b)
       m.display(overrides)
     } flatten;
-
-    val vars = Vars(bindings: _*)
 
     //    println("mod disp ", bindings)
 
     <div>
-      {for (b <- vars) yield b.bind}
+      {for (b <- bindings) yield b.bind}
     </div>
   }
 }
@@ -37,15 +38,20 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    val bindings = withinOctopus.connections.collect { case Child(c: Octopus) ⇒
-      DisplayModel.display(c, overrides ::: childOverrides)
+    val children = withinOctopus.connections.collect { case Child(c: Octopus) ⇒
+      c
     }
-    val vars = Vars(bindings: _*)
+    val childVars = Vars(children: _*)
+    val boundingVars = Vars[Binding[Node]]()
+    for ((v, i) ← childVars.value.zipWithIndex) {
+      val upd = (b: Binding[Node]) ⇒ {boundingVars.value(i); println("child display updater")}: Unit
+      boundingVars.value(i) = DisplayModel.display(v, overrides ::: childOverrides, upd)
+    }
 
-    println("child disp of ", withinOctopus, bindings, withinOctopus.connections)
+    println("child disp of ", withinOctopus, children, withinOctopus.connections)
 
     <div>
-      {for (b <- vars) yield b.bind}
+      {for (b <- boundingVars) yield b.bind}
     </div>
   }
   private def childOverrides = getSiblingModules(this) flatMap (_.overrides)

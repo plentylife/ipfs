@@ -1,6 +1,5 @@
 package life.plenty.ui.model
 
-import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model._
 import org.scalajs.dom.raw.Node
@@ -10,8 +9,10 @@ import scalaz.std.list._
 
 object DisplayModel {
 
-  def display(o: Octopus, overrides: List[ModuleOverride] = List()): Binding[Node] = {
-    o.modules.collectFirst({ case dm: DisplayModule[_] ⇒ dm.display(overrides)
+  def display(o: Octopus, overrides: List[ModuleOverride] = List(), updater: (Binding[Node]) ⇒ Unit): Binding[Node] = {
+    o.modules.collectFirst({ case dm: DisplayModule[_] ⇒
+      dm.setUpdater(updater)
+      dm.display(overrides)
     }).flatten getOrElse noDisplay
   }
 
@@ -25,10 +26,12 @@ object DisplayModel {
   private def noDisplay: Binding[Node] = <div>This octopus has no display</div>
 
   trait DisplayModule[+T <: Octopus] extends Module[T] {
-    private var existingBinding: Option[Var[Node]] = None
+    private var updater: (Binding[Node]) ⇒ Unit = (b) ⇒ Unit
     private var onLastDisplayHadOverrides = List[ModuleOverride]()
 
     def doDisplay(): Boolean = true
+
+    def setUpdater(upd: (Binding[Node]) ⇒ Unit) = updater = upd
 
     def overrides: List[ModuleOverride] = List()
 
@@ -50,19 +53,10 @@ object DisplayModel {
 
     protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node]
 
-    @dom
-    private def innerDisplay(overrides: List[ModuleOverride]): Binding[Node] = existingBinding match {
-      case Some(v) ⇒
-        println("inner old var", this, this.withinOctopus)
-        v.value_=(<div>test</div>)
-        //        v.value_=(generateHtml(overrides).bind)
-        v.bind
-      case None ⇒
-        println("inner new var", this, this.withinOctopus)
-        val v = Var(generateHtml(overrides).bind)
-        existingBinding = Option(v)
-        //        v.value_=(<div>test</div>)
-        v.bind
+    private def innerDisplay(overrides: List[ModuleOverride]): Binding[Node] = {
+      val html = generateHtml(overrides)
+      updater(html)
+      html
     }
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =
