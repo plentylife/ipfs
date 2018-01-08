@@ -21,7 +21,7 @@ object Main {
   }
 
   def mainSection: Binding[Node] = {
-    val space = TestInstances.frenchSpace
+    val space = TestInstances.getEntry()
     DisplayModel.display(space)
   }
 

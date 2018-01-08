@@ -8,6 +8,6 @@ package object model {
 
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateQuestion(q) }
     ModuleRegistry.add { case wp: WithParent[_] ⇒ new ActionAddParent(wp) }
-    ModuleRegistry.add { case o: Space ⇒ new AddGreatQuestions(o) }
+    ModuleRegistry.add { case o: BasicSpace ⇒ new AddGreatQuestions(o) }
   }
 }

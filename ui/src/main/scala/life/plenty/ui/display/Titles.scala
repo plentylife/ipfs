@@ -15,7 +15,7 @@ class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Spac
     ModuleOverride(new NoDisplay(withinOctopus), (m) ⇒ m.isInstanceOf[TitleWithNav]))
 
   @dom
-  override def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
+  protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     <div class="nav-bar">
       <div>back</div>
       <div class="title">
@@ -26,8 +26,9 @@ class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Spac
 }
 
 class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
+
   @dom
-  override def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
+  protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     val action = withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m }
 
     <div class="title-with-input">
@@ -37,6 +38,7 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
       <input type="text" disabled={action.isEmpty} onkeyup={onEnter _}/>
     </div>
   }
+
   private def onEnter(e: KeyboardEvent) = {
     if (e.keyCode == 13) {
       withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m } foreach (a ⇒ {
@@ -48,8 +50,9 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 
 class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
   override def doDisplay(): Boolean = !withinOctopus.modules.exists(_.isInstanceOf[TitleWithQuestionInput])
+
   @dom
-  override protected def displaySelf(overrides: List[ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     println("question title display")
     <div class="question-title">
       {Var(prefix + withinOctopus.title).bind}

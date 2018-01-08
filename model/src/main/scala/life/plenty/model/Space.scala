@@ -15,14 +15,14 @@ class BasicSpace(override val title: String) extends Space {
   override protected def preConstructor(): Unit = {
     super.preConstructor()
     addConnection(Marker(FILL_GREAT_QUESTIONS))
+    println("basic space init", this.connections)
   }
 }
 
 class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnInitialize[Space] {
   override def onInitialize(): Unit = {
-    println("adding great questions to ", withinOctopus, withinOctopus.connections)
-    //    println(withinOctopus.connections)
     withinOctopus.getTopConnection({ case m@Marker(FILL_GREAT_QUESTIONS) ⇒ m }).foreach(_ ⇒ fill())
+    println("added great questions to ", withinOctopus, withinOctopus.connections)
   }
 
   private def fill(): Unit = {
@@ -36,8 +36,17 @@ class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnIniti
     }
     withinOctopus addConnection Marker(HAS_FILLED_GREAT_QUESTIONS)
 
-    GreatQuestions.orderedConstructors foreach {
-      constr ⇒ withinOctopus addConnection Child(constr(withinOctopus))
+    // reverse because first in -- last out
+    GreatQuestions.orderedConstructors.reverse map {
+      constr ⇒ constr(withinOctopus)
+    } foreach {
+      question ⇒
+        if (!withinOctopus.connections.collect(
+          { case Child(q: GreatQuestion) ⇒
+            println(q.getClass, question.getClass)
+            q
+          }
+        ).exists(_.getClass == question.getClass)) withinOctopus addConnection Child(question)
     }
   }
 }
