@@ -55,7 +55,6 @@ object DisplayModel {
       case Some(v) ⇒
         println("inner old var", this, this.withinOctopus)
         v.value_=(<div>test</div>)
-
         //        v.value_=(generateHtml(overrides).bind)
         v.bind
       case None ⇒
