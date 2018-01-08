@@ -41,7 +41,7 @@ trait Octopus {
 
   /* Constructor */
   preConstructor()
-  println("Octopus constructor")
+  println("Octopus constructor -- " + this.toString)
   getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})
   //  println(connections)
 

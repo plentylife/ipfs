@@ -10,7 +10,6 @@ import scalaz.std.list._
 object DisplayModel {
 
   def display(o: Octopus, overrides: List[ModuleOverride] = List()): Binding[Node] = {
-    println("disp function over", o, overrides)
     o.modules.collectFirst({ case dm: DisplayModule[_] ⇒ dm.display(overrides)
     }).flatten getOrElse noDisplay
   }

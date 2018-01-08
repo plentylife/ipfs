@@ -1,7 +1,7 @@
 package life.plenty
 
 import life.plenty.model._
-import life.plenty.ui.display.{ChildDisplay, ModularDisplay, TitleWithInput, TitleWithNav}
+import life.plenty.ui.display.{ChildDisplay, ModularDisplay, TitleWithNav, TitleWithQuestionInput}
 
 package object ui {
 
@@ -11,7 +11,7 @@ package object ui {
     /* the modules should be added in a queue fashion: the last overrides the first */
 
     ModuleRegistry add { case o: Space ⇒ new TitleWithNav(o) }
-    ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithInput(o) }
+    ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithQuestionInput(o) }
     ModuleRegistry add { case o: Octopus ⇒ new ChildDisplay(o) }
     ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }
   }
