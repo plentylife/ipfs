@@ -1,6 +1,8 @@
 package life.plenty.model
 
-import life.plenty.model.MarkerEnum.{FILL_GREAT_QUESTIONS, HAS_FILLED_GREAT_QUESTIONS}
+import life.plenty.model.actions.ActionOnInitialize
+import life.plenty.model.connection.MarkerEnum.{FILL_GREAT_QUESTIONS, HAS_FILLED_GREAT_QUESTIONS}
+import life.plenty.model.connection.{Child, Marker, Parent, Title}
 
 trait Space extends Octopus {
   val title: String

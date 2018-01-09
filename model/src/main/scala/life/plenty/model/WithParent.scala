@@ -1,5 +1,8 @@
 package life.plenty.model
 
+import life.plenty.model.actions.ActionOnInitialize
+import life.plenty.model.connection.Parent
+
 trait WithParent[T <: Octopus] extends Octopus {
   val parent: T
   // this has become a module

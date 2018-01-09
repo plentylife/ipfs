@@ -1,5 +1,7 @@
 package life.plenty.model
 
+trait GreatQuestion extends Space with WithParent[Space]
+
 object GreatQuestions {
 
   val orderedConstructors: List[Space ⇒ GreatQuestion] =

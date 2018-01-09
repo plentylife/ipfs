@@ -1,6 +1,7 @@
 package life.plenty.model.actions
 
 import life.plenty.model._
+import life.plenty.model.connection.Child
 
 class ActionCreateQuestion(override val withinOctopus: Space) extends Module[Space] {
   def create(title: String) = {

@@ -1,6 +1,8 @@
 package life.plenty.model
 
-import life.plenty.model.MarkerEnum.MarkerEnum
+import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnGraphTransform, ActionOnInitialize}
+import life.plenty.model.connection.MarkerEnum.MarkerEnum
+import life.plenty.model.connection.{Connection, Marker}
 
 trait Octopus {
   val partialId: String = ""
@@ -59,61 +61,6 @@ trait Octopus {
 
 }
 
-trait Connection[T] {
-  val value: T
-
-  def id: String = value.hashCode().toBinaryString
-}
-
-case class Parent[T <: Octopus](parent: T) extends Connection[T] {
-  override val value: T = parent
-}
-
-case class Child[T <: Octopus](child: T) extends Connection[T] {
-  override val value = child
-}
-
-case class Creator[String](user: String) extends Connection[String] {
-  override val value: String = user
-}
-
-case class CreationTime[Long](time: Long) extends Connection[Long] {
-  override val value: Long = time
-}
-
-case class Title(title: String) extends Connection[String] {
-  override val value: String = title
-}
-
-case class Marker(m: MarkerEnum) extends Connection[MarkerEnum] {
-  override val value: MarkerEnum = m
-}
-
-object MarkerEnum extends Enumeration {
-  type MarkerEnum = Value
-  val FILL_GREAT_QUESTIONS, HAS_FILLED_GREAT_QUESTIONS = Value
-}
-
 trait Module[+T <: Octopus] {
   val withinOctopus: T
 }
-
-trait ActionGraphTransform extends Module[Octopus] {
-  def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit]
-
-  def onConnectionRemove(connection: Connection[_]): Either[Exception, Unit]
-}
-
-trait ActionOnGraphTransform extends ActionGraphTransform
-
-trait ActionAfterGraphTransform extends ActionGraphTransform
-
-trait ActionOnInitialize[T <: Octopus] extends Module[T] {
-  def onInitialize()
-}
-
-trait Question extends Space with WithParent[Space]
-
-trait GreatQuestion extends Space with WithParent[Space]
-
-trait Answer extends Octopus

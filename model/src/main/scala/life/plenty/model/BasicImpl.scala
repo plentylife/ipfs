@@ -1,6 +1,9 @@
 package life.plenty.model
 
-import life.plenty.model.MarkerEnum.FILL_GREAT_QUESTIONS
+import life.plenty.model.connection.Marker
+import life.plenty.model.connection.MarkerEnum.FILL_GREAT_QUESTIONS
+
+trait Question extends Space with WithParent[Space]
 
 class BasicQuestion(override val parent: Space, override val title: String) extends Question {
   override def preConstructor(): Unit = {

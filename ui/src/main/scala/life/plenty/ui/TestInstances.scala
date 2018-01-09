@@ -1,7 +1,8 @@
 package life.plenty.ui
 
 import life.plenty.model.GreatQuestions.Why
-import life.plenty.model.{BasicQuestion, BasicSpace, Child}
+import life.plenty.model.connection.Child
+import life.plenty.model.{BasicQuestion, BasicSpace}
 
 object TestInstances {
 
