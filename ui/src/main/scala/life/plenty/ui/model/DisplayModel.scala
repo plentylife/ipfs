@@ -12,7 +12,7 @@ object DisplayModel {
 
   def display(o: Octopus, overrides: List[ModuleOverride] = List()): Binding[Node] = {
     o.modules.collectFirst({ case dm: DisplayModule[_] ⇒
-      dm.display(overrides)
+      dm.display(None, overrides)
     }).flatten getOrElse noDisplay
   }
 
@@ -28,24 +28,32 @@ object DisplayModel {
   private def noDisplay: Binding[Node] = <div>This octopus has no display</div>
 
   trait DisplayModule[+T <: Octopus] extends Module[T] {
-    private var onLastDisplayHadOverrides = List[ModuleOverride]()
+    private var _affects = Set[DisplayModule[_]]()
+
+    def display(calledBy: DisplayModule[_], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
+      this.display(Option(calledBy), overrides)
+    }
 
     def doDisplay(): Boolean = true
 
     def overrides: List[ModuleOverride] = List()
 
-    def display(overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
+    def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
       //      println("displaying ", this, withinOctopus)
-      onLastDisplayHadOverrides = overrides
       overriddenBy(overrides) match {
-        case Some(module) ⇒ module.display(overrides)
+        case Some(module) ⇒ module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {
+          calledBy foreach (c ⇒ _affects += c)
           Option(generateHtml(overrides))
         } else None
       }
     }
 
-    def updateSelf(): Unit = ???
+    def update = affects foreach (_.updateSelf())
+
+    def affects = _affects
+
+    protected def updateSelf(): Unit
 
     protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node]
 
@@ -57,5 +65,8 @@ object DisplayModel {
 
   case class ModuleOverride(by: DisplayModule[Octopus], condition: (DisplayModule[Octopus]) ⇒ Boolean)
 
-  trait TitleDisplay extends DisplayModule[Octopus]
+  trait TitleDisplay extends DisplayModule[Octopus] {
+    /*todo. make global title var and make updater */
+    override protected def updateSelf(): Unit = Unit
+  }
 }
