@@ -2,13 +2,18 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateQuestion
-import life.plenty.model.{GreatQuestion, Parent, Space}
-import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, TitleDisplay}
+import life.plenty.model.{GreatQuestion, Octopus, Parent, Space}
+import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
 
 import scalaz.std.list._
 
+
+trait TitleDisplay extends DisplayModule[Octopus] {
+  /*todo. make global title var and make updater */
+  override protected def updateSelf(): Unit = Unit
+}
 
 class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
   override def overrides: List[ModuleOverride] = super.overrides ::: List(
@@ -29,6 +34,7 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 
   @dom
   protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
+    println("title with inputt", withinOctopus.modules)
     val action = withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m }
 
     <div class="title-with-input">

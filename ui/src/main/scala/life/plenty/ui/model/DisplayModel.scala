@@ -64,9 +64,4 @@ object DisplayModel {
   }
 
   case class ModuleOverride(by: DisplayModule[Octopus], condition: (DisplayModule[Octopus]) ⇒ Boolean)
-
-  trait TitleDisplay extends DisplayModule[Octopus] {
-    /*todo. make global title var and make updater */
-    override protected def updateSelf(): Unit = Unit
-  }
 }
