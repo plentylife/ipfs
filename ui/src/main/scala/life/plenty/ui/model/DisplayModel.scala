@@ -2,6 +2,7 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model._
+import life.plenty.model.connection.Parent
 import life.plenty.ui.display.ChildDisplay
 import org.scalajs.dom.raw.Node
 
