@@ -2,6 +2,7 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model._
+import life.plenty.ui.display.ChildDisplay
 import org.scalajs.dom.raw.Node
 
 import scala.language.postfixOps
@@ -16,7 +17,7 @@ object DisplayModel {
   }
 
   def reRender(o: Octopus): Unit = o.getTopConnectionData({ case Parent(p: Octopus) ⇒ p }).foreach {
-    _.getTopModule({ case m: DisplayModule[_] ⇒ m }).foreach(_.updateSelf())
+    _.getTopModule({ case m: ChildDisplay ⇒ m }).foreach(_.updateSelf())
   }
 
 

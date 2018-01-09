@@ -35,7 +35,7 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
 
-  var children = Vars(getChildren: _*)
+  var children: Vars[Octopus] = Vars[Octopus]()
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     updateSelf()
@@ -49,7 +49,9 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
     println("child display updatding")
     children.value(i) = c
   }
+
   def getChildren: List[Octopus] = {
+    println("getting children", withinOctopus)
     println("getting children", withinOctopus.connections)
     withinOctopus.connections.collect({ case Child(c: Octopus) ⇒ c })
   }
