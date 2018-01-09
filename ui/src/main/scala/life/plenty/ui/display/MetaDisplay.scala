@@ -45,7 +45,7 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     updateSelf()
-    println("child disp of ", withinOctopus, children, withinOctopus.connections)
+    //println("child disp of ", withinOctopus, children, withinOctopus.connections)
 
     <div>
       {for (c <- children) yield DisplayModel.display(c, overrides ::: childOverrides).bind}
@@ -53,13 +53,13 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   }
 
   override def updateSelf(): Unit = for ((c, i) ← getChildren.zipWithIndex) {
-    println("child display updatding")
+    //println("child display updatding")
     children.value(i) = c
   }
 
   def getChildren: List[Octopus] = {
-    println("getting children", withinOctopus)
-    println("getting children", withinOctopus.connections)
+    //println("getting children", withinOctopus)
+    //println("getting children", withinOctopus.connections)
     withinOctopus.connections.collect({ case Child(c: Octopus) ⇒ c })
   }
   private def childOverrides = getSiblingModules(this) flatMap (_.overrides)

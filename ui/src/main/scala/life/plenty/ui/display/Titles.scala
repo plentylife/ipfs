@@ -34,7 +34,7 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 
   @dom
   protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    println("title with inputt", withinOctopus.modules)
+    //println("title with inputt", withinOctopus.modules)
     val action = withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m }
 
     <div class="title-with-input">
@@ -59,7 +59,7 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
 
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    println("question title display")
+    //println("question title display")
     <div class="question-title">
       {Var(prefix + withinOctopus.title).bind}{"?"}
     </div>

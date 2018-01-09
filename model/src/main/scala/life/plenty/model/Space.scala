@@ -16,7 +16,7 @@ trait Space extends Octopus {
 class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnInitialize[Space] {
   override def onInitialize(): Unit = {
     withinOctopus.getTopConnection({ case m@Marker(FILL_GREAT_QUESTIONS) ⇒ m }).foreach(_ ⇒ fill())
-    println("added great questions to ", withinOctopus, withinOctopus.connections)
+    //println("added great questions to ", withinOctopus, withinOctopus.connections)
   }
 
   private def fill(): Unit = {
@@ -25,7 +25,7 @@ class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnIniti
     val filled = p.exists(_.hasMarker(HAS_FILLED_GREAT_QUESTIONS)) ||
       withinOctopus.hasMarker(HAS_FILLED_GREAT_QUESTIONS)
     if (filled) {
-      println("aborted gq fill")
+      //println("aborted gq fill")
       return
     }
     withinOctopus addConnection Marker(HAS_FILLED_GREAT_QUESTIONS)
@@ -37,7 +37,7 @@ class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnIniti
       question ⇒
         if (!withinOctopus.connections.collect(
           { case Child(q: GreatQuestion) ⇒
-            println(q.getClass, question.getClass)
+            //println(q.getClass, question.getClass)
             q
           }
         ).exists(_.getClass == question.getClass)) withinOctopus addConnection Child(question)
