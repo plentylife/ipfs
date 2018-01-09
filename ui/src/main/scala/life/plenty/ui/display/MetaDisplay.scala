@@ -25,11 +25,14 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 
     //    println("mod disp ", bindings)
 
+    val displayable = siblingModules map (m ⇒ m.display(this, overrides)) withFilter (_.nonEmpty) map (_.get)
+
     <div>
-      {for {m <- siblingModules; d ← m.display(this, overrides)} yield d.bind}
+      {for (d <- displayable) yield d.bind}
     </div>
   }
-  override protected def updateSelf(): Unit = for ((d, i) ← getSiblingModules(this).reverse) {
+  override protected def updateSelf(): Unit = for (
+    (d: DisplayModule[Octopus], i: Int) ← getSiblingModules(this).reverse.zipWithIndex) {
     siblingModules.value(i) = d
   }
 }

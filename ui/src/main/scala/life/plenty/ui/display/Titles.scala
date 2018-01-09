@@ -55,7 +55,7 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     println("question title display")
     <div class="question-title">
-      {Var(prefix + withinOctopus.title).bind}
+      {Var(prefix + withinOctopus.title).bind}{"?"}
     </div>
   }
   private def prefix = withinOctopus.getTopConnectionData({ case Parent(p: GreatQuestion) ⇒ p }) match {

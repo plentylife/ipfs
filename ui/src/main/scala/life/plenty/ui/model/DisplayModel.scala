@@ -30,7 +30,7 @@ object DisplayModel {
   trait DisplayModule[+T <: Octopus] extends Module[T] {
     private var _affects = Set[DisplayModule[_]]()
 
-    def display(calledBy: DisplayModule[_], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
+    def display(calledBy: DisplayModule[Octopus], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
       this.display(Option(calledBy), overrides)
     }
 
@@ -38,7 +38,7 @@ object DisplayModel {
 
     def overrides: List[ModuleOverride] = List()
 
-    def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
+    def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride]): Option[Binding[Node]] = {
       //      println("displaying ", this, withinOctopus)
       overriddenBy(overrides) match {
         case Some(module) ⇒ module.display(calledBy, overrides)

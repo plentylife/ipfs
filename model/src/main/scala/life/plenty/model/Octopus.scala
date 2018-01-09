@@ -112,9 +112,8 @@ trait ActionOnInitialize[T <: Octopus] extends Module[T] {
   def onInitialize()
 }
 
-
 trait Question extends Space with WithParent[Space]
 
-trait GreatQuestion extends Question
+trait GreatQuestion extends Space with WithParent[Space]
 
 trait Answer extends Octopus
