@@ -11,6 +11,7 @@ class DisplayUpdateOnChildrenTransform(override val withinOctopus: Octopus) exte
     connection match {
       case _: Child[_] ⇒
         //        println("yes")
+        // todo fixme this funcion is flawed
         DisplayModel.reRender(withinOctopus)
         Right()
       case _ ⇒

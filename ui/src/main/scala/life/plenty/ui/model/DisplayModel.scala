@@ -17,6 +17,7 @@ object DisplayModel {
     }).flatten getOrElse noDisplay
   }
 
+  /* todo. fixme this is flawed */
   def reRender(o: Octopus): Unit = o.getTopConnectionData({ case Parent(p: Octopus) ⇒ p }).foreach {
     _.getTopModule({ case m: ChildDisplay ⇒ m }).foreach(_.updateSelf())
   }
@@ -45,6 +46,7 @@ object DisplayModel {
         case Some(module) ⇒ module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {
           calledBy foreach (c ⇒ _affects += c)
+          updateSelf()
           Option(generateHtml(overrides))
         } else None
       }
