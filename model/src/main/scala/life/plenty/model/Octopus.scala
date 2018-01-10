@@ -6,7 +6,7 @@ import life.plenty.model.connection.{Connection, Marker}
 
 trait Octopus {
   val partialId: String = ""
-  protected var _modules: List[Module[Octopus]] = ModuleRegistry.getModules(this)
+  protected var _modules: List[Module[Octopus]] = List()
   //  val mandatoryConnections: Set[Class[Connection[_]]]
   protected var _connections: List[Connection[_]] = List()
 
@@ -58,6 +58,7 @@ trait Octopus {
   protected def preConstructor(): Unit = Unit
 
   /* Constructor */
+  _modules = ModuleRegistry.getModules(this)
   preConstructor()
   println("Octopus constructor -- " + this.toString)
   getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})

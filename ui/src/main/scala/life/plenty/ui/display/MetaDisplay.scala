@@ -29,7 +29,7 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
     </div>
   }
   override def update(): Unit = {
-    println("modular display updating", this)
+    //    println("modular display updating", this)
     for (
       (d: DisplayModule[Octopus], i: Int) ← getSiblingModules(this).reverse.zipWithIndex) {
       siblingModules.value(i) = d
@@ -43,14 +43,14 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   private val children: Vars[Octopus] = Vars[Octopus]()
 
   override def update(): Unit = {
-    println("child display updatding", this)
+    //    println("child display updatding", this)
     for ((c, i) ← getChildren.zipWithIndex) {
       children.value(i) = c
     }
   }
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    println("child display has children", this, children.value)
+    //    println("child display has children", this, children.value)
     <div>
       {for (c <- children) yield DisplayModel.display(c, overrides ::: childOverrides).bind}
     </div>

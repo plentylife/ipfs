@@ -18,8 +18,10 @@ object DisplayModel {
   /* todo. fixme this is flawed */
   def reRender(o: Octopus): Unit = o.getTopModule({ case m: DisplayModule[_] ⇒ m }).foreach(m ⇒ {
     // fixme. add a variable to display module indicating if it has been rendered once
-    println("re-render of module", m, m.withinOctopus)
-    m.update()
+    if (m.hasRendered) {
+      println("re-render of module", m, m.withinOctopus)
+      m.update()
+    }
   })
 
   def getSiblingModules(self: DisplayModule[Octopus]): List[DisplayModule[Octopus]] = self.withinOctopus.getModules {
@@ -31,6 +33,8 @@ object DisplayModel {
   /* the main trait */
 
   trait DisplayModule[+T <: Octopus] extends Module[T] {
+    private var _hasRenderedOnce = false
+
     def display(calledBy: DisplayModule[Octopus], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
       this.display(Option(calledBy), overrides)
     }
@@ -44,6 +48,7 @@ object DisplayModel {
         case Some(module) ⇒ module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {
           println("displaying ", this, withinOctopus, calledBy)
+          if (!_hasRenderedOnce) _hasRenderedOnce = true
           update()
           Option(generateHtml(overrides))
         } else None
@@ -52,12 +57,15 @@ object DisplayModel {
 
     def update(): Unit
 
+    def hasRendered = _hasRenderedOnce
+
     protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node]
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =
       overrides.collectFirst {
         case ModuleOverride(by, con) if con(this) ⇒ by
       }
+
   }
 
   case class ModuleOverride(by: DisplayModule[Octopus], condition: (DisplayModule[Octopus]) ⇒ Boolean)

@@ -13,9 +13,14 @@ package object ui {
 
     ModuleRegistry add { case o: Space ⇒ new TitleWithNav(o) }
     ModuleRegistry add { case o: Space ⇒ new DisplayUpdateOnChildrenTransform(o) }
+
     ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithQuestionInput(o) }
+
     ModuleRegistry add { case q: Question ⇒ new QuestionTitle(q) }
     ModuleRegistry add { case q: Question ⇒ new CreateAnswer(q) }
+
+    ModuleRegistry add { case a: Answer ⇒ new AnswerDisplay(a) }
+
     ModuleRegistry add { case o: Octopus ⇒ new ChildDisplay(o) }
     ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }
   }
