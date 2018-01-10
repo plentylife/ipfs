@@ -12,14 +12,14 @@ import org.scalajs.dom.raw.Node
 
 class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Question] {
   println("Create answer ", withinOctopus)
-  private val opened = Var(false)
   private lazy val action = Var(false)
+  private val opened = Var(false)
   override def doDisplay() = findAction.nonEmpty
+  //  override def doDisplay() = true
+  private def findAction: Option[ActionCreateAnswer] = withinOctopus.getTopModule({ case m: ActionCreateAnswer ⇒ m })
   override protected def updateSelf(): Unit = {
     action.value_=(findAction.nonEmpty)
   }
-  //  override def doDisplay() = true
-  private def findAction: Option[ActionCreateAnswer] = withinOctopus.getTopModule({ case m: ActionCreateAnswer ⇒ m })
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
     if (!opened.bind) {
@@ -41,6 +41,7 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   private def postAnswerButton: Binding[Node] = {
       <input type="button" value="post answer" onclick={postAnswer _}/>
   }
+
   private def postAnswer(e: Event) = {
     val input = e.srcElement.asInstanceOf[Input].value
     findAction foreach { a ⇒
