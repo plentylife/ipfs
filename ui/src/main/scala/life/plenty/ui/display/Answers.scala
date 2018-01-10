@@ -22,11 +22,6 @@ class AnswerDisplay(override val withinOctopus: Answer) extends DisplayModule[An
 
 }
 
-//class BasicAnswerDisplay(override val withinOctopus: Answer) extends AnswerDisplay(withinOctopus) {
-//
-//}
-
-
 class ContributionDisplay(override val withinOctopus: Answer) extends AnswerDisplay(withinOctopus) {
   override def overrides: List[DisplayModel.ModuleOverride] =
     ModuleOverride(new NoDisplay(withinOctopus),

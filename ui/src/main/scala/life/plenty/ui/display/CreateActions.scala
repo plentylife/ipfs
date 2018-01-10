@@ -15,13 +15,7 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   private lazy val action = Var(false)
   private val opened = Var(false)
   private val isContribution = Var(false)
-
-  override def doDisplay() = findAction.nonEmpty
-  //  override def doDisplay() = true
-  private def findAction: Option[ActionCreateAnswer] = withinOctopus.getTopModule({ case m: ActionCreateAnswer ⇒ m })
-  override def update(): Unit = {
-    action.value_=(findAction.nonEmpty)
-  }
+  private val body = Var("")
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
     if (!opened.bind) {
@@ -31,11 +25,21 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
     } else {
       <div class={"open-answer-box"}>
         <label for="is-contribution">Can someone contribute this?</label>
-        <input type="checkbox" name="is-contribution" checked={isContribution.bind} onchange={toggleContribution _}/>
-        <textarea cols={50} rows={10}>opened</textarea>{postAnswerButton.bind}
+        <input type="checkbox" name="is-contribution" checked={isContribution.bind} onchange={toggleContribution _}/>{textArea.bind}{postAnswerButton.bind}
       </div>
     }
   }
+
+  override def doDisplay() = findAction.nonEmpty
+  //  override def doDisplay() = true
+  private def findAction: Option[ActionCreateAnswer] = withinOctopus.getTopModule({ case m: ActionCreateAnswer ⇒ m })
+  override def update(): Unit = {
+    action.value_=(findAction.nonEmpty)
+  }
+  @dom
+  private def textArea: Binding[TextArea] = <textarea cols={50} rows={10} placeholder="Write your answer here"
+                                                      onchange={e: Event ⇒
+                                                        body.value_=(e.srcElement.asInstanceOf[TextArea].value)}></textarea>
   @dom
   private def newAnswerButton: Binding[Node] = {
       <input type="button" value={"+answer"} disabled={!action.bind} onclick={e: Event ⇒
@@ -45,15 +49,15 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   private def postAnswerButton: Binding[Node] = {
       <input type="button" value="post answer" onclick={postAnswer _}/>
   }
-
   private def toggleContribution(e: Event) = {
     val cbox = e.srcElement.asInstanceOf[Input].checked
+    println("post answer contr", cbox)
     isContribution.value_=(cbox)
   }
   private def postAnswer(e: Event) = {
-    val input = e.srcElement.asInstanceOf[TextArea].value
+    println("post answer", body.value)
     findAction foreach { a ⇒
-      a.create(input)
+      a.create(body.value, isContribution.value)
     }
   }
 }
