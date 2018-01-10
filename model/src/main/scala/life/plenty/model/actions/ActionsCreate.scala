@@ -15,5 +15,6 @@ class ActionCreateAnswer(override val withinOctopus: Space) extends Module[Space
   def create(body: String) = {
     val a = new BasicAnswer(withinOctopus, body)
     withinOctopus.addConnection(Child(a))
+    println("answer created", withinOctopus.connections)
   }
 }

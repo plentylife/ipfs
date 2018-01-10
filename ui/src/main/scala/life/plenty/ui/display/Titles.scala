@@ -13,7 +13,7 @@ import scalaz.std.list._
 
 trait TitleDisplay extends DisplayModule[Octopus] {
   /*todo. make global title var and make updater */
-  override protected def updateSelf(): Unit = Unit
+  override def update(): Unit = Unit
 }
 
 class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {

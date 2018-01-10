@@ -7,17 +7,19 @@ import life.plenty.model.actions.ActionCreateAnswer
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.Event
-import org.scalajs.dom.html.Input
+import org.scalajs.dom.html.{Input, TextArea}
 import org.scalajs.dom.raw.Node
 
 class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Question] {
   println("Create answer ", withinOctopus)
   private lazy val action = Var(false)
   private val opened = Var(false)
+  private val isContribution = Var(false)
+
   override def doDisplay() = findAction.nonEmpty
   //  override def doDisplay() = true
   private def findAction: Option[ActionCreateAnswer] = withinOctopus.getTopModule({ case m: ActionCreateAnswer ⇒ m })
-  override protected def updateSelf(): Unit = {
+  override def update(): Unit = {
     action.value_=(findAction.nonEmpty)
   }
   @dom
@@ -28,6 +30,8 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
       </div>
     } else {
       <div class={"open-answer-box"}>
+        <label for="is-contribution">Can someone contribute this?</label>
+        <input type="checkbox" name="is-contribution" checked={isContribution.bind} onchange={toggleContribution _}/>
         <textarea cols={50} rows={10}>opened</textarea>{postAnswerButton.bind}
       </div>
     }
@@ -42,8 +46,12 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
       <input type="button" value="post answer" onclick={postAnswer _}/>
   }
 
+  private def toggleContribution(e: Event) = {
+    val cbox = e.srcElement.asInstanceOf[Input].checked
+    isContribution.value_=(cbox)
+  }
   private def postAnswer(e: Event) = {
-    val input = e.srcElement.asInstanceOf[Input].value
+    val input = e.srcElement.asInstanceOf[TextArea].value
     findAction foreach { a ⇒
       a.create(input)
     }

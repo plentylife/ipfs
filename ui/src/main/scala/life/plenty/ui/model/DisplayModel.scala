@@ -2,8 +2,6 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model._
-import life.plenty.model.connection.Parent
-import life.plenty.ui.display.ChildDisplay
 import org.scalajs.dom.raw.Node
 
 import scala.language.postfixOps
@@ -18,10 +16,11 @@ object DisplayModel {
   }
 
   /* todo. fixme this is flawed */
-  def reRender(o: Octopus): Unit = o.getTopConnectionData({ case Parent(p: Octopus) ⇒ p }).foreach {
-    _.getTopModule({ case m: ChildDisplay ⇒ m }).foreach(_.updateSelf())
-  }
-
+  def reRender(o: Octopus): Unit = o.getTopModule({ case m: DisplayModule[_] ⇒ m }).foreach(m ⇒ {
+    // fixme. add a variable to display module indicating if it has been rendered once
+    println("re-render of module", m, m.withinOctopus)
+    m.update()
+  })
 
   def getSiblingModules(self: DisplayModule[Octopus]): List[DisplayModule[Octopus]] = self.withinOctopus.getModules {
     case m: DisplayModule[_] if m != self ⇒ m }
@@ -29,9 +28,9 @@ object DisplayModel {
   @dom
   private def noDisplay: Binding[Node] = <div>This octopus has no display</div>
 
-  trait DisplayModule[+T <: Octopus] extends Module[T] {
-    private var _affects = Set[DisplayModule[_]]()
+  /* the main trait */
 
+  trait DisplayModule[+T <: Octopus] extends Module[T] {
     def display(calledBy: DisplayModule[Octopus], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
       this.display(Option(calledBy), overrides)
     }
@@ -41,22 +40,17 @@ object DisplayModel {
     def overrides: List[ModuleOverride] = List()
 
     def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride]): Option[Binding[Node]] = {
-      println("displaying ", this, withinOctopus)
       overriddenBy(overrides) match {
         case Some(module) ⇒ module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {
-          calledBy foreach (c ⇒ _affects += c)
-          updateSelf()
+          println("displaying ", this, withinOctopus, calledBy)
+          update()
           Option(generateHtml(overrides))
         } else None
       }
     }
 
-    def update = affects foreach (_.updateSelf())
-
-    def affects = _affects
-
-    protected def updateSelf(): Unit
+    def update(): Unit
 
     protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node]
 

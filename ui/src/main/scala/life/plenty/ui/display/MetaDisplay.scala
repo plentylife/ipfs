@@ -14,7 +14,7 @@ import scalaz.std.list._
 class NoDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
   override def doDisplay(): Boolean = false
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = null
-  override protected def updateSelf(): Unit = Unit
+  override def update(): Unit = Unit
 }
 
 class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
@@ -22,19 +22,18 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
   private val siblingModules = Vars[DisplayModule[Octopus]]()
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    updateSelf()
-
-    //    println("mod disp ", bindings)
-
     val displayable = siblingModules map (m ⇒ m.display(this, overrides)) withFilter (_.nonEmpty) map (_.get)
 
     <div>
       {for (d <- displayable) yield d.bind}
     </div>
   }
-  override protected def updateSelf(): Unit = for (
-    (d: DisplayModule[Octopus], i: Int) ← getSiblingModules(this).reverse.zipWithIndex) {
-    siblingModules.value(i) = d
+  override def update(): Unit = {
+    println("modular display updating", this)
+    for (
+      (d: DisplayModule[Octopus], i: Int) ← getSiblingModules(this).reverse.zipWithIndex) {
+      siblingModules.value(i) = d
+    }
   }
 }
 
@@ -43,19 +42,18 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
 
   private val children: Vars[Octopus] = Vars[Octopus]()
 
+  override def update(): Unit = {
+    println("child display updatding", this)
+    for ((c, i) ← getChildren.zipWithIndex) {
+      children.value(i) = c
+    }
+  }
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    updateSelf()
-    //println("child disp of ", withinOctopus, children, withinOctopus.connections)
-
+    println("child display has children", this, children.value)
     <div>
       {for (c <- children) yield DisplayModel.display(c, overrides ::: childOverrides).bind}
     </div>
-  }
-
-  override def updateSelf(): Unit = for ((c, i) ← getChildren.zipWithIndex) {
-    //println("child display updatding")
-    children.value(i) = c
   }
 
   def getChildren: List[Octopus] = {
