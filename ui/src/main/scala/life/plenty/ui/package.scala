@@ -20,6 +20,7 @@ package object ui {
     ModuleRegistry add { case q: Question ⇒ new CreateAnswer(q) }
 
     ModuleRegistry add { case a: Answer ⇒ new AnswerDisplay(a) }
+    ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
 
     ModuleRegistry add { case o: Octopus ⇒ new ChildDisplay(o) }
     ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }

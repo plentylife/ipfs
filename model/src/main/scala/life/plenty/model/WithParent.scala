@@ -5,8 +5,6 @@ import life.plenty.model.connection.Parent
 
 trait WithParent[T <: Octopus] extends Octopus {
   val parent: T
-  // this has become a module
-  //  addConnection(Parent(parent))
 }
 
 class ActionAddParent[T <: Octopus](override val withinOctopus: WithParent[T]) extends
