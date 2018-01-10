@@ -14,8 +14,12 @@ trait Octopus {
 
   def modules: List[Module[Octopus]] = _modules
 
-  def getTopModule[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): Option[T] =
-    _modules.collectFirst(matchBy)
+  //  def modules: List[Module[Octopus]] = if (_modules == null) ModuleRegistry.getModules(this) else _modules
+
+  def getTopModule[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): Option[T] = {
+    println("getting top module", modules)
+    modules.collectFirst(matchBy)
+  }
 
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
     var onErrorList = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*) map { m ⇒

@@ -41,7 +41,7 @@ object DisplayModel {
     def overrides: List[ModuleOverride] = List()
 
     def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride]): Option[Binding[Node]] = {
-      //      println("displaying ", this, withinOctopus)
+      println("displaying ", this, withinOctopus)
       overriddenBy(overrides) match {
         case Some(module) ⇒ module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {
