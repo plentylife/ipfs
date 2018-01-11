@@ -3,6 +3,7 @@ package life.plenty
 import life.plenty.model._
 import life.plenty.ui.actions.DisplayUpdateOnChildrenTransform
 import life.plenty.ui.display._
+import life.plenty.ui.display.actions.{Contribute, CreateAnswer}
 
 package object ui {
 
@@ -21,6 +22,7 @@ package object ui {
 
     ModuleRegistry add { case a: Answer ⇒ new AnswerDisplay(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
+    ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }
 
     ModuleRegistry add { case o: Octopus ⇒ new ChildDisplay(o) }
     ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }

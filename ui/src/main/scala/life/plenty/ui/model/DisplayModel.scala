@@ -15,20 +15,22 @@ object DisplayModel {
     }).flatten getOrElse noDisplay
   }
 
-  /* todo. fixme this is flawed */
-  def reRender(o: Octopus): Unit = o.getTopModule({ case m: DisplayModule[_] ⇒ m }).foreach(m ⇒ {
-    // fixme. add a variable to display module indicating if it has been rendered once
-    if (m.hasRendered) {
-      println("re-render of module", m, m.withinOctopus)
-      m.update()
-    }
-  })
-
-  def getSiblingModules(self: DisplayModule[Octopus]): List[DisplayModule[Octopus]] = self.withinOctopus.getModules {
-    case m: DisplayModule[_] if m != self ⇒ m }
-
   @dom
   private def noDisplay: Binding[Node] = <div>This octopus has no display</div>
+
+  def reRender(o: Octopus, moduleSelector: PartialFunction[Module[Octopus], DisplayModule[Octopus]] = {
+    case
+      m: DisplayModule[_] ⇒ m
+  }): Unit =
+    o.getTopModule(moduleSelector).foreach(m ⇒ {
+      if (m.hasRendered) {
+        println("re-render of module", m, m.withinOctopus)
+        m.update()
+      }
+    })
+  def getSiblingModules(self: DisplayModule[Octopus]): List[DisplayModule[Octopus]] = self.withinOctopus.getModules {
+    case m: DisplayModule[_] if m != self ⇒ m
+  }
 
   /* the main trait */
 
@@ -69,4 +71,5 @@ object DisplayModel {
   }
 
   case class ModuleOverride(by: DisplayModule[Octopus], condition: (DisplayModule[Octopus]) ⇒ Boolean)
+
 }

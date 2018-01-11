@@ -1,4 +1,4 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}

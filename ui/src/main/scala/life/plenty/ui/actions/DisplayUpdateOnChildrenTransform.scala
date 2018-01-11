@@ -2,7 +2,8 @@ package life.plenty.ui.actions
 
 import life.plenty.model._
 import life.plenty.model.actions.ActionAfterGraphTransform
-import life.plenty.model.connection.{Child, Connection}
+import life.plenty.model.connection.{Child, Connection, Contributor}
+import life.plenty.ui.display.ContributionDisplay
 import life.plenty.ui.model.DisplayModel
 
 class DisplayUpdateOnChildrenTransform(override val withinOctopus: Octopus) extends ActionAfterGraphTransform {
@@ -13,10 +14,10 @@ class DisplayUpdateOnChildrenTransform(override val withinOctopus: Octopus) exte
         println("re-render listener executed", withinOctopus, connection)
         // todo fixme this funcion is flawed
         DisplayModel.reRender(withinOctopus)
-        Right()
+      case Contributor(_) ⇒
+        println("re-render listener executed for contributor", withinOctopus, connection)
+        DisplayModel.reRender(withinOctopus, { case m: ContributionDisplay ⇒ m })
       case _ ⇒
-        //        println("no")
-        Right()
     }
     Right()
   }
