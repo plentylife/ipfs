@@ -10,10 +10,13 @@ package object ui {
   def initialize(): Unit = {
     println("UI is adding modules into registry")
 
-    /* the modules should be added in a queue fashion: the last overrides the first */
+    /* the modules should be added in a list fashion: the last overrides the first */
+
+    ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
+    //    ModuleRegistry add { case o: Members ⇒ new DisplayUpdateOnChildrenTransform(o) }
 
     ModuleRegistry add { case o: Space ⇒ new TitleWithNav(o) }
-    ModuleRegistry add { case o: Space ⇒ new DisplayUpdateOnChildrenTransform(o) }
+    //    ModuleRegistry add { case o: Space ⇒ new DisplayUpdateOnChildrenTransform(o) }
 
     ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithQuestionInput(o) }
 
@@ -24,6 +27,7 @@ package object ui {
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
     ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }
 
+    ModuleRegistry add { case o: Octopus ⇒ new DisplayUpdateOnChildrenTransform(o) }
     ModuleRegistry add { case o: Octopus ⇒ new ChildDisplay(o) }
     ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }
   }

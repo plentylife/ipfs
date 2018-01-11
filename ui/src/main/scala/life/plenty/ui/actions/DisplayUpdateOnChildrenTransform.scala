@@ -2,8 +2,8 @@ package life.plenty.ui.actions
 
 import life.plenty.model._
 import life.plenty.model.actions.ActionAfterGraphTransform
-import life.plenty.model.connection.{Child, Connection, Contributor}
-import life.plenty.ui.display.ContributionDisplay
+import life.plenty.model.connection.{Child, Connection, Contributor, Member}
+import life.plenty.ui.display.{ContributionDisplay, MembersDisplay}
 import life.plenty.ui.model.DisplayModel
 
 class DisplayUpdateOnChildrenTransform(override val withinOctopus: Octopus) extends ActionAfterGraphTransform {
@@ -17,6 +17,9 @@ class DisplayUpdateOnChildrenTransform(override val withinOctopus: Octopus) exte
       case Contributor(_) ⇒
         println("re-render listener executed for contributor", withinOctopus, connection)
         DisplayModel.reRender(withinOctopus, { case m: ContributionDisplay ⇒ m })
+      case Member(_) ⇒
+        println("re-render listener executed for member", withinOctopus, connection)
+        DisplayModel.reRender(withinOctopus, { case m: MembersDisplay ⇒ m })
       case _ ⇒
     }
     Right()

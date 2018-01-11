@@ -1,6 +1,6 @@
 package life.plenty
 
-import life.plenty.model.actions.{ActionAddContributor, ActionCreateAnswer, ActionCreateQuestion}
+import life.plenty.model.actions._
 
 package object model {
   def initialize(): Unit = {
@@ -15,5 +15,8 @@ package object model {
 
     ModuleRegistry.add { case wp: WithParent[_] ⇒ new ActionAddParent(wp) }
     ModuleRegistry.add { case o: BasicSpace ⇒ new AddGreatQuestions(o) }
+    ModuleRegistry.add { case o: BasicSpace ⇒ new InitializeMembers(o) }
+
+    ModuleRegistry.add { case o: Octopus ⇒ new ActionAddMember(o) }
   }
 }
