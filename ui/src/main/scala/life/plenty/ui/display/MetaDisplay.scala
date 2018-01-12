@@ -33,7 +33,7 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
   override def update(): Unit = {
     //    println("modular display updating", this)
     for (
-      (d: DisplayModule[Octopus], i: Int) ← getSiblingModules(this).reverse.zipWithIndex) {
+      (d: DisplayModule[Octopus], i: Int) ← getSiblingModules(this).zipWithIndex) {
       siblingModules.value(i) = d
     }
   }
