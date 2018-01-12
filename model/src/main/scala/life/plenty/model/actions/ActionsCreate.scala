@@ -18,7 +18,7 @@ class ActionCreateAnswer(override val withinOctopus: Space) extends Module[Space
   }
 }
 
-class InitializeMembers(override val withinOctopus: Space) extends ActionOnInitialize[Space] {
+class InitializeMembersOctopus(override val withinOctopus: Space) extends ActionOnInitialize[Space] {
   override def onInitialize(): Unit = {
     withinOctopus.addConnection(Child(new Members(withinOctopus)))
   }

@@ -61,6 +61,8 @@ object DisplayModel {
 
     def hasRendered = _hasRenderedOnce
 
+    //    def orderPreference(toReorder: List[Octopus]) = identity(toReorder)
+
     protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node]
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =

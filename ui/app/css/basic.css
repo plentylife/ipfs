@@ -1,0 +1,10 @@
+.child-display-box {
+    border: 1px solid green;
+    margin-left: 10px;
+    padding: 3px
+}
+
+.modular-display-box {
+    border: 1px solid blue;
+    padding: 3px
+}
