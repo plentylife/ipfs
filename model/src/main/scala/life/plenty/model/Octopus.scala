@@ -3,6 +3,7 @@ package life.plenty.model
 import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnGraphTransform, ActionOnInitialize}
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Connection, Marker}
+import life.plenty.model.modifiers.ModuleFilters
 
 trait Octopus {
   val partialId: String = ""
@@ -12,7 +13,11 @@ trait Octopus {
 
   def id: String = ???
 
-  def modules: List[Module[Octopus]] = _modules
+  private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
+
+  def modules: List[Module[Octopus]] = moduleFilters.foldLeft(_modules)((ms, f) ⇒ {
+    f(ms)
+  })
 
   //  def modules: List[Module[Octopus]] = if (_modules == null) ModuleRegistry.getModules(this) else _modules
 
@@ -52,7 +57,12 @@ trait Octopus {
 
   def connections: List[Connection[_]] = _connections
 
+  /** these modules are filtered */
   def getModules[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): List[T] =
+    modules.collect(matchBy)
+
+  /** these modules do not have any filters applied */
+  def getAllModules[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): List[T] =
     _modules.collect(matchBy)
 
   protected def preConstructor(): Unit = Unit

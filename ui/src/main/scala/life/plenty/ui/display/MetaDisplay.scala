@@ -19,7 +19,6 @@ class NoDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octop
 }
 
 class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
-
   private val siblingModules = Vars[DisplayModule[Octopus]]()
   override def update(): Unit = {
     //    println("modular display updating", this)

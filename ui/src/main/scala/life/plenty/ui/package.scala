@@ -16,6 +16,7 @@ package object ui {
 
     ModuleRegistry add { case o: Space ⇒ new TitleWithNav(o) }
     ModuleRegistry add { case o: Space ⇒ new ViewStateLinks(o) }
+    ModuleRegistry add { case o: Space ⇒ new RateEffortModuleFilter(o) }
     ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortModuleFilter(o) }
     ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortDisplay(o) }
     ModuleRegistry add { case o: BasicSpace ⇒ new BasicSpaceDisplayOrder(o) }

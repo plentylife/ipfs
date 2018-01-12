@@ -13,10 +13,11 @@ trait Space extends Octopus {
   }
 }
 
+/* fixme move*/
 class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnInitialize[Space] {
   override def onInitialize(): Unit = {
     withinOctopus.getTopConnection({ case m@Marker(FILL_GREAT_QUESTIONS) ⇒ m }).foreach(_ ⇒ fill())
-    //println("added great questions to ", withinOctopus, withinOctopus.connections)
+    println("added great questions to ", withinOctopus, withinOctopus.connections)
   }
 
   private def fill(): Unit = {

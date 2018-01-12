@@ -19,8 +19,7 @@ object DisplayModel {
   private def noDisplay: Binding[Node] = <div>This octopus has no display</div>
 
   def reRender(o: Octopus, moduleSelector: PartialFunction[Module[Octopus], DisplayModule[Octopus]] = {
-    case
-      m: DisplayModule[_] ⇒ m
+    case m: DisplayModule[_] ⇒ m
   }): Unit =
     o.getTopModule(moduleSelector).foreach(m ⇒ {
       if (m.hasRendered) {

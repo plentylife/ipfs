@@ -12,7 +12,7 @@ trait FilterModule[+O <: Octopus, Elem, L <: Iterable[Elem]] extends CollectionM
   def filter(what: L): L
 }
 
-trait ModuleFilters[+O <: Octopus] extends FilterModule[O, Module[_], Iterable[Module[_]]]
+trait ModuleFilters[+O <: Octopus] extends FilterModule[O, Module[Octopus], List[Module[Octopus]]]
 
 trait OctopusModifier[+Within <: Octopus] extends
   CollectionModificationModule[Within, Octopus, List[Octopus]] {
