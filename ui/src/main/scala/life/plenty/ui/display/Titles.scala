@@ -18,7 +18,7 @@ trait TitleDisplay extends DisplayModule[Octopus] {
 
 class TitleWithNav(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
   override def overrides: List[ModuleOverride] = super.overrides ::: List(
-    ModuleOverride(new NoDisplay(withinOctopus), (m) ⇒ m.isInstanceOf[TitleWithNav]))
+    ModuleOverride(this, new NoDisplay(withinOctopus), (m) ⇒ m.isInstanceOf[TitleWithNav]))
 
   @dom
   protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {

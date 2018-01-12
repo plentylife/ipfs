@@ -35,7 +35,7 @@ class ContributionDisplay(override val withinOctopus: Answer) extends AnswerDisp
   }
 
   override def overrides: List[DisplayModel.ModuleOverride] =
-    ModuleOverride(new NoDisplay(withinOctopus),
+    ModuleOverride(this, new NoDisplay(withinOctopus),
       m ⇒ m.isInstanceOf[AnswerDisplay] && !m.isInstanceOf[ContributionDisplay]) :: super.overrides
   @dom
   override def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {

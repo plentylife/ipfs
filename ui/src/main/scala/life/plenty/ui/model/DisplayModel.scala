@@ -67,11 +67,12 @@ object DisplayModel {
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =
       overrides.collectFirst {
-        case ModuleOverride(by, con) if con(this) ⇒ by
+        case ModuleOverride(creator, by, condition) if creator != this && condition(this) ⇒ by
       }
 
   }
 
-  case class ModuleOverride(by: DisplayModule[Octopus], condition: (DisplayModule[Octopus]) ⇒ Boolean)
+  case class ModuleOverride(creator: DisplayModule[Octopus], by: DisplayModule[Octopus], condition:
+  (DisplayModule[Octopus]) ⇒ Boolean)
 
 }
