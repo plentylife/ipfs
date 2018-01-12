@@ -2,23 +2,23 @@ package life.plenty.model.modifiers
 
 import life.plenty.model.{Module, Octopus}
 
-import scala.collection.TraversableLike
-
-trait CollectionModificationModule[O <: Octopus, Elem, L <: TraversableLike[Elem, L]] extends Module[O] {
-  def process(what: L): L
+trait CollectionModificationModule[O <: Octopus, Elem] extends Module[O] {
+  def apply[L <: Iterable[Elem]](what: L): L
 }
 
-trait FilterModule[O <: Octopus, F] extends CollectionModificationModule[O, F, L
+trait FilterModule[O <: Octopus, F, L <: Iterable[F]] extends CollectionModificationModule[O, F, L] {
+  def apply(what: L): L = filter(what)
 
-<: TraversableLike[F, L]] {
-def process[L <: TraversableLike[F, L]] (what: L): L = filter (what)
-  def filter[L <: TraversableLike[F, L]](what: L): L
+  def filter(what: L): L
 }
 
-trait ModuleFilters[O <: Octopus] extends FilterModule[O, Module[_]]
+trait ModuleFilters[O <: Octopus, L <: Iterable[Module[_]]] extends FilterModule[O, Module[_], L]
 
-trait OctopusOrdering[O <: Octopus] extends CollectionModificationModule[O, Octopus] {
-  def process[L <: TraversableLike[Octopus, L]](what: L): L = order(what)
+trait OctopusModifier[Within <: Octopus, L <: Iterable[Octopus]] extends
+  CollectionModificationModule[Within, Octopus, L]
 
-  def order[L <: TraversableLike[Octopus, L]](what: L): L
+trait OctopusOrdering[O <: Octopus] extends OctopusModifier[O, List[Octopus]] {
+  def apply(what: List[Octopus]): List[Octopus] = order(what)
+
+  def order(what: List[Octopus]): List[Octopus]
 }

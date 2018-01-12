@@ -4,6 +4,7 @@ import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.Octopus
 import life.plenty.model.connection.Child
+import life.plenty.model.modifiers.OctopusModifier
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
@@ -42,7 +43,10 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 
 
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
-  private lazy val orderModules = withinOctopus.getModules({ case m: })
+  private lazy val modifiers: List[OctopusModifier[Octopus, Iterable[Octopus]]] =
+    withinOctopus.getModules({ case m: OctopusModifier[Octopus, Iterable[Octopus]] ⇒ m })
+  //private lazy val modifiers: List[OctopusModifier[Octopus, Iterable[Octopus]]] =
+  //    withinOctopus.getModules({ case m: OctopusModifier[Octopus, Iterable[Octopus]] ⇒ m})
 
   private val children: Vars[Octopus] = Vars[Octopus]()
 
@@ -61,10 +65,13 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
     </div>
   }
 
-  def getChildren: List[Octopus] = {
+  def getChildren: Iterable[Octopus] = {
     //println("getting children", withinOctopus)
     //println("getting children", withinOctopus.connections)
-    withinOctopus.connections.collect({ case Child(c: Octopus) ⇒ c })
+    val children = withinOctopus.connections.collect({ case Child(c: Octopus) ⇒ c })
+    modifiers.foldLeft(children: Iterable[Octopus])((cs, mod) ⇒ {
+      mod.apply(cs): Iterable[Octopus]
+    })
   }
   private def childOverrides = getSiblingModules(this) flatMap (_.overrides)
 }

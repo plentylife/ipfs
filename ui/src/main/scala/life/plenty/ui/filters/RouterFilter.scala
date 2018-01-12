@@ -6,7 +6,8 @@ import life.plenty.ui.display.RateEffortDisplay
 
 import scala.collection.TraversableLike
 
-abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends ModuleFilters[Octopus] {
+abstract class RouterModuleFilter[L <: Iterable[Module[_]]](override val withinOctopus: Octopus) extends
+  ModuleFilters[Octopus, L] {
   protected val acceptable: Set[(Module[_]) ⇒ Boolean]
 
   override def filter[L <: TraversableLike[Module[_], L]](what: L): L = {
