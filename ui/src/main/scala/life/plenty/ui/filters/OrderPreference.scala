@@ -10,13 +10,14 @@ import life.plenty.model.{BasicSpace, Members, Octopus}
 //trait ChildOrderPreference extends OrderPreference[Octopus, List[Octopus], BasicSpace]
 
 class BasicSpaceDisplayOrder(override val withinOctopus: BasicSpace) extends OctopusOrdering[BasicSpace] {
-  override def order(toReorder: List[Octopus]): List[Octopus] = {
-    val i = toReorder.indexWhere(_.isInstanceOf[Members])
+
+  override def order(what: List[Octopus]): List[Octopus] = {
+    val i = what.indexWhere(_.isInstanceOf[Members])
     if (i != -1) {
-      val s = toReorder.splitAt(i)
-      toReorder(i) :: s._1 ::: s._2.tail
+      val s = what.splitAt(i)
+      what(i) :: s._1 ::: s._2.tail
     } else {
-      toReorder
+      what
     }
   }
 }

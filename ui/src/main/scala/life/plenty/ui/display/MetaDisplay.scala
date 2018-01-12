@@ -43,8 +43,8 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 
 
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
-  private lazy val modifiers: List[OctopusModifier[Octopus, Iterable[Octopus]]] =
-    withinOctopus.getModules({ case m: OctopusModifier[Octopus, Iterable[Octopus]] ⇒ m })
+  private lazy val modifiers: List[OctopusModifier[Octopus]] =
+    withinOctopus.getModules({ case m: OctopusModifier[Octopus] ⇒ m })
   //private lazy val modifiers: List[OctopusModifier[Octopus, Iterable[Octopus]]] =
   //    withinOctopus.getModules({ case m: OctopusModifier[Octopus, Iterable[Octopus]] ⇒ m})
 
@@ -65,12 +65,12 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
     </div>
   }
 
-  def getChildren: Iterable[Octopus] = {
+  def getChildren: List[Octopus] = {
     //println("getting children", withinOctopus)
     //println("getting children", withinOctopus.connections)
     val children = withinOctopus.connections.collect({ case Child(c: Octopus) ⇒ c })
-    modifiers.foldLeft(children: Iterable[Octopus])((cs, mod) ⇒ {
-      mod.apply(cs): Iterable[Octopus]
+    modifiers.foldLeft(children)((cs, mod) ⇒ {
+      mod.apply(cs): List[Octopus]
     })
   }
   private def childOverrides = getSiblingModules(this) flatMap (_.overrides)

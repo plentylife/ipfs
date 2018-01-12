@@ -4,13 +4,11 @@ import life.plenty.model.modifiers.ModuleFilters
 import life.plenty.model.{Module, Octopus}
 import life.plenty.ui.display.RateEffortDisplay
 
-import scala.collection.TraversableLike
-
-abstract class RouterModuleFilter[L <: Iterable[Module[_]]](override val withinOctopus: Octopus) extends
-  ModuleFilters[Octopus, L] {
+abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
+  ModuleFilters[Octopus] {
   protected val acceptable: Set[(Module[_]) ⇒ Boolean]
 
-  override def filter[L <: TraversableLike[Module[_], L]](what: L): L = {
+  override def filter(what: Iterable[Module[_]]): Iterable[Module[_]] = {
     what filter { m ⇒
       acceptable exists (cf ⇒ cf(m))
     }
