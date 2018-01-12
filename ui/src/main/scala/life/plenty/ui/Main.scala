@@ -15,6 +15,7 @@ object Main {
   @JSExport
   def main(): Unit = {
     println("Entry point")
+    Router.initialize
     mInit()
     initialize()
 
