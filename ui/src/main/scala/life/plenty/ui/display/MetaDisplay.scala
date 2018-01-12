@@ -20,15 +20,16 @@ class NoDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octop
 
 class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
   private val siblingModules = Vars[DisplayModule[Octopus]]()
+
   override def update(): Unit = {
-    //    println("modular display updating", this)
-    for (
-      (d: DisplayModule[Octopus], i: Int) ← getSiblingModules(this).reverse.zipWithIndex) {
-      siblingModules.value(i) = d
-    }
+    println("modular display updating", this, getSiblingModules(this))
+    siblingModules.value.clear()
+    siblingModules.value.insertAll(0, getSiblingModules(this).reverse)
   }
+
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
+    println("modular display gen HTML")
     val displayable = siblingModules map { m ⇒ m.display(this, siblingOverrides ::: overrides)
     } withFilter (_.nonEmpty) map (_.get)
 

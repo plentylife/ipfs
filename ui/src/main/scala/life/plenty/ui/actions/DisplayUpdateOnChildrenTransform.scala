@@ -11,14 +11,14 @@ class DisplayUpdateOnChildrenTransform(override val withinOctopus: Octopus) exte
     //    println("re-render listener triggered", withinOctopus, connection)
     connection match {
       case Child(_) ⇒
-        println("re-render listener executed", withinOctopus, connection)
+        //        println("re-render listener executed", withinOctopus, connection)
         // todo fixme this funcion is flawed
         DisplayModel.reRender(withinOctopus)
       case Contributor(_) ⇒
-        println("re-render listener executed for contributor", withinOctopus, connection)
+        //        println("re-render listener executed for contributor", withinOctopus, connection)
         DisplayModel.reRender(withinOctopus, { case m: ContributionDisplay ⇒ m })
       case Member(_) ⇒
-        println("re-render listener executed for member", withinOctopus, connection)
+        //        println("re-render listener executed for member", withinOctopus, connection)
         DisplayModel.reRender(withinOctopus, { case m: MembersDisplay ⇒ m })
       case _ ⇒
     }

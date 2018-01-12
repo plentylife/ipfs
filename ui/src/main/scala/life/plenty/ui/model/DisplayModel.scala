@@ -23,7 +23,7 @@ object DisplayModel {
   }): Unit =
     o.getTopModule(moduleSelector).foreach(m ⇒ {
       if (m.hasRendered) {
-        println("re-render of module", m, m.withinOctopus)
+        println("re-render of module", m)
         m.update()
       }
     })

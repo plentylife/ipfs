@@ -1,33 +1,48 @@
 package life.plenty.ui.filters
 
-import com.thoughtworks.binding.dom
+import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.modifiers.ModuleFilters
 import life.plenty.model.{Module, Octopus}
 import life.plenty.ui.display._
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.ViewState.ViewState
 import life.plenty.ui.model.{DisplayModel, Router, ViewState}
+import org.scalajs.dom.Node
 
 abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
   ModuleFilters[Octopus] {
 
   protected val engageOnState: ViewState
-  override def filter(what: List[Module[Octopus]]): List[Module[Octopus]] = if (isEngaged) {
-    what filter { m ⇒
-      acceptable exists (cf ⇒ cf(m))
-    }
-  } else what
+  private var _flag = false
   protected def acceptable: Set[(Module[_]) ⇒ Boolean] = Set(_.isInstanceOf[ChildDisplay],
     _.isInstanceOf[ModularDisplay])
-  protected def isEngaged: Boolean = ViewState(Router.router.state.value.stateId) == engageOnState
-  @dom
-  private def update = {
-    isEngaged(Router.router.state.bind.stateId) && {
-      println("router filter updated");
-      DisplayModel.reRender(withinOctopus);
-      false
+  override def filter(what: List[Module[Octopus]]): List[Module[Octopus]] = if (isEngaged) {
+    val f = what filter { m ⇒
+      acceptable exists (cf ⇒ cf(m))
     }
+    //    println("router filter filtered ", f)
+    f
+  } else what
+  protected def isEngaged: Boolean = isEngaged(Router.router.state.value.stateId)
+  @dom
+  def update: Binding[Node] = {
+    //    println("rf updating", Router.router.state.bind.stateId, ViewState(Router.router.state.bind.stateId),
+    // engageOnState)
+
+    <span class="no-display">
+      {println(isEngaged(Router.router.state.bind.stateId), _flag)
+    //        if (_flag) {
+    if (isEngaged(Router.router.state.bind.stateId)) {
+      println("router filter updated", withinOctopus);
+      DisplayModel.reRender(withinOctopus);
+    }
+    //        } else {
+    //          _flag = true
+    //        }
+    ""}
+    </span>
   }
+
   protected def isEngaged(stateId: Int): Boolean = ViewState(stateId) == engageOnState
 }
 
