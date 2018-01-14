@@ -19,9 +19,14 @@ object Router {
 
     override def apply(state: RoutingParams): String = toHash(state)
   })
+
   private def defaultRoutingParams = fromHash(window.location.hash) getOrElse changeViewState(ViewState.DISCUSSION)
 
-  def initialize = router.watch()
+  var paramsOnLoad: Option[RoutingParams] = None
+  def initialize = {
+    paramsOnLoad = fromHash(window.location.hash)
+    router.watch()
+  }
 
   def toHash(r: RoutingParams): String = {
     "#" + Base64.getEncoder.encodeToString(write(r).getBytes)

@@ -10,10 +10,10 @@ import life.plenty.ui.model.{DisplayModel, Router, ViewState}
 import org.scalajs.dom.Node
 
 abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
-  ModuleFilters[Octopus] {
+  ModuleFilters[Octopus] with DisplayModule[Octopus] {
 
   protected val engageOnState: ViewState
-  private var _flag = false
+
   protected def acceptable: Set[(Module[_]) ⇒ Boolean] = Set(_.isInstanceOf[ChildDisplay],
     _.isInstanceOf[ModularDisplay])
   override def filter(what: List[Module[Octopus]]): List[Module[Octopus]] = if (isEngaged) {
@@ -24,21 +24,22 @@ abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
     f
   } else what
   protected def isEngaged: Boolean = isEngaged(Router.router.state.value.stateId)
-  @dom
-  def update: Binding[Node] = {
-    //    println("rf updating", Router.router.state.bind.stateId, ViewState(Router.router.state.bind.stateId),
-    // engageOnState)
 
+  override def update(): Unit = Unit
+  @dom
+  override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
+    println("has router filter rendered", hasRendered)
     <span class="no-display">
-      {println(isEngaged(Router.router.state.bind.stateId), _flag)
-    //        if (_flag) {
-    if (isEngaged(Router.router.state.bind.stateId)) {
-      println("router filter updated", withinOctopus);
-      DisplayModel.reRender(withinOctopus);
-    }
-    //        } else {
-    //          _flag = true
-    //        }
+      {println("has router filter rendered", hasRendered, Router.paramsOnLoad.map(_.stateId == Router.router.state
+      .bind.stateId))
+    if (hasRendered) {
+      println("has rendered is true")
+      if (Router.paramsOnLoad.map(_.stateId != Router.router.state.bind.stateId).getOrElse(false) &&
+        isEngaged(Router.router.state.bind.stateId)) {
+        println("router filter updated", withinOctopus);
+        DisplayModel.reRender(withinOctopus);
+      }
+    } else println("has rendered is false")
     ""}
     </span>
   }
@@ -55,6 +56,16 @@ class RateEffortModuleFilter(override val withinOctopus: Octopus) extends Router
       _.isInstanceOf[TitleWithNav],
       _.isInstanceOf[ViewStateLinks],
     _.isInstanceOf[RateEffortDisplay]
+    ): Set[Module[_] ⇒ Boolean]
+  }
+  override protected def acceptable: Set[Module[_] ⇒ Boolean] = super.acceptable ++ _acceptable
+}
+
+class DiscussModuleFilter(override val withinOctopus: Octopus) extends RouterModuleFilter(withinOctopus) {
+  override protected val engageOnState: ViewState = ViewState.DISCUSSION
+  private val _acceptable = {
+    Set(
+      !_.isInstanceOf[RateEffortDisplay]
     ): Set[Module[_] ⇒ Boolean]
   }
   override protected def acceptable: Set[Module[_] ⇒ Boolean] = super.acceptable ++ _acceptable

@@ -23,13 +23,13 @@ object Main {
     mInit()
     initialize()
 
-    //    println("testing routing hash", Router.toHash(RoutingParams(ViewState.DISCUSSION)))
-
     dom.render(document.body, mainSection)
   }
 
-  @dom
   def mainSection: Binding[Node] = {
+
+    /* try to do something like this again */
+
     val space = TestInstances.getEntry()
     val d = DisplayModel.display(space)
     val f = space.getAllModules({ case m: RouterModuleFilter ⇒ m })

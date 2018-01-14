@@ -49,9 +49,10 @@ object DisplayModel {
         case Some(module) ⇒ module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {
           println("displaying ", this, withinOctopus, calledBy)
-          if (!_hasRenderedOnce) _hasRenderedOnce = true
           update()
-          Option(generateHtml(overrides))
+          val html = Option(generateHtml(overrides))
+          if (!_hasRenderedOnce) _hasRenderedOnce = true
+          html
         } else None
       }
     }
