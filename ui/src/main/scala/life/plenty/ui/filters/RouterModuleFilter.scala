@@ -1,16 +1,14 @@
 package life.plenty.ui.filters
 
-import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.modifiers.ModuleFilters
 import life.plenty.model.{Module, Octopus}
 import life.plenty.ui.display._
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.ViewState.ViewState
-import life.plenty.ui.model.{DisplayModel, Router, ViewState}
-import org.scalajs.dom.Node
+import life.plenty.ui.model.{Router, ViewState}
 
 abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
-  ModuleFilters[Octopus] with DisplayModule[Octopus] {
+  ModuleFilters[Octopus] {
 
   protected val engageOnState: ViewState
 
@@ -21,28 +19,11 @@ abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
       acceptable exists (cf ⇒ cf(m))
     }
     //    println("router filter filtered ", f)
+    println("router filter filtered ", this)
     f
   } else what
-  protected def isEngaged: Boolean = isEngaged(Router.router.state.value.stateId)
 
-  override def update(): Unit = Unit
-  @dom
-  override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
-    println("has router filter rendered", hasRendered)
-    <span class="no-display">
-      {println("has router filter rendered", hasRendered, Router.paramsOnLoad.map(_.stateId == Router.router.state
-      .bind.stateId))
-    if (hasRendered) {
-      println("has rendered is true")
-      if (Router.paramsOnLoad.map(_.stateId != Router.router.state.bind.stateId).getOrElse(false) &&
-        isEngaged(Router.router.state.bind.stateId)) {
-        println("router filter updated", withinOctopus);
-        DisplayModel.reRender(withinOctopus);
-      }
-    } else println("has rendered is false")
-    ""}
-    </span>
-  }
+  protected def isEngaged: Boolean = isEngaged(Router.router.state.value.stateId)
 
   protected def isEngaged(stateId: Int): Boolean = ViewState(stateId) == engageOnState
 }

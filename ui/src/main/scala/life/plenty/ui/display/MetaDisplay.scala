@@ -5,8 +5,8 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.Octopus
 import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
-import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
+import life.plenty.ui.model.{DisplayModel, Router}
 import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
@@ -33,12 +33,17 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     //    println("modular display gen HTML")
 
-
-
     val displayable = siblingModules map { m ⇒ m.display(this, siblingOverrides ::: overrides)
     } withFilter (_.nonEmpty) map (_.get)
 
     <div class="modular-display-box">
+      <span>
+        {val p = Router.router.state.bind
+      if (p != Router.paramsOnLoad.orNull) {
+        update()
+        p.toString
+      } else "no change in params"}
+      </span>
       {for (d <- displayable) yield d.bind}
     </div>
   }
