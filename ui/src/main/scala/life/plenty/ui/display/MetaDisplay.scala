@@ -5,8 +5,8 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.Octopus
 import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
+import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
-import life.plenty.ui.model.{DisplayModel, Router}
 import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
@@ -22,11 +22,9 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
   private val siblingModules: Vars[DisplayModule[Octopus]] = Vars()
 
   override def update(): Unit = {
-    println("modular display updating", this, getSiblingModules(this), siblingModules, siblingModules.value)
+    //    println("modular display updating", this, getSiblingModules(this), siblingModules, siblingModules.value)
     siblingModules.value.clear()
-    println("clear")
     siblingModules.value.insertAll(0, getSiblingModules(this).reverse)
-    println("insert")
   }
 
   @dom
@@ -37,13 +35,6 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
     } withFilter (_.nonEmpty) map (_.get)
 
     <div class="modular-display-box">
-      <span>
-        {val p = Router.router.state.bind
-      if (p != Router.paramsOnLoad.orNull) {
-        update()
-        p.toString
-      } else "no change in params"}
-      </span>
       {for (d <- displayable) yield d.bind}
     </div>
   }
@@ -55,8 +46,6 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
   private lazy val modifiers: List[OctopusModifier[Octopus]] =
     withinOctopus.getModules({ case m: OctopusModifier[Octopus] ⇒ m })
-  //private lazy val modifiers: List[OctopusModifier[Octopus, Iterable[Octopus]]] =
-  //    withinOctopus.getModules({ case m: OctopusModifier[Octopus, Iterable[Octopus]] ⇒ m})
 
   private val children: Vars[Octopus] = Vars[Octopus]()
 

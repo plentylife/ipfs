@@ -19,8 +19,6 @@ trait Octopus {
     f(ms)
   })
 
-  //  def modules: List[Module[Octopus]] = if (_modules == null) ModuleRegistry.getModules(this) else _modules
-
   def getTopModule[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): Option[T] = {
     //    println("getting top module", modules)
     modules.collectFirst(matchBy)

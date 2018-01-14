@@ -4,28 +4,23 @@ import life.plenty.model.modifiers.ModuleFilters
 import life.plenty.model.{Module, Octopus}
 import life.plenty.ui.display._
 import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.ViewState
 import life.plenty.ui.model.ViewState.ViewState
-import life.plenty.ui.model.{Router, ViewState}
+
 
 abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
-  ModuleFilters[Octopus] {
+  RouterFilter[Octopus, Module[Octopus], List[Module[Octopus]]] with ModuleFilters[Octopus] {
 
-  protected val engageOnState: ViewState
-
-  protected def acceptable: Set[(Module[_]) ⇒ Boolean] = Set(_.isInstanceOf[ChildDisplay],
-    _.isInstanceOf[ModularDisplay])
-  override def filter(what: List[Module[Octopus]]): List[Module[Octopus]] = if (isEngaged) {
+  override protected def filterInner(what: List[Module[Octopus]]): List[Module[Octopus]] = {
     val f = what filter { m ⇒
       acceptable exists (cf ⇒ cf(m))
     }
-    //    println("router filter filtered ", f)
-    println("router filter filtered ", this)
+    println("router filter filtered ", this, f)
+    //    println("router filter filtered ", this)
     f
-  } else what
-
-  protected def isEngaged: Boolean = isEngaged(Router.router.state.value.stateId)
-
-  protected def isEngaged(stateId: Int): Boolean = ViewState(stateId) == engageOnState
+  }
+  protected def acceptable: Set[(Module[_]) ⇒ Boolean] = Set(_.isInstanceOf[ChildDisplay],
+    _.isInstanceOf[ModularDisplay], _.isInstanceOf[ModuleFilters[_]])
 }
 
 class RateEffortModuleFilter(override val withinOctopus: Octopus) extends RouterModuleFilter(withinOctopus) {

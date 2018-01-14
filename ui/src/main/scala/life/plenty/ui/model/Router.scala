@@ -3,6 +3,7 @@ package life.plenty.ui.model
 import java.util.Base64
 
 import com.thoughtworks.binding.Route
+import life.plenty.model.Octopus
 import life.plenty.ui.model.ViewState.ViewState
 import org.scalajs.dom.window
 import upickle.default.{macroRW, ReadWriter ⇒ RW, _}
@@ -22,10 +23,19 @@ object Router {
 
   private def defaultRoutingParams = fromHash(window.location.hash) getOrElse changeViewState(ViewState.DISCUSSION)
 
-  var paramsOnLoad: Option[RoutingParams] = None
+  private var lastParams: Option[RoutingParams] = None
   def initialize = {
-    paramsOnLoad = fromHash(window.location.hash)
+    lastParams = fromHash(window.location.hash)
     router.watch()
+  }
+
+  def reRender(o: Octopus, p: RoutingParams) = {
+    println("routing params (current, last)", p, lastParams.orNull)
+    if (p != lastParams.orNull) {
+      println("Router re-render")
+      lastParams = Option(p)
+      DisplayModel.reRender(o)
+    }
   }
 
   def toHash(r: RoutingParams): String = {
