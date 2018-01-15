@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "license": "UNLICENSED",
+  "dependencies": {
+    "orbit-db": "0.19.2",
+    "ipfs": "0.27.6"
+  },
+  "devDependencies": {
+    "webpack": "3.10.0"
+  }
+}
