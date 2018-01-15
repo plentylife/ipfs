@@ -30,9 +30,9 @@ object Router {
   }
 
   def reRender(o: Octopus, p: RoutingParams) = {
-    println("routing params (current, last)", p, lastParams.orNull)
+    //    println("routing params (current, last)", p, lastParams.orNull)
     if (p != lastParams.orNull) {
-      println("Router re-render")
+      //      println("Router re-render")
       lastParams = Option(p)
       DisplayModel.reRender(o)
     }
@@ -43,7 +43,7 @@ object Router {
   }
   def fromHash(h: String) = {
     val params = h.drop(1)
-    println("decoding from hash", Base64.getDecoder.decode(params).map(_.toChar).mkString)
+    //    println("decoding from hash", Base64.getDecoder.decode(params).map(_.toChar).mkString)
     Try(read[RoutingParams](Base64.getDecoder.decode(params).map(_.toChar).mkString)).toOption
   }
 

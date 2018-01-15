@@ -48,7 +48,7 @@ object DisplayModel {
       overriddenBy(overrides) match {
         case Some(module) ⇒ module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {
-          println("displaying ", this, withinOctopus, calledBy)
+          //          println("displaying ", this, withinOctopus, calledBy)
           update()
           val html = Option(generateHtml(overrides))
           if (!_hasRenderedOnce) _hasRenderedOnce = true

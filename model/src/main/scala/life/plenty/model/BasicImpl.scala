@@ -12,7 +12,7 @@ class BasicQuestion(override val parent: Space, override val title: String) exte
   }
 }
 
-class BasicSpace(override val title: String) extends Space {
+class BasicSpace(override val title: String) extends Space with WithMembers {
   override protected def preConstructor(): Unit = {
     super.preConstructor()
     addConnection(Marker(FILL_GREAT_QUESTIONS))

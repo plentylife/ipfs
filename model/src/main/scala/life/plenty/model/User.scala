@@ -6,6 +6,6 @@ trait User extends Octopus {
   override def id: String = _id
 }
 
-case class BasicUser(override protected val _id: String) extends User {
+class BasicUser(override protected val _id: String) extends User {
 
 }

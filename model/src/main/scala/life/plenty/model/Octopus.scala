@@ -15,9 +15,14 @@ trait Octopus {
 
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
-  def modules: List[Module[Octopus]] = moduleFilters.foldLeft(_modules)((ms, f) ⇒ {
-    f(ms)
-  })
+  def modules: List[Module[Octopus]] = {
+    println("mod filters of", this)
+    println(moduleFilters)
+    moduleFilters.foldLeft(_modules)((ms, f) ⇒ {
+      //      println("filter stage", ms, f)
+      f(ms)
+    })
+  }
 
   def getTopModule[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): Option[T] = {
     //    println("getting top module", modules)
@@ -66,6 +71,10 @@ trait Octopus {
   protected def preConstructor(): Unit = Unit
 
   /* Constructor */
+  println("Octopus pre-constructor -- ")
+  println(this)
+  println(this.getClass)
+
   _modules = ModuleRegistry.getModules(this)
   preConstructor()
   println("Octopus constructor -- " + this.toString)

@@ -5,7 +5,7 @@ import life.plenty.model.connection.{Child, Connection, Contributor, Parent}
 
 class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
   def add(userId: String) = {
-    val u = BasicUser(userId)
+    val u = new BasicUser(userId)
     val existing = withinOctopus.connections.collect({ case Contributor(u) ⇒ u })
     if (!existing.contains(u)) {
       withinOctopus.addConnection(Contributor(u))
@@ -45,5 +45,13 @@ class ActionAddMember(override val withinOctopus: Octopus) extends ActionAfterGr
           }
       }
     }
+  }
+}
+
+class ActionAddParent[T <: Octopus](override val withinOctopus: WithParent[T]) extends
+  ActionOnInitialize[WithParent[T]] {
+  override def onInitialize(): Unit = {
+    //    println("adding parent")
+    withinOctopus addConnection Parent(withinOctopus.parent)
   }
 }

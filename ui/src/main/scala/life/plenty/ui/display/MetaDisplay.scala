@@ -29,7 +29,7 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    //    println("modular display gen HTML")
+    println("modular display gen HTML", this)
 
     val displayable = siblingModules map { m ⇒ m.display(this, siblingOverrides ::: overrides)
     } withFilter (_.nonEmpty) map (_.get)
@@ -72,5 +72,8 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
       mod.apply(cs): List[Octopus]
     })
   }
-  private def childOverrides = getSiblingModules(this) flatMap (_.overrides)
+  private def childOverrides = {
+    println("getting child overrides")
+    getSiblingModules(this) flatMap (_.overrides)
+  }
 }
