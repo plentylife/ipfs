@@ -1,5 +1,6 @@
 package life.plenty.model.modifiers
 
+import life.plenty.model.connection.Connection
 import life.plenty.model.{Module, Octopus}
 
 trait CollectionModificationModule[+O <: Octopus, Elem, L <: Iterable[Elem]] extends Module[O] {
@@ -14,6 +15,8 @@ trait FilterModule[+O <: Octopus, Elem, L <: Iterable[Elem]] extends CollectionM
 
 /** can in theory filter themselves out */
 trait ModuleFilters[+O <: Octopus] extends FilterModule[O, Module[Octopus], List[Module[Octopus]]]
+
+trait ConnectionFilters[+O <: Octopus] extends FilterModule[O, Connection[_], List[Connection[_]]]
 
 trait OctopusModifier[+Within <: Octopus] extends
   CollectionModificationModule[Within, Octopus, List[Octopus]] {

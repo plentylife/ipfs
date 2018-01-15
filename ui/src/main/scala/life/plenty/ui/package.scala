@@ -30,7 +30,7 @@ package object ui {
     ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }
 
     ModuleRegistry add { case o: Octopus ⇒ new RateEffortModuleFilter(o) }
-    ModuleRegistry add { case o: Octopus ⇒ println("discuss getting", o); new DiscussModuleFilter(o) }
+    ModuleRegistry add { case o: Octopus ⇒ new DiscussModuleFilter(o) }
     ModuleRegistry add { case o: Octopus ⇒ new RateEffortConnectionFilter(o) }
 
     ModuleRegistry add { case o: Octopus ⇒ new DisplayUpdateOnChildrenTransform(o) }

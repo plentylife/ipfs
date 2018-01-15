@@ -7,8 +7,8 @@ import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.ViewState
 import life.plenty.ui.model.ViewState.ViewState
 
-//(override val withinOctopus: Octopus)
-trait RouterModuleFilter extends
+//
+abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
   RouterFilter[Octopus, Module[Octopus], List[Module[Octopus]]] with ModuleFilters[Octopus] {
 
   override protected def filterInner(what: List[Module[Octopus]]): List[Module[Octopus]] = {
@@ -23,7 +23,7 @@ trait RouterModuleFilter extends
     _.isInstanceOf[ModularDisplay], _.isInstanceOf[RouterFilter[_, _, _]])
 }
 
-class RateEffortModuleFilter(override val withinOctopus: Octopus) extends RouterModuleFilter(withinOctopus) {
+class RateEffortModuleFilter(private val _withinOctopus: Octopus) extends RouterModuleFilter(_withinOctopus) {
   override protected val engageOnState: ViewState = ViewState.RATING
   private val _acceptable = {
     Set(
@@ -37,7 +37,7 @@ class RateEffortModuleFilter(override val withinOctopus: Octopus) extends Router
   override protected def acceptable: Set[Module[_] ⇒ Boolean] = super.acceptable ++ _acceptable
 }
 
-class DiscussModuleFilter(override val withinOctopus: Octopus) extends RouterModuleFilter(withinOctopus) {
+class DiscussModuleFilter(private val _withinOctopus: Octopus) extends RouterModuleFilter(_withinOctopus) {
   override protected val engageOnState: ViewState = ViewState.DISCUSSION
   private val _acceptable = {
     Set(

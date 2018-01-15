@@ -24,14 +24,8 @@ trait RouterFilter[+O <: Octopus, Elem, L <: Iterable[Elem]] extends FilterModul
 
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
-    println("filter oct", this, withinOctopus)
     <span class="module-hook">
       {Router.reRender(withinOctopus, Router.router.state.bind); ""}
     </span>
-  }
-
-  if (withinOctopus.toString == "undefined") {
-    println("UNDEF")
-    println("filter init", this, withinOctopus)
   }
 }
