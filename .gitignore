@@ -4,3 +4,4 @@ yarn.lock
 package-lock.json
 ui/app/entry.js
 .sass-cache
+**/css/*

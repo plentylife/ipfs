@@ -39,7 +39,9 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
     </div>
   }
 
-  private def siblingOverrides = getSiblingModules(this) flatMap (_.overrides)
+  private def siblingOverrides = getSiblingModules(this) flatMap (m ⇒ {
+    if (m.doDisplay()) m.overrides else Nil
+  })
 }
 
 
@@ -47,7 +49,7 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   private lazy val modifiers: List[OctopusModifier[Octopus]] =
     withinOctopus.getModules({ case m: OctopusModifier[Octopus] ⇒ m })
 
-  private val children: Vars[Octopus] = Vars[Octopus]()
+  protected val children: Vars[Octopus] = Vars[Octopus]()
 
   override def update(): Unit = {
     //    println("child display updatding", this)
@@ -73,8 +75,44 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
     })
   }
 
-  private def getOverridesBelow = {
+  protected def getOverridesBelow = {
     //    println("getting child overrides")
-    getSiblingModules(this) flatMap (_.overrides)
+    getSiblingModules(this) flatMap (m ⇒ {
+      if (m.doDisplay()) m.overrides else Nil
+    })
   }
 }
+
+abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends ChildDisplay(_withinOctopus) {
+  protected val displayInOrder: List[String]
+
+  protected def groupBy(o: Octopus): String
+
+  override def overrides: List[ModuleOverride] = {
+    ModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
+      dm.isInstanceOf[ChildDisplay] && dm.withinOctopus == withinOctopus
+    }) :: super.overrides
+  }
+
+  @dom
+  override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
+    val grouped = children.value.groupBy(groupBy)
+    val overridesBelow = overrides ::: getOverridesBelow
+
+    println("groups", displayInOrder)
+    println("groups", grouped)
+
+    <div class="child-display-grouped-box d-flex flex-row">
+      {for (gName ← displayInOrder) yield generateHtmlForGroup(gName, grouped(gName).toList, overridesBelow).bind}
+    </div>
+  }
+
+  @dom
+  private def generateHtmlForGroup(name: String, octopi: List[Octopus],
+                                   overridesBelow: List[ModuleOverride]): Binding[Node] = {
+    <div class={s"group-$name d-flex flex-column"}>
+      {for (c <- octopi) yield DisplayModel.display(c, overridesBelow).bind}
+    </div>
+  }
+}
+
