@@ -1,5 +1,6 @@
 package life.plenty.model.actions
 
+import life.plenty.model.GraphUtils
 import life.plenty.model.connection.{Child, Connection, Contributor, Parent}
 import life.plenty.model.octopi._
 
@@ -31,20 +32,7 @@ class ActionAddMember(override val withinOctopus: Octopus) extends ActionAfterGr
   override def onConnectionRemove(connection: Connection[_]): Either[Exception, Unit] = ???
 
   private def findModule(starting: Octopus = withinOctopus): Option[Members] = {
-    //    println("trying to find member module in", starting)
-    val within = starting.getTopConnectionData({ case Child(m: Members) ⇒ m })
-    //    if (within.nonEmpty) println("found members octopus") else println(starting.connections)
-    within orElse {
-      starting.getTopConnectionData({ case Parent(p: Octopus) ⇒ p }) flatMap {
-        p ⇒
-          if (p == starting) {
-            println("Error in findModule of ActionAddMember: same parent")
-            None
-          } else {
-            findModule(p)
-          }
-      }
-    }
+    GraphUtils.findModuleUpParentTree(starting, { case Child(m: Members) ⇒ m })
   }
 }
 

@@ -2,7 +2,7 @@ package life.plenty.ui
 
 import life.plenty.model.connection.Child
 import life.plenty.model.octopi.GreatQuestions.{When, Why}
-import life.plenty.model.octopi.{BasicAnswer, BasicQuestion, BasicSpace, Contribution}
+import life.plenty.model.octopi._
 
 object TestInstances {
 
@@ -18,10 +18,15 @@ object TestInstances {
       frenchSpace.addConnection(Child(q))
       q
     }
+    val members = frenchSpace.getTopConnectionData({ case Child(m: Members) ⇒ m }).get
+
+
+    val u = new BasicUser("antonid")
     val q = new BasicQuestion(why, "lets test this")
     val c = new Contribution(q, "our first contribution")
     val a = new BasicAnswer(when, "tomorrow perhaps")
 
+    members.addMember(u)
     why.addConnection(Child(q))
     when.addConnection(Child(a))
     q.addConnection(Child(c))

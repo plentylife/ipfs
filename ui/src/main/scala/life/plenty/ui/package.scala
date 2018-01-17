@@ -10,13 +10,16 @@ import life.plenty.ui.filters.{BasicSpaceDisplayOrder, DiscussModuleFilter, Rate
 
 package object ui {
 
+  val thanks = "\u20B8"
+
   def initialize(): Unit = {
     println("UI is adding modules into registry")
 
     /* the modules should be added in a list fashion: the last overrides the first */
     ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
 
-    ModuleRegistry add { case o: Space ⇒ new TitleWithNav(o) }
+    ModuleRegistry add { case o: Space ⇒ new CurrentUserWallet(o) }
+    ModuleRegistry add { case o: Space ⇒ new MenuBar(o) }
     ModuleRegistry add { case o: Space ⇒ new ViewStateLinks(o) }
     ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortDisplay(o) }
     ModuleRegistry add { case o: BasicSpace ⇒ new BasicSpaceDisplayOrder(o) }

@@ -12,6 +12,7 @@ lazy val model = project.enablePlugins(ScalaJSPlugin, SbtJsEngine).in(file("mode
 lazy val ui = project.enablePlugins(ScalaJSPlugin, SbtJsEngine).in(file("ui"))
   //  .enablePlugins(ScalaJSBundlerPlugin)
   .dependsOn(model).settings(
+  relativeSourceMaps := true,
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
   //  webpackBundlingMode := BundlingMode.LibraryOnly(),
 //  scalaJSUseMainModuleInitializer := false,

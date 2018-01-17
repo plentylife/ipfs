@@ -29,7 +29,7 @@ class RateEffortModuleFilter(private val _withinOctopus: Octopus) extends Router
     Set(
       !_.isInstanceOf[DisplayModule[_]],
       _.isInstanceOf[MembersDisplay],
-      _.isInstanceOf[TitleWithNav],
+      _.isInstanceOf[MenuBar],
       _.isInstanceOf[ViewStateLinks],
     _.isInstanceOf[RateEffortDisplay]
     ): Set[Module[_] ⇒ Boolean]
