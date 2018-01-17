@@ -1,0 +1,31 @@
+@import "../node_modules/bootstrap/scss/bootstrap";
+@import "menu";
+@import "qna";
+
+body {
+  margin: 0;
+}
+
+.child-display-box:first-child {
+  margin-left: 0;
+}
+
+.child-display-box {
+  /*border: 1px solid green;*/
+  margin-left: 10px;
+  /*padding: 3px*/
+}
+
+.modular-display-box {
+  /*border: 1px solid blue;*/
+  /*padding: 3px*/
+}
+
+.module-hook {
+  display: none;
+  /*width: 5px;*/
+  /*height: 5px;*/
+  /*background-color: pink;*/
+  /*display: block;*/
+  /*margin-bottom: 3px;*/
+}

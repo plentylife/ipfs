@@ -6,6 +6,7 @@
     "@babel/preset-env": "^7.0.0-beta.37",
     "babel-loader": "^8.0.0-beta.0",
     "babel-polyfill": "^6.26.0",
+    "bootstrap": "^4.0.0-beta.3",
     "ipfs": "0.27.6",
     "orbit-db": "0.19.2"
   },

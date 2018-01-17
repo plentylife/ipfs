@@ -15,9 +15,14 @@ class AnswerDisplay(override val withinOctopus: Answer) extends DisplayModule[An
 
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
-    <div>
-      answer:
-      {body.bind}
+    <div class="card d-inline-flex mt-1">
+      <div class="card-body">
+        <h6 class="card-title">answer</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+        <p class="card-text">
+          {body.bind}
+        </p>
+      </div>
     </div>
   }
 

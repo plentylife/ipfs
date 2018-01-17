@@ -21,7 +21,7 @@ class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] wi
 
   @dom
   protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    <div class="nav-bar">
+    <div class="menu-bar">
       <div>back</div>
       <div class="title">
         {Var(withinOctopus.title).bind}
