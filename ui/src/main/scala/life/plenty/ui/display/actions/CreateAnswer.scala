@@ -2,8 +2,8 @@ package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.Question
 import life.plenty.model.actions.ActionCreateAnswer
+import life.plenty.model.octopi.Question
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.Event

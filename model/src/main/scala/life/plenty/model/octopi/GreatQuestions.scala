@@ -1,4 +1,4 @@
-package life.plenty.model
+package life.plenty.model.octopi
 
 trait GreatQuestion extends Space with WithParent[Space]
 

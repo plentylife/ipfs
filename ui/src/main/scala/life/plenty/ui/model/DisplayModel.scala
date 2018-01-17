@@ -1,7 +1,7 @@
 package life.plenty.ui.model
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model._
+import life.plenty.model.octopi.{Module, Octopus}
 import org.scalajs.dom.raw.Node
 
 import scala.language.postfixOps

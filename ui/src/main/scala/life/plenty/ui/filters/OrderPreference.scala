@@ -1,7 +1,7 @@
 package life.plenty.ui.filters
 
 import life.plenty.model.modifiers.OctopusOrdering
-import life.plenty.model.{BasicSpace, Members, Octopus}
+import life.plenty.model.octopi.{BasicSpace, Members, Octopus}
 //
 //trait OrderPreference[IT, L<: Iterable[IT], T <: Octopus] extends Module[T] {
 //  def orderPreference(toReorder: L): L

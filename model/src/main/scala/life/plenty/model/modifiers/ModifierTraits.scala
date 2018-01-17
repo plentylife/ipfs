@@ -1,7 +1,7 @@
 package life.plenty.model.modifiers
 
 import life.plenty.model.connection.Connection
-import life.plenty.model.{Module, Octopus}
+import life.plenty.model.octopi.{Module, Octopus}
 
 trait CollectionModificationModule[+O <: Octopus, Elem, L <: Iterable[Elem]] extends Module[O] {
   def apply(what: L): L

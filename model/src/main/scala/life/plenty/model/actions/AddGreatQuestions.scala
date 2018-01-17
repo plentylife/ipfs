@@ -2,7 +2,7 @@ package life.plenty.model.actions
 
 import life.plenty.model.connection.MarkerEnum.{FILL_GREAT_QUESTIONS, HAS_FILLED_GREAT_QUESTIONS}
 import life.plenty.model.connection.{Child, Marker, Parent}
-import life.plenty.model.{GreatQuestion, GreatQuestions, Octopus, Space}
+import life.plenty.model.octopi.{GreatQuestion, GreatQuestions, Octopus, Space}
 
 /* fixme move*/
 class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnInitialize[Space] {

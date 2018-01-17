@@ -1,4 +1,4 @@
-package life.plenty.model
+package life.plenty.model.octopi
 
 import life.plenty.model.connection.Body
 

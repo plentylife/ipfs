@@ -1,8 +1,8 @@
 package life.plenty.ui.actions
 
-import life.plenty.model._
 import life.plenty.model.actions.ActionAfterGraphTransform
 import life.plenty.model.connection.{Child, Connection, Contributor, Member}
+import life.plenty.model.octopi.Octopus
 import life.plenty.ui.display.{ContributionDisplay, MembersDisplay}
 import life.plenty.ui.model.DisplayModel
 

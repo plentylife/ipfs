@@ -1,4 +1,4 @@
-package life.plenty.model
+package life.plenty.model.octopi
 
 trait User extends Octopus {
   protected val _id: String

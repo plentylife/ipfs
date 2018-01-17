@@ -1,6 +1,7 @@
 package life.plenty
 
 import life.plenty.model.actions._
+import life.plenty.model.octopi._
 
 package object model {
   def initialize(): Unit = {

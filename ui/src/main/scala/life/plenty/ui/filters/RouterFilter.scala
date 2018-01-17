@@ -1,8 +1,8 @@
 package life.plenty.ui.filters
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.Octopus
 import life.plenty.model.modifiers.FilterModule
+import life.plenty.model.octopi.Octopus
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.ViewState.ViewState
 import life.plenty.ui.model.{DisplayModel, Router, ViewState}

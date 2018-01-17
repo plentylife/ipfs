@@ -1,5 +1,6 @@
-package life.plenty.model
+package life.plenty.model.octopi
 
+import life.plenty.model.ModuleRegistry
 import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnGraphTransform, ActionOnInitialize}
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Connection, Marker}

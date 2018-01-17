@@ -3,7 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Contributor
-import life.plenty.model.{Answer, User}
+import life.plenty.model.octopi.{Answer, User}
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import org.scalajs.dom.raw.Node

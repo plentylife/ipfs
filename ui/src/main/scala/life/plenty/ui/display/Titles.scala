@@ -3,7 +3,7 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateQuestion
 import life.plenty.model.connection.Parent
-import life.plenty.model.{GreatQuestion, Octopus, Space}
+import life.plenty.model.octopi.{GreatQuestion, Octopus, Space}
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}

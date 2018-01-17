@@ -1,7 +1,7 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection.Connection
-import life.plenty.model.{Module, Octopus}
+import life.plenty.model.octopi.{Module, Octopus}
 
 trait ActionGraphTransform extends Module[Octopus] {
   def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit]

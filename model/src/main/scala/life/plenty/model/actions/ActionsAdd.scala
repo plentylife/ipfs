@@ -1,7 +1,7 @@
 package life.plenty.model.actions
 
-import life.plenty.model._
 import life.plenty.model.connection.{Child, Connection, Contributor, Parent}
+import life.plenty.model.octopi._
 
 class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
   def add(userId: String) = {

@@ -1,8 +1,8 @@
 package life.plenty.ui.filters
 
-import life.plenty.model._
 import life.plenty.model.connection.Connection
 import life.plenty.model.modifiers.ConnectionFilters
+import life.plenty.model.octopi.{Members, Octopus, WithMembers}
 import life.plenty.ui.model.ViewState
 import life.plenty.ui.model.ViewState.ViewState
 

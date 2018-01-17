@@ -1,6 +1,6 @@
 package life.plenty.model.connection
 
-import life.plenty.model.User
+import life.plenty.model.octopi.User
 
 case class Creator[String](user: String) extends Connection[String] {
   override def value: String = user

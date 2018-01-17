@@ -1,4 +1,4 @@
-package life.plenty.model
+package life.plenty.model.octopi
 
 import life.plenty.model.connection.Marker
 import life.plenty.model.connection.MarkerEnum.FILL_GREAT_QUESTIONS

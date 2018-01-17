@@ -1,8 +1,8 @@
 package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.Contribution
 import life.plenty.model.actions.ActionAddContributor
+import life.plenty.model.octopi.Contribution
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.Event

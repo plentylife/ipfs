@@ -1,6 +1,7 @@
 package life.plenty
 
 import life.plenty.model._
+import life.plenty.model.octopi._
 import life.plenty.ui.actions.DisplayUpdateOnChildrenTransform
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions.{Contribute, CreateAnswer}

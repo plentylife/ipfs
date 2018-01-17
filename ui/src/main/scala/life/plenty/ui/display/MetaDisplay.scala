@@ -2,9 +2,9 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.Octopus
 import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
+import life.plenty.model.octopi.Octopus
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
@@ -67,7 +67,7 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
     //println("getting children", withinOctopus)
     //println("getting children", withinOctopus.connections)
     val children = withinOctopus.connections.collect({ case Child(c: Octopus) ⇒ c })
-    println("getting children", children)
+    //    println("getting children", children)
     modifiers.foldLeft(children)((cs, mod) ⇒ {
       mod.apply(cs): List[Octopus]
     })

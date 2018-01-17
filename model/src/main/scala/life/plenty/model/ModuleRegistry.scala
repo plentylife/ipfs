@@ -1,5 +1,7 @@
 package life.plenty.model
 
+import life.plenty.model.octopi.{Module, Octopus}
+
 object ModuleRegistry {
   private var _registry: List[PartialFunction[Octopus, Module[Octopus]]] = List()
   def getModules(octopus: Octopus): List[Module[Octopus]] = {
