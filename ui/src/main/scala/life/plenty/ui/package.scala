@@ -5,6 +5,7 @@ import life.plenty.model.octopi._
 import life.plenty.ui.actions.DisplayUpdateOnChildrenTransform
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions.{Contribute, CreateAnswer}
+import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
 import life.plenty.ui.filters.BasicSpaceDisplayOrder
 
 package object ui {
@@ -41,6 +42,7 @@ package object ui {
     ModuleRegistry add { case o: Octopus ⇒ new ChildDisplay(o) }
 
     ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }
+    ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }
   }
 
 }

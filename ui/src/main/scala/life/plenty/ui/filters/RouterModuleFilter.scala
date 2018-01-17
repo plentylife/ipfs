@@ -3,6 +3,7 @@ package life.plenty.ui.filters
 import life.plenty.model.modifiers.ModuleFilters
 import life.plenty.model.octopi.{Module, Octopus}
 import life.plenty.ui.display._
+import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.ViewState
 import life.plenty.ui.model.ViewState.ViewState

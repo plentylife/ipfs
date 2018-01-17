@@ -1,4 +1,4 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.meta
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
@@ -10,40 +10,6 @@ import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSibl
 import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
-
-
-class NoDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
-  override def doDisplay(): Boolean = false
-  override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = null
-  override def update(): Unit = Unit
-}
-
-class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
-  private val siblingModules: Vars[DisplayModule[Octopus]] = Vars()
-
-  override def update(): Unit = {
-    //    println("modular display updating", this, getSiblingModules(this), siblingModules, siblingModules.value)
-    siblingModules.value.clear()
-    siblingModules.value.insertAll(0, getSiblingModules(this).reverse)
-  }
-
-  @dom
-  override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    //    println("modular display gen HTML", this)
-
-    val displayable = siblingModules map { m ⇒ m.display(this, siblingOverrides ::: overrides)
-    } withFilter (_.nonEmpty) map (_.get)
-
-    <div class="modular-display-box">
-      {for (d <- displayable) yield d.bind}
-    </div>
-  }
-
-  private def siblingOverrides = getSiblingModules(this) flatMap (m ⇒ {
-    if (m.doDisplay()) m.overrides else Nil
-  })
-}
-
 
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
   private lazy val modifiers: List[OctopusModifier[Octopus]] =
@@ -57,14 +23,6 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
     children.value.insertAll(0, getChildren)
   }
 
-  @dom
-  override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    //    println("child display has children", this, children.value)
-    <div class="child-display-box d-flex flex-column">
-      {for (c <- children) yield DisplayModel.display(c, overrides ::: getOverridesBelow).bind}
-    </div>
-  }
-
   def getChildren: List[Octopus] = {
     //println("getting children", withinOctopus)
     //println("getting children", withinOctopus.connections)
@@ -73,6 +31,14 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
     modifiers.foldLeft(children)((cs, mod) ⇒ {
       mod.apply(cs): List[Octopus]
     })
+  }
+
+  @dom
+  override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
+    //    println("child display has children", this, children.value)
+    <div class="child-display-box d-flex flex-column">
+      {for (c <- children) yield DisplayModel.display(c, overrides ::: getOverridesBelow).bind}
+    </div>
   }
 
   protected def getOverridesBelow = {
@@ -86,21 +52,18 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
 abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends ChildDisplay(_withinOctopus) {
   protected val displayInOrder: List[String]
 
-  protected def groupBy(o: Octopus): String
-
   override def overrides: List[ModuleOverride] = {
     ModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
       dm.isInstanceOf[ChildDisplay] && dm.withinOctopus == withinOctopus
     }) :: super.overrides
   }
 
+  protected def groupBy(o: Octopus): String
+
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     val grouped = children.value.groupBy(groupBy)
     val overridesBelow = overrides ::: getOverridesBelow
-
-    println("groups", displayInOrder)
-    println("groups", grouped)
 
     <div class="child-display-grouped-box d-flex flex-row">
       {for (gName ← displayInOrder) yield generateHtmlForGroup(gName, grouped(gName).toList, overridesBelow).bind}
@@ -115,4 +78,3 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
     </div>
   }
 }
-

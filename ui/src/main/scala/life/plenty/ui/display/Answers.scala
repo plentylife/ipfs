@@ -4,6 +4,7 @@ import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Contributor
 import life.plenty.model.octopi.{Answer, User}
+import life.plenty.ui.display.meta.NoDisplay
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import org.scalajs.dom.raw.Node
