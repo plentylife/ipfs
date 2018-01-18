@@ -12,7 +12,10 @@ package object model {
     ModuleRegistry.add { case q: GreatQuestion ⇒ new ActionCreateQuestion(q) }
 
     ModuleRegistry.add { case a: Answer ⇒ new ActionCreateQuestion(a) }
-    ModuleRegistry.add { case c: Contribution ⇒ new ActionAddContributor(c) }
+    ModuleRegistry.add { case a: Answer ⇒ new ActionUpDownVote(a) }
+
+    // one contributor per contribution (the creator)
+    //    ModuleRegistry.add { case c: Contribution ⇒ new ActionAddContributor(c) }
 
     ModuleRegistry.add { case wp: WithParent[_] ⇒ new ActionAddParent(wp) }
     ModuleRegistry.add { case o: BasicSpace ⇒ new AddGreatQuestions(o) }

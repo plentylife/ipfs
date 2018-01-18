@@ -5,7 +5,7 @@ import life.plenty.model.octopi.Octopus
 
 object GraphUtils {
 
-  //  def collectFromAllChildren
+  //  def calculateVotes(a: Answer) =
 
   def findModuleUpParentTree[T](in: Octopus, matchBy: PartialFunction[Connection[_], T]): Option[T] = {
     {

@@ -30,7 +30,7 @@ package object ui {
     ModuleRegistry add { case q: Question ⇒ new QuestionTitle(q) }
     ModuleRegistry add { case q: Question ⇒ new CreateAnswer(q) }
 
-    ModuleRegistry add { case a: Answer ⇒ new AnswerDisplay(a) }
+    ModuleRegistry add { case a: BasicAnswer ⇒ new BasicAnswerDisplay(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
     ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }
 

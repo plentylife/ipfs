@@ -18,5 +18,4 @@ class BasicAnswer(override val parent: Space, override val body: String) extends
 
 class Contribution(override val parent: Space, override val body: String) extends Answer {
   override val title: String = ""
-
 }

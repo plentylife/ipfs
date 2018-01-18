@@ -43,3 +43,13 @@ class ActionAddParent[T <: Octopus](override val withinOctopus: WithParent[T]) e
     withinOctopus addConnection Parent(withinOctopus.parent)
   }
 }
+
+class ActionUpDownVote(override val withinOctopus: Answer) extends Module[Answer] {
+  def up(by: User) = {
+    new Vote(1, withinOctopus, by)
+  }
+
+  def down(by: User) = {
+    new Vote(-1, withinOctopus, by)
+  }
+}

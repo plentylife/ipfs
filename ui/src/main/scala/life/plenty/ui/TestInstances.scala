@@ -21,7 +21,7 @@ object TestInstances {
     val members = frenchSpace.getTopConnectionData({ case Child(m: Members) ⇒ m }).get
 
 
-    val u = new BasicUser("antonid")
+    val u = new BasicUser("anton")
     val q = new BasicQuestion(why, "lets test this")
     val c = new Contribution(q, "our first contribution")
     val qw = new BasicQuestion(when, "are we meeting")
