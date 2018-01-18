@@ -35,11 +35,31 @@ class CurrentUserWallet(override val withinOctopus: Space) extends DisplayModule
 
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
-    <div class="current-user-wallet-outer-box">
-      {wallet.bind match {
-      case None => "you are not part of this group"
-      case Some(w) => w.getThanksGivenInSpace.toString + ui.thanks
-    }}
+    {
+      wallet.bind match {
+        case None => <div class="current-user-wallet-outer-box">you are not part of this group</div>
+        case Some(w) => displayWallet(w).bind
+      }
+    }
+  }
+
+  @dom
+  private def displayWallet(w: Wallet): Binding[Node] = {
+    <div class="current-user-wallet-outer-box d-inline-flex flex-row mr-2">
+      <div class="d-inline-flex flex-column align-items-center mr-2">
+        <div class="balance">
+          {w.getUsableThanksAmount.toString + ui.thanks}
+          /
+          {w.getUsableThanksLimit.toString + ui.thanks}
+        </div>
+        <div class="text-muted">Balance / Credit Limit</div>
+      </div>
+      <div class="d-inline-flex flex-column align-items-center">
+        <div class="balance">
+          {w.getUsableVotes.toString}
+        </div>
+        <div class="text-muted">Voting Power</div>
+      </div>
     </div>
   }
 }

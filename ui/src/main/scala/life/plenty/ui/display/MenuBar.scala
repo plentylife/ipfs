@@ -22,11 +22,11 @@ class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] wi
 
   @dom
   protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    <div class="menu-bar">
+    <div class="menu-bar d-flex flex-row justify-content-between align-items-center">
       <div>back</div>
-      <div class="title">
+      <h3 class="title">
         {Var(withinOctopus.title).bind}
-      </div>
+      </h3>
       <div class="wallet">
         {wallet.bind match {
         case Some(w) => w.getHtml.bind

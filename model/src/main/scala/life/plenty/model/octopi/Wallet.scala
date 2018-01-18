@@ -7,7 +7,7 @@ class Wallet(user: User, inMembers: Members) extends Octopus {
 
   def getUsableThanksLimit: Int = 50
 
-  def getVotes: Int = 10
+  def getUsableVotes: Int = 10
 
   /** per day */
   def getThanksSpoilRate = 0.01

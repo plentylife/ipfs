@@ -2,3 +2,9 @@
   background-color: theme-color("dark");
   color: color-yiq(theme-color("dark"));
 }
+
+.current-user-wallet-outer-box {
+  .balance {
+    color: #34ce57;
+  }
+}
