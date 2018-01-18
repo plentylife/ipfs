@@ -7,6 +7,7 @@ import life.plenty.model.connection.Child
 import life.plenty.model.octopi.{Members, Octopus, Wallet}
 import life.plenty.ui
 import life.plenty.ui.UiContext
+import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 
 object CurrentUserWallet {
@@ -55,15 +56,9 @@ object CurrentUserWallet {
           /
           {thanksLimit.bind.toString + ui.thanks}
         </div>
-        <div class="text-muted">
-
-          <a data:tabindex="0" data:data-toggle="popover" data:data-trigger="focus"
-             title="Dismissible popover" class="btn btn-lg btn-danger" data:role="button"
-             data:data-content="And here's some amazing content. It's very engaging. Right?">
-            Balance / Credit Limit
-          </a>
+        <div class="text-muted" onclick={e: Event ⇒ Help.walletBalanceHelp}>
+          Balance / Credit Limit
           <img class="question-tooltip" src="iconic/svg/question-mark.svg" alt="help"/>
-
         </div>
         <div class="text-muted">Spoiling at
           {Math.round(thanksSpoilRate.bind * 100).toString}
@@ -73,7 +68,7 @@ object CurrentUserWallet {
         <div class="balance">
           {voteBalance.bind.toString}
         </div>
-        <div class="text-muted">Voting Power
+        <div class="text-muted" onclick={e: Event ⇒ Help.voteBalanceHelp}>Voting Power
           <img class="question-tooltip" src="iconic/svg/question-mark.svg" alt="help"/>
         </div>
       </div>

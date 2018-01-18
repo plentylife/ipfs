@@ -32,8 +32,11 @@ body {
 
 .main-help {
   position: fixed;
-  top: 0;
+  border-radius: 3%;
+  top: 3%;
   left: 40%;
   right: 40%;
+  padding: 15px;
   background: black;
+  color: whitesmoke;
 }
