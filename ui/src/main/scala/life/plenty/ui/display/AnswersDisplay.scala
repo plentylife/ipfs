@@ -26,7 +26,7 @@ class BasicAnswerDisplay(override val withinOctopus: BasicAnswer) extends Displa
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
     val disabled = findVoteModule.isEmpty
-    <div class="card d-inline-flex mt-1 mr-1 flex-row">
+    <div class="card d-inline-flex mt-1 mr-1 flex-row answer">
       <div class="d-inline-flex flex-column">
         <button type="button" class="btn btn-primary" disabled={disabled} onclick={upVote _}>Up vote</button>
         <button type="button" class="btn btn-primary" disabled={disabled} onclick={downVote _}>Down vote</button>
@@ -73,7 +73,7 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
   @dom
   override def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
     val disabled = findTipModule.isEmpty
-    <div class="card d-inline-flex mt-1 flex-row">
+    <div class="card d-inline-flex mt-1 flex-row contribution">
       <div class="d-inline-flex flex-column">
         {if (error.bind.nonEmpty) {
         <div class="text-danger">
@@ -81,10 +81,9 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
         </div>
       } else {
         <span></span>
-      }}{if (open.bind) {
-        inputDisplay.bind
-      } else <span></span>}<button type="button" class="btn btn-primary" disabled={disabled} onclick={onTip
-      _}>Tip</button>
+      }}{if (open.bind) {inputDisplay.bind} else <span></span>}<button type="button" class="btn btn-primary"
+                                                                       disabled={disabled}
+                                                                       onclick={onTip _}>Tip</button>
         <span>collected
           {tipsCollected.bind.toString}{ui.thanks}
         </span>
