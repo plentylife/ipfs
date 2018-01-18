@@ -12,8 +12,9 @@ class ActionCreateQuestion(override val withinOctopus: Space) extends Module[Spa
 }
 
 class ActionCreateAnswer(override val withinOctopus: Space) extends Module[Space] {
-  def create(body: String, isContribution: Boolean = false) = {
-    val a = if (!isContribution) new BasicAnswer(withinOctopus, body) else new Contribution(withinOctopus, body)
+  def create(body: String, creator: User, isContribution: Boolean = false) = {
+    val a = if (!isContribution) new BasicAnswer(withinOctopus, body) else new Contribution(withinOctopus, body,
+      creator)
     withinOctopus.addConnection(Child(a))
   }
 }

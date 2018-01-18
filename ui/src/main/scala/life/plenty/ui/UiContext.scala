@@ -4,7 +4,7 @@ import life.plenty.model.GraphUtils
 import life.plenty.model.connection.Child
 import life.plenty.model.octopi._
 
-object Context {
+object UiContext {
   val userId = "anton"
   var startingSpace: Space = null
 

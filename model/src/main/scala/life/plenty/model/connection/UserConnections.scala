@@ -17,3 +17,7 @@ case class Contributor(override val user: User) extends UserConnection {
 
 case class Member(override val user: User) extends UserConnection {
 }
+
+case class From(override val user: User) extends UserConnection
+
+case class To(override val user: User) extends UserConnection

@@ -18,6 +18,9 @@ class BasicAnswer(override val parent: Space, override val body: String) extends
   override val title: String = ""
 }
 
-class Contribution(override val parent: Space, override val body: String) extends Answer {
+class Contribution(override val parent: Space, override val body: String, override val creator: User) extends Answer
+  with WithCreator {
+  def countTips: Int = (0 :: this.connections.collect({ case Child(t: Transaction) ⇒ t.amount })).sum
+
   override val title: String = ""
 }

@@ -6,7 +6,7 @@ import life.plenty.model.GraphUtils
 import life.plenty.model.connection.Child
 import life.plenty.model.octopi.{Members, Octopus, Wallet}
 import life.plenty.ui
-import life.plenty.ui.Context
+import life.plenty.ui.UiContext
 import org.scalajs.dom.raw.Node
 
 object CurrentUserWallet {
@@ -38,7 +38,7 @@ object CurrentUserWallet {
   private def findWallet(withinOctopus: Octopus): Option[Wallet] = {
     //    println("trying to find wallet in ", withinOctopus, withinOctopus.connections)
     GraphUtils.findModuleUpParentTree(withinOctopus, { case Child(m: Members) ⇒ m }).flatMap(m ⇒ {
-      m.members.find(_ == Context.getUser).flatMap(u ⇒ {
+      m.members.find(_ == UiContext.getUser).flatMap(u ⇒ {
         u.getTopConnectionData({
           case Child(w: Wallet) ⇒ w
         })

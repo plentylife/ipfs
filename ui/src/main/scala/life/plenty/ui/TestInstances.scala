@@ -8,7 +8,7 @@ object TestInstances {
 
   def getEntry() = {
     val frenchSpace = new BasicSpace("learning french")
-    Context.startingSpace = frenchSpace
+    UiContext.startingSpace = frenchSpace
 
     val why = frenchSpace.getTopConnectionData({ case Child(q: Why) ⇒ q }) getOrElse {
       val q = new Why(frenchSpace)
@@ -23,14 +23,18 @@ object TestInstances {
     val members = frenchSpace.getTopConnectionData({ case Child(m: Members) ⇒ m }).get
 
 
-    val u = new BasicUser("anton")
+    val u1 = new BasicUser("anton")
+    val u2 = new BasicUser("sarah")
+
     val q = new BasicQuestion(why, "lets test this")
-    val c = new Contribution(q, "our first contribution")
+    val c = new Contribution(q, "our first contribution", u2)
     val qw = new BasicQuestion(when, "are we meeting")
     val aw1 = new BasicAnswer(qw, "tomorrow perhaps")
     val aw2 = new BasicAnswer(qw, "monday at 3")
 
-    members.addMember(u)
+    members.addMember(u1)
+    members.addMember(u2)
+
     why.addConnection(Child(q))
     qw.addConnection(Child(aw1))
     qw.addConnection(Child(aw2))

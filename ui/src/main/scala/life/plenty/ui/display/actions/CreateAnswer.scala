@@ -4,6 +4,7 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateAnswer
 import life.plenty.model.octopi.Question
+import life.plenty.ui.UiContext
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.Event
@@ -57,7 +58,7 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   private def postAnswer(e: Event) = {
     println("post answer", body.value)
     findAction foreach { a ⇒
-      a.create(body.value, isContribution.value)
+      a.create(body.value, UiContext.getUser, isContribution.value)
     }
   }
 }
