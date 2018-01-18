@@ -34,7 +34,7 @@ package object ui {
     ModuleRegistry add { case q: Question ⇒ new AnswerGroup(q) }
 
     ModuleRegistry add { case a: BasicAnswer ⇒ new BasicAnswerDisplay(a) }
-    ModuleRegistry add { case a: BasicAnswer ⇒ new DisplayUpdateAnswerOrderChange(a) }
+    ModuleRegistry add { case a: Answer ⇒ new DisplayUpdateAnswerOrderChange(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
     // following the model of one contributer per contribution/answer
     //    ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }

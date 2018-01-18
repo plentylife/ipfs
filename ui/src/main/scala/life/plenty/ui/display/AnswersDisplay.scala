@@ -104,7 +104,7 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
     if (open.value) {
       if (tipping > 0) {
         findTipModule.foreach(_.add(tipping, UiContext.getUser))
-        tipping = -1
+        tipping = 1
         open.value_=(false)
       } else {
         error.value_=("must tip more than nothing")
