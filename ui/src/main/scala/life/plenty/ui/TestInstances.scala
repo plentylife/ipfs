@@ -8,6 +8,8 @@ object TestInstances {
 
   def getEntry() = {
     val frenchSpace = new BasicSpace("learning french")
+    Context.startingSpace = frenchSpace
+
     val why = frenchSpace.getTopConnectionData({ case Child(q: Why) ⇒ q }) getOrElse {
       val q = new Why(frenchSpace)
       frenchSpace.addConnection(Child(q))

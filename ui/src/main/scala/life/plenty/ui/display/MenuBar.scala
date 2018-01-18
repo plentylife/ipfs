@@ -8,17 +8,18 @@ import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import org.scalajs.dom.raw.Node
 
 class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
-  private val wallet = Var(getWallet)
+  //  private val wallet = Var(getWallet)
 
   override def overrides: List[ModuleOverride] = super.overrides ::: List(
     ModuleOverride(this, new NoDisplay(withinOctopus), (m) ⇒ m.isInstanceOf[MenuBar]))
 
   override def update(): Unit = {
     super.update()
-    wallet.value_=(getWallet)
+    //    wallet.value_=(getWallet)
   }
 
-  private def getWallet = withinOctopus.getTopModule({ case m: CurrentUserWallet ⇒ m })
+  //  private def getWallet = withinOctopus.getTopModule({ case m: CurrentUserWallet ⇒ m })
+  //  private def getWallet = withinOctopus.getTopModule({ case m: CurrentUserWallet ⇒ m })
 
   @dom
   protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
@@ -28,11 +29,13 @@ class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] wi
         {Var(withinOctopus.title).bind}
       </h3>
       <div class="wallet">
-        {wallet.bind match {
-        case Some(w) => w.getHtml.bind
-        case None => <span>no wallet found</span>
-      }}
+        {CurrentUserWallet.generateHtml(withinOctopus).bind}
       </div>
     </div>
   }
 }
+
+//{wallet.bind match {
+//  case Some(w) => w.getHtml.bind
+//  case None => <span>no wallet found</span>
+//}}

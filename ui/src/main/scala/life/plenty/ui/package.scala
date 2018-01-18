@@ -2,7 +2,7 @@ package life.plenty
 
 import life.plenty.model._
 import life.plenty.model.octopi._
-import life.plenty.ui.actions.DisplayUpdateOnChildrenTransform
+import life.plenty.ui.actions.{DisplayUpdateOnChildrenTransform, DisplayUpdateWalletChange}
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions.CreateAnswer
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
@@ -17,8 +17,9 @@ package object ui {
 
     /* the modules should be added in a list fashion: the last overrides the first */
     ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
+    ModuleRegistry add { case o: User ⇒ new DisplayUpdateWalletChange(o) }
 
-    ModuleRegistry add { case o: Space ⇒ new CurrentUserWallet(o) }
+    //    ModuleRegistry add { case o: Space ⇒ new CurrentUserWallet(o) }
     ModuleRegistry add { case o: Space ⇒ new MenuBar(o) }
     //    ModuleRegistry add { case o: Space ⇒ new ViewStateLinks(o) }
     //    ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortDisplay(o) }

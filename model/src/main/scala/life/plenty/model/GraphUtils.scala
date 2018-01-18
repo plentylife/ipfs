@@ -10,7 +10,7 @@ object GraphUtils {
   def findModuleUpParentTree[T](in: Octopus, matchBy: PartialFunction[Connection[_], T]): Option[T] = {
     {
       val within = in.getTopConnectionData(matchBy)
-      //      println("graph utils", within, in, in.connections)
+      //            println("graph utils", within, in, in.connections)
       within orElse {
         in.getTopConnectionData({ case Parent(p: Octopus) ⇒ p }) flatMap {
           p ⇒
