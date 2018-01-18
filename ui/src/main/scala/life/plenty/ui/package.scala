@@ -2,7 +2,8 @@ package life.plenty
 
 import life.plenty.model._
 import life.plenty.model.octopi._
-import life.plenty.ui.actions.{DisplayUpdateOnChildrenTransform, DisplayUpdateWalletChange}
+import life.plenty.ui.actions.{DisplayUpdateAnswerOrderChange, DisplayUpdateOnChildrenTransform,
+  DisplayUpdateWalletChange}
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions.CreateAnswer
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
@@ -32,6 +33,7 @@ package object ui {
     ModuleRegistry add { case q: Question ⇒ new CreateAnswer(q) }
 
     ModuleRegistry add { case a: BasicAnswer ⇒ new BasicAnswerDisplay(a) }
+    ModuleRegistry add { case a: BasicAnswer ⇒ new DisplayUpdateAnswerOrderChange(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
     // following the model of one contributer per contribution/answer
     //    ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }

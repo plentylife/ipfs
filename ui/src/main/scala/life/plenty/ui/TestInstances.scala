@@ -27,11 +27,13 @@ object TestInstances {
     val q = new BasicQuestion(why, "lets test this")
     val c = new Contribution(q, "our first contribution")
     val qw = new BasicQuestion(when, "are we meeting")
-    val aw = new BasicAnswer(qw, "tomorrow perhaps")
+    val aw1 = new BasicAnswer(qw, "tomorrow perhaps")
+    val aw2 = new BasicAnswer(qw, "monday at 3")
 
     members.addMember(u)
     why.addConnection(Child(q))
-    qw.addConnection(Child(aw))
+    qw.addConnection(Child(aw1))
+    qw.addConnection(Child(aw2))
     when.addConnection(Child(qw))
     q.addConnection(Child(c))
 

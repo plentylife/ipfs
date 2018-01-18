@@ -1,9 +1,11 @@
 package life.plenty.model.octopi
 
-import life.plenty.model.connection.Body
+import life.plenty.model.connection.{Body, Child}
 
 trait Answer extends Space with WithParent[Space] {
   val body: String
+
+  def countVotes = (0 :: this.connections.collect({ case Child(v: Vote) ⇒ v.sizeAndDirection })).sum
 
   override protected def preConstructor() = {
     super.preConstructor()

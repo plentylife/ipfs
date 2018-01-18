@@ -1,6 +1,7 @@
 package life.plenty
 
 import life.plenty.model.actions._
+import life.plenty.model.modifiers.AnswerVoteOrder
 import life.plenty.model.octopi._
 
 package object model {
@@ -9,6 +10,7 @@ package object model {
 
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateQuestion(q) }
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateAnswer(q) }
+    ModuleRegistry.add { case q: Question ⇒ new AnswerVoteOrder(q) }
     ModuleRegistry.add { case q: GreatQuestion ⇒ new ActionCreateQuestion(q) }
 
     ModuleRegistry.add { case a: Answer ⇒ new ActionCreateQuestion(a) }
