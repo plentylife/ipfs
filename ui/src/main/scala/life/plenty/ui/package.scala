@@ -4,7 +4,7 @@ import life.plenty.model._
 import life.plenty.model.octopi._
 import life.plenty.ui.actions.DisplayUpdateOnChildrenTransform
 import life.plenty.ui.display._
-import life.plenty.ui.display.actions.{Contribute, CreateAnswer}
+import life.plenty.ui.display.actions.CreateAnswer
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
 import life.plenty.ui.filters.BasicSpaceDisplayOrder
 
@@ -32,7 +32,8 @@ package object ui {
 
     ModuleRegistry add { case a: BasicAnswer ⇒ new BasicAnswerDisplay(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
-    ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }
+    // following the model of one contributer per contribution/answer
+    //    ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }
 
     //    ModuleRegistry add { case o: Octopus ⇒ new RateEffortModuleFilter(o) }
     //    ModuleRegistry add { case o: Octopus ⇒ new DiscussModuleFilter(o) }
