@@ -31,6 +31,7 @@ package object ui {
 
     ModuleRegistry add { case q: Question ⇒ new QuestionTitle(q) }
     ModuleRegistry add { case q: Question ⇒ new CreateAnswer(q) }
+    ModuleRegistry add { case q: Question ⇒ new AnswerGroup(q) }
 
     ModuleRegistry add { case a: BasicAnswer ⇒ new BasicAnswerDisplay(a) }
     ModuleRegistry add { case a: BasicAnswer ⇒ new DisplayUpdateAnswerOrderChange(a) }

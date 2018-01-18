@@ -12,3 +12,11 @@
   @extend .pb-1;
   border-bottom: 1px dashed lightblue;
 }
+
+.group-answers {
+  flex-direction: row;
+}
+
+.group-great {
+  flex-direction: column;
+}

@@ -21,7 +21,7 @@ object DisplayModel {
   def reRender(o: Octopus, moduleSelector: PartialFunction[Module[Octopus], DisplayModule[Octopus]] = {
     case m: DisplayModule[_] ⇒ m
   }): Unit =
-    o.getTopModule(moduleSelector).foreach(m ⇒ {
+    o.getModules(moduleSelector).foreach(m ⇒ {
       if (m.hasRendered) {
         println("re-render of module", m)
         m.update()
@@ -60,6 +60,8 @@ object DisplayModel {
     def update(): Unit
 
     def hasRendered = _hasRenderedOnce
+
+    def containerClasses: Set[String] = Set()
 
     //    def orderPreference(toReorder: List[Octopus]) = identity(toReorder)
 
