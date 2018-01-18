@@ -14,15 +14,19 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
     _members.value.clear()
     _members.value.insertAll(0, withinOctopus.members)
   }
+
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
     <div>
       members of this space:
-      {for (m <- _members) yield displayMember(m).bind}
+      <ul>
+        {for (m <- _members) yield displayMember(m).bind}
+      </ul>
     </div>
   }
+
   @dom
-  private def displayMember(u: User): Binding[Node] = <span>
+  private def displayMember(u: User): Binding[Node] = <li>
     {u.id}
-    ,</span>
+  </li>
 }

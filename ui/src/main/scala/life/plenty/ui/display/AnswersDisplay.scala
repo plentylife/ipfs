@@ -61,7 +61,7 @@ class BasicAnswerDisplay(override val withinOctopus: BasicAnswer) extends Displa
 class ContributionDisplay(override val withinOctopus: Contribution) extends DisplayModule[Contribution] {
   protected val body = Var[String](withinOctopus.body)
   private val tipsCollected = Var(0)
-  private val open = Var(true)
+  private val open = Var(false)
   private var tipping: Int = 1
   private var error = Var("")
 
@@ -85,7 +85,8 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
                                                                        disabled={disabled}
                                                                        onclick={onTip _}>Tip</button>
         <span>collected
-          {tipsCollected.bind.toString}{ui.thanks}
+          {tipsCollected.bind.toString}<br/>{ui.thanks}
+          hanks
         </span>
       </div>
       <div class="card-body">

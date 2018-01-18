@@ -8,3 +8,13 @@
     color: #34ce57;
   }
 }
+
+.menu-bar {
+  .question-tooltip {
+    color: theme-color("dark");
+    background-color: color-yiq(theme-color("dark"));
+    padding: 3px;
+    border-radius: 7px;
+    width: 20px;
+  }
+}

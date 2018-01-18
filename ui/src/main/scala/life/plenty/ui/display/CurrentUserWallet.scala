@@ -50,12 +50,21 @@ object CurrentUserWallet {
   private def displayWallet(): Binding[Node] = {
     <div class="current-user-wallet-outer-box d-inline-flex flex-row mr-2">
       <div class="d-inline-flex flex-column align-items-center mr-2">
-        <div class="balance">
+        <div class="balance" data:data-toggle="popover" data:data-content="Disabled popover">
           {thanksBalance.bind.toString + ui.thanks}
           /
           {thanksLimit.bind.toString + ui.thanks}
         </div>
-        <div class="text-muted">Balance / Credit Limit</div>
+        <div class="text-muted">
+
+          <a data:tabindex="0" data:data-toggle="popover" data:data-trigger="focus"
+             title="Dismissible popover" class="btn btn-lg btn-danger" data:role="button"
+             data:data-content="And here's some amazing content. It's very engaging. Right?">
+            Balance / Credit Limit
+          </a>
+          <img class="question-tooltip" src="iconic/svg/question-mark.svg" alt="help"/>
+
+        </div>
         <div class="text-muted">Spoiling at
           {Math.round(thanksSpoilRate.bind * 100).toString}
           % per day</div>
@@ -64,7 +73,9 @@ object CurrentUserWallet {
         <div class="balance">
           {voteBalance.bind.toString}
         </div>
-        <div class="text-muted">Voting Power</div>
+        <div class="text-muted">Voting Power
+          <img class="question-tooltip" src="iconic/svg/question-mark.svg" alt="help"/>
+        </div>
       </div>
     </div>
   }
