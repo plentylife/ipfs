@@ -85,8 +85,10 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
                                                                        disabled={disabled}
                                                                        onclick={onTip _}>Tip</button>
         <span>collected
-          {tipsCollected.bind.toString}<br/>{ui.thanks}
-          hanks
+          {tipsCollected.bind.toString}<br/>
+          <span>
+            {ui.thanks}
+            hanks</span>
         </span>
       </div>
       <div class="card-body">
