@@ -28,14 +28,17 @@ object Help {
     }
   }
 
-  def walletBalanceHelp = displayNow("wallet balance")
-
-  /* Predefined helps */
-
   private def displayNow(msg: String) = {
     text.value_=(msg)
     open.value_=(true)
   }
 
-  def voteBalanceHelp = displayNow("vote balance")
+  /* Predefined helps */
+
+  def walletBalanceHelp = displayNow("This is your account balance. It is represented in the internal currency -- " +
+    "Thanks -- gratitude, which you give to people who make contributions to your common projects and events. Unlike " +
+    "regular money that you are used to, it spoils (expires), so 'if you don't use it, you lose it'.")
+
+  def voteBalanceHelp = displayNow("This represents the amount of power you have to steer a group and to prioritize " +
+    "tasks. To gain votes, you must give Thanks to people who have made contributions.")
 }
