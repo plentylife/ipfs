@@ -73,7 +73,7 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
   @dom
   override def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
     val disabled = findTipModule.isEmpty
-    <div class="card d-inline-flex mt-1 flex-row contribution">
+    <div class="card d-inline-flex mt-1 mr-1 flex-row contribution">
       <div class="d-inline-flex flex-column">
         {if (error.bind.nonEmpty) {
         <div class="text-danger">
@@ -85,10 +85,7 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
                                                                        disabled={disabled}
                                                                        onclick={onTip _}>Tip</button>
         <span>collected
-          {tipsCollected.bind.toString}<br/>
-          <span>
-            {ui.thanks}
-            hanks</span>
+          {s"${tipsCollected.bind} ${ui.thanks}hanks"}
         </span>
       </div>
       <div class="card-body">

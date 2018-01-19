@@ -32,9 +32,15 @@
   }
 }
 
+$contribution-color: forestgreen;
+
 .card.contribution {
-  border-color: forestgreen;
+  border-color: $contribution-color;
   .card-title {
-    color: forestgreen;
+    color: $contribution-color;
   }
+}
+
+.contribution-label {
+  color: $contribution-color
 }

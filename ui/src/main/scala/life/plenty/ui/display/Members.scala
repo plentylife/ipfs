@@ -17,11 +17,14 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
 
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
-    <div>
-      members of this space:
-      <ul>
-        {for (m <- _members) yield displayMember(m).bind}
-      </ul>
+    <div class="card d-inline-flex mt-2 ml-2">
+      <div class="card-body">
+
+        <div class="card-title">members of this space:</div>
+        <ul>
+          {for (m <- _members) yield displayMember(m).bind}
+        </ul>
+      </div>
     </div>
   }
 

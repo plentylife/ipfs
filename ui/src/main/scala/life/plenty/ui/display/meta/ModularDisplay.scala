@@ -25,7 +25,7 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
     val displayable = siblingModules map { m ⇒ m.display(this, siblingOverrides ::: overrides)
     } withFilter (_.nonEmpty) map (_.get)
 
-    <div class="modular-display-box">
+    <div class="modular-display-box d-inline-flex flex-column">
       {for (d <- displayable) yield d.bind}
     </div>
   }

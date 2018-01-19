@@ -17,6 +17,7 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   private val opened = Var(false)
   private val isContribution = Var(false)
   private val body = Var("")
+
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
     if (!opened.bind) {
@@ -25,40 +26,53 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
       </div>
     } else {
       <div class={"open-answer-box"}>
-        <label for="is-contribution">Can someone contribute this?</label>
-        <input type="checkbox" name="is-contribution" checked={isContribution.bind} onchange={toggleContribution _}/>{textArea.bind}{postAnswerButton.bind}
+        <label for="is-contribution">Are
+          <span class="contribution-label">contributing</span>
+          this?</label>
+        <input type="checkbox" name="is-contribution"
+               checked={isContribution.bind} onchange={toggleContribution _}/>{textArea.bind}<br/>{postAnswerButton
+        .bind}
       </div>
     }
   }
 
   override def doDisplay() = findAction.nonEmpty
+
   //  override def doDisplay() = true
   private def findAction: Option[ActionCreateAnswer] = withinOctopus.getTopModule({ case m: ActionCreateAnswer ⇒ m })
+
   override def update(): Unit = {
     action.value_=(findAction.nonEmpty)
   }
+
   @dom
   private def textArea: Binding[TextArea] = <textarea cols={50} rows={10} placeholder="Write your answer here"
                                                       onchange={e: Event ⇒
-                                                        body.value_=(e.srcElement.asInstanceOf[TextArea].value)}></textarea>
+                                                        body.value_=(e.srcElement.asInstanceOf[TextArea].value)
+                                                      }></textarea>
+
   @dom
   private def newAnswerButton: Binding[Node] = {
       <input type="button" value={"+answer"} disabled={!action.bind} onclick={e: Event ⇒
       opened.value_=(true);}/>
   }
+
   @dom
   private def postAnswerButton: Binding[Node] = {
       <input type="button" value="post answer" onclick={postAnswer _}/>
   }
+
   private def toggleContribution(e: Event) = {
     val cbox = e.srcElement.asInstanceOf[Input].checked
     println("post answer contr", cbox)
     isContribution.value_=(cbox)
   }
+
   private def postAnswer(e: Event) = {
     println("post answer", body.value)
     findAction foreach { a ⇒
       a.create(body.value, UiContext.getUser, isContribution.value)
+      opened.value_=(false)
     }
   }
 }

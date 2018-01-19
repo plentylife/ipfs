@@ -6,6 +6,16 @@ body {
   margin: 0;
 }
 
+#viewport {
+  .modular-display-box:first-of-type {
+    width: 100%;
+  }
+}
+
+.child-display-grouped-box {
+  flex-wrap: wrap;
+}
+
 .child-display-box:first-child {
   margin-left: 0;
 }
