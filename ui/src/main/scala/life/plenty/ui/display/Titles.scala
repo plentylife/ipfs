@@ -27,7 +27,7 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
       <h3 class="title mr-3">
         {Var(withinOctopus.title).bind}
       </h3>
-      <input type="text" disabled={action.isEmpty} onkeyup={onEnter _}/>
+      <input type="text" disabled={action.isEmpty} onkeyup={onEnter _} placeholder="ask your question"/>
     </div>
   }
 

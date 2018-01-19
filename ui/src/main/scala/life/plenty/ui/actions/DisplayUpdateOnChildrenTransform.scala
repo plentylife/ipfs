@@ -2,7 +2,7 @@ package life.plenty.ui.actions
 
 import life.plenty.model.actions.ActionAfterGraphTransform
 import life.plenty.model.connection._
-import life.plenty.model.octopi.{Answer, Octopus, Transaction, Vote}
+import life.plenty.model.octopi._
 import life.plenty.ui.UiContext
 import life.plenty.ui.display.meta.ChildDisplay
 import life.plenty.ui.display.{ContributionDisplay, CurrentUserWallet, MembersDisplay}
@@ -36,13 +36,14 @@ class DisplayUpdateWalletChange(override val withinOctopus: Octopus) extends Act
   override def onConnectionRemove(connection: Connection[_]): Either[Exception, Unit] = onConnection(connection)
 
   private def onConnection(c: Connection[_]): Either[Exception, Unit] = {
-    println("duwc")
     c match {
       case Child(v: Vote) if v.by == UiContext.getUser ⇒ {
         CurrentUserWallet.update(withinOctopus)
       }
       case Child(t: Transaction) if t.from == UiContext.getUser ⇒ {
-        println("duwc trans")
+        CurrentUserWallet.update(withinOctopus)
+      }
+      case Child(va: VoteAllowance) if va.owner == UiContext.getUser ⇒ {
         CurrentUserWallet.update(withinOctopus)
       }
       case _ ⇒

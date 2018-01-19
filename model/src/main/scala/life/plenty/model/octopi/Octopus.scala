@@ -79,6 +79,7 @@ trait Octopus {
 
   /* Constructor */
 
+  /** this is ran before the modules are registered */
   protected def preConstructor(): Unit = Unit
 
   /* Constructor */

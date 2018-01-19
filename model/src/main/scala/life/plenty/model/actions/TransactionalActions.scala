@@ -17,5 +17,6 @@ class ActionTip(override val withinOctopus: Contribution) extends Module[Contrib
   def add(howMuch: Int, by: User) = {
     println("adding tip")
     new Transaction(howMuch, by, withinOctopus)
+    new VoteAllowance(howMuch, by)
   }
 }
