@@ -1,9 +1,10 @@
 package life.plenty.data
 
-import life.plenty.model.connection.Parent
-import life.plenty.model.octopi.BasicSpace
+import life.plenty.model.ModuleRegistry
+import life.plenty.model.octopi.{BasicSpace, Octopus, Space}
 
 import scala.scalajs.js
+import scala.scalajs.js.JSON
 
 
 object Main {
@@ -14,38 +15,28 @@ object Main {
 
   def main(): Unit = {
     println("Data entry point")
+    modules
 
     _gun = Gun(js.Array("http://localhost:8080/gun"))
 
-
-
-    //    gun.get("constructor-args")
-    //        .put(new ConstructorArgs {
-    //          override val parent: String = "parent-id"
-    //          override val id: Int = 123
-    //        }, (ack) ⇒ {
-    //          println(JSON.stringify(ack))
-    //        }).on((d,k) ⇒ {
-    //      println(JSON.stringify(d))
-    //      println(d.asInstanceOf[ConstructorArgs].id)
-    //    })
-
     val ts = new BasicSpace("test")
-    val fp = new BasicSpace("test_parent")
-    ts.addConnection(Parent(fp))
+    //    val fp = new BasicSpace("test_parent")
+    //    ts.addConnection(Parent(fp))
+    //
+
+    gun.get(ts.id).`val`((d, k) ⇒ {
+      println(JSON.stringify(d))
+    })
 
     OctopusWriter.write(ts)
 
-    OctopusReader.read("test")
+
   }
 
   private def modules = {
+    ModuleRegistry add { case o: Octopus ⇒ new OctopusGunReaderModule(o) }
 
+    ModuleRegistry add { case o: Space ⇒ new SpaceConstructorWriter(o) }
   }
 }
 
-//@ScalaJSDefined
-//trait ConstructorArgs extends js.Object {
-//  val parent: String
-//  val id: Int
-//}

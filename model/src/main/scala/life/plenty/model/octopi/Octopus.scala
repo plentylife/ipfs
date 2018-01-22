@@ -91,8 +91,6 @@ trait Octopus {
 
 }
 
-class BlandOctopus extends Octopus
-
 trait Module[+T <: Octopus] {
   val withinOctopus: T
 }

@@ -28,3 +28,5 @@ trait WithCreator extends Octopus {
     this.addConnection(Creator(creator))
   }
 }
+
+//trait WithConstructor

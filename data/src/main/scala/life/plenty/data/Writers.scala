@@ -2,15 +2,17 @@ package life.plenty.data
 
 import life.plenty.data.Main.gun
 import life.plenty.model.connection.Connection
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.{Module, Octopus, Space}
 
 import scala.scalajs.js
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
-    val go = gun.get(o.id).put(js.Dynamic.literal(
+    val go = gun.get(o.id)
+    go.put(js.Dynamic.literal(
       "class" → o.getClass.getSimpleName
     ), null)
+    o.getTopModule({ case m: ConstructorWriterModule[_] ⇒ m }).foreach(_.write(go))
 
     val gcons = go.get("connections")
     for (c ← o.allConnections) {
@@ -35,5 +37,18 @@ object ConnectionWriter {
       case o: Octopus ⇒ o.id
       case other ⇒ other.toString()
     }
+  }
+}
+
+trait ConstructorWriterModule[T <: Octopus] extends Module[T] {
+  def write(gun: Gun)
+}
+
+class SpaceConstructorWriter(override val withinOctopus: Space) extends ConstructorWriterModule[Space] {
+  def write(gun: Gun) = {
+    val constr = gun.get("class-constructor")
+    constr.put(js.Dynamic.literal(
+      "title" → withinOctopus.title
+    ), null)
   }
 }
