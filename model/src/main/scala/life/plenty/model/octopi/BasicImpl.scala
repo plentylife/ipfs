@@ -19,3 +19,7 @@ class BasicSpace(override val title: String) extends Space with WithMembers {
     //println("basic space init", this.connections)
   }
 }
+
+object BasicSpace {
+
+}

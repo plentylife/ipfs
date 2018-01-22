@@ -3,6 +3,9 @@ package life.plenty.model.octopi
 import life.plenty.model.connection.{Child, Member, Parent}
 
 class Members(override val parent: Space) extends WithParent[Space] {
+
+  override def id: String = "membersof" + parent.id
+
   // fixme. shouldn't that be in a module?
   def addMember(u: User) = {
     println("adding member", u.id, u)

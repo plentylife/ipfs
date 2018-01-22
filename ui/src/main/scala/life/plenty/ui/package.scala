@@ -43,12 +43,12 @@ package object ui {
     //    ModuleRegistry add { case o: Octopus ⇒ new DiscussModuleFilter(o) }
     //    ModuleRegistry add { case o: Octopus ⇒ new RateEffortConnectionFilter(o) }
 
-    ModuleRegistry add { case o: Octopus ⇒ new DisplayUpdateOnChildrenTransform(o) }
+    ModuleRegistry add { case o: Octopus if o.isInstanceOf[BlandOctopus] ⇒ new DisplayUpdateOnChildrenTransform(o) }
     // fixme just a test
     //    ModuleRegistry add { case o: Octopus if !o.isInstanceOf[Transaction] ⇒ new ChildDisplay(o) }
-    ModuleRegistry add { case o: Octopus ⇒ new ChildDisplay(o) }
+    ModuleRegistry add { case o: Octopus if o.isInstanceOf[BlandOctopus] ⇒ new ChildDisplay(o) }
 
-    ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }
+    ModuleRegistry add { case o: Octopus if o.isInstanceOf[BlandOctopus] ⇒ new ModularDisplay(o) }
     ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }
   }
 
