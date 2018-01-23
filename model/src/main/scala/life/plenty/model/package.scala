@@ -3,9 +3,20 @@ package life.plenty
 import life.plenty.model.actions._
 import life.plenty.model.modifiers.AnswerVoteOrder
 import life.plenty.model.octopi._
+import life.plenty.model.utils.Hash
 
 package object model {
-  def initialize(): Unit = {
+  private var _hasher: Hash = _
+
+  def getHasher: Hash = _hasher
+
+  def setHasher(h: Hash) = _hasher = h
+
+  def initialize(hasher: Hash): Unit = {
+    _hasher = hasher
+
+    println("got hasher", hasher)
+
     println("Model is adding modules to registry")
 
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateQuestion(q) }

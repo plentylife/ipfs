@@ -1,7 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.data.{Main ⇒ dataMain}
+import life.plenty.data.{Hashes, Main ⇒ dataMain}
 import life.plenty.model.{initialize ⇒ mInit}
 import life.plenty.ui.display.Help
 import life.plenty.ui.model.DisplayModel
@@ -19,11 +19,15 @@ object Main {
   def main(): Unit = {
     println("Entry point")
 
+
+    //    mInit(new Hash {
+    //      private val h = Hashes.SHA256
+    //      override def b64(str: String): String = h.b64(str)
+    //    })
     dataMain.main()
 
 
     //    Router.initialize
-    //    mInit()
     //    initialize()
     //
     //    dom.render(document.body, mainSection)
@@ -31,6 +35,12 @@ object Main {
 
   @JSExport
   def gun = dataMain.gun
+
+  @JSExport
+  def hashes = Hashes
+
+  @JSExport
+  def hashes256 = Hashes.SHA256.newInstance()
 
   @dom
   def mainSection: Binding[Node] = {

@@ -1,5 +1,6 @@
 package life.plenty.model.octopi
 
+import life.plenty.model
 import life.plenty.model.ModuleRegistry
 import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnAddToModuleStack, ActionOnGraphTransform,
   ActionOnInitialize}
@@ -16,7 +17,7 @@ trait Octopus {
   protected var _connections: List[Connection[_]] = List()
 
   //  def id: String = idProperty getOrElse base64.encodeToString(idGenerator.getBytes)
-  def id: String = idProperty getOrElse idGenerator.hashCode.toBinaryString
+  def id: String = idProperty getOrElse model.getHasher.b64(idGenerator)
 
   def idGenerator: String = ???
 

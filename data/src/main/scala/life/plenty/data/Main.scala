@@ -1,5 +1,6 @@
 package life.plenty.data
 
+import life.plenty.model
 import life.plenty.model.octopi.BasicSpace
 
 import scala.scalajs.js
@@ -12,6 +13,9 @@ object Main {
 
   def main(): Unit = {
     println("Data entry point")
+    // fixme remove after testing
+    model.setHasher(DataHash)
+
     modules
 
     _gun = Gun(js.Array("http://localhost:8080/gun"))

@@ -9,6 +9,7 @@
     "bootstrap": "^4.0.0-beta.3",
     "ipfs": "0.27.6",
     "jquery": "^3.2.1",
+    "jshashes": "^1.0.7",
     "libp2p-webrtc-star": "^0.13.3",
     "orbit-db": "0.19.2",
     "wrtc": "0.0.65"
