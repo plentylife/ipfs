@@ -28,6 +28,6 @@ object BasicSpace extends InstantiateByApply[BasicSpace] {
 trait InstantiateByApply[T] {
   def instantiate: T
 
-  def apply(className: String) = if (className == this.getClass.getSimpleName) Option(instantiate)
+  def apply(className: String): Option[T] = if (className == this.getClass.getSimpleName) Option(instantiate)
   else None
 }

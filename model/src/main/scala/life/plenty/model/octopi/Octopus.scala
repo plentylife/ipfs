@@ -15,7 +15,8 @@ trait Octopus {
   //  val mandatoryConnections: Set[Class[Connection[_]]]
   protected var _connections: List[Connection[_]] = List()
 
-  def id: String = idProperty getOrElse idGenerator
+  //  def id: String = idProperty getOrElse base64.encodeToString(idGenerator.getBytes)
+  def id: String = idProperty getOrElse idGenerator.hashCode.toBinaryString
 
   def idGenerator: String = ???
 

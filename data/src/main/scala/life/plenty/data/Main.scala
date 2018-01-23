@@ -1,6 +1,7 @@
 package life.plenty.data
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import life.plenty.model.octopi.BasicSpace
+
 import scala.scalajs.js
 
 object Main {
@@ -15,7 +16,7 @@ object Main {
 
     _gun = Gun(js.Array("http://localhost:8080/gun"))
 
-    //    val ts = new BasicSpace("test")
+    val ts = new BasicSpace("test")
     //        val fp = new BasicSpace("test_parent")
     //        ts.addConnection(Parent(fp))
     //
@@ -24,12 +25,11 @@ object Main {
     //      println(JSON.stringify(d))
     //    })
     //
-    //    OctopusWriter.write(ts)
+    //      println("writing")
+    //        OctopusWriter.write(ts)
 
-    OctopusReader.read("test") map {
-      r ⇒ println("test", r)
-    }
-    println("after read")
+    println(s"Trying to read ${ts.id}")
+    OctopusReader.read(ts.id)
 
     //    val r = Await.result(OctopusReader.read("test"), Duration.Inf)
     //          println("test", r)
