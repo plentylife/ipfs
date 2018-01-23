@@ -1,6 +1,7 @@
 package life.plenty.data
 
 import life.plenty.model
+import life.plenty.model.connection.Parent
 import life.plenty.model.octopi.BasicSpace
 
 import scala.scalajs.js
@@ -21,8 +22,8 @@ object Main {
     _gun = Gun(js.Array("http://localhost:8080/gun"))
 
     val ts = new BasicSpace("test")
-    //        val fp = new BasicSpace("test_parent")
-    //        ts.addConnection(Parent(fp))
+    val fp = new BasicSpace("test_parent")
+    ts.addConnection(Parent(fp))
     //
 
     //    gun.get(ts.id).`val`((d, k) ⇒ {
@@ -30,7 +31,7 @@ object Main {
     //    })
     //
     //      println("writing")
-    //            OctopusWriter.write(ts)
+    OctopusWriter.write(ts)
 
     println(s"Trying to read ${ts.id}")
     OctopusReader.read(ts.id)

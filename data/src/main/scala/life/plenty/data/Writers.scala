@@ -12,7 +12,7 @@ object OctopusWriter {
     go.put(js.Dynamic.literal(
       "class" → o.getClass.getSimpleName
     ), null)
-    o.getTopModule({ case m: ConstructorWriterModule[_] ⇒ m }).foreach(_.write(go))
+    //    o.getTopModule({ case m: ConstructorWriterModule[_] ⇒ m }).foreach(_.write(go))
 
     val gcons = go.get("connections")
     for (c ← o.allConnections) {
@@ -28,7 +28,10 @@ object ConnectionWriter {
       "class" → c.getClass.getSimpleName,
       "value" → v
     )
-    // fixme. make this a hash
+    c.value match {
+      case o: Octopus ⇒ OctopusWriter.write(o)
+      case _ ⇒
+    }
     Main.gun.get(c.id).put(obj)
   }
 

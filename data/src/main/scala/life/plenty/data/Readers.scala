@@ -1,7 +1,7 @@
 package life.plenty.data
 
 import life.plenty.model.actions.ActionOnAddToModuleStack
-import life.plenty.model.connection.{Connection, Title}
+import life.plenty.model.connection.{Child, Connection, Parent, Title}
 import life.plenty.model.octopi.{BasicSpace, Octopus}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -53,15 +53,19 @@ object ConnectionReader {
     Title(_, _)
   )
 
+  private val octopusReaders = Stream[(String, Octopus) ⇒ Option[Connection[_]]](
+    Child(_, _), Parent(_, _)
+  )
+
   private def hasClass(key: String): Future[Boolean] = {
     val p = Promise[Boolean]()
     Main.gun.get(key).`val`((d, k) ⇒ {
       if (!js.isUndefined(d)) {
         println(JSON.stringify(d))
-        println(s"key `$key` has a class property")
+        //        println(s"key `$key` has a class property")
         p.success(true)
       } else {
-        println(s"key `$key` does not")
+        //        println(s"key `$key` does not")
         p.success(false)
       }
     })
@@ -69,25 +73,22 @@ object ConnectionReader {
   }
 
   def read(d: js.Object, key: String): Future[Option[Connection[_]]] = {
-    println("reading connection object")
-    println(JSON.stringify(d))
+    //    println(JSON.stringify(d))
 
-    //    val p = Promise[Option[Connection[_]]]()
-    //    Main.gun.get(key).get("value").`val`((d, k) ⇒ {
     val con = d.asInstanceOf[JsConnection]
-    println("serialized into", con)
-    hasClass(con.value) map { hc ⇒
+    hasClass(con.value) flatMap { hc ⇒
       if (hc) {
-        null
+        OctopusReader.read(con.value) map {
+          _ flatMap { o ⇒
+            octopusReaders flatMap { f ⇒ f(con.`class`, o) } headOption;
+          }
+        }
       } else {
-        leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption;
-        //          val res = leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption;
-        //          p.success(res)
+        Future(
+          leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption
+        )
       }
     }
-    //    })
-
-    //    p.future
   }
 }
 
@@ -97,7 +98,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) exte
     println("gun reader in initialize of ", withinOctopus, withinOctopus.connections)
     gun.get("connections").map().`val`((d, k) ⇒ {
       ConnectionReader.read(d, k) map { c ⇒ {
-        println("loaded connection", c)
+        println("loaded connection", c, JSON.stringify(d))
       }
       }
     })

@@ -21,3 +21,11 @@ trait InstantiateFromStringByApply[T <: Connection[_]] {
     if (className == this.getClass.getSimpleName) instantiate(from)
     else None
 }
+
+trait InstantiateFromOctopusByApply[T <: Connection[_]] {
+  def instantiate(from: Octopus): T
+
+  def apply(className: String, from: Octopus): Option[T] =
+    if (className == this.getClass.getSimpleName) Option(instantiate(from))
+    else None
+}
