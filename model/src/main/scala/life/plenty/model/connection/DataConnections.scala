@@ -11,3 +11,7 @@ case class Body(body: String) extends Connection[String] {
 case class Amount(amount: Int) extends Connection[Int] {
   override def value: Int = amount
 }
+
+case class Id(idValue: String) extends Connection[String] {
+  override def value: String = idValue
+}

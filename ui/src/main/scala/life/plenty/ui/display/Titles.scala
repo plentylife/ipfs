@@ -25,7 +25,7 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 
     <div class="title-with-input d-flex mt-3">
       <h3 class="title mr-3">
-        {Var(withinOctopus.title).bind}
+        {Var(withinOctopus.title()).bind}
       </h3>
       <input type="text" disabled={action.isEmpty} onkeyup={onEnter _} placeholder="ask your question"/>
     </div>
@@ -47,11 +47,11 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     //println("question title display")
     <div class="question-title">
-      {Var(prefix + withinOctopus.title).bind}{"?"}
+      {Var(prefix + withinOctopus.title()).bind}{"?"}
     </div>
   }
   private def prefix = withinOctopus.getTopConnectionData({ case Parent(p: GreatQuestion) ⇒ p }) match {
-    case Some(p) ⇒ p.title + " "
+    case Some(p) ⇒ p.title() + " "
     case _ ⇒ ""
   }
 }

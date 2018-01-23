@@ -1,18 +1,23 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.ModuleRegistry
-import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnGraphTransform, ActionOnInitialize}
+import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnAddToModuleStack, ActionOnGraphTransform,
+  ActionOnInitialize}
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
-import life.plenty.model.connection.{Connection, Marker}
+import life.plenty.model.connection.{Connection, Id, Marker}
 import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
 
 trait Octopus {
-  val partialId: String = ""
+  val _id: String = null
+  val idProperty = new Property({ case Id(idValue: String) ⇒ idValue }, this, Option(_id))
+
   protected var _modules: List[Module[Octopus]] = List()
   //  val mandatoryConnections: Set[Class[Connection[_]]]
   protected var _connections: List[Connection[_]] = List()
 
-  def id: String = ???
+  def id: String = idProperty getOrElse idGenerator
+
+  def idGenerator: String = ???
 
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
@@ -34,7 +39,13 @@ trait Octopus {
     modules.collectFirst(matchBy)
   }
 
-  def addModule(module: Module[Octopus]): Unit = _modules = module :: _modules
+  def addModule(module: Module[Octopus]): Unit = {
+    _modules = module :: _modules
+    module match {
+      case m: ActionOnAddToModuleStack[_] ⇒ m.onAddToStack()
+      case _ ⇒
+    }
+  }
 
   /* Connections */
   private lazy val connectionFilters = getAllModules({ case m: ConnectionFilters[_] ⇒ m })
@@ -89,6 +100,23 @@ trait Octopus {
   getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})
   //  println(connections)
 
+}
+
+/** the get on connection data is not safe */
+class Property[T](getter: PartialFunction[Connection[_], T], in: Octopus, private val init: Option[T] = None) {
+  private var _init: Option[T] = init
+
+  private[octopi] def initWith(v: T): Unit = _init = Option(v)
+
+  def forInit(f: (T) ⇒ Unit): Unit = _init foreach f
+
+  def apply(): T = _init getOrElse in.getTopConnectionData(getter).get
+
+  def getSafe: Option[T] = _init orElse in.getTopConnectionData(getter)
+
+  def map[B](f: (T) ⇒ B): Option[B] = getSafe map f
+
+  def getOrElse(v: T): T = getSafe.getOrElse(v)
 }
 
 trait Module[+T <: Octopus] {

@@ -48,7 +48,7 @@ class SpaceConstructorWriter(override val withinOctopus: Space) extends Construc
   def write(gun: Gun) = {
     val constr = gun.get("class-constructor")
     constr.put(js.Dynamic.literal(
-      "title" → withinOctopus.title
+      "title" → withinOctopus.title()
     ), null)
   }
 }

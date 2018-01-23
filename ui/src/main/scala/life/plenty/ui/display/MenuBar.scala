@@ -22,7 +22,7 @@ class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] wi
     <div class="menu-bar d-flex flex-row justify-content-between align-items-center">
 
       <h3 class="title ml-2">
-        {Var(withinOctopus.title).bind}
+        {Var(withinOctopus.title()).bind}
       </h3>
       <div class="wallet">
         {CurrentUserWallet.generateHtml(withinOctopus).bind}

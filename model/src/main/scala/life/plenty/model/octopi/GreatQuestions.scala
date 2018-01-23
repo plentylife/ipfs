@@ -8,23 +8,23 @@ object GreatQuestions {
     List(new Why(_), new What(_), new When(_), new Where(_), new How(_))
 
   class Why(override val parent: Space) extends GreatQuestion {
-    override val title: String = "Why"
+    override val _title: String = "Why"
   }
 
   class When(override val parent: Space) extends GreatQuestion {
-    override val title: String = "When"
+    override val _title: String = "When"
   }
 
   class Where(override val parent: Space) extends GreatQuestion {
-    override val title: String = "Where"
+    override val _title: String = "Where"
   }
 
   class What(override val parent: Space) extends GreatQuestion {
-    override val title: String = "What"
+    override val _title: String = "What"
   }
 
   class How(override val parent: Space) extends GreatQuestion {
-    override val title: String = "How"
+    override val _title: String = "How"
   }
 
 }

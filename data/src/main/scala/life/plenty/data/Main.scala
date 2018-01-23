@@ -1,11 +1,7 @@
 package life.plenty.data
 
-import life.plenty.model.ModuleRegistry
-import life.plenty.model.octopi.{BasicSpace, Octopus, Space}
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
-import scala.scalajs.js.JSON
-
 
 object Main {
 
@@ -19,24 +15,31 @@ object Main {
 
     _gun = Gun(js.Array("http://localhost:8080/gun"))
 
-    val ts = new BasicSpace("test")
-    //    val fp = new BasicSpace("test_parent")
-    //    ts.addConnection(Parent(fp))
+    //    val ts = new BasicSpace("test")
+    //        val fp = new BasicSpace("test_parent")
+    //        ts.addConnection(Parent(fp))
     //
 
-    gun.get(ts.id).`val`((d, k) ⇒ {
-      println(JSON.stringify(d))
-    })
+    //    gun.get(ts.id).`val`((d, k) ⇒ {
+    //      println(JSON.stringify(d))
+    //    })
+    //
+    //    OctopusWriter.write(ts)
 
-    OctopusWriter.write(ts)
+    OctopusReader.read("test") map {
+      r ⇒ println("test", r)
+    }
+    println("after read")
 
+    //    val r = Await.result(OctopusReader.read("test"), Duration.Inf)
+    //          println("test", r)
 
   }
 
   private def modules = {
-    ModuleRegistry add { case o: Octopus ⇒ new OctopusGunReaderModule(o) }
+    //    ModuleRegistry add { case o: Octopus ⇒ new OctopusGunReaderModule(o) }
 
-    ModuleRegistry add { case o: Space ⇒ new SpaceConstructorWriter(o) }
+    //    ModuleRegistry add { case o: Space ⇒ new SpaceConstructorWriter(o) }
   }
 }
 

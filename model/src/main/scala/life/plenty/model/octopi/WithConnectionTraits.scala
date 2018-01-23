@@ -13,11 +13,10 @@ trait WithMembers extends Space {
   // fixme. maybe redo this
   private def find: Option[Members] = this.getTopConnectionData({ case Child(m: Members) ⇒ m })
 
-  override protected def preConstructor(): Unit = {
-    super.preConstructor()
-    if (find.isEmpty) this.addConnection(Child(new Members(this)))
-    println("with members constructor")
-  }
+  //  override protected def preConstructor(): Unit = {
+  //    super.preConstructor()
+  //    println("with members constructor")
+  //  }
 }
 
 trait WithCreator extends Octopus {
@@ -29,4 +28,7 @@ trait WithCreator extends Octopus {
   }
 }
 
-//trait WithConstructor
+//
+//trait WithId {
+//
+//}
