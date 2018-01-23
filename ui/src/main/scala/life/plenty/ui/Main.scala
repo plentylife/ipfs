@@ -40,7 +40,7 @@ object Main {
   def hashes = Hashes
 
   @JSExport
-  def hashes256 = Hashes.SHA256.newInstance()
+  def hashes256 = new Hashes.SHA256
 
   @dom
   def mainSection: Binding[Node] = {

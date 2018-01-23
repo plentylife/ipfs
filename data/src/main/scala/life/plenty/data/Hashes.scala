@@ -9,17 +9,15 @@ import scala.scalajs.js.annotation.JSGlobal
 @js.native
 object Hashes extends js.Any {
 
-  val SHA256 = js.constructorTag[SHA256]
+  @js.native
+  class SHA256 extends js.Any {
+    def b64(str: String): String = js.native
+  }
 }
 
-@js.native
-class SHA256 extends js.Any {
-  //  def apply(): SHA256 = js.
-  def b64(str: String): String = js.native
-}
 
 object DataHash extends Hash {
-  private val h = Hashes.SHA256.newInstance()
+  private val h = new Hashes.SHA256
 
   override def b64(str: String): String = h.b64(str)
 }
