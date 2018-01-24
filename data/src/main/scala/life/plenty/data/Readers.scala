@@ -2,23 +2,26 @@ package life.plenty.data
 
 import life.plenty.model.actions.ActionOnAddToModuleStack
 import life.plenty.model.connection._
-import life.plenty.model.octopi.GreatQuestions._
 import life.plenty.model.octopi.{BasicQuestion, BasicSpace, Octopus}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.language.postfixOps
 import scala.scalajs.js
-import scala.scalajs.js.JSON
 import scala.util.Random
 
 object OctopusReader {
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
-    BasicSpace(_), BasicQuestion(_),
-    Why(_), When(_), Where(_), Who(_), How(_), What(_)
+    BasicSpace(_),
+    (c: String) ⇒ BasicQuestion(c),
+    //    Why(_), When(_), Where(_), Who(_), How(_), What(_)
   )
 
   def read(id: String): Future[Option[Octopus]] = {
+    // from cache
+    val fromCache = Cache.get(id)
+    if (fromCache.nonEmpty) return Future(fromCache)
+
     val gun = Main.gun.get(id)
 
     val className = Promise[String]()
@@ -34,6 +37,7 @@ object OctopusReader {
           val o = f(cs)
           o foreach { o ⇒
             o.idProperty.setInner(id)
+            Cache.put(o)
             o.addModule(new OctopusGunReaderModule(o, gun))
           }
           o
@@ -108,9 +112,9 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) exte
     val rm = Random.nextInt(100)
     //    println("gun reader in initialize of ", withinOctopus, withinOctopus.connections)
     gun.get("connections").map().`val`((d, k) ⇒ {
-      println(s"TRYING loaded connection of ${withinOctopus.getClass} $rm", JSON.stringify(d))
+      //      println(s"TRYING loaded connection of ${withinOctopus.getClass} $rm", JSON.stringify(d))
       ConnectionReader.read(d, k) map { optCon ⇒ {
-        println(s"loaded connection of ${withinOctopus.getClass} $rm", optCon, JSON.stringify(d))
+        //        println(s"loaded connection of ${withinOctopus.getClass} $rm", optCon, JSON.stringify(d))
         optCon foreach withinOctopus.addConnection
       }
       }

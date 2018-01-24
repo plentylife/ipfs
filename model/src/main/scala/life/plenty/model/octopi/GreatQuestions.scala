@@ -19,7 +19,7 @@ object GreatQuestions {
   }
 
   object Why extends InstantiateByApply[Why] {
-    def instantiate = new Why(null)
+    override def instantiate: Why = new Why(null)
   }
 
   class When(override val _parent: Space) extends GreatQuestion {
@@ -27,7 +27,7 @@ object GreatQuestions {
   }
 
   object When extends InstantiateByApply[When] {
-    def instantiate = new When(null)
+    override def instantiate: When = new When(null)
   }
 
   class Where(override val _parent: Space) extends GreatQuestion {
@@ -35,7 +35,7 @@ object GreatQuestions {
   }
 
   object Where extends InstantiateByApply[Where] {
-    def instantiate = new Where(null)
+    override def instantiate: Where = new Where(null)
   }
 
   class What(override val _parent: Space) extends GreatQuestion {
@@ -43,7 +43,7 @@ object GreatQuestions {
   }
 
   object What extends InstantiateByApply[What] {
-    def instantiate = new What(null)
+    override def instantiate: What = new What(null)
   }
 
   class How(override val _parent: Space) extends GreatQuestion {
@@ -51,7 +51,7 @@ object GreatQuestions {
   }
 
   object How extends InstantiateByApply[How] {
-    def instantiate = new How(null)
+    override def instantiate: How = new How(null)
   }
 
   class Who(override val _parent: Space) extends GreatQuestion {
@@ -59,7 +59,7 @@ object GreatQuestions {
   }
 
   object Who extends InstantiateByApply[Who] {
-    def instantiate = new Who(null)
+    override def instantiate: Who = new Who(null)
   }
 
 }

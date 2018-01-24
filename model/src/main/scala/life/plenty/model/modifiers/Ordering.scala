@@ -5,7 +5,7 @@ import life.plenty.model.octopi._
 class AnswerVoteOrder(override val withinOctopus: Question) extends OctopusOrdering[Question] {
 
   override def order(what: List[Octopus]): List[Octopus] = {
-    println("ordering answers")
+    //    println("ordering answers")
     var answers = List[Answer]()
     var others = List[Octopus]()
     for (o ← what) {

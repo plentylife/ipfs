@@ -26,7 +26,7 @@ trait InstantiateFromOctopusByApply[T <: Connection[_]] {
   def instantiate(from: Octopus): T
 
   def apply(className: String, from: Octopus): Option[T] = {
-    println(s"applying on connection ${this.getClass.getSimpleName} == ${className}")
+    //    println(s"applying on connection ${this.getClass.getSimpleName} == ${className}")
     if (className == this.getClass.getSimpleName) Option(instantiate(from))
     else None
   }
