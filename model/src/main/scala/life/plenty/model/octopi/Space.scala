@@ -3,15 +3,15 @@ package life.plenty.model.octopi
 import life.plenty.model.connection.Title
 
 trait Space extends Octopus {
-  protected[Space] val _title: String = null
-  lazy val title = new Property[String]({ case Title(t: String) ⇒ t }, this)
+  protected val _title: String
+  lazy val title = new Property[String]({ case Title(t: String) ⇒ t }, this, _title)
 
-  override def idGenerator: String = title()
+  override def idGenerator: String = super.idGenerator + title()
 
   override protected def preConstructor(): Unit = {
     super.preConstructor()
     title.setInner(_title)
-    title forInner { t ⇒ addConnection(Title(t)) }
+    title applyInner { t ⇒ addConnection(Title(t)) }
   }
 }
 

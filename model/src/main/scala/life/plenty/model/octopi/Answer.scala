@@ -13,12 +13,12 @@ trait Answer extends Space with WithParent[Space] {
   }
 }
 
-class BasicAnswer(override val parent: Space, override val body: String) extends Answer {
+class BasicAnswer(override val _parent: Space, override val body: String) extends Answer {
   /** at least for now, answers do not have titles */
   override val _title: String = ""
 }
 
-class Contribution(override val parent: Space, override val body: String, override val creator: User) extends Answer
+class Contribution(override val _parent: Space, override val body: String, override val creator: User) extends Answer
   with WithCreator {
   def countTips: Int = (0 :: this.connections.collect({ case Child(t: Transaction) ⇒ t.amount })).sum
 

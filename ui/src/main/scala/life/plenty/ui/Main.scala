@@ -6,8 +6,8 @@ import life.plenty.model.octopi.{BasicSpace, Octopus}
 import life.plenty.model.{initialize ⇒ mInit}
 import life.plenty.ui.display.Help
 import life.plenty.ui.model.DisplayModel
-import org.scalajs.dom.{Event, document}
 import org.scalajs.dom.raw.Node
+import org.scalajs.dom.{Event, document}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
@@ -22,11 +22,11 @@ object Main {
     println("Entry point")
 
     dataMain.main()
-
-
     //    Router.initialize
+    mInit()
     initialize()
-    //
+
+
     val ts = new BasicSpace("test")
     OctopusReader.read(ts.id) foreach (s ⇒
       dom.render(document.body, mainSection(s))
@@ -34,24 +34,10 @@ object Main {
 
   }
 
-  //  @JSExport
-  //  def gun = dataMain.gun
-  //
-  //  @JSExport
-  //  def hashes = Hashes
-  //
-  //  @JSExport
-  //  def hashes256 = new Hashes.SHA256
-
   @dom
   def mainSection(space: Option[Octopus]): Binding[Node] = {
-    //    val space = TestInstances.getEntry()
-
-
-    //    val space =
-
     <div id="viewport" onclick={e: Event ⇒ Help.triggerClose()}>
-      {Help.display.bind}{if (space.nonEmpty) DisplayModel.display(space.get).bind else <span>nothing to show</span>}
+      {Help.display().bind}{if (space.nonEmpty) DisplayModel.display(space.get).bind else <span>nothing to show</span>}
     </div>
   }
 

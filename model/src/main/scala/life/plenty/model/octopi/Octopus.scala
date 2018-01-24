@@ -9,16 +9,19 @@ import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
 
 trait Octopus {
   val _id: String = null
-  val idProperty = new Property({ case Id(idValue: String) ⇒ idValue }, this, Option(_id))
+  val idProperty = new Property[String]({ case Id(idValue: String) ⇒ idValue }, this, _id)
 
   protected var _modules: List[Module[Octopus]] = List()
   //  val mandatoryConnections: Set[Class[Connection[_]]]
   protected var _connections: List[Connection[_]] = List()
 
   //  def id: String = idProperty getOrElse base64.encodeToString(idGenerator.getBytes)
-  def id: String = idProperty getOrElse model.getHasher.b64(idGenerator)
+  def id: String = idProperty getOrLazyElse model.getHasher.b64(idGenerator)
 
-  def idGenerator: String = ???
+  def idGenerator: String = {
+    //    println(this, "is generating id", idProperty.getSafe, idProperty.getOrLazyElse("faulty"))
+    ""
+  }
 
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
@@ -68,8 +71,12 @@ trait Octopus {
 
   def hasMarker(marker: MarkerEnum): Boolean = connections.collect { case Marker(m) if m == marker ⇒ true } contains true
 
+  //  def pushConnectionUnsafe(connection: Connection)
 
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
+    // duplicates are silently dropped
+    if (_connections.exists(_.id == connection.id)) return Right()
+
     var onErrorList = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*) map { m ⇒
       m.onConnectionAdd(connection)
     }
@@ -103,21 +110,33 @@ trait Octopus {
 
 }
 
-/** the get on connection data is not safe */
-class Property[T](val getter: PartialFunction[Connection[_], T], in: Octopus, private val init: Option[T] = None) {
-  private var _inner: Option[T] = init
+/** the get on connection data is not safe
+  *
+  * @param init can be null */
+class Property[T](val getter: PartialFunction[Connection[_], T], in: Octopus, val init: T = null) {
+  private var _inner: Option[T] = Option(init)
 
-  private[octopi] def setInner(v: T): Unit = _inner = Option(v)
+  def setInner(v: T): Unit = _inner = Option(v)
 
-  def forInner(f: (T) ⇒ Unit): Unit = _inner foreach f
+  def applyInner(f: (T) ⇒ Unit): Unit = {
+    //    println("trying to apply inner to ", _inner)
+    _inner foreach f
+    //    println("applied")
+  }
 
-  def apply(): T = getSafe.get
+  def apply(): T = {
+    try {
+      getSafe.get
+    } catch {
+      case e: Throwable ⇒ println(e.getMessage); e.printStackTrace(); throw e
+    }
+  }
 
   def getSafe: Option[T] = _inner orElse in.getTopConnectionData(getter)
 
   def map[B](f: (T) ⇒ B): Option[B] = getSafe map f
 
-  def getOrElse(v: T): T = getSafe.getOrElse(v)
+  def getOrLazyElse(v: ⇒ T): T = getSafe.getOrElse(v)
 
   private var updaters = Set[() ⇒ Unit]()
 
@@ -129,7 +148,7 @@ class Property[T](val getter: PartialFunction[Connection[_], T], in: Octopus, pr
   }
 
   /* Constructor */
-  println("adding property watch module")
+  //  println("adding property watch module")
   in.addModule(new PropertyWatch[T](in, this))
 }
 

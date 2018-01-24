@@ -1,7 +1,7 @@
 package life.plenty.data
 
 import life.plenty.model.actions.ActionOnAddToModuleStack
-import life.plenty.model.connection.{Child, Connection, Parent, Title}
+import life.plenty.model.connection._
 import life.plenty.model.octopi.{BasicSpace, Octopus}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -29,7 +29,10 @@ object OctopusReader {
       val r = availableClasses.flatMap(f ⇒ {
         try {
           val o = f(cs)
-          o foreach { o ⇒ o.addModule(new OctopusGunReaderModule(o, gun)) }
+          o foreach { o ⇒
+            o.idProperty.setInner(id)
+            o.addModule(new OctopusGunReaderModule(o, gun))
+          }
           o
         } catch {
           case e: Throwable ⇒ println(e); e.printStackTrace(); None
@@ -50,7 +53,7 @@ object ConnectionReader {
   }
 
   private val leafReaders = Stream[(String, String) ⇒ Option[Connection[_]]](
-    Title(_, _)
+    Title(_, _), Body(_, _), Amount(_, _), Id(_, _)
   )
 
   private val octopusReaders = Stream[(String, Octopus) ⇒ Option[Connection[_]]](
@@ -95,7 +98,7 @@ object ConnectionReader {
 class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) extends
   ActionOnAddToModuleStack[Octopus] {
   override def onAddToStack(): Unit = {
-    println("gun reader in initialize of ", withinOctopus, withinOctopus.connections)
+    //    println("gun reader in initialize of ", withinOctopus, withinOctopus.connections)
     gun.get("connections").map().`val`((d, k) ⇒ {
       ConnectionReader.read(d, k) map { optCon ⇒ {
         println("loaded connection", optCon, JSON.stringify(d))

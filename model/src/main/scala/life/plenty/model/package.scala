@@ -12,11 +12,7 @@ package object model {
 
   def setHasher(h: Hash) = _hasher = h
 
-  def initialize(hasher: Hash): Unit = {
-    _hasher = hasher
-
-    println("got hasher", hasher)
-
+  def initialize(): Unit = {
     println("Model is adding modules to registry")
 
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateQuestion(q) }
@@ -32,8 +28,9 @@ package object model {
     // one contributor per contribution (the creator)
     //    ModuleRegistry.add { case c: Contribution ⇒ new ActionAddContributor(c) }
 
-    ModuleRegistry.add { case wp: WithParent[_] ⇒ new ActionAddParent(wp) }
-    ModuleRegistry.add { case o: BasicSpace ⇒ new AddGreatQuestions(o) }
+    //    ModuleRegistry.add { case wp: WithParent[_] ⇒ new ActionAddParent(wp) }
+    //    ModuleRegistry.add { case o: BasicSpace ⇒ new AddGreatQuestions(o) }
+
     ModuleRegistry.add { case o: BasicSpace ⇒ new InitializeMembersOctopus(o) }
 
     ModuleRegistry.add { case o: Octopus ⇒ new ActionAddMember(o) }

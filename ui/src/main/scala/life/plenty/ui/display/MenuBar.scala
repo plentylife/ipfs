@@ -19,7 +19,7 @@ class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] wi
 
   @dom
   protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    println("menu bar display")
+    //    println("menu bar display")
     <div class="menu-bar d-flex flex-row justify-content-between align-items-center">
 
       <h3 class="title ml-2">

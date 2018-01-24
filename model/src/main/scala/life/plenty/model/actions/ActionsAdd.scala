@@ -1,7 +1,7 @@
 package life.plenty.model.actions
 
 import life.plenty.model.GraphUtils
-import life.plenty.model.connection.{Child, Connection, Contributor, Parent}
+import life.plenty.model.connection.{Child, Connection, Contributor}
 import life.plenty.model.octopi._
 
 class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
@@ -36,10 +36,10 @@ class ActionAddMember(override val withinOctopus: Octopus) extends ActionAfterGr
   }
 }
 
-class ActionAddParent[T <: Octopus](override val withinOctopus: WithParent[T]) extends
-  ActionOnInitialize[WithParent[T]] {
-  override def onInitialize(): Unit = {
-    //    println("adding parent")
-    withinOctopus addConnection Parent(withinOctopus.parent)
-  }
-}
+//class ActionAddParent[T <: Octopus](override val withinOctopus: WithParent[T]) extends
+//  ActionOnInitialize[WithParent[T]] {
+//  override def onInitialize(): Unit = {
+//    //    println("adding parent")
+//    withinOctopus addConnection Parent(withinOctopus.parent)
+//  }
+//}

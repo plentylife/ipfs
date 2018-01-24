@@ -5,7 +5,7 @@ import life.plenty.model.connection.MarkerEnum.FILL_GREAT_QUESTIONS
 
 trait Question extends Space with WithParent[Space]
 
-class BasicQuestion(override val parent: Space, override val _title: String) extends Question {
+class BasicQuestion(override val _parent: Space, override val _title: String) extends Question {
   override def preConstructor(): Unit = {
     super.preConstructor()
     //println("BasicQuestion constr", this.connections)
