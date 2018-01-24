@@ -8,6 +8,7 @@ import scala.scalajs.js
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
+    // fixme there should be a check that the class does not already exist
     val go = gun.get(o.id)
     go.put(js.Dynamic.literal(
       "class" → o.getClass.getSimpleName

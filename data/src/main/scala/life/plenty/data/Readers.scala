@@ -97,8 +97,9 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) exte
   override def onAddToStack(): Unit = {
     println("gun reader in initialize of ", withinOctopus, withinOctopus.connections)
     gun.get("connections").map().`val`((d, k) ⇒ {
-      ConnectionReader.read(d, k) map { c ⇒ {
-        println("loaded connection", c, JSON.stringify(d))
+      ConnectionReader.read(d, k) map { optCon ⇒ {
+        println("loaded connection", optCon, JSON.stringify(d))
+        optCon foreach withinOctopus.addConnection
       }
       }
     })
