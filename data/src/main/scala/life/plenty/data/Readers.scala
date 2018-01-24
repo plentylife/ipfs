@@ -2,17 +2,20 @@ package life.plenty.data
 
 import life.plenty.model.actions.ActionOnAddToModuleStack
 import life.plenty.model.connection._
-import life.plenty.model.octopi.{BasicSpace, Octopus}
+import life.plenty.model.octopi.GreatQuestions._
+import life.plenty.model.octopi.{BasicQuestion, BasicSpace, Octopus}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.language.postfixOps
 import scala.scalajs.js
 import scala.scalajs.js.JSON
+import scala.util.Random
 
 object OctopusReader {
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
-    BasicSpace(_)
+    BasicSpace(_), BasicQuestion(_),
+    Why(_), When(_), Where(_), Who(_), How(_), What(_)
   )
 
   def read(id: String): Future[Option[Octopus]] = {
@@ -20,7 +23,7 @@ object OctopusReader {
 
     val className = Promise[String]()
     gun.get("class").`val`((d, k) ⇒ {
-      // fixme throws an error if id is not present
+      // fixme throws an error if id is not present in db
       className.success(d.toLocaleString())
     })
 
@@ -64,7 +67,7 @@ object ConnectionReader {
     val p = Promise[Boolean]()
     Main.gun.get(key).`val`((d, k) ⇒ {
       if (!js.isUndefined(d)) {
-        println(JSON.stringify(d))
+        //        println(JSON.stringify(d))
         //        println(s"key `$key` has a class property")
         p.success(true)
       } else {
@@ -81,8 +84,12 @@ object ConnectionReader {
     val con = d.asInstanceOf[JsConnection]
     hasClass(con.value) flatMap { hc ⇒
       if (hc) {
-        OctopusReader.read(con.value) map {
-          _ flatMap { o ⇒
+        println("processing connection value with class")
+        OctopusReader.read(con.value) map { optO ⇒
+          println("read octopus", optO)
+
+          if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
+          optO flatMap { o ⇒
             octopusReaders flatMap { f ⇒ f(con.`class`, o) } headOption;
           }
         }
@@ -98,10 +105,12 @@ object ConnectionReader {
 class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) extends
   ActionOnAddToModuleStack[Octopus] {
   override def onAddToStack(): Unit = {
+    val rm = Random.nextInt(100)
     //    println("gun reader in initialize of ", withinOctopus, withinOctopus.connections)
     gun.get("connections").map().`val`((d, k) ⇒ {
+      println(s"TRYING loaded connection of ${withinOctopus.getClass} $rm", JSON.stringify(d))
       ConnectionReader.read(d, k) map { optCon ⇒ {
-        println("loaded connection", optCon, JSON.stringify(d))
+        println(s"loaded connection of ${withinOctopus.getClass} $rm", optCon, JSON.stringify(d))
         optCon foreach withinOctopus.addConnection
       }
       }

@@ -2,14 +2,19 @@ package life.plenty.model.octopi
 
 import life.plenty.model.connection.Marker
 import life.plenty.model.connection.MarkerEnum.FILL_GREAT_QUESTIONS
+import life.plenty.model.utils.InstantiateByApply
 
 trait Question extends Space with WithParent[Space]
 
 class BasicQuestion(override val _parent: Space, override val _title: String) extends Question {
-  override def preConstructor(): Unit = {
-    super.preConstructor()
-    //println("BasicQuestion constr", this.connections)
-  }
+  //  override def preConstructor(): Unit = {
+  //    super.preConstructor()
+  //    //println("BasicQuestion constr", this.connections)
+  //  }
+}
+
+object BasicQuestion extends InstantiateByApply[BasicQuestion] {
+  override def instantiate: BasicQuestion = new BasicQuestion(null, null)
 }
 
 class BasicSpace(override val _title: String) extends Space with WithMembers {
@@ -25,9 +30,4 @@ object BasicSpace extends InstantiateByApply[BasicSpace] {
   def instantiate = new BasicSpace(null)
 }
 
-trait InstantiateByApply[T] {
-  def instantiate: T
 
-  def apply(className: String): Option[T] = if (className == this.getClass.getSimpleName) Option(instantiate)
-  else None
-}

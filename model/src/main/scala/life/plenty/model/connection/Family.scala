@@ -15,5 +15,7 @@ case class Parent[T <: Octopus](parent: T) extends Connection[T] {
 }
 
 object Parent extends InstantiateFromOctopusByApply[Parent[_]] {
-  override def instantiate(from: Octopus): Parent[_] = Parent(from)
+  override def instantiate(from: Octopus): Parent[_] = {
+    Parent(from)
+  }
 }

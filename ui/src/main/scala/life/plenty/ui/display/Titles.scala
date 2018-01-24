@@ -5,11 +5,11 @@ import life.plenty.model.actions.ActionCreateQuestion
 import life.plenty.model.connection.Parent
 import life.plenty.model.octopi.{GreatQuestion, Octopus, Space}
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
+import life.plenty.ui.model.Helpers._
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
 
 import scalaz.std.list._
-
 
 trait TitleDisplay extends DisplayModule[Octopus] {
   /*todo. make global title var and make updater */
@@ -25,9 +25,12 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 
     <div class="title-with-input d-flex mt-3">
       <h3 class="title mr-3">
-        {Var(withinOctopus.title()).bind}
+        {withinOctopus.title.dom.bind}
       </h3>
-      <input type="text" disabled={action.isEmpty} onkeyup={onEnter _} placeholder="ask your question"/>
+      <span class="d-inline-flex">
+        <input type="text" disabled={action.isEmpty} onkeyup={onEnter _} placeholder="ask your question"/>
+        ?
+      </span>
     </div>
   }
 
@@ -47,7 +50,7 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     //println("question title display")
     <div class="question-title">
-      {Var(prefix + withinOctopus.title()).bind}{"?"}
+      {Var(prefix + withinOctopus.title.dom).bind}{"?"}
     </div>
   }
   private def prefix = withinOctopus.getTopConnectionData({ case Parent(p: GreatQuestion) ⇒ p }) match {

@@ -71,8 +71,6 @@ trait Octopus {
 
   def hasMarker(marker: MarkerEnum): Boolean = connections.collect { case Marker(m) if m == marker ⇒ true } contains true
 
-  //  def pushConnectionUnsafe(connection: Connection)
-
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
     // duplicates are silently dropped
     if (_connections.exists(_.id == connection.id)) return Right()

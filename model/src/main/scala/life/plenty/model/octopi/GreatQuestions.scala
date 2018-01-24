@@ -1,8 +1,10 @@
 package life.plenty.model.octopi
 
+import life.plenty.model.utils.InstantiateByApply
+
 trait GreatQuestion extends Space with WithParent[Space] {
   override def idGenerator: String = {
-    println(this, "id gen is called", _parent, parent.getSafe, _title, title.getSafe)
+    //    println(this, "id gen is called", _parent, parent.getSafe, _title, title.getSafe)
     super.idGenerator + this.getClass.getSimpleName
   }
 }

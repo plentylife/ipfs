@@ -12,7 +12,7 @@ import org.scalajs.dom.html.{Input, TextArea}
 import org.scalajs.dom.raw.Node
 
 class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Question] {
-  println("Create answer ", withinOctopus)
+  //  println("Display create answer ", withinOctopus)
   private lazy val action = Var(false)
   private val opened = Var(false)
   private val isContribution = Var(false)

@@ -2,8 +2,8 @@ package life.plenty.data
 
 import life.plenty.model
 import life.plenty.model.connection.Parent
-import life.plenty.model.octopi.BasicSpace
 import life.plenty.model.octopi.GreatQuestions.Who
+import life.plenty.model.octopi.{BasicQuestion, BasicSpace}
 
 import scala.scalajs.js
 
@@ -22,10 +22,12 @@ object Main {
 
     val ts = new BasicSpace("test")
     val who = new Who(ts)
+    val q = new BasicQuestion(who, "first question")
     val fp = new BasicSpace("test_parent")
     ts.addConnection(Parent(fp))
 
     println("fake data in")
+    println(ts.id, ts.connections)
 
     OctopusWriter.write(ts)
 

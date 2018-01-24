@@ -7,7 +7,7 @@ import life.plenty.model.{initialize ⇒ mInit}
 import life.plenty.ui.display.Help
 import life.plenty.ui.model.DisplayModel
 import org.scalajs.dom.raw.Node
-import org.scalajs.dom.{Event, document}
+import org.scalajs.dom.{Event, document, window}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
@@ -28,10 +28,15 @@ object Main {
 
 
     val ts = new BasicSpace("test")
-    OctopusReader.read(ts.id) foreach (s ⇒
-      dom.render(document.body, mainSection(s))
-      )
+    println(s"ui loading ${ts.id}")
+    OctopusReader.read(ts.id) foreach { s ⇒
+      window.setTimeout(() ⇒ {
+        println("*** after load")
+        println(s.get.connections)
+      }, 3000)
 
+      dom.render(document.body, mainSection(s))
+    }
   }
 
   @dom
