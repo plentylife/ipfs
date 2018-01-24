@@ -1,5 +1,4 @@
 package life.plenty.ui.display
-import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateQuestion
 import life.plenty.model.connection.Parent
@@ -46,15 +45,20 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
   override def doDisplay(): Boolean = !withinOctopus.modules.exists(_.isInstanceOf[TitleWithQuestionInput])
 
+  //  implicit val parser: (String) ⇒ String = {(s) ⇒ prefix + s}
+  //      {Var(prefix + withinOctopus.title.dom).bind}{"?"}
+
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     //println("question title display")
     <div class="question-title">
-      {Var(prefix + withinOctopus.title.dom).bind}{"?"}
+      {prefix}{withinOctopus.title.dom.bind}{"?"}
     </div>
   }
-  private def prefix = withinOctopus.getTopConnectionData({ case Parent(p: GreatQuestion) ⇒ p }) match {
-    case Some(p) ⇒ p.title() + " "
-    case _ ⇒ ""
+
+  private def prefix: String =
+    withinOctopus.getTopConnectionData({ case Parent(p: GreatQuestion) ⇒ p }) match {
+      case Some(p) ⇒ println(s"prefix ${p.title()}"); p.title() + " "
+      case _ ⇒ println("no prefix", withinOctopus.connections); ""
   }
 }

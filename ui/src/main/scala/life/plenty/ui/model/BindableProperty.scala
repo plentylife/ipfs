@@ -12,8 +12,9 @@ object Helpers {
   implicit class BindableProperty[T](property: Property[T])(implicit parser: T ⇒ String) {
     val inner = Var(property.getSafe)
 
+    println(s"registering updater ${this.getClass} ${this.property.in.getClass}")
     property.registerUpdater(() ⇒ {
-      println("Bindable property updated")
+      println(s"Bindable property updated ${this.getClass}")
       println(property.getSafe)
       inner.value_=(property.getSafe)
     })

@@ -111,7 +111,7 @@ trait Octopus {
 /** the get on connection data is not safe
   *
   * @param init can be null */
-class Property[T](val getter: PartialFunction[Connection[_], T], in: Octopus, val init: T = null) {
+class Property[T](val getter: PartialFunction[Connection[_], T], val in: Octopus, val init: T = null) {
   private var _inner: Option[T] = Option(init)
 
   def setInner(v: T): Unit = _inner = Option(v)
