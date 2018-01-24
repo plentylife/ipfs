@@ -1,22 +1,20 @@
 package life.plenty.model.octopi
 
-import life.plenty.model.utils.InstantiateByApply
+trait Question extends Space with WithParent[Space] {}
 
-trait Question extends Space with WithParent[Space]
-
-class BasicQuestion(override val _parent: Space, override val _title: String) extends Question {
+class BasicQuestion(override val _parent: Space, override val _title: String) extends Question {}
   //  override def preConstructor(): Unit = {
   //    super.preConstructor()
   //    //println("BasicQuestion constr", this.connections)
   //  }
-}
+//}
 
-object BasicQuestion extends InstantiateByApply[BasicQuestion] {
-  override def instantiate: BasicQuestion = {
-    val r = new BasicQuestion(null, null)
-    println(s"object ${this.getClass} instantiated ${r}")
-    r
-  }
+//object BasicQuestion extends InstantiateByApply[BasicQuestion] {
+//  override def instantiate: BasicQuestion = {
+//    val r = new BasicQuestion(null, null)
+//    println(s"object ${this.getClass} instantiated ${r}")
+//    r
+//  }
 
   //  override def apply(className: String): Option[BasicQuestion] = {
   //    println(s"bq applying by className ${className} on ${this.getClass.getSimpleName}")
@@ -24,7 +22,7 @@ object BasicQuestion extends InstantiateByApply[BasicQuestion] {
   //    println(s"result ${r}")
   //    r
   //  }
-}
+//}
 
 class BasicSpace(override val _title: String) extends Space with WithMembers {
 
@@ -35,12 +33,12 @@ class BasicSpace(override val _title: String) extends Space with WithMembers {
   }
 }
 
-object BasicSpace extends InstantiateByApply[BasicSpace] {
-  override def instantiate: BasicSpace = {
-    val r = new BasicSpace(null)
-    println(s"object ${this.getClass} instantiated ${r}")
-    r
-  }
-}
-
-
+//object BasicSpace extends InstantiateByApply[BasicSpace] {
+//  override def instantiate: BasicSpace = {
+//    val r = new BasicSpace(null)
+//    println(s"object ${this.getClass} instantiated ${r}")
+//    r
+//  }
+//}
+//
+//

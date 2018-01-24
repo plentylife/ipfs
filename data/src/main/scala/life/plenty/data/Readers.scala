@@ -2,6 +2,7 @@ package life.plenty.data
 
 import life.plenty.model.actions.ActionOnAddToModuleStack
 import life.plenty.model.connection._
+import life.plenty.model.octopi.GreatQuestions.Who
 import life.plenty.model.octopi.{BasicQuestion, BasicSpace, Octopus}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,9 +12,14 @@ import scala.scalajs.js
 import scala.util.Random
 
 object OctopusReader {
+  def ci(className: String, inst: ⇒ Octopus) = {
+    (cn: String) ⇒ if (className == cn) Option(inst) else None
+  }
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
-    BasicSpace(_),
-    (c: String) ⇒ BasicQuestion(c),
+    ci("BasicSpace", new BasicSpace(null)),
+    ci("BasicQuestion", new BasicQuestion(null, null)),
+    ci("Who", new Who(null))
+    //,
     //    Why(_), When(_), Where(_), Who(_), How(_), What(_)
   )
 
