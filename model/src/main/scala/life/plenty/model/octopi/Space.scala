@@ -10,8 +10,8 @@ trait Space extends Octopus {
 
   override protected def preConstructor(): Unit = {
     super.preConstructor()
-    title.initWith(_title)
-    title forInit { t ⇒ addConnection(Title(t)) }
+    title.setInner(_title)
+    title forInner { t ⇒ addConnection(Title(t)) }
   }
 }
 

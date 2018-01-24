@@ -2,8 +2,7 @@ package life.plenty.model.octopi
 
 import life.plenty.model
 import life.plenty.model.ModuleRegistry
-import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnAddToModuleStack, ActionOnGraphTransform,
-  ActionOnInitialize}
+import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Connection, Id, Marker}
 import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
@@ -105,20 +104,33 @@ trait Octopus {
 }
 
 /** the get on connection data is not safe */
-class Property[T](getter: PartialFunction[Connection[_], T], in: Octopus, private val init: Option[T] = None) {
-  private var _init: Option[T] = init
+class Property[T](val getter: PartialFunction[Connection[_], T], in: Octopus, private val init: Option[T] = None) {
+  private var _inner: Option[T] = init
 
-  private[octopi] def initWith(v: T): Unit = _init = Option(v)
+  private[octopi] def setInner(v: T): Unit = _inner = Option(v)
 
-  def forInit(f: (T) ⇒ Unit): Unit = _init foreach f
+  def forInner(f: (T) ⇒ Unit): Unit = _inner foreach f
 
-  def apply(): T = _init getOrElse in.getTopConnectionData(getter).get
+  def apply(): T = getSafe.get
 
-  def getSafe: Option[T] = _init orElse in.getTopConnectionData(getter)
+  def getSafe: Option[T] = _inner orElse in.getTopConnectionData(getter)
 
   def map[B](f: (T) ⇒ B): Option[B] = getSafe map f
 
   def getOrElse(v: T): T = getSafe.getOrElse(v)
+
+  private var updaters = Set[() ⇒ Unit]()
+
+  def registerUpdater(f: () ⇒ Unit) = updaters += f
+
+  def update(c: Connection[_]): Unit = {
+    if (getter.isDefinedAt(c)) setInner(getter(c))
+    updaters foreach (f ⇒ f())
+  }
+
+  /* Constructor */
+  println("adding property watch module")
+  in.addModule(new PropertyWatch[T](in, this))
 }
 
 trait Module[+T <: Octopus] {
