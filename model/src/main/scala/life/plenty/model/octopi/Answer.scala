@@ -10,7 +10,7 @@ trait Answer extends Space with WithParent[Space] {
   def countVotes: Int = (0 :: this.connections.collect({ case Child(v: Vote) ⇒ v.sizeAndDirection })).sum
 
   override def idGenerator: String = {
-    println(_body, body.init, body.getSafe)
+    //    println("answer id gen", _body, body.init, body.getSafe)
     super.idGenerator + body()
   }
 

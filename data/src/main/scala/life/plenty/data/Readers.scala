@@ -119,15 +119,22 @@ object ConnectionReader {
 
 class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) extends
   ActionOnAddToModuleStack[Octopus] {
+  var loaded = false
+
   override def onAddToStack(): Unit = {
     //    println("gun reader in initialize of ", withinOctopus, withinOctopus.connections)
     gun.get("connections").map().`val`((d, k) ⇒ {
       println(s"TRYING loaded connection of ${withinOctopus.getClass} $k", JSON.stringify(d))
       ConnectionReader.read(d, k) map { optCon ⇒ {
         println(s"loaded connection of ${withinOctopus.getClass} $k", optCon, JSON.stringify(d))
-        optCon foreach withinOctopus.addConnection
+        optCon foreach { c ⇒
+          c.tmpMarker = "gun"
+          withinOctopus.addConnection(c)
+        }
       }
       }
     })
+
+    loaded = true
   }
 }

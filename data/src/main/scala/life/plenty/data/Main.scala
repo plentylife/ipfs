@@ -1,9 +1,10 @@
 package life.plenty.data
 
 import life.plenty.model
+import life.plenty.model.ModuleRegistry
 import life.plenty.model.connection.Parent
 import life.plenty.model.octopi.GreatQuestions.Who
-import life.plenty.model.octopi.{BasicAnswer, BasicQuestion, BasicSpace}
+import life.plenty.model.octopi.{BasicAnswer, BasicQuestion, BasicSpace, Octopus}
 
 import scala.scalajs.js
 
@@ -11,12 +12,13 @@ object Main {
 
   private var _gun: Gun = _
 
-  def gun = _gun
+  def gun: Gun = _gun
 
   def main(): Unit = {
     println("Data entry point")
     // fixme remove after testing
     model.setHasher(DataHash)
+    modules()
 
     _gun = Gun(js.Array("http://localhost:8080/gun"))
 
@@ -39,6 +41,10 @@ object Main {
 
     //    println(s"Trying to read ${ts.id}")
     //    OctopusReader.read(ts.id)
+  }
+
+  def modules(): Unit = {
+    ModuleRegistry add { case o: Octopus ⇒ new GunWriterModule(o) }
   }
 }
 

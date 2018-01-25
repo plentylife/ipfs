@@ -6,6 +6,9 @@ import life.plenty.model.octopi.Octopus
 trait Connection[T] {
   def value: T
 
+  // fixme
+  var tmpMarker: String = ""
+
   def id: String = idGivenValue(value) + this.getClass.getSimpleName
 
   protected def idGivenValue(v: T) = v match {

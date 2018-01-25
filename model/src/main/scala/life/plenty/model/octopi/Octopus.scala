@@ -87,7 +87,7 @@ trait Octopus {
 
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
     // duplicates are silently dropped
-    println(s"adding connection ${connection} to ${this}")
+    //    println(s"adding connection ${connection} to ${this}")
     if (_connections.now.exists(_.id == connection.id)) return Right()
 
     var onErrorList = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*) map { m ⇒
@@ -100,7 +100,7 @@ trait Octopus {
       case None ⇒
         //        _connections() = connection :: _connections.now
         _lastAddedConnection() = Option(connection)
-        println(s"added connection ${connection} to ${this} ${_connections.now}")
+        //        println(s"added connection ${connection} to ${this} ${_connections.now}")
 
         onErrorList = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*) map { m ⇒
           m.onConnectionAdd(connection)

@@ -11,11 +11,11 @@ trait WithParent[T <: Octopus] extends Octopus {
 
   override protected def preConstructor(): Unit = {
     super.preConstructor()
-    //    println("with parent preconstructor", this, _parent, parent.init, parent.getSafe)
     parent applyInner { p ⇒
       this.addConnection(Parent(p))
       p.addConnection(Child(this))
     }
+    println(s"with parent preconstructor ${this} ${parent.getSafe.map(_.connections)}", _parent, parent.getSafe)
   }
 }
 
