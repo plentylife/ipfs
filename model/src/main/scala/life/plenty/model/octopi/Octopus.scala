@@ -6,6 +6,8 @@ import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Connection, Id, Marker}
 import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
+import life.plenty.model.utils.Property
+import rx.{Ctx, Rx, Var}
 
 trait Octopus {
   val _id: String = null
@@ -13,9 +15,14 @@ trait Octopus {
 
   protected var _modules: List[Module[Octopus]] = List()
   //  val mandatoryConnections: Set[Class[Connection[_]]]
-  protected var _connections: List[Connection[_]] = List()
+  protected val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
+  protected val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
+  //  protected val _connections: Rx.Dynamic[List[Connection[_]]] =
+  //    _lastAddedConnection.fold(List.empty[Connection[_]])(
+  //      (list: List[Connection[_]], elem: Option[Connection[_]]) ⇒ {elem.map(_ :: list).getOrElse(list)})
 
-  //  def id: String = idProperty getOrElse base64.encodeToString(idGenerator.getBytes)
+  //  protected var _connections: Rx[List[Connection[_]]] = Var(List[Connection[_]]()).r
+
   def id: String = idProperty getOrLazyElse model.getHasher.b64(idGenerator)
 
   def idGenerator: String = {
@@ -57,11 +64,11 @@ trait Octopus {
   /** filters applied */
   def connections: List[Connection[_]] = {
     //    println("con fitlres", connectionFilters)
-    connectionFilters.foldLeft(_connections)((cs, f) ⇒ f(cs))
+    connectionFilters.foldLeft(_connections.now)((cs, f) ⇒ f(cs))
   }
 
   /** no filters applied */
-  def allConnections: List[Connection[_]] = _connections
+  def allConnections: List[Connection[_]] = _connections.now
 
   def getTopConnection[T](f: PartialFunction[Connection[_], Connection[T]]): Option[Connection[T]] =
     connections.collectFirst(f)
@@ -69,11 +76,16 @@ trait Octopus {
   def getTopConnectionData[T](f: PartialFunction[Connection[_], T]): Option[T] =
     connections.collectFirst(f)
 
+  /** this method will go away as rx is introduced thoroughly.
+    * does not filter. collects on raw connections list */
+  def getAllTopConnectionDataRx[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
+    Rx {_connections().collectFirst(f)}
+
   def hasMarker(marker: MarkerEnum): Boolean = connections.collect { case Marker(m) if m == marker ⇒ true } contains true
 
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
     // duplicates are silently dropped
-    if (_connections.exists(_.id == connection.id)) return Right()
+    if (_connections.now.exists(_.id == connection.id)) return Right()
 
     var onErrorList = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*) map { m ⇒
       m.onConnectionAdd(connection)
@@ -83,7 +95,9 @@ trait Octopus {
       case Some(e) ⇒ e
 
       case None ⇒
-        _connections = connection :: _connections
+        _connections() = connection :: _connections.now
+        _lastAddedConnection() = Option(connection)
+
         onErrorList = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*) map { m ⇒
           m.onConnectionAdd(connection)
         }
@@ -108,47 +122,7 @@ trait Octopus {
 
 }
 
-/** the get on connection data is not safe
-  *
-  * @param init can be null */
-class Property[T](val getter: PartialFunction[Connection[_], T], val in: Octopus, val init: T = null) {
-  private var _inner: Option[T] = Option(init)
 
-  def setInner(v: T): Unit = _inner = Option(v)
-
-  def applyInner(f: (T) ⇒ Unit): Unit = {
-    //    println("trying to apply inner to ", _inner)
-    _inner foreach f
-    //    println("applied")
-  }
-
-  def apply(): T = {
-    try {
-      getSafe.get
-    } catch {
-      case e: Throwable ⇒ println(e.getMessage); e.printStackTrace(); throw e
-    }
-  }
-
-  def getSafe: Option[T] = _inner orElse in.getTopConnectionData(getter)
-
-  def map[B](f: (T) ⇒ B): Option[B] = getSafe map f
-
-  def getOrLazyElse(v: ⇒ T): T = getSafe.getOrElse(v)
-
-  private var updaters = Set[() ⇒ Unit]()
-
-  def registerUpdater(f: () ⇒ Unit) = updaters += f
-
-  def update(c: Connection[_]): Unit = {
-    if (getter.isDefinedAt(c)) setInner(getter(c))
-    updaters foreach (f ⇒ f())
-  }
-
-  /* Constructor */
-  //  println("adding property watch module")
-  in.addModule(new PropertyWatch[T](in, this))
-}
 
 trait Module[+T <: Octopus] {
   val withinOctopus: T

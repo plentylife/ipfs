@@ -1,4 +1,6 @@
 package life.plenty.ui.display
+
+import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateQuestion
 import life.plenty.model.connection.Parent
@@ -7,6 +9,8 @@ import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import life.plenty.ui.model.Helpers._
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
+import org.scalajs.dom.window
+import rx.Ctx
 
 import scalaz.std.list._
 
@@ -52,13 +56,27 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     //println("question title display")
     <div class="question-title">
-      {prefix}{withinOctopus.title.dom.bind}{"?"}
+      {prefix.bind}{withinOctopus.title.dom.bind}{"?"}
     </div>
   }
 
-  private def prefix: String =
-    withinOctopus.getTopConnectionData({ case Parent(p: GreatQuestion) ⇒ p }) match {
-      case Some(p) ⇒ println(s"prefix ${p.title()}"); p.title() + " "
-      case _ ⇒ println("no prefix", withinOctopus.connections); ""
-  }
+  val prefix: Var[String] = Var("")
+
+  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
+
+  private val parent = {withinOctopus.getAllTopConnectionDataRx({ case Parent(p: GreatQuestion) ⇒ p })}
+  parent.trigger({
+    println("parent triggered")
+    parent.now.foreach { p ⇒
+      println(s"prefix ${p.title()}"); prefix.value_=(p.title() + " ")
+    }
+  })
+
+  window.setTimeout(() ⇒ {println("question.title", withinOctopus.connections)}, 3000)
+
+  //    private val o = withinOctopus.getAllTopConnectionDataRx({ case Parent(p: GreatQuestion) ⇒ p }).foreach({
+  //      case Some(p) ⇒ println(s"prefix ${p.title()}"); prefix.value_=(p.title() + " ")
+  //      case _ ⇒ println("no prefix", withinOctopus.connections); ""
+  //    })
+
 }

@@ -12,7 +12,10 @@ lazy val data = project.enablePlugins(ScalaJSPlugin, SbtJsEngine).in(file("data"
 
 lazy val model = project.enablePlugins(ScalaJSPlugin).in(file("model"))
   .settings(
-    relativeSourceMaps := true
+    relativeSourceMaps := true,
+    libraryDependencies ++= Seq(
+      "com.lihaoyi" %%% "scalarx" % "0.3.2"
+    )
   )
 
 lazy val ui = project.enablePlugins(ScalaJSPlugin, SbtJsEngine).in(file("ui"))

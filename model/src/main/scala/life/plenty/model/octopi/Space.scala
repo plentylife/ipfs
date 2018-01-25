@@ -1,6 +1,7 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.Title
+import life.plenty.model.utils.Property
 
 trait Space extends Octopus {
   protected val _title: String

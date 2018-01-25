@@ -27,6 +27,8 @@ object Main {
     ts.addConnection(Parent(fp))
 
     println("fake data in")
+    println(q, q.connections)
+    println(who, who.connections)
     println(ts.id, ts.connections)
 
     OctopusWriter.write(ts)

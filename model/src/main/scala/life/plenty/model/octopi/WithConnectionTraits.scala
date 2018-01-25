@@ -1,6 +1,7 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.{Child, Creator, Parent}
+import life.plenty.model.utils.Property
 
 trait WithParent[T <: Octopus] extends Octopus {
   protected val _parent: T
@@ -10,8 +11,11 @@ trait WithParent[T <: Octopus] extends Octopus {
 
   override protected def preConstructor(): Unit = {
     super.preConstructor()
-    //    println("with parent preconstructor; parent", parent, parent.getSafe)
-    parent applyInner (_.addConnection(Child(this)))
+    println("with parent preconstructor", this, _parent, parent.init, parent.getSafe)
+    parent applyInner { p ⇒
+      this.addConnection(Parent(p))
+      p.addConnection(Child(this))
+    }
   }
 }
 

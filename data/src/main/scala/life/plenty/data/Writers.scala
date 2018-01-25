@@ -8,6 +8,7 @@ import scala.scalajs.js
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
+    println(s"writing ${o} ${o.connections}")
     // fixme there should be a check that the class does not already exist
     val go = gun.get(o.id)
     go.put(js.Dynamic.literal(
@@ -26,16 +27,21 @@ object OctopusWriter {
 
 object ConnectionWriter {
   def write(c: Connection[_]): Gun = {
-    val v = getValue(c)
-    val obj = js.Dynamic.literal(
-      "class" → c.getClass.getSimpleName,
-      "value" → v
-    )
-    c.value match {
-      case o: Octopus ⇒ OctopusWriter.write(o)
-      case _ ⇒
-    }
-    Main.gun.get(c.id).put(obj)
+    val gc = Main.gun.get(c.id)
+    gc.`val`((d, k) ⇒ {
+      if (js.isUndefined(d)) {
+        val v = getValue(c)
+        c.value match {
+          case o: Octopus ⇒ OctopusWriter.write(o)
+          case _ ⇒
+        }
+        val obj = js.Dynamic.literal(
+          "class" → c.getClass.getSimpleName,
+          "value" → v
+        )
+        gc.put(obj)
+      }
+    })
   }
 
   def getValue(c: Connection[_]) = {

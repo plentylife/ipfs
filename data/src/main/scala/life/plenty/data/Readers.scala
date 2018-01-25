@@ -94,7 +94,7 @@ object ConnectionReader {
     val con = d.asInstanceOf[JsConnection]
     hasClass(con.value) flatMap { hc ⇒
       if (hc) {
-        println("processing connection value with class")
+        //        println("processing connection value with class")
         OctopusReader.read(con.value) map { optO ⇒
           println("read octopus", optO)
 

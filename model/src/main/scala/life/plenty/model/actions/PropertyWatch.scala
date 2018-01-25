@@ -1,7 +1,8 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection.Connection
-import life.plenty.model.octopi.{Octopus, Property}
+import life.plenty.model.octopi.Octopus
+import life.plenty.model.utils.Property
 
 class PropertyWatch[T](override val withinOctopus: Octopus, val property: Property[T]) extends ActionOnGraphTransform {
   override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {

@@ -2,7 +2,7 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.Property
+import life.plenty.model.utils.Property
 import org.scalajs.dom.Node
 
 object Helpers {
@@ -12,9 +12,9 @@ object Helpers {
   implicit class BindableProperty[T](property: Property[T])(implicit parser: T ⇒ String) {
     val inner = Var(property.getSafe)
 
-    println(s"registering updater ${this.getClass} ${this.property.in.getClass}")
+    //    println(s"registering updater ${this.getClass} ${this.property.in.getClass}")
     property.registerUpdater(() ⇒ {
-      println(s"Bindable property updated ${this.getClass}")
+      println(s"Bindable property updated ${this.getClass} ${property.getSafe}")
       println(property.getSafe)
       inner.value_=(property.getSafe)
     })
