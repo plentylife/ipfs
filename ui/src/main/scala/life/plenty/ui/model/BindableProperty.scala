@@ -4,23 +4,25 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.utils.Property
 import org.scalajs.dom.Node
+import rx.Ctx
 
 object Helpers {
-
-  //  implicit
 
   implicit class BindableProperty[T](property: Property[T])(implicit parser: T ⇒ String) {
     val inner = Var(property.getSafe)
 
-    //    println(s"registering updater ${this.getClass} ${this.property.in.getClass}")
-    property.registerUpdater(() ⇒ {
-      println(s"Bindable property updated ${this.getClass} ${property.getSafe}")
-      println(property.getSafe)
-      inner.value_=(property.getSafe)
+    //    property.registerUpdater(() ⇒ {
+    //      println(property.getSafe)
+    //      inner.value_=(property.getSafe)
+    //    })
+    implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
+
+    property.getRx.foreach(p ⇒ {
+      println("rx property update", p)
+      inner.value_=(p)
     })
 
     @dom
-    //    def dom(parser: (T) ⇒ String = {x ⇒ x.toString}): Binding[Node] = {
     def dom: Binding[Node] = {
       if (inner.bind.nonEmpty) {
         <span class={s"${property.getClass.getSimpleName}"}>
@@ -30,8 +32,6 @@ object Helpers {
         <span></span>
       }
     }
-
-
   }
 
 }

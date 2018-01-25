@@ -10,16 +10,18 @@ import life.plenty.model.utils.Property
 import rx.{Ctx, Rx, Var}
 
 trait Octopus {
+  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
+
   val _id: String = null
   val idProperty = new Property[String]({ case Id(idValue: String) ⇒ idValue }, this, _id)
 
   protected var _modules: List[Module[Octopus]] = List()
   //  val mandatoryConnections: Set[Class[Connection[_]]]
   protected val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
-  protected val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
-  //  protected val _connections: Rx.Dynamic[List[Connection[_]]] =
-  //    _lastAddedConnection.fold(List.empty[Connection[_]])(
-  //      (list: List[Connection[_]], elem: Option[Connection[_]]) ⇒ {elem.map(_ :: list).getOrElse(list)})
+  //  protected val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
+  protected val _connections: Rx.Dynamic[List[Connection[_]]] =
+    _lastAddedConnection.fold(List.empty[Connection[_]])(
+      (list: List[Connection[_]], elem: Option[Connection[_]]) ⇒ {elem.map(_ :: list).getOrElse(list)})
 
   //  protected var _connections: Rx[List[Connection[_]]] = Var(List[Connection[_]]()).r
 
@@ -79,12 +81,13 @@ trait Octopus {
   /** this method will go away as rx is introduced thoroughly.
     * does not filter. collects on raw connections list */
   def getAllTopConnectionDataRx[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
-    Rx {_connections().collectFirst(f)}
+    _connections.map(_.collectFirst(f))
 
   def hasMarker(marker: MarkerEnum): Boolean = connections.collect { case Marker(m) if m == marker ⇒ true } contains true
 
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
     // duplicates are silently dropped
+    println(s"adding connection ${connection} to ${this}")
     if (_connections.now.exists(_.id == connection.id)) return Right()
 
     var onErrorList = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*) map { m ⇒
@@ -95,8 +98,9 @@ trait Octopus {
       case Some(e) ⇒ e
 
       case None ⇒
-        _connections() = connection :: _connections.now
+        //        _connections() = connection :: _connections.now
         _lastAddedConnection() = Option(connection)
+        println(s"added connection ${connection} to ${this} ${_connections.now}")
 
         onErrorList = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*) map { m ⇒
           m.onConnectionAdd(connection)

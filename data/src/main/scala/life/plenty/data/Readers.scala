@@ -2,14 +2,14 @@ package life.plenty.data
 
 import life.plenty.model.actions.ActionOnAddToModuleStack
 import life.plenty.model.connection._
-import life.plenty.model.octopi.GreatQuestions.Who
-import life.plenty.model.octopi.{BasicQuestion, BasicSpace, Octopus}
+import life.plenty.model.octopi.GreatQuestions._
+import life.plenty.model.octopi._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.language.postfixOps
 import scala.scalajs.js
-import scala.util.Random
+import scala.scalajs.js.JSON
 
 object OctopusReader {
   def ci(className: String, inst: ⇒ Octopus) = {
@@ -18,9 +18,14 @@ object OctopusReader {
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
     ci("BasicSpace", new BasicSpace(null)),
     ci("BasicQuestion", new BasicQuestion(null, null)),
-    ci("Who", new Who(null))
-    //,
-    //    Why(_), When(_), Where(_), Who(_), How(_), What(_)
+    ci("Who", new Who(null)),
+    ci("How", new How(null)),
+    ci("What", new What(null)),
+    ci("Why", new Why(null)),
+    ci("When", new When(null)),
+    ci("Where", new Where(null)),
+    ci("BasicAnswer", new BasicAnswer(null, null)),
+    ci("Contribution", new Contribution(null, null, null)),
   )
 
   def read(id: String): Future[Option[Octopus]] = {
@@ -115,12 +120,11 @@ object ConnectionReader {
 class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) extends
   ActionOnAddToModuleStack[Octopus] {
   override def onAddToStack(): Unit = {
-    val rm = Random.nextInt(100)
     //    println("gun reader in initialize of ", withinOctopus, withinOctopus.connections)
     gun.get("connections").map().`val`((d, k) ⇒ {
-      //      println(s"TRYING loaded connection of ${withinOctopus.getClass} $rm", JSON.stringify(d))
+      println(s"TRYING loaded connection of ${withinOctopus.getClass} $k", JSON.stringify(d))
       ConnectionReader.read(d, k) map { optCon ⇒ {
-        //        println(s"loaded connection of ${withinOctopus.getClass} $rm", optCon, JSON.stringify(d))
+        println(s"loaded connection of ${withinOctopus.getClass} $k", optCon, JSON.stringify(d))
         optCon foreach withinOctopus.addConnection
       }
       }

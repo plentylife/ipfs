@@ -9,7 +9,6 @@ import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import life.plenty.ui.model.Helpers._
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
-import org.scalajs.dom.window
 import rx.Ctx
 
 import scalaz.std.list._
@@ -66,13 +65,12 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
 
   private val parent = {withinOctopus.getAllTopConnectionDataRx({ case Parent(p: GreatQuestion) ⇒ p })}
   parent.trigger({
-    println("parent triggered")
     parent.now.foreach { p ⇒
-      println(s"prefix ${p.title()}"); prefix.value_=(p.title() + " ")
+      prefix.value_=(p.title() + " ")
     }
   })
 
-  window.setTimeout(() ⇒ {println("question.title", withinOctopus.connections)}, 3000)
+  //  window.setTimeout(() ⇒ {println("question.title", withinOctopus.connections)}, 3000)
 
   //    private val o = withinOctopus.getAllTopConnectionDataRx({ case Parent(p: GreatQuestion) ⇒ p }).foreach({
   //      case Some(p) ⇒ println(s"prefix ${p.title()}"); prefix.value_=(p.title() + " ")

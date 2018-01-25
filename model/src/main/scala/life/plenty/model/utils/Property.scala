@@ -3,6 +3,7 @@ package life.plenty.model.utils
 import life.plenty.model.actions.PropertyWatch
 import life.plenty.model.connection.Connection
 import life.plenty.model.octopi.Octopus
+import rx.{Ctx, Rx, Var}
 
 /** the get on connection data is not safe
   *
@@ -13,7 +14,7 @@ class Property[T](val getter: PartialFunction[Connection[_], T], val in: Octopus
   def setInner(v: T): Unit = _inner = Option(v)
 
   def applyInner(f: (T) ⇒ Unit): Unit = {
-    println("trying to apply inner to ", _inner)
+    //    println("trying to apply inner to ", _inner)
     _inner foreach f
     //    println("applied")
   }
@@ -22,9 +23,14 @@ class Property[T](val getter: PartialFunction[Connection[_], T], val in: Octopus
     try {
       getSafe.get
     } catch {
-      case e: Throwable ⇒ println(e.getMessage); e.printStackTrace(); throw e
+      case e: Throwable ⇒ println(s"${e.getMessage} in ${in}"); e.printStackTrace(); throw e
     }
   }
+
+  def getRx(implicit ctx: Ctx.Owner): Rx[Option[T]] = Var(_inner).flatMap(i ⇒ {
+    if (i.isEmpty) in.getAllTopConnectionDataRx(getter)
+    else Var(i)
+  })
 
   def getSafe: Option[T] = _inner orElse in.getTopConnectionData(getter)
 

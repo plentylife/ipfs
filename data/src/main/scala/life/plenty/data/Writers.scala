@@ -19,7 +19,7 @@ object OctopusWriter {
     val gcons = go.get("connections")
     for (c ← o.allConnections) {
       val conGun = ConnectionWriter.write(c)
-      println("writing connection", c)
+      println("writing connection", c, c.id)
       gcons.set(conGun, null)
     }
   }

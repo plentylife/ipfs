@@ -2,7 +2,7 @@ package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{OctopusReader, Main ⇒ dataMain}
-import life.plenty.model.octopi.{BasicSpace, Octopus}
+import life.plenty.model.octopi.{BasicSpace, Octopus, Space}
 import life.plenty.model.{initialize ⇒ mInit}
 import life.plenty.ui.display.Help
 import life.plenty.ui.model.DisplayModel
@@ -29,7 +29,8 @@ object Main {
 
     val ts = new BasicSpace("test")
     println(s"ui loading ${ts.id}")
-    OctopusReader.read(ts.id) foreach { s ⇒
+    OctopusReader.read(ts.id) foreach { spaceOpt ⇒
+      spaceOpt foreach { s ⇒ UiContext.startingSpace = s.asInstanceOf[Space] }
       //      window.setTimeout(() ⇒ {
       //        println("*** after load")
       //        println(s.get.connections)
@@ -39,7 +40,7 @@ object Main {
       //        }}
       //      }, 3000)
 
-      dom.render(document.body, mainSection(s))
+      dom.render(document.body, mainSection(spaceOpt))
     }
   }
 
