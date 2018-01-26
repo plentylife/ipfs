@@ -70,16 +70,17 @@ object ConnectionWriter {
 class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGraphTransform {
   private lazy val gun = Main.gun.get(withinOctopus.id)
 
-  private def readerLoaded = withinOctopus.getTopModule({ case r: OctopusGunReaderModule ⇒ r }) match {
-    case Some(r: OctopusGunReaderModule) ⇒ r.loaded
-    case _ ⇒ false
-  }
+  //  private def readerLoaded = withinOctopus.getTopModule({ case r: OctopusGunReaderModule ⇒ r }) match {
+  //    case Some(r: OctopusGunReaderModule) ⇒ r.loaded
+  //    case _ ⇒ false
+  //  }
 
   override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {
-    println(s"gunwirtermodue ${withinOctopus} ${connection} ${connection.tmpMarker} ${readerLoaded}")
+    println(s"gunwirtermodue ${withinOctopus} ${connection} ${connection.tmpMarker}")
     println(withinOctopus.modules)
-    println(s"id ${withinOctopus.idProperty.init} ${withinOctopus.idProperty.getSafe}")
-    if (connection.tmpMarker != "gun" && readerLoaded) {
+    //    println(s"id ${withinOctopus.idProperty.init} ${withinOctopus.idProperty.getSafe}")
+    //    if (connection.tmpMarker != "gun" && readerLoaded) {
+    if (connection.tmpMarker != "gun") {
       OctopusWriter.writeSingleConnection(connection, gun)
     }
     Right()

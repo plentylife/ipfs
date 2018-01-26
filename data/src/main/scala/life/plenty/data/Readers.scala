@@ -16,16 +16,16 @@ object OctopusReader {
     (cn: String) ⇒ if (className == cn) Option(inst) else None
   }
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
-    ci("BasicSpace", new BasicSpace(null, null)),
-    ci("BasicQuestion", new BasicQuestion(null, null, null)),
-    ci("Who", new Who(null, null)),
-    ci("How", new How(null, null)),
-    ci("What", new What(null, null)),
-    ci("Why", new Why(null, null)),
-    ci("When", new When(null, null)),
-    ci("Where", new Where(null, null)),
-    ci("BasicAnswer", new BasicAnswer(null, null, null)),
-    ci("Contribution", new Contribution(null, null, null)),
+    ci("BasicSpace", new BasicSpace()),
+    ci("BasicQuestion", new BasicQuestion()),
+    ci("Who", new Who()),
+    ci("How", new How()),
+    ci("What", new What()),
+    ci("Why", new Why()),
+    ci("When", new When()),
+    ci("Where", new Where()),
+    ci("BasicAnswer", new BasicAnswer()),
+    ci("Contribution", new Contribution()),
   )
 
   def read(id: String): Future[Option[Octopus]] = {
@@ -47,7 +47,7 @@ object OctopusReader {
         try {
           val o = f(cs)
           o foreach { o ⇒
-            o.idProperty.setInner(id)
+            o.addConnection(Id(id))
             Cache.put(o)
             o.addModule(new OctopusGunReaderModule(o, gun))
           }

@@ -4,9 +4,8 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateAnswer
 import life.plenty.model.octopi.Question
-import life.plenty.ui.UiContext
-import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.html.{Input, TextArea}
 import org.scalajs.dom.raw.Node

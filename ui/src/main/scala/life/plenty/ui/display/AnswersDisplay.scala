@@ -4,10 +4,9 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionUpDownVote
 import life.plenty.model.octopi._
-import life.plenty.ui.UiContext
-import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 import rx.Ctx
@@ -39,7 +38,7 @@ class BasicAnswerDisplay(override val withinOctopus: BasicAnswer) extends Displa
         <h6 class="card-title">answer</h6>
         <h6 class="card-subtitle mb-2 text-muted">by john</h6>
         <p class="card-text">
-          {withinOctopus.body.dom.bind}
+          {withinOctopus.getBody.dom.bind}
         </p>
       </div>
     </div>

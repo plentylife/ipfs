@@ -9,7 +9,7 @@ import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import life.plenty.ui.model.Helpers._
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
-import rx.Ctx
+import rx.{Ctx, Rx}
 
 import scalaz.std.list._
 
@@ -27,7 +27,7 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 
     <div class="title-with-input d-flex mt-3">
       <h3 class="title mr-3">
-        {withinOctopus.title.dom.bind}
+        {withinOctopus.getTitle.dom.bind}
       </h3>
       <span class="d-inline-flex">
         <input type="text" disabled={action.isEmpty} onkeyup={onEnter _} placeholder="ask your question"/>
@@ -55,7 +55,7 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     //println("question title display")
     <div class="question-title">
-      {prefix.bind}{withinOctopus.title.dom.bind}{"?"}
+      {gqTitle.dom.bind}{withinOctopus.getTitle.dom.bind}{"?"}
     </div>
   }
 
@@ -63,12 +63,13 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
 
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  private val parent = {withinOctopus.getAllTopConnectionDataRx({ case Parent(p: GreatQuestion) ⇒ p })}
-  parent.trigger({
-    parent.now.foreach { p ⇒
-      prefix.value_=(p.title() + " ")
-    }
-  })
+  private val gqParent = {withinOctopus.rx.get({ case Parent(p: GreatQuestion) ⇒ p })}
+  private val gqTitle: Rx[Option[String]] = gqParent.flatMap {
+    case Some(gq) ⇒ gq.getTitle: Rx[Option[String]]
+    case None ⇒ rx.Var(Some("")): Rx[Option[String]]
+  }
+
+
 
   //  window.setTimeout(() ⇒ {println("question.title", withinOctopus.connections)}, 3000)
 

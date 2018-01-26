@@ -5,10 +5,9 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionTip
 import life.plenty.model.octopi.Contribution
 import life.plenty.ui
-import life.plenty.ui.UiContext
-import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Node
@@ -54,7 +53,7 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
         <h6 class="card-subtitle mb-2 text-muted">by sarah</h6>
         <p class="card-text">
           body
-          {withinOctopus.body.dom.bind}
+          {withinOctopus.getBody.dom.bind}
         </p>
       </div>
     </div>

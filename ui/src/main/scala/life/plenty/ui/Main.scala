@@ -2,10 +2,11 @@ package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{OctopusReader, Main ⇒ dataMain}
+import life.plenty.model.connection.Title
 import life.plenty.model.octopi.{BasicSpace, Octopus, Space}
 import life.plenty.model.{initialize ⇒ mInit}
 import life.plenty.ui.display.Help
-import life.plenty.ui.model.DisplayModel
+import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.{Event, document}
 
@@ -27,7 +28,9 @@ object Main {
     initialize()
 
 
-    val ts = new BasicSpace("test")
+    val ts = new BasicSpace()
+    ts.asNew(Title("test"))
+
     println(s"ui loading ${ts.id}")
     OctopusReader.read(ts.id) foreach { spaceOpt ⇒
       spaceOpt foreach { s ⇒ UiContext.startingSpace = s.asInstanceOf[Space] }

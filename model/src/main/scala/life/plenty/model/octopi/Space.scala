@@ -1,19 +1,17 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.Title
-import life.plenty.model.utils.Property
+import life.plenty.model.utils._
 
-trait Space extends Octopus {
-  protected val _title: String
-  lazy val title = new Property[String]({ case Title(t: String) ⇒ t }, this, _title)
+//trait Space extends Octopus {
+trait Space extends WithParent[Space] {
+  def getTitle = rx.get({ case Title(t) ⇒ t })
 
-  override def idGenerator: String = super.idGenerator + title()
+  override def required = super.required + getTitle - getParent
 
-  override protected def preConstructor(): Unit = {
-    super.preConstructor()
-    title.setInner(_title)
-    title applyInner { t ⇒ addConnection(Title(t)) }
-  }
+  println(s"space required fields ${required}")
+
+  override def idGenerator: String = super.idGenerator + (getTitle: String)
 }
 
 

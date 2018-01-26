@@ -7,9 +7,8 @@ import life.plenty.model.connection.{Connection, Marker}
 import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
 import rx.{Ctx, Rx, Var}
 
-trait Octopus extends WithBasicInfo {
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-  override lazy val _this = this
+trait Octopus extends OctopusConstructor {
+  implicit var ctx: Ctx.Owner = Ctx.Owner.safe()
 
   protected var _modules: List[Module[Octopus]] = List()
   protected val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
@@ -63,6 +62,7 @@ trait Octopus extends WithBasicInfo {
   def getTopConnectionData[T](f: PartialFunction[Connection[_], T]): Option[T] =
     connections.collectFirst(f)
 
+  @deprecated
   /** this method will go away as rx is introduced thoroughly.
     * does not filter. collects on raw connections list */
   def getAllTopConnectionDataRx[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
@@ -70,6 +70,33 @@ trait Octopus extends WithBasicInfo {
       case Some(c) ⇒ Var(Option(c))
       case None ⇒ _lastAddedConnection.map(_.collect(f))
     }
+
+  object s {
+    def get[T](f: PartialFunction[Connection[_], Connection[T]]): Option[Connection[T]] = getTopConnection(f)
+
+    def ex[T](f: PartialFunction[Connection[_], T]): Option[T] = getTopConnectionData(f)
+
+    def exf[T](f: PartialFunction[Connection[_], T]): T = ex(f).get
+  }
+
+  object rx {
+    // fixme add filters
+    def cons: Rx.Dynamic[List[Connection[_]]] = _connections map { cons ⇒
+      connectionFilters.foldLeft(cons)((cs, f) ⇒ f(cs))
+    }
+
+    def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
+      cons.now.collectFirst(f) match {
+        case Some(c) ⇒ Var(Option(c))
+        case None ⇒ getWatch(f)
+      }
+
+    def getWatch[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
+      _lastAddedConnection.map(_.collect(f))
+    }
+
+    //    def getAll[T <: Connection[_]](implicit ctx: Ctx.Owner): Rx[Iterable[T]] = _connections.
+  }
 
   //    _connections.map(_.collectFirst(f))
 

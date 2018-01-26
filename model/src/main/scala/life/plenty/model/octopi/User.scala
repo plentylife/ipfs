@@ -1,9 +1,9 @@
 package life.plenty.model.octopi
 
 trait User extends Octopus {
-  protected val userId: String
+  override def required = super.required + getRxId
 
-  override def idGenerator: String = userId
+  override def idGenerator: String = throw new NotImplementedError("this method not supposed to be used for users")
 
   override def equals(o: Any): Boolean = o match {
     case that: User => that.id.equalsIgnoreCase(this.id)
@@ -13,6 +13,6 @@ trait User extends Octopus {
   override def hashCode: Int = id.hashCode
 }
 
-class BasicUser(override protected val userId: String, override val _basicInfo: BasicInfo) extends User {
+class BasicUser() extends User {
 
 }

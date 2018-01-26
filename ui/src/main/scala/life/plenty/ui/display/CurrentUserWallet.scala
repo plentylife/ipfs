@@ -6,7 +6,7 @@ import life.plenty.model.GraphUtils
 import life.plenty.model.connection.Child
 import life.plenty.model.octopi.{Members, Octopus, Wallet}
 import life.plenty.ui
-import life.plenty.ui.UiContext
+import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 

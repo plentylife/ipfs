@@ -1,29 +1,21 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.{Child, Parent}
-import life.plenty.model.utils.Property
+import rx.Rx
 
 trait WithParent[T <: Octopus] extends Octopus {
-  protected val _parent: T
-  lazy val parent = new Property[T]({ case Parent(o: T) ⇒ o }, this, _parent)
+  override def required = super.required + getParent
 
-  override def idGenerator: String = super.idGenerator + parent().id
+  def getParent: Rx[Option[Octopus]] = rx.get({ case Parent(p: Octopus) ⇒ p })
 
-  override protected def preConstructor(): Unit = {
-    super.preConstructor()
-    parent applyInner { p ⇒
-      this.addConnection(Parent(p))
-      p.addConnection(Child(this))
-    }
-    println(s"with parent preconstructor ${this} ${parent.getSafe.map(_.connections)}", _parent, parent.getSafe)
-  }
+  override def idGenerator: String = super.idGenerator + getParent.now.get.id
+
+  getParent.foreach(_.foreach { p: Octopus ⇒
+    println(s"adding child to parent from ${this} to $p")
+    p.addConnection(Child(this))
+  })
 }
 
 trait WithMembers extends Space {
-  lazy val members: Property[Members] = new Property[Members]({ case Child(m: Members) ⇒ m }, this, null)
-
-  override protected def preConstructor(): Unit = {
-    super.preConstructor()
-    println("with members constructor")
-  }
+  //  def members: Members = new Property[Members]({ case Child(m: Members) ⇒ m }, this, null)
 }
