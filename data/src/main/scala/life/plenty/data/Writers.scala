@@ -2,7 +2,7 @@ package life.plenty.data
 
 import life.plenty.data.Main.gun
 import life.plenty.model.actions.ActionAfterGraphTransform
-import life.plenty.model.connection.Connection
+import life.plenty.model.connection.{AtInstantiation, Connection}
 import life.plenty.model.octopi.Octopus
 
 import scala.scalajs.js
@@ -76,11 +76,11 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
   //  }
 
   override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {
-    println(s"gunwirtermodue ${withinOctopus} ${connection} ${connection.tmpMarker}")
+    println(s"Gun Writer ${withinOctopus} ${connection} marker: ${connection.tmpMarker}")
     println(withinOctopus.modules)
     //    println(s"id ${withinOctopus.idProperty.init} ${withinOctopus.idProperty.getSafe}")
     //    if (connection.tmpMarker != "gun" && readerLoaded) {
-    if (connection.tmpMarker != "gun") {
+    if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       OctopusWriter.writeSingleConnection(connection, gun)
     }
     Right()

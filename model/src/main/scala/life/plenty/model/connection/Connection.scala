@@ -3,11 +3,16 @@ package life.plenty.model.connection
 import life.plenty.model
 import life.plenty.model.octopi.Octopus
 
+trait TmpMarker
+
+object NoMarker extends TmpMarker
+
+object AtInstantiation extends TmpMarker
+
 trait Connection[T] {
   def value: T
 
-  // fixme
-  var tmpMarker: String = ""
+  var tmpMarker: TmpMarker = NoMarker
 
   def id: String = idGivenValue(value) + this.getClass.getSimpleName
 

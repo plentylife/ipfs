@@ -4,10 +4,10 @@ import life.plenty.model.connection.Title
 import life.plenty.model.utils._
 
 //trait Space extends Octopus {
-trait Space extends WithParent[Space] {
+trait Space extends Octopus {
   def getTitle = rx.get({ case Title(t) ⇒ t })
 
-  override def required = super.required + getTitle - getParent
+  override def required = super.required + getTitle
 
   println(s"space required fields ${required}")
 

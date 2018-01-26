@@ -11,6 +11,8 @@ import scala.language.postfixOps
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 
+object GunMarker extends TmpMarker
+
 object OctopusReader {
   def ci(className: String, inst: ⇒ Octopus) = {
     (cn: String) ⇒ if (className == cn) Option(inst) else None
@@ -128,7 +130,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) exte
       ConnectionReader.read(d, k) map { optCon ⇒ {
         println(s"loaded connection of ${withinOctopus.getClass} $k", optCon, JSON.stringify(d))
         optCon foreach { c ⇒
-          c.tmpMarker = "gun"
+          c.tmpMarker = GunMarker
           withinOctopus.addConnection(c)
         }
       }

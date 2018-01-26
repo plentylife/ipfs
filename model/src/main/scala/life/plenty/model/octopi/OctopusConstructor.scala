@@ -3,7 +3,7 @@ package life.plenty.model.octopi
 import java.util.Date
 
 import life.plenty.model
-import life.plenty.model.connection.{Connection, CreationTime, Creator, Id}
+import life.plenty.model.connection._
 import rx.Rx
 
 trait OctopusConstructor {
@@ -28,10 +28,17 @@ trait OctopusConstructor {
   def set(c: Connection[_]): Unit = addConnection(c)
 
   def asNew(properties: Connection[_]*): Unit = {
-    properties.foreach(p ⇒ self.set(p))
-    addConnection(CreationTime(new Date().getTime))
+    println(s"attempting to instantiate ${this}")
+    properties.foreach(p ⇒ {
+      p.tmpMarker = AtInstantiation
+      self.set(p)
+    })
+    val ct = CreationTime(new Date().getTime)
+    ct.tmpMarker = AtInstantiation
+    addConnection(ct)
     for (p ← required) {
       if (p.now.isEmpty) throw new Exception(s"Class ${this} was not properly instantiated on property ${p.getClass}")
     }
+    println(s"successfully instantiated ${this}")
   }
 }
