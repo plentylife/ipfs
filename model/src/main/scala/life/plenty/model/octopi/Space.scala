@@ -9,8 +9,6 @@ trait Space extends Octopus {
 
   override def required = super.required + getTitle
 
-  println(s"space required fields ${required}")
-
   override def idGenerator: String = super.idGenerator + (getTitle: String)
 }
 

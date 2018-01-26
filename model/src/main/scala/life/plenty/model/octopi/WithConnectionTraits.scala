@@ -10,10 +10,12 @@ trait WithParent[T <: Octopus] extends Octopus {
 
   override def idGenerator: String = super.idGenerator + getParent.now.get.id
 
-  getParent.foreach(_.foreach { p: Octopus ⇒
-    println(s"adding child to parent from ${this} to $p")
-    p.addConnection(Child(this))
-  })
+  onInstantiate {
+    getParent.foreach(_.foreach { p: Octopus ⇒
+      println(s"adding child to parent from ${this} to $p")
+      p.addConnection(Child(this).inst)
+    })
+  }
 }
 
 trait WithMembers extends Space {

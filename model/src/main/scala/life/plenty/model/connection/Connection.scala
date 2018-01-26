@@ -20,6 +20,11 @@ trait Connection[T] {
     case o: Octopus ⇒ model.getHasher.b64(o.id + "connection")
     case other ⇒ model.getHasher.b64(other.toString)
   }
+
+  def inst: Connection[T] = {
+    this.tmpMarker = AtInstantiation
+    this
+  }
 }
 
 trait InstantiateFromStringByApply[T <: Connection[_]] {

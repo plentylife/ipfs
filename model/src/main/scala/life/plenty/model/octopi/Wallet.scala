@@ -12,10 +12,12 @@ class Wallet() extends Octopus {
 
   def getMembers: Rx[Option[Members]] = rx.get({ case Parent(m: Members) ⇒ m })
 
-  def registerWithParent(p: Octopus) = p.addConnection(Child(this))
+  def registerWithParent(p: Octopus) = p.addConnection(Child(this).inst)
 
-  getUser.foreach(_ foreach registerWithParent)
-  getMembers.foreach(_ foreach registerWithParent)
+  onInstantiate {
+    getUser.foreach(_ foreach registerWithParent)
+    getMembers.foreach(_ foreach registerWithParent)
+  }
 
   def getUsableThanksAmount: Int = {
     //    val thanks = (0 :: user.connections.collect({ case Child(t: Transaction) ⇒

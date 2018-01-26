@@ -4,18 +4,17 @@ import java.util.Date
 
 import life.plenty.model
 import life.plenty.model.connection._
-import rx.Rx
+import rx.{Rx, Var}
 
 trait OctopusConstructor {
   self: Octopus ⇒
-  //  private[this] implicit val ctx: Ctx.Owner = self.ctx
 
   def getRxId: Rx[Option[String]] = rx.get({ case Id(id) ⇒ id })
 
   def id: String = getTopConnectionData({ case Id(id) ⇒ id }) getOrElse model.getHasher.b64(idGenerator)
 
   def idGenerator: String = {
-    //    println(this, "is generating id", idProperty.getSafe, idProperty.getOrLazyElse("faulty"))
+    println(s"${this.getClass} is generating id; ${_connections.now}")
     s.exf({ case CreationTime(t) ⇒ t }).toString + s.exf({ case Creator(c) ⇒ c }).id
   }
 
@@ -27,8 +26,12 @@ trait OctopusConstructor {
 
   def set(c: Connection[_]): Unit = addConnection(c)
 
+  val instantiated = Var(false)
+
+  def onInstantiate(f: ⇒ Unit) = instantiated.foreach(i ⇒ if (i) f)
+
   def asNew(properties: Connection[_]*): Unit = {
-    println(s"attempting to instantiate ${this}")
+    println(s"attempting to instantiate ${this.getClass}")
     properties.foreach(p ⇒ {
       p.tmpMarker = AtInstantiation
       self.set(p)
@@ -37,8 +40,10 @@ trait OctopusConstructor {
     ct.tmpMarker = AtInstantiation
     addConnection(ct)
     for (p ← required) {
-      if (p.now.isEmpty) throw new Exception(s"Class ${this} was not properly instantiated on property ${p.getClass}")
+      if (p.now.isEmpty) throw new Exception(s"Class ${this.getClass} was not properly instantiated. " +
+        s"Connections ${this._connections.now}")
     }
-    println(s"successfully instantiated ${this}")
+    instantiated() = true
+    println(s"successfully instantiated ${this} ${this.id}")
   }
 }

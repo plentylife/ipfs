@@ -1,9 +1,11 @@
 package life.plenty.model.octopi
 
 trait User extends Octopus {
-  override def required = super.required + getRxId
+  override def required = Set(getRxId)
 
-  override def idGenerator: String = throw new NotImplementedError("this method not supposed to be used for users")
+  override def idGenerator: String = {
+    throw new NotImplementedError(s"this method not supposed to be used for users. Connections ${_connections.now}")
+  }
 
   override def equals(o: Any): Boolean = o match {
     case that: User => that.id.equalsIgnoreCase(this.id)

@@ -11,8 +11,8 @@ trait Octopus extends OctopusConstructor {
   implicit var ctx: Ctx.Owner = Ctx.Owner.safe()
 
   protected var _modules: List[Module[Octopus]] = List()
-  protected val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
-  protected val _connections: Rx.Dynamic[List[Connection[_]]] =
+  protected lazy val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
+  protected lazy val _connections: Rx.Dynamic[List[Connection[_]]] =
     _lastAddedConnection.fold(List.empty[Connection[_]])(
       (list: List[Connection[_]], elem: Option[Connection[_]]) ⇒ {elem.map(_ :: list).getOrElse(list)})
 
@@ -29,8 +29,9 @@ trait Octopus extends OctopusConstructor {
     modules.collect(matchBy)
 
   /** these modules do not have any filters applied */
-  def getAllModules[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): List[T] =
+  def getAllModules[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): List[T] = {
     _modules.collect(matchBy)
+  }
 
   def getTopModule[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): Option[T] = {
     modules.collectFirst(matchBy)
@@ -49,7 +50,6 @@ trait Octopus extends OctopusConstructor {
 
   /** filters applied */
   def connections: List[Connection[_]] = {
-    //    println("con fitlres", connectionFilters)
     connectionFilters.foldLeft(_connections.now)((cs, f) ⇒ f(cs))
   }
 
@@ -98,8 +98,6 @@ trait Octopus extends OctopusConstructor {
     //    def getAll[T <: Connection[_]](implicit ctx: Ctx.Owner): Rx[Iterable[T]] = _connections.
   }
 
-  //    _connections.map(_.collectFirst(f))
-
   def hasMarker(marker: MarkerEnum): Boolean = connections.collect { case Marker(m) if m == marker ⇒ true } contains true
 
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
@@ -137,7 +135,7 @@ trait Octopus extends OctopusConstructor {
   /* Constructor */
   _modules = ModuleRegistry.getModules(this)
   preConstructor()
-  println("Octopus constructor -- " + this.toString)
+  println("Octopus constructor -- " + this.getClass)
   getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})
   //  println(connections)
 

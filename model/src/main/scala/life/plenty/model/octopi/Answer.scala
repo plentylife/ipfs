@@ -23,7 +23,7 @@ trait Answer extends Space with WithParent[Space] {
 
   /** at least for now, answers do not have titles */
   override def asNew(properties: Connection[_]*): Unit = {
-    set(Title(""))
+    set(Title("").inst)
     super.asNew(properties: _*)
   }
 }

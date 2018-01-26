@@ -3,7 +3,8 @@ package life.plenty.data
 import life.plenty.data.Main.gun
 import life.plenty.model.actions.ActionAfterGraphTransform
 import life.plenty.model.connection.{AtInstantiation, Connection}
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.{Module, Octopus}
+import rx.Ctx
 
 import scala.scalajs.js
 
@@ -70,21 +71,23 @@ object ConnectionWriter {
 class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGraphTransform {
   private lazy val gun = Main.gun.get(withinOctopus.id)
 
-  //  private def readerLoaded = withinOctopus.getTopModule({ case r: OctopusGunReaderModule ⇒ r }) match {
-  //    case Some(r: OctopusGunReaderModule) ⇒ r.loaded
-  //    case _ ⇒ false
-  //  }
-
   override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {
-    println(s"Gun Writer ${withinOctopus} ${connection} marker: ${connection.tmpMarker}")
-    println(withinOctopus.modules)
-    //    println(s"id ${withinOctopus.idProperty.init} ${withinOctopus.idProperty.getSafe}")
-    //    if (connection.tmpMarker != "gun" && readerLoaded) {
+    //    println(s"Gun Writer ${withinOctopus} ${connection} marker: ${connection.tmpMarker}")
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
+      println(s"Gun Writer ${withinOctopus} [${withinOctopus.id}] ${connection} ")
       OctopusWriter.writeSingleConnection(connection, gun)
     }
     Right()
   }
 
   override def onConnectionRemove(connection: Connection[_]): Either[Exception, Unit] = ???
+}
+
+class InstantiationGunWriterModule(override val withinOctopus: Octopus) extends Module[Octopus] {
+  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
+
+  withinOctopus.onInstantiate {
+    println(s"Instantiation Gun Writer ${withinOctopus}")
+    OctopusWriter.write(withinOctopus)
+  }
 }
