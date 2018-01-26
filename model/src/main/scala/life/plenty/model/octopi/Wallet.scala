@@ -2,7 +2,7 @@ package life.plenty.model.octopi
 
 import life.plenty.model.connection.{Child, Parent}
 
-class Wallet(user: User, inMembers: Members) extends Octopus {
+class Wallet(user: User, inMembers: Members, override val _basicInfo: BasicInfo) extends Octopus {
   def getUsableThanksAmount: Int = {
     val thanks = (0 :: user.connections.collect({ case Child(t: Transaction) ⇒
       println(s"tamount ${t.amount}");
@@ -16,7 +16,9 @@ class Wallet(user: User, inMembers: Members) extends Octopus {
 
   def getUsableVotes: Int = {
     val allowance = user.connections.collect({ case Child(a: VoteAllowance) ⇒ a.size }).sum
-    val used = user.connections.collect({ case Child(v: Vote) ⇒ v.sizeAndDirection.abs }).sum
+    // fixme
+    //    val used = user.connections.collect({ case Child(v: Vote) ⇒ v.sizeAndDirection.abs }).sum
+    val used = 0
     allowance - used
   }
 

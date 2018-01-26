@@ -15,7 +15,7 @@ class AnswerVoteOrder(override val withinOctopus: Question) extends OctopusOrder
       }
     }
 
-    answers = answers.sortBy(_.countVotes).reverse
+    answers = answers.sortBy(_.votes.now).reverse
     answers ::: others
   }
 }

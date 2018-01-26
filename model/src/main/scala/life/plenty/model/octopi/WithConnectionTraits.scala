@@ -1,6 +1,6 @@
 package life.plenty.model.octopi
 
-import life.plenty.model.connection.{Child, Creator, Parent}
+import life.plenty.model.connection.{Child, Parent}
 import life.plenty.model.utils.Property
 
 trait WithParent[T <: Octopus] extends Octopus {
@@ -27,17 +27,3 @@ trait WithMembers extends Space {
     println("with members constructor")
   }
 }
-
-trait WithCreator extends Octopus {
-  val creator: User
-
-  override protected def preConstructor(): Unit = {
-    super.preConstructor()
-    this.addConnection(Creator(creator))
-  }
-}
-
-//
-//trait WithId {
-//
-//}

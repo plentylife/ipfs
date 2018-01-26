@@ -38,6 +38,8 @@ class Property[T](val getter: PartialFunction[Connection[_], T], val in: Octopus
 
   def getOrLazyElse(v: ⇒ T): T = getSafe.getOrElse(v)
 
+  def getOrElseRx(v: ⇒ T)(implicit ctx: Ctx.Owner): Rx[T] = getRx.map(_.getOrElse(v))
+
   private var updaters = Set[() ⇒ Unit]()
 
   def registerUpdater(f: () ⇒ Unit) = updaters += f

@@ -16,15 +16,15 @@ object OctopusReader {
     (cn: String) ⇒ if (className == cn) Option(inst) else None
   }
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
-    ci("BasicSpace", new BasicSpace(null)),
-    ci("BasicQuestion", new BasicQuestion(null, null)),
-    ci("Who", new Who(null)),
-    ci("How", new How(null)),
-    ci("What", new What(null)),
-    ci("Why", new Why(null)),
-    ci("When", new When(null)),
-    ci("Where", new Where(null)),
-    ci("BasicAnswer", new BasicAnswer(null, null)),
+    ci("BasicSpace", new BasicSpace(null, null)),
+    ci("BasicQuestion", new BasicQuestion(null, null, null)),
+    ci("Who", new Who(null, null)),
+    ci("How", new How(null, null)),
+    ci("What", new What(null, null)),
+    ci("Why", new Why(null, null)),
+    ci("When", new When(null, null)),
+    ci("Where", new Where(null, null)),
+    ci("BasicAnswer", new BasicAnswer(null, null, null)),
     ci("Contribution", new Contribution(null, null, null)),
   )
 

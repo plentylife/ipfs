@@ -1,36 +1,21 @@
 package life.plenty.model.octopi
 
-import life.plenty.model
 import life.plenty.model.ModuleRegistry
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
-import life.plenty.model.connection.{Connection, Id, Marker}
+import life.plenty.model.connection.{Connection, Marker}
 import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
-import life.plenty.model.utils.Property
 import rx.{Ctx, Rx, Var}
 
-trait Octopus {
+trait Octopus extends WithBasicInfo {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-
-  val _id: String = null
-  val idProperty = new Property[String]({ case Id(idValue: String) ⇒ idValue }, this, _id)
+  override lazy val _this = this
 
   protected var _modules: List[Module[Octopus]] = List()
-  //  val mandatoryConnections: Set[Class[Connection[_]]]
   protected val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
-  //  protected val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
   protected val _connections: Rx.Dynamic[List[Connection[_]]] =
     _lastAddedConnection.fold(List.empty[Connection[_]])(
       (list: List[Connection[_]], elem: Option[Connection[_]]) ⇒ {elem.map(_ :: list).getOrElse(list)})
-
-  //  protected var _connections: Rx[List[Connection[_]]] = Var(List[Connection[_]]()).r
-
-  def id: String = idProperty getOrLazyElse model.getHasher.b64(idGenerator)
-
-  def idGenerator: String = {
-    //    println(this, "is generating id", idProperty.getSafe, idProperty.getOrLazyElse("faulty"))
-    ""
-  }
 
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
@@ -81,7 +66,12 @@ trait Octopus {
   /** this method will go away as rx is introduced thoroughly.
     * does not filter. collects on raw connections list */
   def getAllTopConnectionDataRx[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
-    _connections.map(_.collectFirst(f))
+    _connections.now.collectFirst(f) match {
+      case Some(c) ⇒ Var(Option(c))
+      case None ⇒ _lastAddedConnection.map(_.collect(f))
+    }
+
+  //    _connections.map(_.collectFirst(f))
 
   def hasMarker(marker: MarkerEnum): Boolean = connections.collect { case Marker(m) if m == marker ⇒ true } contains true
 
@@ -125,7 +115,6 @@ trait Octopus {
   //  println(connections)
 
 }
-
 
 
 trait Module[+T <: Octopus] {

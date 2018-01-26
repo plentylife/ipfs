@@ -4,17 +4,17 @@ import life.plenty.model.connection.Child
 import life.plenty.model.octopi._
 
 class ActionCreateQuestion(override val withinOctopus: Space) extends Module[Space] {
-  def create(title: String) = {
-    val q = new BasicQuestion(withinOctopus, title)
+  def create(title: String, basicInfo: BasicInfo) = {
+    val q = new BasicQuestion(withinOctopus, title, basicInfo)
     //    println("created question ", q, "in", withinOctopus, withinOctopus.connections)
     withinOctopus.addConnection(Child(q))
   }
 }
 
 class ActionCreateAnswer(override val withinOctopus: Space) extends Module[Space] {
-  def create(body: String, creator: User, isContribution: Boolean = false) = {
-    val a = if (!isContribution) new BasicAnswer(withinOctopus, body) else new Contribution(withinOctopus, body,
-      creator)
+  def create(body: String, creator: User, basicInfo: BasicInfo, isContribution: Boolean = false) = {
+    val a = if (!isContribution) new BasicAnswer(withinOctopus, body, basicInfo)
+    else new Contribution(withinOctopus, body, basicInfo)
     withinOctopus.addConnection(Child(a))
   }
 }

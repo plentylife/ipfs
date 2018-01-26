@@ -13,6 +13,6 @@ trait User extends Octopus {
   override def hashCode: Int = id.hashCode
 }
 
-class BasicUser(override protected val userId: String) extends User {
+class BasicUser(override protected val userId: String, override val _basicInfo: BasicInfo) extends User {
 
 }

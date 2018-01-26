@@ -17,9 +17,10 @@ class BasicAnswerDisplay(override val withinOctopus: BasicAnswer) extends Displa
 
   //  protected val body = Var[String](withinOctopus._body)
   protected val votes = Var[Int](0)
+  withinOctopus.votes.foreach(v ⇒ votes.value_=(v))
 
   override def update(): Unit = {
-    votes.value_=(withinOctopus.countVotes)
+    //    votes.value_=(withinOctopus.votes)
     //    body.value_=(withinOctopus._body)
   }
 
@@ -48,12 +49,12 @@ class BasicAnswerDisplay(override val withinOctopus: BasicAnswer) extends Displa
 
   private def upVote(e: Event) = {
     findVoteModule.foreach(_.up(UiContext.getUser))
-    votes.value_=(withinOctopus.countVotes)
+    //    votes.value_=(withinOctopus.votes)
   }
 
   private def downVote(e: Event) = {
     findVoteModule.foreach(_.down(UiContext.getUser))
-    votes.value_=(withinOctopus.countVotes)
+    //    votes.value_=(withinOctopus.votes)
   }
 
 }

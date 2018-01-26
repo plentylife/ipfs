@@ -1,8 +1,8 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection.MarkerEnum.{FILL_GREAT_QUESTIONS, HAS_FILLED_GREAT_QUESTIONS}
-import life.plenty.model.connection.{Child, Marker, Parent}
-import life.plenty.model.octopi.{GreatQuestion, GreatQuestions, Octopus, Space}
+import life.plenty.model.connection.{Marker, Parent}
+import life.plenty.model.octopi.{Octopus, Space}
 
 /* fixme move*/
 class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnInitialize[Space] {
@@ -23,16 +23,17 @@ class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnIniti
     withinOctopus addConnection Marker(HAS_FILLED_GREAT_QUESTIONS)
 
     // reverse because first in -- last out
-    GreatQuestions.orderedConstructors.reverse map {
-      constr ⇒ constr(withinOctopus)
-    } foreach {
-      question ⇒
-        if (!withinOctopus.connections.collect(
-          { case Child(q: GreatQuestion) ⇒
-            //println(q.getClass, question.getClass)
-            q
-          }
-        ).exists(_.getClass == question.getClass)) withinOctopus addConnection Child(question)
-    }
+    // fixme. uncomment
+    //    GreatQuestions.orderedConstructors.reverse map {
+    //      constr ⇒ constr(withinOctopus)
+    //    } foreach {
+    //      question ⇒
+    //        if (!withinOctopus.connections.collect(
+    //          { case Child(q: GreatQuestion) ⇒
+    //            //println(q.getClass, question.getClass)
+    //            q
+    //          }
+    //        ).exists(_.getClass == question.getClass)) withinOctopus addConnection Child(question)
+    //    }
   }
 }
