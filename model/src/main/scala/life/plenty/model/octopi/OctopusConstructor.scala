@@ -14,7 +14,7 @@ trait OctopusConstructor {
   def id: String = getTopConnectionData({ case Id(id) ⇒ id }) getOrElse model.getHasher.b64(idGenerator)
 
   def idGenerator: String = {
-    println(s"${this.getClass} is generating id; ${_connections.now}")
+    //    println(s"${this.getClass} is generating id; ${_connections.now}")
     s.exf({ case CreationTime(t) ⇒ t }).toString + s.exf({ case Creator(c) ⇒ c }).id
   }
 

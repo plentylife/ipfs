@@ -17,7 +17,7 @@ object Helpers {
     implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
     rxv.foreach(p ⇒ {
-      println("rx property update", p)
+      //      println("rx property update", p)
       inner.value_=(p)
     })
 

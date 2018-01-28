@@ -92,7 +92,7 @@ trait Octopus extends OctopusConstructor {
       }
 
     def getWatch[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      _lastAddedConnection.map(_.collect(f))
+      _lastAddedConnection.map(_.collect(f)).filter(_.nonEmpty)
     }
 
     //    def getAll[T <: Connection[_]](implicit ctx: Ctx.Owner): Rx[Iterable[T]] = _connections.

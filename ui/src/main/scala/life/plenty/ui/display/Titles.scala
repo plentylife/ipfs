@@ -69,6 +69,8 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
     case None ⇒ rx.Var(Some("")): Rx[Option[String]]
   }
 
+  gqTitle.foreach(t ⇒ println(s"title changed ${t}"))
+
 
 
   //  window.setTimeout(() ⇒ {println("question.title", withinOctopus.connections)}, 3000)
