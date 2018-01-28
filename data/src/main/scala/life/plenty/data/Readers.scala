@@ -17,6 +17,7 @@ object OctopusReader {
     (cn: String) ⇒ if (className == cn) Option(inst) else None
   }
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
+    ci("BasicUser", new BasicUser()),
     ci("BasicSpace", new BasicSpace()),
     ci("BasicQuestion", new BasicQuestion()),
     ci("Who", new Who()),
@@ -43,7 +44,7 @@ object OctopusReader {
     })
 
     className.future.map(cs ⇒ {
-      println(s"constructing $cs --")
+      println(s"Gun is constructing $cs")
       val r = availableClasses.flatMap(f ⇒ {
         try {
           val o = f(cs)

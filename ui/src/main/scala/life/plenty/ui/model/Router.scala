@@ -13,19 +13,19 @@ import scala.util.Try
 object Router {
   val router: Route.Hash[RoutingParams] = Route.Hash(defaultRoutingParams)(new Route.Format[RoutingParams] {
     override def unapply(hashText: String): Option[RoutingParams] = {
-      val r = fromHash(hashText)
-      println("read hash", r)
-      r
+      fromHash(hashText)
     }
 
     override def apply(state: RoutingParams): String = toHash(state)
   })
 
-  private def defaultRoutingParams = fromHash(window.location.hash) getOrElse changeViewState(ViewState.DISCUSSION)
+  private def defaultRoutingParams = fromHash(window.location.hash) getOrElse
+    changeViewState(ViewState.DISCUSSION, RoutingParams(0, None))
 
   private var lastParams: Option[RoutingParams] = None
   def initialize = {
     lastParams = fromHash(window.location.hash)
+    println(s"Router has params ${lastParams}")
     router.watch()
   }
 
@@ -39,15 +39,15 @@ object Router {
   }
 
   def toHash(r: RoutingParams): String = {
-    "#" + Base64.getEncoder.encodeToString(write(r).getBytes)
+    "#" + Base64.getUrlEncoder.encodeToString(write(r).getBytes)
   }
   def fromHash(h: String) = {
     val params = h.drop(1)
     //    println("decoding from hash", Base64.getDecoder.decode(params).map(_.toChar).mkString)
-    Try(read[RoutingParams](Base64.getDecoder.decode(params).map(_.toChar).mkString)).toOption
+    Try(read[RoutingParams](Base64.getUrlDecoder.decode(params).map(_.toChar).mkString)).toOption
   }
 
-  def changeViewState(s: ViewState, routingParams: RoutingParams = RoutingParams(0)) =
+  def changeViewState(s: ViewState, routingParams: RoutingParams) =
     routingParams.copy(stateId = s.id)
 }
 
@@ -56,7 +56,7 @@ object ViewState extends Enumeration {
   val DISCUSSION, RATING = Value
 }
 
-case class RoutingParams(stateId: Int) {
+case class RoutingParams(stateId: Int, spaceId: Option[String]) {
   def state = ViewState(stateId)
 }
 

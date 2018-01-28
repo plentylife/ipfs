@@ -7,7 +7,7 @@ import org.scalajs.dom.html.Input
 import org.scalajs.dom.{Event, Node}
 
 object Login {
-  private val open = Var(isOpen)
+  //  private val open = Var(isOpen)
 
   private val name = Var("")
   private val email = Var("")
@@ -15,13 +15,15 @@ object Login {
   private val emailEmpty = Var(false)
   private val nameEmpty = Var(false)
 
-  private def isOpen = {
-    UiContext.getUser == null
+  @dom
+  private def isOpen: Binding[Boolean] = {
+    //    UiContext.getUser == null
+    UiContext.userVar.bind == null
   }
 
   @dom
   def display(): Binding[Node] = {
-    if (open.bind) {
+    if (isOpen.bind) {
       <div class="login-outer-box d-flex justify-content-center align-items-center">
         <div class="login-box d-inline-flex flex-column">
           <div>
@@ -52,7 +54,7 @@ object Login {
           <button type="button" class="btn btn-primary mt-2" onclick={e: Event ⇒
             if (name.value.nonEmpty && email.value.nonEmpty) {
               UiContext.login(name.value, email.value)
-              open.value_=(isOpen)
+              //              open.value_=(isOpen)
             }}>Login</button>
         </div>
       </div>
