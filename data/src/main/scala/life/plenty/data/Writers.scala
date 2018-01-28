@@ -61,6 +61,7 @@ object ConnectionWriter {
         gc.put(obj)
       } else {
         println(s"skipped writing connection ${c} ${c.id}")
+        // this might means that a connection to a different octopus is getting reused
       }
     })
   }
@@ -78,7 +79,8 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
 
   override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {
     //    println(s"Gun Writer ${withinOctopus.id} ${connection} marker: ${connection.tmpMarker}")
-    if (withinOctopus.instantiated.now &&
+    if (
+      withinOctopus.isNew &&
       connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       println(s"Gun Writer ${withinOctopus} [${withinOctopus.id}] ${connection} ")
       OctopusWriter.writeSingleConnection(connection, gun)
@@ -92,7 +94,7 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
 class InstantiationGunWriterModule(override val withinOctopus: Octopus) extends Module[Octopus] {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  withinOctopus.onInstantiate {
+  withinOctopus.onNew {
     println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
     OctopusWriter.write(withinOctopus)
   }

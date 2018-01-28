@@ -1,17 +1,18 @@
 package life.plenty.model.actions
 
+import life.plenty.model.connection.{Amount, Creator, Parent}
 import life.plenty.model.octopi._
 
 
 class ActionUpDownVote(override val withinOctopus: Answer) extends Module[Answer] {
   def up(by: User) = {
-    //    new Vote(1, withinOctopus, by, basicInfo)
-    ???
+    val v = new Vote
+    v.asNew(Amount(1), Parent(withinOctopus), Creator(by))
   }
 
   def down(by: User) = {
-    //    new Vote(-1, withinOctopus, by, basicInfo)
-    ???
+    val v = new Vote
+    v.asNew(Amount(-1), Parent(withinOctopus), Creator(by))
   }
 }
 

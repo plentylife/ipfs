@@ -80,7 +80,6 @@ trait Octopus extends OctopusConstructor {
   }
 
   object rx {
-    // fixme add filters
     def cons: Rx.Dynamic[List[Connection[_]]] = _connections map { cons ⇒
       connectionFilters.foldLeft(cons)((cs, f) ⇒ f(cs))
     }

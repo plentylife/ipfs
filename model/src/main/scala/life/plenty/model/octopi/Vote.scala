@@ -1,20 +1,18 @@
 package life.plenty.model.octopi
 
-//val _sizeAndDirection: Int, val answer: Answer, val by: User, override val _basicInfo: BasicInfo
-class Vote() extends
-  Octopus {
+import life.plenty.model.connection.{Amount, Child, Parent}
+import life.plenty.model.utils._
 
-  lazy val sizeAndDirection = null
-  //  lazy val sizeAndDirection = new Property[Int]({ case Amount(a) ⇒ a }, this, _sizeAndDirection)
+class Vote() extends Octopus {
 
-  override protected def preConstructor() = {
-    super.preConstructor()
-    //    println("new vote for user", by, by.id, by.connections)
-    //    addConnection(Parent(answer))
-    //    addConnection(Parent(by))
-    //    addConnection(Amount(_sizeAndDirection))
-    //    answer.addConnection(Child(this))
-    //    by.addConnection(Child(this))
+  lazy val sizeAndDirection = rx.get({ case Amount(a) ⇒ a })
+  lazy val parentAnswer = rx.get({ case Parent(a: Answer) ⇒ a })
+
+  override def required = super.required ++ Set(sizeAndDirection, parentAnswer)
+
+  onNew {
+    parentAnswer.addConnection(Child(this))
+    println(s"New vote added as a child to ${parentAnswer.now} | ${parentAnswer.now.get.connections}")
   }
 }
 

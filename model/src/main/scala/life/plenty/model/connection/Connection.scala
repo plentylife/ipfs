@@ -36,6 +36,7 @@ trait InstantiateFromStringByApply[T <: Connection[_]] {
 }
 
 trait InstantiateFromOctopusByApply[T <: Connection[_]] {
+  // fixme. ideally should be optional
   def instantiate(from: Octopus): T
 
   def apply(className: String, from: Octopus): Option[T] = {

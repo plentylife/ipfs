@@ -14,7 +14,7 @@ class Wallet() extends Octopus {
 
   def registerWithParent(p: Octopus) = p.addConnection(Child(this).inst)
 
-  onInstantiate {
+  onNew {
     getUser.foreach(_ foreach registerWithParent)
     getMembers.foreach(_ foreach registerWithParent)
   }

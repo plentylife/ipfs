@@ -4,6 +4,7 @@ import java.util.Date
 
 import life.plenty.model
 import life.plenty.model.connection._
+import life.plenty.model.utils._
 import rx.{Rx, Var}
 
 trait OctopusConstructor {
@@ -24,11 +25,21 @@ trait OctopusConstructor {
 
   def required: Set[Rx[Option[_]]] = Set(getCreator)
 
+  /** alias for [[addConnection()]] */
   def set(c: Connection[_]): Unit = addConnection(c)
 
-  val instantiated = Var(false)
+  private lazy val isNewVar = Var(false)
 
-  def onInstantiate(f: ⇒ Unit): Unit = instantiated.foreach(i ⇒ if (i) f)
+  def isNew = isNewVar.now
+
+  def onNew(f: ⇒ Unit): Unit = {
+    isNewVar.foreach(i ⇒ {
+      if (i) {
+        f
+        isNewVar.kill()
+      }
+    })
+  }
 
   def asNew(properties: Connection[_]*): Unit = {
     println(s"attempting to instantiate ${this.getClass}")
@@ -39,11 +50,14 @@ trait OctopusConstructor {
     val ct = CreationTime(new Date().getTime)
     ct.tmpMarker = AtInstantiation
     addConnection(ct)
+
     for (p ← required) {
       if (p.now.isEmpty) throw new Exception(s"Class ${this.getClass} was not properly instantiated. " +
         s"Connections ${this._connections.now}")
     }
-    instantiated() = true
+
+    getCreator.addConnection(Created(this).inst)
+    isNewVar() = true
     println(s"successfully instantiated ${this} ${this.id}")
   }
 }

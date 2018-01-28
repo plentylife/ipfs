@@ -28,6 +28,7 @@ object OctopusReader {
     ci("Where", new Where()),
     ci("BasicAnswer", new BasicAnswer()),
     ci("Contribution", new Contribution()),
+    ci("Vote", new Vote)
   )
 
   def read(id: String): Future[Option[Octopus]] = {
@@ -49,7 +50,9 @@ object OctopusReader {
         try {
           val o = f(cs)
           o foreach { o ⇒
-            o.addConnection(Id(id))
+            val idCon = Id(id)
+            idCon.tmpMarker = GunMarker
+            o.addConnection(idCon)
             Cache.put(o)
             o.addModule(new OctopusGunReaderModule(o, gun))
           }
@@ -73,11 +76,11 @@ object ConnectionReader {
   }
 
   private val leafReaders = Stream[(String, String) ⇒ Option[Connection[_]]](
-    Title(_, _), Body(_, _), Amount(_, _), Id(_, _), Name(_, _)
+    Title(_, _), Body(_, _), Amount(_, _), Id(_, _), Name(_, _), CreationTime(_, _), Marker(_, _)
   )
 
   private val octopusReaders = Stream[(String, Octopus) ⇒ Option[Connection[_]]](
-    Child(_, _), Parent(_, _)
+    Child(_, _), Parent(_, _), Created(_, _), Creator(_, _), Contributor(_, _), Member(_, _), To(_, _), From(_, _)
   )
 
   private def hasClass(key: String): Future[Boolean] = {
@@ -103,7 +106,7 @@ object ConnectionReader {
       if (hc) {
         //        println("processing connection value with class")
         OctopusReader.read(con.value) map { optO ⇒
-          println("Read octopus", optO)
+          println(s"Read octopus $optO ${optO.map(_.connections).getOrElse(List())}")
 
           if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
           optO flatMap { o ⇒

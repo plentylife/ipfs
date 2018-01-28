@@ -42,3 +42,11 @@ object Name extends InstantiateFromStringByApply[Name] {
   override def instantiate(from: String): Option[Name] = Option(Name(from))
 }
 
+case class CreationTime(time: Long) extends Connection[Long] {
+  override def value: Long = time
+}
+
+object CreationTime extends InstantiateFromStringByApply[CreationTime] {
+  override def instantiate(from: String): Option[CreationTime] = Try(from.toLong).toOption map { a ⇒ CreationTime(a) }
+}
+

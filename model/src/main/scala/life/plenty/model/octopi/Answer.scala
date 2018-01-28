@@ -2,7 +2,7 @@ package life.plenty.model.octopi
 
 import life.plenty.model.connection.{Body, Child, Connection, Title}
 import life.plenty.model.utils._
-import rx.{Rx, Var}
+import rx.Rx
 
 trait Answer extends Space with WithParent[Space] {
   override def required = super.required + getBody
@@ -10,10 +10,8 @@ trait Answer extends Space with WithParent[Space] {
   def getBody = rx.get({ case Body(b) ⇒ b })
 
   lazy val votes: Rx[Int] = Rx {
-    (0 :: this._connections().collect({ case Child(v: Vote) ⇒
-      //      val rx: Rx[Int] = v.sizeAndDirection.getOrElse(0)
-      val rx: Rx[Int] = Var(0)
-      rx(): Int
+    (0 :: this.rx.cons().collect({ case Child(v: Vote) ⇒
+      v.sizeAndDirection.now.getOrElse(0): Int
     })).sum
   }
 
