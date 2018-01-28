@@ -51,6 +51,7 @@ trait Octopus extends OctopusConstructor {
   private lazy val connectionFilters = getAllModules({ case m: ConnectionFilters[_] ⇒ m })
 
   /** filters applied */
+  @deprecated("This is not reliable due to the nature of gun loading")
   def connections: List[Connection[_]] = {
     connectionFilters.foldLeft(_connections.now)((cs, f) ⇒ f(cs))
   }
@@ -58,9 +59,11 @@ trait Octopus extends OctopusConstructor {
   /** no filters applied */
   def allConnections: List[Connection[_]] = _connections.now
 
+  @deprecated("This is not reliable due to the nature of gun loading")
   def getTopConnection[T](f: PartialFunction[Connection[_], Connection[T]]): Option[Connection[T]] =
     connections.collectFirst(f)
 
+  @deprecated("This is not reliable due to the nature of gun loading")
   def getTopConnectionData[T](f: PartialFunction[Connection[_], T]): Option[T] =
     connections.collectFirst(f)
 
@@ -82,8 +85,12 @@ trait Octopus extends OctopusConstructor {
   }
 
   object rx {
-    def cons: Rx.Dynamic[List[Connection[_]]] = _connections map { cons ⇒
-      connectionFilters.foldLeft(cons)((cs, f) ⇒ f(cs))
+    def cons: Rx.Dynamic[List[Connection[_]]] = {
+      onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
+
+      _connections map { cons ⇒
+        connectionFilters.foldLeft(cons)((cs, f) ⇒ f(cs))
+      }
     }
 
     def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
@@ -135,6 +142,7 @@ trait Octopus extends OctopusConstructor {
 
   /* Constructor */
   _modules = ModuleRegistry.getModules(this)
+  private lazy val onConnectionsRequestedModules = getModules({ case m: ActionOnConnectionsRequest ⇒ m })
   preConstructor()
   //  println("Octopus constructor -- " + this.getClass)
   //  getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})

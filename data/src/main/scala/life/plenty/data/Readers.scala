@@ -1,6 +1,6 @@
 package life.plenty.data
 
-import life.plenty.model.actions.ActionOnAddToModuleStack
+import life.plenty.model.actions.ActionOnConnectionsRequest
 import life.plenty.model.connection._
 import life.plenty.model.octopi.GreatQuestions._
 import life.plenty.model.octopi._
@@ -17,6 +17,7 @@ object OctopusReader {
   def ci(className: String, inst: ⇒ Octopus) = {
     (cn: String) ⇒ if (className == cn) Option(inst) else None
   }
+
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
     ci("BasicUser", new BasicUser()),
     ci("BasicSpace", new BasicSpace()),
@@ -58,7 +59,7 @@ object OctopusReader {
             idCon.tmpMarker = GunMarker
             o.addConnection(idCon)
             Cache.put(o)
-            o.addModule(new OctopusGunReaderModule(o, gun))
+            //            o.addModule(new OctopusGunReaderModule(o, gun))
           }
           o
         } catch {
@@ -126,22 +127,26 @@ object ConnectionReader {
   }
 }
 
-class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) extends
-  ActionOnAddToModuleStack[Octopus] {
+class OctopusGunReaderModule(override val withinOctopus: Octopus) extends ActionOnConnectionsRequest {
   var loaded = false
 
-  override def onAddToStack(): Unit = {
+  override def onConnectionsRequest(): Unit = if (!loaded) {
     println(s"Gun Reader in ${withinOctopus.getClass} with ${withinOctopus.connections}")
-    //    gun.`val`((d, k) ⇒ {
-    //      println(s"Gun Reader ${withinOctopus.id}")
-    //      println(JSON.stringify(d))
-    //    })
+    val gun = Main.gun.get(withinOctopus.id)
+    gun.`val`((d, k) ⇒ {
+      if (!js.isUndefined(d)) load(gun)
+    })
+  }
+
+  private def load(gun: Gun) = {
     gun.get("connections").map().`val`((d, k) ⇒ {
-      //      println(s"TRYING loaded connection of ${withinOctopus.getClass} $k", JSON.stringify(d))
       ConnectionReader.read(d, k) map { optCon ⇒ {
-        //                println(s"Gun read connection of ${withinOctopus.getClass} $k", optCon, JSON.stringify(d))
         println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
-        if (optCon.isEmpty) println(JSON.stringify(d))
+        if (optCon.isEmpty) {
+          println(JSON.stringify(d))
+          throw new Exception("Gun reader could not parse a connection.")
+        }
+
         optCon foreach { c ⇒
           c.tmpMarker = GunMarker
           withinOctopus.addConnection(c)

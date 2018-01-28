@@ -23,6 +23,7 @@ object Main {
   def modules(): Unit = {
     ModuleRegistry add { case o: Octopus ⇒ new GunWriterModule(o) }
     ModuleRegistry add { case o: Octopus ⇒ new InstantiationGunWriterModule(o) }
+    ModuleRegistry add { case o: Octopus ⇒ new OctopusGunReaderModule(o) }
   }
 }
 

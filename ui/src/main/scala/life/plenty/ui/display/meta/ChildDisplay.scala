@@ -32,13 +32,14 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   }
 
   def getChildren: Rx[List[Octopus]] = {
+    println("getting children")
     val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.map(_.collect({ case Child(c: Octopus) ⇒ c }))
     val ordered = childrenRx.map { children ⇒
       modifiers.foldLeft(children)((cs, mod) ⇒ {
         mod.apply(cs): List[Octopus]
       })
     }
-    //    println("got children", this, ordered)
+    println("got children", this, ordered.now)
     ordered
   }
 
