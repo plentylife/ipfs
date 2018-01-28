@@ -1,7 +1,6 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.Title
-import life.plenty.model.utils._
 
 //trait Space extends Octopus {
 trait Space extends Octopus {
@@ -9,7 +8,7 @@ trait Space extends Octopus {
 
   override def required = super.required + getTitle
 
-  override def idGenerator: String = super.idGenerator + (getTitle: String)
+  //  override def idGenerator: String = super.idGenerator + (getTitle: String)
 }
 
 

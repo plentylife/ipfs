@@ -5,9 +5,9 @@ import life.plenty.model.connection.{Connection, Title}
 trait GreatQuestion extends Space with WithParent[Space] {
   protected val t: Title
 
-  override def idGenerator: String = {
-    super.idGenerator + this.getClass.getSimpleName
-  }
+  //  override def idGenerator: String = {
+  //    super.idGenerator + this.getClass.getSimpleName
+  //  }
 
   override def asNew(properties: Connection[_]*): Unit = {
     val ps = properties.:+(t)

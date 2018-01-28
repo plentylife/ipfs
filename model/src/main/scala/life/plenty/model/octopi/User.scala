@@ -6,9 +6,9 @@ import rx.Rx
 trait User extends Octopus {
   override def required = Set(getRxId, getName)
 
-  override def idGenerator: String = {
-    throw new NotImplementedError(s"this method not supposed to be used for users. Connections ${_connections.now}")
-  }
+  //  override def idGenerator: String = {
+  //    throw new NotImplementedError(s"this method not supposed to be used for users. Connections ${_connections.now}")
+  //  }
 
   def getName: Rx[Option[String]] = rx.get({ case Name(n: String) ⇒ n })
 

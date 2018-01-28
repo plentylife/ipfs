@@ -8,7 +8,7 @@ trait WithParent[T <: Octopus] extends Octopus {
 
   def getParent: Rx[Option[Octopus]] = rx.get({ case Parent(p: Octopus) ⇒ p })
 
-  override def idGenerator: String = super.idGenerator + getParent.now.get.id
+  //  override def idGenerator: String = super.idGenerator + getParent.now.get.id
 
   onNew {
     getParent.foreach(_.foreach { p: Octopus ⇒

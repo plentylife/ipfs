@@ -8,16 +8,19 @@ import life.plenty.model.connection._
 import life.plenty.model.utils._
 import rx.{Rx, Var}
 
+import scala.util.Random
+
 trait OctopusConstructor {
   self: Octopus ⇒
+
+  private val rand = Random
 
   def getRxId: Rx[Option[String]] = rx.get({ case Id(id) ⇒ id })
 
   def id: String = getTopConnectionData({ case Id(id) ⇒ id }) getOrElse model.getHasher.b64(idGenerator)
 
-  def idGenerator: String = {
-    //    println(s"${this.getClass} is generating id; ${_connections.now}")
-    s.exf({ case CreationTime(t) ⇒ t }).toString + s.exf({ case Creator(c) ⇒ c }).id
+  private def idGenerator: String = {
+    rand.nextLong().toString + s.exf({ case CreationTime(t) ⇒ t }).toString + s.exf({ case Creator(c) ⇒ c }).id
   }
 
   def getCreationTime: Rx[Option[Long]] = rx.get({ case CreationTime(t) ⇒ t })

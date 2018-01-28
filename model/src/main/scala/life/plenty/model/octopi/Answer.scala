@@ -1,7 +1,6 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.{Body, Child, Connection, Title}
-import life.plenty.model.utils._
 import rx.Rx
 
 trait Answer extends Space with WithParent[Space] {
@@ -25,9 +24,9 @@ trait Answer extends Space with WithParent[Space] {
   //    })).sum
   //  }
 
-  override def idGenerator: String = {
-    super.idGenerator + (getBody: String)
-  }
+  //  override def idGenerator: String = {
+  //    super.idGenerator + (getBody: String)
+  //  }
 
   /** at least for now, answers do not have titles */
   override def asNew(properties: Connection[_]*): Unit = {
