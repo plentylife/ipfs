@@ -2,12 +2,9 @@ package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{OctopusReader, Main ⇒ dataMain}
-import life.plenty.model.connection.{Body, Parent, Title}
-import life.plenty.model.octopi.GreatQuestions.Who
 import life.plenty.model.octopi._
 import life.plenty.model.{initialize ⇒ mInit}
-import life.plenty.ui.display.Help
-import life.plenty.ui.model.UiContext.getCreator
+import life.plenty.ui.display.{Help, Login}
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.{Event, document}
@@ -18,47 +15,35 @@ import scalaz.std.list._
 @JSExportTopLevel("Main")
 object Main {
 
-  var testSpace: Space = null
-
   @JSExport
   def main(): Unit = {
     println("Entry point")
 
+    // has to be first because it sets the hasher function
     dataMain.main()
+    UiContext.initialize()
     //    Router.initialize
     mInit()
     initialize()
 
+    dom.render(document.body, mainSection())
+    if (UiContext.getUser != null) showUi()
+  }
 
-    val ts = new BasicSpace()
-    testSpace = ts
-    ts.asNew(Title("test"), getCreator)
-    val who = new Who()
-    who.asNew(Parent(ts), getCreator)
-    val q = new BasicQuestion()
-    q.asNew(Parent(who), Title("is asking these"), getCreator)
-    val a = new BasicAnswer()
-    a.asNew(Parent(q), Body("I am asking these"), getCreator)
-
-
-    println(s"UI loading ${ts.id}")
-    OctopusReader.read(ts.id) foreach { spaceOpt ⇒
-      spaceOpt foreach { s ⇒ UiContext.startingSpace = s.asInstanceOf[Space] }
-
-      dom.render(document.body, mainSection(spaceOpt))
+  def showUi() = {
+    val id = "02PgqlznC6LmE6FJNettMmLVxztTemvxdb3ChgXTsOk="
+    println(s"UI loading ${id}")
+    OctopusReader.read(id) foreach { spaceOpt ⇒
+      UiContext.startingSpace.value_=(spaceOpt map { s ⇒ s.asInstanceOf[Space] })
     }
   }
 
-  @JSExport
-  def ts = testSpace.connections
-
-  @JSExport
-  def startingCons = UiContext.startingSpace.connections
-
   @dom
-  def mainSection(space: Option[Octopus]): Binding[Node] = {
+  def mainSection(): Binding[Node] = {
     <div id="viewport" onclick={e: Event ⇒ Help.triggerClose()}>
-      {Help.display().bind}{if (space.nonEmpty) DisplayModel.display(space.get).bind else <span>nothing to show</span>}
+      {Help.display().bind}{Login.display().bind}{if (UiContext.startingSpace.bind.nonEmpty)
+      DisplayModel.display(UiContext.startingSpace.bind.get).bind else
+      <span>nothing to show</span>}
     </div>
   }
 

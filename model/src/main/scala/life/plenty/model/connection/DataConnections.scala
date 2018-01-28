@@ -33,3 +33,12 @@ case class Id(idValue: String) extends Connection[String] {
 object Id extends InstantiateFromStringByApply[Id] {
   override def instantiate(from: String): Option[Id] = Option(Id(from))
 }
+
+case class Name(name: String) extends Connection[String] {
+  override def value: String = name
+}
+
+object Name extends InstantiateFromStringByApply[Name] {
+  override def instantiate(from: String): Option[Name] = Option(Name(from))
+}
+

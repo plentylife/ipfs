@@ -1,8 +1,26 @@
 package life.plenty.ui
 
+import life.plenty.model.connection.{Body, Parent, Title}
+import life.plenty.model.octopi.GreatQuestions.Who
+import life.plenty.model.octopi.{BasicAnswer, BasicQuestion, BasicSpace, Space}
+import life.plenty.ui.model.UiContext.getCreator
+
 object TestInstances {
 
-  def getEntry() = {
+  def load(): Space = {
+    val ts = new BasicSpace()
+    ts.asNew(Title("test"), getCreator)
+    val who = new Who()
+    who.asNew(Parent(ts), getCreator)
+    val q = new BasicQuestion()
+    q.asNew(Parent(who), Title("is asking these"), getCreator)
+    val a = new BasicAnswer()
+    a.asNew(Parent(q), Body("I am asking these"), getCreator)
+
+    ts
+  }
+
+  //  def getEntry() = {
     //    val frenchSpace = new BasicSpace("learning french")
     //    UiContext.startingSpace = frenchSpace
     //
@@ -39,7 +57,7 @@ object TestInstances {
     //
     //    println(when)
     //    frenchSpace
-  }
+  //  }
 
 }
 

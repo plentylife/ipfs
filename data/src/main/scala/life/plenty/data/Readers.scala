@@ -72,7 +72,7 @@ object ConnectionReader {
   }
 
   private val leafReaders = Stream[(String, String) ⇒ Option[Connection[_]]](
-    Title(_, _), Body(_, _), Amount(_, _), Id(_, _)
+    Title(_, _), Body(_, _), Amount(_, _), Id(_, _), Name(_, _)
   )
 
   private val octopusReaders = Stream[(String, Octopus) ⇒ Option[Connection[_]]](
