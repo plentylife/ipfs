@@ -7,10 +7,15 @@ import life.plenty.model.utils.Hash
 
 package object model {
   private var _hasher: Hash = _
+  private var _defaultCreator: Option[User] = None
 
   def getHasher: Hash = _hasher
 
   def setHasher(h: Hash) = _hasher = h
+
+  def defaultCreator_=(u: User) = _defaultCreator = Option(u)
+
+  def defaultCreator = _defaultCreator
 
   def initialize(): Unit = {
     println("Model is adding modules to registry")

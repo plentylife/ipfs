@@ -51,6 +51,7 @@ trait OctopusConstructor {
     ct.tmpMarker = AtInstantiation
     addConnection(ct)
 
+    model.defaultCreator.foreach(c ⇒ set(Creator(c).inst))
     for (p ← required) {
       if (p.now.isEmpty) throw new Exception(s"Class ${this.getClass} was not properly instantiated. " +
         s"Connections ${this._connections.now}")

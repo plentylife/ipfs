@@ -3,7 +3,7 @@ package life.plenty.ui
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{OctopusReader, Main ⇒ dataMain}
 import life.plenty.model.octopi._
-import life.plenty.model.{initialize ⇒ mInit}
+import life.plenty.model.{defaultCreator_=, initialize ⇒ mInit}
 import life.plenty.ui.display.{Help, Login}
 import life.plenty.ui.model.{DisplayModel, Router, UiContext}
 import org.scalajs.dom.raw.Node
@@ -37,6 +37,7 @@ object Main {
 
     <span style="display:none">
       {if (UiContext.userVar.bind != null) {
+      defaultCreator_=(UiContext.userVar.value)
       Router.router.state.value.spaceId match {
         case Some(id) ⇒
           println(s"UI loading ${id}")

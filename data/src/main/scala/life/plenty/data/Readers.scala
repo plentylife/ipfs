@@ -34,7 +34,10 @@ object OctopusReader {
   def read(id: String): Future[Option[Octopus]] = {
     // from cache
     val fromCache = Cache.get(id)
-    if (fromCache.nonEmpty) return Future(fromCache)
+    if (fromCache.nonEmpty) {
+      println("Read from cache")
+      return Future(fromCache)
+    }
 
     val gun = Main.gun.get(id)
 
@@ -135,7 +138,8 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) exte
     gun.get("connections").map().`val`((d, k) ⇒ {
       //      println(s"TRYING loaded connection of ${withinOctopus.getClass} $k", JSON.stringify(d))
       ConnectionReader.read(d, k) map { optCon ⇒ {
-        //        println(s"loaded connection of ${withinOctopus.getClass} $k", optCon, JSON.stringify(d))
+        //                println(s"Gun read connection of ${withinOctopus.getClass} $k", optCon, JSON.stringify(d))
+        println(s"Gun read connection of ${withinOctopus.getClass} $k", optCon)
         optCon foreach { c ⇒
           c.tmpMarker = GunMarker
           withinOctopus.addConnection(c)

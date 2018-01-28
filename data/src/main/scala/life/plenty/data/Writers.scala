@@ -79,9 +79,8 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
 
   override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {
     //    println(s"Gun Writer ${withinOctopus.id} ${connection} marker: ${connection.tmpMarker}")
-    if (
-      withinOctopus.isNew &&
-      connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
+    //      withinOctopus.isNew &&
+    if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       println(s"Gun Writer ${withinOctopus} [${withinOctopus.id}] ${connection} ")
       OctopusWriter.writeSingleConnection(connection, gun)
     }
