@@ -1,6 +1,6 @@
 package life.plenty.model.actions
 
-import life.plenty.model.connection.{Parent, Title}
+import life.plenty.model.connection.{Body, Parent, Title}
 import life.plenty.model.octopi._
 
 class ActionCreateQuestion(override val withinOctopus: Space) extends Module[Space] {
@@ -12,10 +12,8 @@ class ActionCreateQuestion(override val withinOctopus: Space) extends Module[Spa
 
 class ActionCreateAnswer(override val withinOctopus: Space) extends Module[Space] {
   def create(body: String, creator: User, isContribution: Boolean = false) = {
-    //    val a = if (!isContribution) new BasicAnswer(withinOctopus, body, basicInfo)
-    //    else new Contribution(withinOctopus, body, basicInfo)
-    //    withinOctopus.addConnection(Child(a))
-    ???
+    val a = if (!isContribution) new BasicAnswer else new Contribution
+    a.asNew(Parent(withinOctopus), Body(body))
   }
 }
 

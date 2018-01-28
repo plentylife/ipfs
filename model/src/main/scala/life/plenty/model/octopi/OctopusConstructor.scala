@@ -42,7 +42,7 @@ trait OctopusConstructor {
   }
 
   def asNew(properties: Connection[_]*): Unit = {
-    println(s"attempting to instantiate ${this.getClass}")
+    println(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
     properties.foreach(p ⇒ {
       p.tmpMarker = AtInstantiation
       self.set(p)

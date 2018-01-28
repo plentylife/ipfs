@@ -37,8 +37,9 @@ object Main {
 
     <span style="display:none">
       {if (UiContext.userVar.bind != null) {
-      defaultCreator_=(UiContext.userVar.value)
-      Router.router.state.value.spaceId match {
+      println(s"Setting default creator to ${UiContext.userVar.bind}")
+      defaultCreator_=(UiContext.userVar.bind)
+      Router.router.state.bind.spaceId match {
         case Some(id) ⇒
           println(s"UI loading ${id}")
           OctopusReader.read(id) foreach { spaceOpt ⇒
