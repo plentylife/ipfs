@@ -9,6 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.language.postfixOps
 import scala.scalajs.js
+import scala.scalajs.js.JSON
 
 object GunMarker extends TmpMarker
 
@@ -35,7 +36,7 @@ object OctopusReader {
     // from cache
     val fromCache = Cache.get(id)
     if (fromCache.nonEmpty) {
-      println("Read from cache")
+      //      println("Read from cache")
       return Future(fromCache)
     }
 
@@ -102,14 +103,11 @@ object ConnectionReader {
   }
 
   def read(d: js.Object, key: String): Future[Option[Connection[_]]] = {
-    //    println(JSON.stringify(d))
-
     val con = d.asInstanceOf[JsConnection]
     hasClass(con.value) flatMap { hc ⇒
       if (hc) {
-        //        println("processing connection value with class")
         OctopusReader.read(con.value) map { optO ⇒
-          println(s"Read octopus $optO ${optO.map(_.connections).getOrElse(List())}")
+          //          println(s"Read octopus $optO ${optO.map(_.connections).getOrElse(List())}")
 
           if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
           optO flatMap { o ⇒
@@ -139,7 +137,8 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) exte
       //      println(s"TRYING loaded connection of ${withinOctopus.getClass} $k", JSON.stringify(d))
       ConnectionReader.read(d, k) map { optCon ⇒ {
         //                println(s"Gun read connection of ${withinOctopus.getClass} $k", optCon, JSON.stringify(d))
-        println(s"Gun read connection of ${withinOctopus.getClass} $k", optCon)
+        println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
+        if (optCon.isEmpty) println(JSON.stringify(d), Id.getClass.getSimpleName)
         optCon foreach { c ⇒
           c.tmpMarker = GunMarker
           withinOctopus.addConnection(c)

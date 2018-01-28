@@ -12,9 +12,11 @@ trait Octopus extends OctopusConstructor {
 
   protected var _modules: List[Module[Octopus]] = List()
   protected lazy val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
-  protected lazy val _connections: Rx.Dynamic[List[Connection[_]]] =
-    _lastAddedConnection.fold(List.empty[Connection[_]])(
-      (list: List[Connection[_]], elem: Option[Connection[_]]) ⇒ {elem.map(_ :: list).getOrElse(list)})
+  protected lazy val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
+
+  //protected lazy val _connections: Rx.Dynamic[List[Connection[_]]] =
+  //    _lastAddedConnection.fold(List.empty[Connection[_]])(
+  //      (list: List[Connection[_]], elem: Option[Connection[_]]) ⇒ {elem.map(_ :: list).getOrElse(list)})
 
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
@@ -112,7 +114,7 @@ trait Octopus extends OctopusConstructor {
       case Some(e) ⇒ e
 
       case None ⇒
-        //        _connections() = connection :: _connections.now
+        _connections() = connection :: _connections.now
         _lastAddedConnection() = Option(connection)
         //        println(s"added connection ${connection} to ${this} ${_connections.now}")
 

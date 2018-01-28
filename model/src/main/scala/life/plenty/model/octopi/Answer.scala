@@ -9,11 +9,21 @@ trait Answer extends Space with WithParent[Space] {
 
   def getBody = rx.get({ case Body(b) ⇒ b })
 
-  lazy val votes: Rx[Int] = Rx {
-    (0 :: this.rx.cons().collect({ case Child(v: Vote) ⇒
-      v.sizeAndDirection.now.getOrElse(0): Int
-    })).sum
+  lazy val votes: Rx[Int] = this.rx.cons.map {
+    cons: List[Connection[_]] ⇒
+      val res: List[Int] = 0 :: cons.collect({ case Child(v: Vote) ⇒
+        println(s"each vote ${v} ${v.connections}")
+        v.sizeAndDirection().getOrElse(0)
+      })
+      println(s"counting votes in $this res $res ${cons}")
+      res.sum
   }
+
+  //lazy val votes: Rx[Int] = Rx {
+  //    (0 :: this.rx.cons().collect({ case Child(v: Vote) ⇒
+  //      v.sizeAndDirection.now.getOrElse(0): Int
+  //    })).sum
+  //  }
 
   override def idGenerator: String = {
     super.idGenerator + (getBody: String)

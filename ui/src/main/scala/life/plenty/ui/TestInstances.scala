@@ -1,7 +1,6 @@
 package life.plenty.ui
 
-import life.plenty.model.connection.{Parent, Title}
-import life.plenty.model.octopi.GreatQuestions.Who
+import life.plenty.model.connection.Title
 import life.plenty.model.octopi.{BasicSpace, Space}
 import life.plenty.ui.model.UiContext.getCreator
 
@@ -10,8 +9,8 @@ object TestInstances {
   def load(): Space = {
     val ts = new BasicSpace()
     ts.asNew(Title("test"), getCreator)
-    val who = new Who()
-    who.asNew(Parent(ts), getCreator)
+    //    val who = new Who()
+    //    who.asNew(Parent(ts), getCreator)
     //    val q = new BasicQuestion()
     //    q.asNew(Parent(who), Title("is asking these"), getCreator)
     //    val a = new BasicAnswer()
