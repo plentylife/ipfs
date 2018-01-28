@@ -134,8 +134,8 @@ trait Octopus extends OctopusConstructor {
   /* Constructor */
   _modules = ModuleRegistry.getModules(this)
   preConstructor()
-  println("Octopus constructor -- " + this.getClass)
-  getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})
+  //  println("Octopus constructor -- " + this.getClass)
+  //  getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})
   //  println(connections)
 
 }

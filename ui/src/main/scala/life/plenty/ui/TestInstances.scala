@@ -1,8 +1,8 @@
 package life.plenty.ui
 
-import life.plenty.model.connection.{Body, Parent, Title}
+import life.plenty.model.connection.{Parent, Title}
 import life.plenty.model.octopi.GreatQuestions.Who
-import life.plenty.model.octopi.{BasicAnswer, BasicQuestion, BasicSpace, Space}
+import life.plenty.model.octopi.{BasicSpace, Space}
 import life.plenty.ui.model.UiContext.getCreator
 
 object TestInstances {
@@ -12,10 +12,10 @@ object TestInstances {
     ts.asNew(Title("test"), getCreator)
     val who = new Who()
     who.asNew(Parent(ts), getCreator)
-    val q = new BasicQuestion()
-    q.asNew(Parent(who), Title("is asking these"), getCreator)
-    val a = new BasicAnswer()
-    a.asNew(Parent(q), Body("I am asking these"), getCreator)
+    //    val q = new BasicQuestion()
+    //    q.asNew(Parent(who), Title("is asking these"), getCreator)
+    //    val a = new BasicAnswer()
+    //    a.asNew(Parent(q), Body("I am asking these"), getCreator)
 
     ts
   }

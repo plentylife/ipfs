@@ -2,8 +2,8 @@ package life.plenty.model.actions
 
 import life.plenty.model.octopi.{Module, Octopus}
 
-trait ActionOnInitialize[T <: Octopus] extends Module[T] {
-  def onInitialize()
+trait ActionOnNew[T <: Octopus] extends Module[T] {
+  def onNew()
 }
 
 trait ActionOnAddToModuleStack[T <: Octopus] extends Module[T] {

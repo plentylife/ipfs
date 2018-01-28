@@ -19,7 +19,7 @@ object Router {
     override def apply(state: RoutingParams): String = toHash(state)
   })
 
-  private def defaultRoutingParams = fromHash(window.location.hash) getOrElse
+  def defaultRoutingParams = fromHash(window.location.hash) getOrElse
     changeViewState(ViewState.DISCUSSION, RoutingParams(0, None))
 
   private var lastParams: Option[RoutingParams] = None

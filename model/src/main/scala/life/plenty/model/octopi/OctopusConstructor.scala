@@ -3,6 +3,7 @@ package life.plenty.model.octopi
 import java.util.Date
 
 import life.plenty.model
+import life.plenty.model.actions.ActionOnNew
 import life.plenty.model.connection._
 import life.plenty.model.utils._
 import rx.{Rx, Var}
@@ -59,6 +60,8 @@ trait OctopusConstructor {
 
     getCreator.addConnection(Created(this).inst)
     isNewVar() = true
+
+    getModules({ case m: ActionOnNew[_] ⇒ m }).foreach({_.onNew()})
     println(s"successfully instantiated ${this} ${this.id}")
   }
 }

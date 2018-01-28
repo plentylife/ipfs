@@ -52,6 +52,14 @@ object Main {
     </span>
   }
 
+  @JSExport
+  def newSpace() = {
+    val ts = TestInstances.load()
+    val rp = Router.defaultRoutingParams.copy(spaceId = Option(ts.id))
+    println("Routing hash")
+    println(Router.toHash(rp))
+  }
+
   @dom
   def mainSection(): Binding[Node] = {
     <div id="viewport" onclick={e: Event ⇒ Help.triggerClose()}>
