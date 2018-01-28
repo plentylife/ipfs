@@ -104,6 +104,9 @@ object ConnectionReader {
 
   def read(d: js.Object, key: String): Future[Option[Connection[_]]] = {
     val con = d.asInstanceOf[JsConnection]
+    // Id is a special case, since it's value points to an octopus, but it's really a leaf connection
+    if (con.`class` == "Id") return Future {Option {Id(con.value)}}
+
     hasClass(con.value) flatMap { hc ⇒
       if (hc) {
         OctopusReader.read(con.value) map { optO ⇒
@@ -115,9 +118,9 @@ object ConnectionReader {
           }
         }
       } else {
-        Future(
+        Future {
           leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption
-        )
+        }
       }
     }
   }
@@ -138,7 +141,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) exte
       ConnectionReader.read(d, k) map { optCon ⇒ {
         //                println(s"Gun read connection of ${withinOctopus.getClass} $k", optCon, JSON.stringify(d))
         println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
-        if (optCon.isEmpty) println(JSON.stringify(d), Id.getClass.getSimpleName)
+        if (optCon.isEmpty) println(JSON.stringify(d))
         optCon foreach { c ⇒
           c.tmpMarker = GunMarker
           withinOctopus.addConnection(c)
