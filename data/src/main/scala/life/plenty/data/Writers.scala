@@ -32,14 +32,16 @@ object OctopusWriter {
   }
 
   def writeSingleConnection(connection: Connection[_], go: Gun): Unit = {
-    println(s"writing single connection ${connection}")
+    println(s"writing single connection ${connection} ${connection.id}")
     val gcons = go.get("connections")
     val conGun = ConnectionWriter.write(connection)
-    gcons.set(conGun, null)
-    go.`val`((d, k) ⇒ {
-      println(s"done writing single connection")
-      println(JSON.stringify(d))
+    gcons.set(conGun, (d) ⇒ {
+      println(s"done writing single connection ${JSON.stringify(d)}")
     })
+    //    go.`val`((d, k) ⇒ {
+    //      println(s"done writing single connection ${k}")
+    //      println(JSON.stringify(d))
+    //    })
   }
 }
 

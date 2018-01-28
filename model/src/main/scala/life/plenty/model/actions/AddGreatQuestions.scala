@@ -1,7 +1,7 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection.{Connection, Parent}
-import life.plenty.model.octopi.GreatQuestions.{When, Where, Who, Why}
+import life.plenty.model.octopi.GreatQuestions.Why
 import life.plenty.model.octopi.{GreatQuestion, Space}
 
 /* fixme move*/
@@ -26,9 +26,9 @@ class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnNew[S
 
     println("Adding great questions")
     addIfNotExists(_.value.isInstanceOf[Why], new Why)
-    addIfNotExists(_.value.isInstanceOf[Where], new Where)
-    addIfNotExists(_.value.isInstanceOf[When], new When)
-    addIfNotExists(_.value.isInstanceOf[Who], new Who)
+    //    addIfNotExists(_.value.isInstanceOf[Where], new Where)
+    //    addIfNotExists(_.value.isInstanceOf[When], new When)
+    //    addIfNotExists(_.value.isInstanceOf[Who], new Who)
 
     // reverse because first in -- last out
     // fixme. uncomment

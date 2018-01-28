@@ -17,10 +17,17 @@ trait OctopusConstructor {
 
   def getRxId: Rx[Option[String]] = rx.get({ case Id(id) ⇒ id })
 
-  def id: String = getTopConnectionData({ case Id(id) ⇒ id }) getOrElse model.getHasher.b64(idGenerator)
+  /** Either retrieves the id, or generates a new one, and sets it */
+  def id: String = getTopConnectionData({ case Id(id) ⇒ id }) getOrElse {
+    val gid = model.getHasher.b64(generateId)
+    set(Id(gid))
+    gid
+  }
 
-  private def idGenerator: String = {
-    rand.nextLong().toString + s.exf({ case CreationTime(t) ⇒ t }).toString + s.exf({ case Creator(c) ⇒ c }).id
+  private def generateId: String = {
+    val res = rand.nextLong().toString +
+      s.exf({ case CreationTime(t) ⇒ t }).toString + s.exf({ case Creator(c) ⇒ c }).id
+    res
   }
 
   def getCreationTime: Rx[Option[Long]] = rx.get({ case CreationTime(t) ⇒ t })
