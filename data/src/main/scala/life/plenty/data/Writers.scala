@@ -7,6 +7,7 @@ import life.plenty.model.octopi.{Module, Octopus}
 import rx.Ctx
 
 import scala.scalajs.js
+import scala.scalajs.js.JSON
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
@@ -31,10 +32,14 @@ object OctopusWriter {
   }
 
   def writeSingleConnection(connection: Connection[_], go: Gun): Unit = {
-    println("writing single connection")
+    println(s"writing single connection ${connection}")
     val gcons = go.get("connections")
     val conGun = ConnectionWriter.write(connection)
     gcons.set(conGun, null)
+    go.`val`((d, k) ⇒ {
+      println(s"done writing single connection")
+      println(JSON.stringify(d))
+    })
   }
 }
 
@@ -72,8 +77,9 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
   private lazy val gun = Main.gun.get(withinOctopus.id)
 
   override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {
-    //    println(s"Gun Writer ${withinOctopus} ${connection} marker: ${connection.tmpMarker}")
-    if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
+    //    println(s"Gun Writer ${withinOctopus.id} ${connection} marker: ${connection.tmpMarker}")
+    if (withinOctopus.instantiated.now &&
+      connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       println(s"Gun Writer ${withinOctopus} [${withinOctopus.id}] ${connection} ")
       OctopusWriter.writeSingleConnection(connection, gun)
     }
@@ -87,7 +93,7 @@ class InstantiationGunWriterModule(override val withinOctopus: Octopus) extends 
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   withinOctopus.onInstantiate {
-    println(s"Instantiation Gun Writer ${withinOctopus}")
+    println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
     OctopusWriter.write(withinOctopus)
   }
 }

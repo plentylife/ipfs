@@ -9,6 +9,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.language.postfixOps
 import scala.scalajs.js
+import scala.scalajs.js.JSON
 
 object GunMarker extends TmpMarker
 
@@ -124,8 +125,12 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus, gun: Gun) exte
 
   override def onAddToStack(): Unit = {
     println(s"Gun Reader in ${withinOctopus.getClass} with ${withinOctopus.connections}")
+    gun.`val`((d, k) ⇒ {
+      println(s"Gun Reader ${withinOctopus.id}")
+      println(JSON.stringify(d))
+    })
     gun.get("connections").map().`val`((d, k) ⇒ {
-      //      println(s"TRYING loaded connection of ${withinOctopus.getClass} $k", JSON.stringify(d))
+      println(s"TRYING loaded connection of ${withinOctopus.getClass} $k", JSON.stringify(d))
       ConnectionReader.read(d, k) map { optCon ⇒ {
         //        println(s"loaded connection of ${withinOctopus.getClass} $k", optCon, JSON.stringify(d))
         optCon foreach { c ⇒

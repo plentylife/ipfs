@@ -28,7 +28,7 @@ trait OctopusConstructor {
 
   val instantiated = Var(false)
 
-  def onInstantiate(f: ⇒ Unit) = instantiated.foreach(i ⇒ if (i) f)
+  def onInstantiate(f: ⇒ Unit): Unit = instantiated.foreach(i ⇒ if (i) f)
 
   def asNew(properties: Connection[_]*): Unit = {
     println(s"attempting to instantiate ${this.getClass}")

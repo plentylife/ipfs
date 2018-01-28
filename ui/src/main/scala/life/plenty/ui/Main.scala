@@ -18,6 +18,8 @@ import scalaz.std.list._
 @JSExportTopLevel("Main")
 object Main {
 
+  var testSpace: Space = null
+
   @JSExport
   def main(): Unit = {
     println("Entry point")
@@ -29,6 +31,7 @@ object Main {
 
 
     val ts = new BasicSpace()
+    testSpace = ts
     ts.asNew(Title("test"), getCreator)
     val who = new Who()
     who.asNew(Parent(ts), getCreator)
@@ -38,14 +41,19 @@ object Main {
     a.asNew(Parent(q), Body("I am asking these"), getCreator)
 
 
-
-    println(s"ui loading ${ts.id}")
+    println(s"UI loading ${ts.id}")
     OctopusReader.read(ts.id) foreach { spaceOpt ⇒
       spaceOpt foreach { s ⇒ UiContext.startingSpace = s.asInstanceOf[Space] }
 
       dom.render(document.body, mainSection(spaceOpt))
     }
   }
+
+  @JSExport
+  def ts = testSpace.connections
+
+  @JSExport
+  def startingCons = UiContext.startingSpace.connections
 
   @dom
   def mainSection(space: Option[Octopus]): Binding[Node] = {

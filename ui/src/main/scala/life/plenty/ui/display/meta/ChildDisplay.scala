@@ -8,10 +8,13 @@ import life.plenty.model.octopi.Octopus
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
+import rx.{Ctx, Rx}
 
 import scalaz.std.list._
 
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
+  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
+
   private lazy val modifiers: List[OctopusModifier[Octopus]] =
     withinOctopus.getModules({ case m: OctopusModifier[Octopus] ⇒ m })
 
@@ -20,14 +23,21 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   override def update(): Unit = {
     //    println("child display updatding", this)
     children.value.clear()
-    children.value.insertAll(0, getChildren)
+    children.value.insertAll(0, getChildren.now)
   }
 
-  def getChildren: List[Octopus] = {
-    val children = withinOctopus.connections.collect({ case Child(c: Octopus) ⇒ c })
-    val ordered = modifiers.foldLeft(children)((cs, mod) ⇒ {
-      mod.apply(cs): List[Octopus]
-    })
+  getChildren.foreach { cs ⇒
+    children.value.clear()
+    children.value.insertAll(0, cs)
+  }
+
+  def getChildren: Rx[List[Octopus]] = {
+    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.map(_.collect({ case Child(c: Octopus) ⇒ c }))
+    val ordered = childrenRx.map { children ⇒
+      modifiers.foldLeft(children)((cs, mod) ⇒ {
+        mod.apply(cs): List[Octopus]
+      })
+    }
     //    println("got children", this, ordered)
     ordered
   }
