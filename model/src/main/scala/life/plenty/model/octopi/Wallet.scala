@@ -3,28 +3,16 @@ package life.plenty.model.octopi
 import life.plenty.model
 import rx.{Ctx, Rx, Var}
 
-class Wallet(u: User) {
-  // fixme check
-  private implicit val ctx = Ctx.Owner.Unsafe
+class Wallet(u: User)(implicit ctx: Ctx.Owner) {
 
   lazy val getUsableThanksAmount: Rx[Int] = {
-    val start = Var(0)
-    u.getTransactionsFrom.foreach(list ⇒ {
-      model.console.println(s"Wallet parsing FROM transactions ${list}")
-      list.map(_.getAmountOrZero).foreach(_.foreach(a ⇒ {
-        model.console.println(s"amount ${a}")
+    Rx {
+      val fromAmounts = u.getTransactionsFrom().map(t ⇒ t.getAmountOrZero())
+      val toAmounts = u.getTransactionsTo().map(t ⇒ t.getAmountOrZero())
 
-        start() = start.now - a
-      }))
-    })
-
-    u.getTransactionsTo.foreach(list ⇒ {
-      model.console.println(s"Wallet parsing TO transactions ${list}")
-      list.map(_.getAmountOrZero).foreach(_.foreach(a ⇒ start() = start.now + a))
-    })
-
-    start.foreach(s ⇒ model.console.println(s"start ${s}"))
-    start
+      model.console.println(s"Wallet thanks count | to ${toAmounts} | from ${fromAmounts}")
+      (0 :: fromAmounts.map(_ * -1) ::: toAmounts).sum
+    }
   }
 
   lazy val getUsableThanksLimit: Rx[Int] = Var(50)
