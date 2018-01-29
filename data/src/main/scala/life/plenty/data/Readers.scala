@@ -185,6 +185,14 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
 
 object OctopusGunReaderModule {
   def onFinishLoad(o: Octopus, f: () ⇒ Unit) = {
-    o.onModulesLoad(f)
+    implicit val _ctx = o.ctx
+    o.onModulesLoad {
+      o.getTopModule({ case m: OctopusGunReaderModule ⇒ m }).foreach {
+        m ⇒
+          m.connectionsLeftToLoad.foreach(count ⇒ if (count == 0) {
+            f()
+          })
+      }
+    }
   }
 }

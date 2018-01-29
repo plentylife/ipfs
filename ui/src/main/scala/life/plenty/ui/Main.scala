@@ -44,16 +44,6 @@ object Main {
           println(s"UI loading ${id}")
           OctopusReader.read(id) foreach { spaceOpt ⇒
             UiContext.startingSpace.value_=(spaceOpt map { s ⇒ s.asInstanceOf[Space] })
-
-            /* fixme this will go away at some point */
-            //            spaceOpt.foreach { o =>
-            //              ui.console.println(s"Trying to add member to space with modules ${o.modules}")
-            //              o.getTopModule({ case m: ActionAddMember => m }).foreach { m =>
-            //                ui.console.println("module found")
-            //                m.addMember(UiContext.userVar.value)
-            //              }
-            //            }
-            /* just meant for initial prototypes to add members on load of a page */
           }
         case None ⇒ println("Router params do not have a space id")
       }

@@ -1,32 +1,30 @@
 package life.plenty.model.octopi
 
-import life.plenty.model.connection.Member
-import rx.{Ctx, Rx}
+import life.plenty.model
+import life.plenty.model.connection.{Child, Member, Parent}
+import rx.Rx
 
 class Members extends WithParent[Space] {
   lazy val getMembers: Rx[List[User]] = rx.getAll({ case Member(u) ⇒ u })
 
-  Members.register(this)
-}
+  // fixme. needs to wait for load
+  def addMember(u: User) = {
 
-object Members {
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-
-  private var constituents = Set[Members]()
-
-  def register(m: Members) = {
-    println("registering members")
-    constituents += m
-    taskList.foreach(t ⇒ t(m, ctx))
-  }
-
-  private var taskList = List[(Members, Ctx.Owner) ⇒ Unit]()
-
-  def proposeTask(task: (Members, Ctx.Owner) ⇒ Unit): Unit = {
-    taskList = task :: taskList
-    constituents foreach { m ⇒
-      task(m, ctx)
+    model.console.trace("Trying to Adding a new member")
+    val existing: Rx[Boolean] = getMembers.map { ms ⇒
+      ms.exists(_.id == u.id)
     }
+
+    existing.foreach { ex ⇒
+      if (!ex) {
+        model.console.println(s"Adding a new member ${u} in ${this}")
+        val w = new Wallet
+        w.asNew(Parent(u), Parent(this))
+        u.addConnection(Child(w))
+        u.addConnection(Parent(this))
+        addConnection(Member(u))
+      }
+    }
+
   }
 }
-
