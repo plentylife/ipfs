@@ -10,14 +10,9 @@ object Helpers {
   implicit class BindableProperty[T](rxv: Rx[Option[T]])(implicit parser: T ⇒ String) {
     val inner = Var(rxv.now)
 
-    //    property.registerUpdater(() ⇒ {
-    //      println(property.getSafe)
-    //      inner.value_=(property.getSafe)
-    //    })
     implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
     rxv.foreach(p ⇒ {
-      //      println("rx property update", p)
       inner.value_=(p)
     })
 

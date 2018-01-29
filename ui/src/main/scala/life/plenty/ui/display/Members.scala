@@ -6,10 +6,10 @@ import life.plenty.data.OctopusGunReaderModule
 import life.plenty.model.octopi.{Members, User}
 import life.plenty.ui
 import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.Helpers.BindableProperty
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.raw.Node
 import rx.{Ctx, Obs}
-
 class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[Members] {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
@@ -39,7 +39,7 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
 
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
-    <div class="card d-inline-flex mt-2 ml-2">
+    <div class="card d-inline-flex mt-2">
       <div class="card-body">
 
         <div class="card-title">members of this space:</div>
@@ -52,6 +52,6 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
 
   @dom
   private def displayMember(u: User): Binding[Node] = <li>
-    {u.id}
+    {u.getName.dom.bind}
   </li>
 }
