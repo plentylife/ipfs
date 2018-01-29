@@ -46,7 +46,11 @@ object OctopusReader {
     val className = Promise[String]()
     gun.get("class").`val`((d, k) ⇒ {
       // fixme throws an error if id is not present in db
-      className.success(d.toLocaleString())
+      try {
+        className.success(d.toLocaleString())
+      } catch {
+        case e: Throwable ⇒ println(s"Failed on ID `$id`"); throw e
+      }
     })
 
     className.future.map(cs ⇒ {

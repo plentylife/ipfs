@@ -11,12 +11,14 @@ import scala.scalajs.js.JSON
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
-    println(s"writing octopus ${o} ${o.connections}")
+    println(s"writing octopus ${o} ${o.connections} ${o.id}")
     // fixme there should be a check that the class does not already exist
     val go = gun.get(o.id)
     go.put(js.Dynamic.literal(
       "class" → o.getClass.getSimpleName
-    ), null)
+    ), (d) ⇒ {
+      println(s"write of ${o.id} resulted in ${JSON.stringify(d)}")
+    })
     //    o.getTopModule({ case m: ConstructorWriterModule[_] ⇒ m }).foreach(_.write(go))
 
     writeConnections(o.allConnections, go)
