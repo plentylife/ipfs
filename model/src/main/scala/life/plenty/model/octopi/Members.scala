@@ -1,24 +1,32 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.Member
-import rx.Rx
+import rx.{Ctx, Rx}
 
-class Members() extends WithParent[Space] {
+class Members extends WithParent[Space] {
+  lazy val getMembers: Rx[List[User]] = rx.getAll({ case Member(u) ⇒ u })
 
-  //  override def idGenerator: String = "membersof" + getParent.id
-
-  // fixme. shouldn't that be in a module?
-  //  def addMember(u: User) = {
-  //    println("adding member", u.id, u)
-
-    //    u.addConnection(Child(new Wallet(u, this, bi)))
-    //    u.addConnection(Parent(this))
-    //    new VoteAllowance(10, u, bi)
-    //    this.addConnection(Member(u))
-    //    println("adding member", u.id, u.connections)
-  //  }
-
-  //  def members: List[User] = this.connections.collect({ case Member(u) ⇒ u })
-
-  lazy val members: Rx[List[User]] = rx.getAll({ case Member(u) ⇒ u })
+  Members.register(this)
 }
+
+object Members {
+  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
+
+  private var constituents = Set[Members]()
+
+  def register(m: Members) = {
+    println("registering members")
+    constituents += m
+    taskList.foreach(t ⇒ t(m, ctx))
+  }
+
+  private var taskList = List[(Members, Ctx.Owner) ⇒ Unit]()
+
+  def proposeTask(task: (Members, Ctx.Owner) ⇒ Unit): Unit = {
+    taskList = task :: taskList
+    constituents foreach { m ⇒
+      task(m, ctx)
+    }
+  }
+}
+

@@ -56,6 +56,16 @@ trait OctopusConstructor {
     })
   }
 
+  def onModulesLoad(f: ⇒ Unit): Unit = {
+    modulesFinishedLoading.foreach(i ⇒ {
+      if (i) {
+        model.console.println("Modules finished loading. Executing function.")
+        f
+        modulesFinishedLoading.kill()
+      }
+    })
+  }
+
   def asNew(properties: Connection[_]*): Unit = {
     println(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
     properties.foreach(p ⇒ {

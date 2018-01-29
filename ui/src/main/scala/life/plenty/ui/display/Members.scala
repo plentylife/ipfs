@@ -2,10 +2,11 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.model.actions.ActionAddMember
 import life.plenty.model.octopi.{Members, User}
 import life.plenty.ui
-import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.raw.Node
 import rx.{Ctx, Obs}
 
@@ -15,14 +16,24 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
   private val _members = Vars[User]()
   private var membersRx: Obs = null
 
+  private var addedCurrentUser = false
+
   override def update(): Unit = {
     if (membersRx == null) {
-      membersRx = withinOctopus.members.foreach(list ⇒ {
+      membersRx = withinOctopus.getMembers.foreach(list ⇒ {
         _members.value.clear()
         _members.value.insertAll(0, list)
         ui.console.println(s"MembersDisplay update ${list}")
       }
       )
+    }
+
+    if (!addedCurrentUser) {
+      ui.console.println(s"Trying to add member to space with modules ${withinOctopus.modules}")
+      o.getTopModule({ case m: ActionAddMember => m }).foreach { m =>
+        ui.console.println("module found")
+        m.addMember(UiContext.userVar.value)
+      }
     }
   }
 

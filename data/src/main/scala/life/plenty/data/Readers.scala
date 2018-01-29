@@ -4,6 +4,7 @@ import life.plenty.model.actions.ActionOnConnectionsRequest
 import life.plenty.model.connection._
 import life.plenty.model.octopi.GreatQuestions._
 import life.plenty.model.octopi._
+import rx.Var
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
@@ -136,19 +137,34 @@ object ConnectionReader {
 }
 
 class OctopusGunReaderModule(override val withinOctopus: Octopus) extends ActionOnConnectionsRequest {
-  var loaded = false
+
+  var instantiated = false
+  val connectionsLeftToLoad = Var(-1)
   console.println(s"Gun Reader instantiated in ${withinOctopus.getClass}")
 
-  override def onConnectionsRequest(): Unit = if (!loaded) {
-    console.println(s"Gun Reader in ${withinOctopus.getClass} with ${withinOctopus.connections}")
-    val gun = Main.gun.get(withinOctopus.id)
-    gun.`val`((d, k) ⇒ {
-      if (!js.isUndefined(d)) load(gun)
-    })
+  override def onConnectionsRequest(): Unit = synchronized {
+    if (!instantiated) {
+      console.println(s"Gun Reader in ${withinOctopus.getClass} with ${withinOctopus.connections}")
+      val gun = Main.gun.get(withinOctopus.id)
+      gun.`val`((d, k) ⇒ {
+        if (!js.isUndefined(d)) {
+          load(gun)
+          instantiated = true
+        }
+      })
+    }
   }
 
   private def load(gun: Gun) = {
-    gun.get("connections").map().`val`((d, k) ⇒ {
+    val gc = gun.get("connections")
+    gc.`val`((d, k) ⇒ {
+      console.trace(s"Gun raw connections to read ${JSON.stringify(d)}")
+      val l = js.Object.keys(d).length
+      connectionsLeftToLoad() = l + connectionsLeftToLoad.now
+      console.trace(s"Gun raw connections length $l")
+    })
+
+    gc.map().`val`((d, k) ⇒ {
       ConnectionReader.read(d, k) map { optCon ⇒ {
         console.println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
         if (optCon.isEmpty) {
@@ -157,13 +173,18 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
         }
 
         optCon foreach { c ⇒
+          connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
           c.tmpMarker = GunMarker
           withinOctopus.addConnection(c)
         }
       }
       }
     })
+  }
+}
 
-    loaded = true
+object OctopusGunReaderModule {
+  def onFinishLoad(o: Octopus, f: () ⇒ Unit) = {
+    o.onModulesLoad(f)
   }
 }

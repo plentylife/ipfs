@@ -7,7 +7,7 @@ import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
 trait Octopus extends OctopusConstructor {
-  implicit var ctx: Ctx.Owner = Ctx.Owner.safe()
+  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   protected var _modules: List[Module[Octopus]] = List()
   protected lazy val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
@@ -68,15 +68,6 @@ trait Octopus extends OctopusConstructor {
   def getTopConnectionData[T](f: PartialFunction[Connection[_], T]): Option[T] =
     connections.collectFirst(f)
 
-  @deprecated
-  /** this method will go away as rx is introduced thoroughly.
-    * does not filter. collects on raw connections list */
-  def getAllTopConnectionDataRx[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
-    _connections.now.collectFirst(f) match {
-      case Some(c) ⇒ Var(Option(c))
-      case None ⇒ _lastAddedConnection.map(_.collect(f))
-    }
-
   object s {
     def get[T](f: PartialFunction[Connection[_], Connection[T]]): Option[Connection[T]] = getTopConnection(f)
 
@@ -86,7 +77,7 @@ trait Octopus extends OctopusConstructor {
   }
 
   object rx {
-    def cons: Rx.Dynamic[List[Connection[_]]] = {
+    def cons(implicit ctx: Ctx.Owner): Rx.Dynamic[List[Connection[_]]] = {
       console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
 
@@ -98,17 +89,17 @@ trait Octopus extends OctopusConstructor {
     def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
       cons.now.collectFirst(f) match {
         case Some(c) ⇒ Var(Option(c))
-        case None ⇒ getWatch(f)
+        case None ⇒ getWatch(f)(ctx)
       }
 
     def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       val current = Var(cons.now.collect(f))
-      getWatch(f).foreach(_.foreach(n ⇒ current() = n :: current.now))
+      getWatch(f)(ctx).foreach(_.foreach(n ⇒ current() = n :: current.now))(ctx)
       current
     }
 
     def getWatch[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      _lastAddedConnection.map(_.collect(f)).filter(_.nonEmpty)
+      _lastAddedConnection.map(_.collect(f))(ctx).filter(_.nonEmpty)(ctx)
     }
 
     //    def getAll[T <: Connection[_]](implicit ctx: Ctx.Owner): Rx[Iterable[T]] = _connections.
@@ -149,19 +140,14 @@ trait Octopus extends OctopusConstructor {
   /** must be filled before accessed */
   private var onConnectionsRequestedModules: List[ActionOnConnectionsRequest] = null
 
-  /* Constructor */
-
-  /** this is ran before the modules are registered */
-  protected def preConstructor(): Unit = Unit
+  protected val modulesFinishedLoading = Var(false)
 
   /* Constructor */
   _modules = ModuleRegistry.getModules(this)
   console.trace(s"Loaded modules ${_modules}")
+  modulesFinishedLoading() = true
   onConnectionsRequestedModules = getModules({ case m: ActionOnConnectionsRequest ⇒ m })
-  preConstructor()
-  //  println("Octopus constructor -- " + this.getClass)
-  //  getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})
-  //  println(connections)
+
 
 }
 
