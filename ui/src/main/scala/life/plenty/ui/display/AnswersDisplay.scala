@@ -27,9 +27,9 @@ class BasicAnswerDisplay(override val withinOctopus: BasicAnswer) extends Displa
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
     val disabled = findVoteModule.isEmpty
     <div class="card d-inline-flex mt-1 mr-1 flex-row answer">
-      <div class="d-inline-flex flex-column">
-        <button type="button" class="btn btn-primary" disabled={disabled} onclick={upVote _}>Up vote</button>
-        <button type="button" class="btn btn-primary" disabled={disabled} onclick={downVote _}>Down vote</button>
+      <div class="d-inline-flex flex-column controls">
+        <button type="button" class="btn btn-primary btn-sm" disabled={disabled} onclick={upVote _}>Up vote</button>
+        <button type="button" class="btn btn-primary btn-sm" disabled={disabled} onclick={downVote _}>Down vote</button>
         <span>
           {votes.bind.toString}
           votes</span>

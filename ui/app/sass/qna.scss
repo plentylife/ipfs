@@ -1,7 +1,15 @@
 .title-with-input {
   input {
-    min-width: 100px;
-    width: 50%;
+    min-width: 150px;
+    flex-grow: 1;
+    display: flex;
+    //width: 50%;
+    //max-width: 400px;
+  }
+  justify-content: space-around;
+  span {
+    max-width: 400px;
+    flex-grow: 1;
   }
 }
 
@@ -25,6 +33,14 @@
   max-width: 50px;
 }
 
+.answer, .contribution {
+  .controls {
+    margin-top: $spacer * 0.25;
+    margin-left: $spacer * 0.25;
+
+  }
+}
+
 .card.answer {
   border-color: saddlebrown;
   .card-title {
@@ -39,6 +55,10 @@ $contribution-color: forestgreen;
   .card-title {
     color: $contribution-color;
   }
+}
+
+.card {
+  border-radius: 0;
 }
 
 .contribution-label {

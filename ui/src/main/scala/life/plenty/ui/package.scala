@@ -46,7 +46,7 @@ package object ui {
     //    ModuleRegistry add { case o: Octopus ⇒ new DisplayUpdateOnChildrenTransform(o) }
     // fixme just a test
     //    ModuleRegistry add { case o: Octopus if !o.isInstanceOf[Transaction] ⇒ new ChildDisplay(o) }
-    ModuleRegistry add { case o: Octopus if !o.isInstanceOf[Vote] ⇒ new ChildDisplay(o) }
+    ModuleRegistry add { case o: Octopus if !(o.isInstanceOf[Vote] || o.isInstanceOf[Question]) ⇒ new ChildDisplay(o) }
 
     ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }
     ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }

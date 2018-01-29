@@ -1,6 +1,7 @@
 .menu-bar {
   background-color: theme-color("dark");
   color: color-yiq(theme-color("dark"));
+  justify-content: space-around;
 }
 
 .current-user-wallet-outer-box {

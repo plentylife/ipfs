@@ -2,6 +2,7 @@ package life.plenty.ui.display
 
 import life.plenty.model.connection.Child
 import life.plenty.model.octopi.{Answer, GreatQuestion, Octopus}
+import life.plenty.ui
 import life.plenty.ui.display.actions.CreateAnswer
 import life.plenty.ui.display.meta.{GroupedChildDisplay, GroupedModularDisplay}
 import life.plenty.ui.model.DisplayModel.DisplayModule
@@ -23,7 +24,10 @@ class AnswerGroup(private val _withinOctopus: Octopus) extends GroupedChildDispl
   override protected val displayInOrder: List[String] = List("answers", "other")
 
   override def doDisplay() = {
-    withinOctopus.connections.collectFirst({ case Child(_: Answer) ⇒ Unit }).nonEmpty
+    //    val r = withinOctopus.connections.collectFirst({ case Child(_: Answer) ⇒ Unit }).nonEmpty
+    val r = true
+    ui.console.println(s"AnswerGroup doDisplay $r")
+    r
   }
 
   override protected def groupBy(o: Octopus): String = o match {
