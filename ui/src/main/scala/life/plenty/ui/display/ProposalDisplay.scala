@@ -11,7 +11,7 @@ import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 import rx.Ctx
 
-class BasicAnswerDisplay(override val withinOctopus: BasicAnswer) extends DisplayModule[BasicAnswer] {
+class BasicAnswerDisplay(override val withinOctopus: Proposal) extends DisplayModule[Proposal] {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   //  protected val body = Var[String](withinOctopus._body)
@@ -35,7 +35,7 @@ class BasicAnswerDisplay(override val withinOctopus: BasicAnswer) extends Displa
           votes</span>
       </div>
       <div class="card-body">
-        <h6 class="card-title">answer</h6>
+        <h6 class="card-title">proposal</h6>
         <h6 class="card-subtitle mb-2 text-muted">by john</h6>
         <p class="card-text">
           {withinOctopus.getBody.dom.bind}

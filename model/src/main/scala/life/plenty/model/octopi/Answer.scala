@@ -33,7 +33,7 @@ trait Answer extends Space with WithParent[Space] {
   }
 }
 
-class BasicAnswer extends Answer {
+class Proposal extends Answer {
 }
 
 class Contribution extends Answer {
