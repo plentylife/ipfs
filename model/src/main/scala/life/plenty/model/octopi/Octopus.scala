@@ -111,7 +111,10 @@ trait Octopus extends OctopusConstructor {
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
     // duplicates are silently dropped
     //    println(s"adding connection ${connection} to ${this}")
-    if (_connections.now.exists(_.id == connection.id)) return Right()
+    if (_connections.now.exists(_.id == connection.id)) {
+      println("Connection was not added since it exists")
+      return Right()
+    }
 
     var onErrorList = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*) map { m ⇒
       m.onConnectionAdd(connection)

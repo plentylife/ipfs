@@ -26,9 +26,11 @@ object UiContext {
     val name = window.localStorage.getItem("username")
     val email = window.localStorage.getItem("useremail")
     //    createAndSetUser(name, email)
-    OctopusReader.read(generateUserId(name, email)).foreach {
-      case Some(u) ⇒ userVar.value_=(u.asInstanceOf[BasicUser])
-      case None ⇒ println("UiContext was unable to load user given the stored credentials")
+    if (name != null && email != null) {
+      OctopusReader.read(generateUserId(name, email)).foreach {
+        case Some(u) ⇒ userVar.value_=(u.asInstanceOf[BasicUser])
+        case None ⇒ println("UiContext was unable to load user given the stored credentials")
+      }
     }
   }
 
