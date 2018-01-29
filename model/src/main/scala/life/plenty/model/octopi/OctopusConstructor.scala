@@ -34,7 +34,11 @@ trait OctopusConstructor {
 
   def getCreator: Rx[Option[User]] = rx.get({ case Creator(t) ⇒ t })
 
-  def required: Set[Rx[Option[_]]] = Set(getCreator)
+  private var _required: Set[() ⇒ Rx[Option[_]]] = Set(() ⇒ getCreator)
+
+  def addToRequired(r: ⇒ Rx[Option[_]]) = _required += { () ⇒ r }
+
+  final def required: Set[() ⇒ Rx[Option[_]]] = _required
 
   /** alias for [[addConnection()]] */
   def set(c: Connection[_]): Unit = addConnection(c)
@@ -64,7 +68,7 @@ trait OctopusConstructor {
 
     model.defaultCreator.foreach(c ⇒ set(Creator(c).inst))
     for (p ← required) {
-      if (p.now.isEmpty) throw new Exception(s"Class ${this.getClass} was not properly instantiated. " +
+      if (p().now.isEmpty) throw new Exception(s"Class ${this.getClass} was not properly instantiated. " +
         s"Connections ${this._connections.now}")
     }
 

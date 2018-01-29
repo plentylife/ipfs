@@ -18,9 +18,10 @@ class ActionUpDownVote(override val withinOctopus: Answer) extends Module[Answer
 
 class ActionTip(override val withinOctopus: Contribution) extends Module[Contribution] {
   def add(howMuch: Int, by: User) = {
-    println("adding tip")
-    //    new Transaction(howMuch, by, withinOctopus, basicInfo)
-    //    new VoteAllowance(howMuch, by, basicInfo)
-    ???
+    //    println("adding tip")
+    val t = new Transaction()
+    t.asNew()
+
+    //        val va = new VoteAllowance(howMuch, by, basicInfo)
   }
 }

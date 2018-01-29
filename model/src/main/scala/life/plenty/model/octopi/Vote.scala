@@ -1,14 +1,15 @@
 package life.plenty.model.octopi
 
-import life.plenty.model.connection.{Amount, Child, Parent}
+import life.plenty.model.connection.{Child, Parent}
 import life.plenty.model.utils._
 
-class Vote() extends Octopus {
+class Vote() extends WithAmount {
 
-  lazy val sizeAndDirection = rx.get({ case Amount(a) ⇒ a })
+  lazy val sizeAndDirection = getAmount
   lazy val parentAnswer = rx.get({ case Parent(a: Answer) ⇒ a })
 
-  override def required = super.required ++ Set(sizeAndDirection, parentAnswer)
+  addToRequired(sizeAndDirection)
+  addToRequired(parentAnswer)
 
   onNew {
     parentAnswer.addConnection(Child(this))

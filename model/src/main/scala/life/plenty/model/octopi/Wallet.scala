@@ -4,7 +4,8 @@ import life.plenty.model.connection.{Child, Parent}
 import rx.Rx
 
 class Wallet() extends Octopus {
-  override def required = super.required + getUser + getMembers
+  addToRequired(getUser)
+  addToRequired(getMembers)
 
   //  rx.getWatch[Parent[Octopus]].map(_.map(p ⇒ p.parent.addConnection(Child(this))))
 

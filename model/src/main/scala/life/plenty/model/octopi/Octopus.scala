@@ -3,8 +3,8 @@ package life.plenty.model.octopi
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Connection, Marker}
-import life.plenty.model.{ModuleRegistry, console}
 import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
+import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
 trait Octopus extends OctopusConstructor {
   implicit var ctx: Ctx.Owner = Ctx.Owner.safe()
@@ -20,6 +20,8 @@ trait Octopus extends OctopusConstructor {
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
   def modules: List[Module[Octopus]] = {
+    console.trace(s"trying to get modules ${_modules}")
+    console.trace(s"trying to get modules ${_modules} filters ${moduleFilters}")
     moduleFilters.foldLeft(_modules)((ms, f) ⇒ {
       f(ms)
     })

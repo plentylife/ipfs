@@ -4,7 +4,8 @@ import life.plenty.model.connection.Name
 import rx.Rx
 
 trait User extends Octopus {
-  override def required = Set(getRxId, getName)
+  addToRequired(getRxId)
+  addToRequired(getName)
 
   //  override def idGenerator: String = {
   //    throw new NotImplementedError(s"this method not supposed to be used for users. Connections ${_connections.now}")

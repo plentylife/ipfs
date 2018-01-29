@@ -10,6 +10,7 @@ package object utils {
   implicit def getRx[T](r: Rx[Option[T]]): T = r.now.get
 
   implicit class OptRxOctopus[T <: Octopus](rx: Rx[Option[T]])(implicit ctx: Ctx.Owner) {
+    console.println(s"Util OptRxOcto ${rx.now}")
     def addConnection(c: Connection[_]) = rx.foreach(_.foreach {
       o: Octopus ⇒ o.addConnection(c)
     })

@@ -1,10 +1,10 @@
 package life.plenty.model.octopi
 
-import life.plenty.model.connection.{Child, Parent}
+import life.plenty.model.connection.{Amount, Child, Parent}
 import rx.Rx
 
 trait WithParent[T <: Octopus] extends Octopus {
-  override def required = super.required + getParent
+  addToRequired(getParent)
 
   def getParent: Rx[Option[Octopus]] = rx.get({ case Parent(p: Octopus) ⇒ p })
 
@@ -16,6 +16,12 @@ trait WithParent[T <: Octopus] extends Octopus {
       p.addConnection(Child(this))
     })
   }
+}
+
+trait WithAmount extends Octopus {
+  addToRequired(getAmount)
+
+  def getAmount = rx.get({ case Amount(a) ⇒ a })
 }
 
 trait WithMembers extends Space {
