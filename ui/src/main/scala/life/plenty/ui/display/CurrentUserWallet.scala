@@ -2,29 +2,55 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.{Octopus, Wallet}
+import life.plenty.model.octopi.{Octopus, Wallet, WithMembers}
 import life.plenty.ui
+import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
+import rx.{Ctx, Obs}
 
 object CurrentUserWallet {
+  private implicit val ctx = Ctx.Owner.safe()
   private val wallet = Var[Option[Wallet]](None)
+  private var walletObs: Obs = null
+
   private val thanksBalance = Var[Int](0)
   private val thanksLimit = Var[Int](0)
   private val thanksSpoilRate = Var[Double](0)
   private val voteBalance = Var[Int](0)
 
   @dom
-  def generateHtml(withinOctopus: Octopus): Binding[Node] = {
-    update(withinOctopus)
-    wallet.bind match {
-      case None => <div class="current-user-wallet-outer-box">you are not part of this group</div>
-      case Some(w) => //displayWallet().bind
-        ???
-    }
+  def generateHtml(withinOctopus: Octopus): Binding[Node] = withinOctopus match {
+    case o: WithMembers ⇒
+      update(o)
+      wallet.bind match {
+        case None => <div class="current-user-wallet-outer-box">you are not part of this group</div>
+        case Some(w) => //displayWallet().bind
+          ???
+      }
+    case _ ⇒ <div>Walled display improperly contstructed</div>
   }
 
-  def update(withinOctopus: Octopus): Unit = {
+  def update(withinOctopus: WithMembers): Unit = {
+    if (walletObs == null) {
+      walletObs = UiContext.getUser.getWallets.foreach(wallets ⇒ {
+        ui.console.println(s"Found wallets ${wallets}")
+        wallets.foreach(w ⇒
+          w.getInMembers.foreach {
+            case Some(m) if m.
+          }
+        )
+
+        wallets.find(_.getInMembers.).foreach(wallet.value_=)
+      })
+    }
+
+    //    walletObs = withinOctopus.getMembers.foreach(_.foreach{mo ⇒
+    //      mo.getMembers.foreach { list ⇒
+    //        list.find(_.id == UiContext.getUser.id).foreach()
+    //      }
+    //    })
+
     //    wallet.value_=(findWallet(withinOctopus))
     //    wallet.value.foreach { w ⇒
     //      thanksBalance.value_=(w.getUsableThanksAmount)

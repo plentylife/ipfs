@@ -5,19 +5,19 @@ import rx.Rx
 
 class Wallet() extends Octopus {
   addToRequired(getUser)
-  addToRequired(getMembers)
+  addToRequired(getInMembers)
 
   //  rx.getWatch[Parent[Octopus]].map(_.map(p ⇒ p.parent.addConnection(Child(this))))
 
   def getUser: Rx[Option[User]] = rx.get({ case Parent(u: User) ⇒ u })
 
-  def getMembers: Rx[Option[Members]] = rx.get({ case Parent(m: Members) ⇒ m })
+  def getInMembers: Rx[Option[Members]] = rx.get({ case Parent(m: Members) ⇒ m })
 
   def registerWithParent(p: Octopus) = p.addConnection(Child(this).inst)
 
   onNew {
     getUser.foreach(_ foreach registerWithParent)
-    getMembers.foreach(_ foreach registerWithParent)
+    getInMembers.foreach(_ foreach registerWithParent)
   }
 
   def getUsableThanksAmount: Int = {

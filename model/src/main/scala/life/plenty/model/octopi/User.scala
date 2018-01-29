@@ -1,6 +1,6 @@
 package life.plenty.model.octopi
 
-import life.plenty.model.connection.Name
+import life.plenty.model.connection.{Child, Name}
 import rx.Rx
 
 trait User extends Octopus {
@@ -12,6 +12,8 @@ trait User extends Octopus {
   //  }
 
   def getName: Rx[Option[String]] = rx.get({ case Name(n: String) ⇒ n })
+
+  lazy val getWallets: Rx[List[Wallet]] = rx.getAll({ case Child(w: Wallet) ⇒ w })
 
   override def equals(o: Any): Boolean = o match {
     case that: User => that.id.equalsIgnoreCase(this.id)

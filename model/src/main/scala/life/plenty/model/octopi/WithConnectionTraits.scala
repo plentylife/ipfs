@@ -26,7 +26,7 @@ trait WithAmount extends Octopus {
 }
 
 trait WithMembers extends Space {
-  lazy val members = rx.get({ case Child(m: Members) ⇒ m })
+  lazy val getMembers = rx.get({ case Child(m: Members) ⇒ m })
 
   onNew {
     val m = new Members
