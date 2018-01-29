@@ -34,6 +34,8 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
       rxChildren = getChildren.foreach { cs ⇒
         children.value.clear()
         children.value.insertAll(0, cs)
+        console.println(s"child updated ${withinOctopus} $cs")
+
       }
     }
   }

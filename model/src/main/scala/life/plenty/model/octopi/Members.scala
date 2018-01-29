@@ -1,6 +1,7 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.Member
+import rx.Rx
 
 class Members() extends WithParent[Space] {
 
@@ -17,5 +18,7 @@ class Members() extends WithParent[Space] {
     //    println("adding member", u.id, u.connections)
   }
 
-  def members: List[User] = this.connections.collect({ case Member(u) ⇒ u })
+  //  def members: List[User] = this.connections.collect({ case Member(u) ⇒ u })
+
+  lazy val members: Rx[List[User]] = rx.getAll({ case Member(u) ⇒ u })
 }

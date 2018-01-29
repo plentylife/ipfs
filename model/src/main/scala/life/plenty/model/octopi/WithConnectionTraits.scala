@@ -1,5 +1,6 @@
 package life.plenty.model.octopi
 
+import life.plenty.model
 import life.plenty.model.connection.{Amount, Child, Parent}
 import rx.Rx
 
@@ -12,7 +13,7 @@ trait WithParent[T <: Octopus] extends Octopus {
 
   onNew {
     getParent.foreach(_.foreach { p: Octopus ⇒
-      println(s"adding child to parent from ${this} to $p")
+      model.console.println(s"adding child to parent from ${this} to $p")
       p.addConnection(Child(this))
     })
   }
@@ -25,5 +26,10 @@ trait WithAmount extends Octopus {
 }
 
 trait WithMembers extends Space {
-  //  def members: Members = new Property[Members]({ case Child(m: Members) ⇒ m }, this, null)
+  lazy val members = rx.get({ case Child(m: Members) ⇒ m })
+
+  onNew {
+    val m = new Members
+    m.asNew(Parent(this))
+  }
 }

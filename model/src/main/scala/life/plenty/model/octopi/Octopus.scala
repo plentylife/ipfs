@@ -101,6 +101,12 @@ trait Octopus extends OctopusConstructor {
         case None ⇒ getWatch(f)
       }
 
+    def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
+      val current = Var(cons.now.collect(f))
+      getWatch(f).foreach(_.foreach(n ⇒ current() = n :: current.now))
+      current
+    }
+
     def getWatch[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
       _lastAddedConnection.map(_.collect(f)).filter(_.nonEmpty)
     }

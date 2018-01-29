@@ -6,13 +6,22 @@ import life.plenty.model.octopi.{Members, User}
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.raw.Node
+import rx.{Ctx, Obs}
 
 class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[Members] {
+  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
+
   private val _members = Vars[User]()
+  private var membersRx: Obs = null
 
   override def update(): Unit = {
-    _members.value.clear()
-    _members.value.insertAll(0, withinOctopus.members)
+    if (membersRx == null) {
+      membersRx = withinOctopus.members.foreach(list ⇒ {
+        _members.value.clear()
+        _members.value.insertAll(0, list)
+      }
+      )
+    }
   }
 
   @dom

@@ -2,11 +2,8 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.GraphUtils
-import life.plenty.model.connection.Child
-import life.plenty.model.octopi.{Members, Octopus, Wallet}
+import life.plenty.model.octopi.{Octopus, Wallet}
 import life.plenty.ui
-import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 
@@ -22,29 +19,31 @@ object CurrentUserWallet {
     update(withinOctopus)
     wallet.bind match {
       case None => <div class="current-user-wallet-outer-box">you are not part of this group</div>
-      case Some(w) => displayWallet().bind
+      case Some(w) => //displayWallet().bind
+        ???
     }
   }
 
   def update(withinOctopus: Octopus): Unit = {
-    wallet.value_=(findWallet(withinOctopus))
-    wallet.value.foreach { w ⇒
-      thanksBalance.value_=(w.getUsableThanksAmount)
-      thanksLimit.value_=(w.getUsableThanksLimit)
-      thanksSpoilRate.value_=(w.getThanksSpoilRate)
-      voteBalance.value_=(w.getUsableVotes)
-    }
+    //    wallet.value_=(findWallet(withinOctopus))
+    //    wallet.value.foreach { w ⇒
+    //      thanksBalance.value_=(w.getUsableThanksAmount)
+    //      thanksLimit.value_=(w.getUsableThanksLimit)
+    //      thanksSpoilRate.value_=(w.getThanksSpoilRate)
+    //      voteBalance.value_=(w.getUsableVotes)
+    //    }
   }
 
   private def findWallet(withinOctopus: Octopus): Option[Wallet] = {
     //    println("trying to find wallet in ", withinOctopus, withinOctopus.connections)
-    GraphUtils.findModuleUpParentTree(withinOctopus, { case Child(m: Members) ⇒ m }).flatMap(m ⇒ {
-      m.members.find(_ == UiContext.getUser).flatMap(u ⇒ {
-        u.getTopConnectionData({
-          case Child(w: Wallet) ⇒ w
-        })
-      })
-    })
+    //    GraphUtils.findModuleUpParentTree(withinOctopus, { case Child(m: Members) ⇒ m }).flatMap(m ⇒ {
+    //      m.members.find(_ == UiContext.getUser).flatMap(u ⇒ {
+    //        u.getTopConnectionData({
+    //          case Child(w: Wallet) ⇒ w
+    //        })
+    //      })
+    //    })
+    ???
   }
 
   @dom

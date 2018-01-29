@@ -32,7 +32,8 @@ object OctopusReader {
     ci("Contribution", new Contribution()),
     ci("Vote", new Vote),
     ci("Transaction", new Transaction),
-    ci("VoteAllowance", new VoteAllowance)
+    ci("VoteAllowance", new VoteAllowance),
+    ci("Members", new Members)
   )
 
   def read(id: String): Future[Option[Octopus]] = {
