@@ -63,21 +63,11 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
 
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  private val gqParent = {withinOctopus.rx.get({ case Parent(p: GreatQuestion) ⇒ p })}
-  private val gqTitle: Rx[Option[String]] = gqParent.flatMap {
+  // must be lazy since class is not instantiated at time of load
+  private lazy val gqParent = {withinOctopus.rx.get({ case Parent(p: GreatQuestion) ⇒ p })}
+  private lazy val gqTitle: Rx[Option[String]] = gqParent.flatMap {
     case Some(gq) ⇒ gq.getTitle: Rx[Option[String]]
     case None ⇒ rx.Var(Some("")): Rx[Option[String]]
   }
-
-  gqTitle.foreach(t ⇒ println(s"title changed ${t}"))
-
-
-
-  //  window.setTimeout(() ⇒ {println("question.title", withinOctopus.connections)}, 3000)
-
-  //    private val o = withinOctopus.getAllTopConnectionDataRx({ case Parent(p: GreatQuestion) ⇒ p }).foreach({
-  //      case Some(p) ⇒ println(s"prefix ${p.title()}"); prefix.value_=(p.title() + " ")
-  //      case _ ⇒ println("no prefix", withinOctopus.connections); ""
-  //    })
 
 }

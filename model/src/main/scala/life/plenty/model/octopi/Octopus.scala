@@ -87,6 +87,7 @@ trait Octopus extends OctopusConstructor {
 
   object rx {
     def cons: Rx.Dynamic[List[Connection[_]]] = {
+      console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
 
       _connections map { cons ⇒
@@ -139,6 +140,9 @@ trait Octopus extends OctopusConstructor {
     }
   }
 
+  /** must be filled before accessed */
+  private var onConnectionsRequestedModules: List[ActionOnConnectionsRequest] = null
+
   /* Constructor */
 
   /** this is ran before the modules are registered */
@@ -146,7 +150,8 @@ trait Octopus extends OctopusConstructor {
 
   /* Constructor */
   _modules = ModuleRegistry.getModules(this)
-  private lazy val onConnectionsRequestedModules = getModules({ case m: ActionOnConnectionsRequest ⇒ m })
+  console.trace(s"Loaded modules ${_modules}")
+  onConnectionsRequestedModules = getModules({ case m: ActionOnConnectionsRequest ⇒ m })
   preConstructor()
   //  println("Octopus constructor -- " + this.getClass)
   //  getModules({ case m: ActionOnInitialize[_] ⇒ m }).foreach({_.onInitialize()})

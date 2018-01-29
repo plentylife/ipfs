@@ -135,6 +135,7 @@ object ConnectionReader {
 
 class OctopusGunReaderModule(override val withinOctopus: Octopus) extends ActionOnConnectionsRequest {
   var loaded = false
+  console.println(s"Gun Reader instantiated in ${withinOctopus.getClass}")
 
   override def onConnectionsRequest(): Unit = if (!loaded) {
     console.println(s"Gun Reader in ${withinOctopus.getClass} with ${withinOctopus.connections}")
