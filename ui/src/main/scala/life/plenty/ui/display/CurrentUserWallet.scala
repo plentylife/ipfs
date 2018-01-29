@@ -48,16 +48,16 @@ object CurrentUserWallet {
     <div class="current-user-wallet-outer-box d-inline-flex flex-row mr-2">
       <div class="d-inline-flex flex-column align-items-center mr-2">
         <div class="balance" data:data-toggle="popover" data:data-content="Disabled popover">
-          {thanksBalance.bind.toString + ui.thanks}
+          {w.getUsableThanksAmount.dom.bind}{ui.thanks}
           /
-          {thanksLimit.bind.toString + ui.thanks}
+          {w.getUsableThanksLimit.dom.bind}{ui.thanks}
         </div>
         <div class="text-muted" onclick={e: Event ⇒ Help.walletBalanceHelp}>
           Balance / Credit Limit
           <img class="question-tooltip" src="iconic/svg/question-mark.svg" alt="help"/>
         </div>
         <div class="text-muted">Spoiling at
-          {Math.round(thanksSpoilRate.bind * 100).toString}
+          {BindableProperty(w.getThanksSpoilRate)(sp => Math.round(sp * 100).toString).dom.bind}
           % per day</div>
       </div>
       <div class="d-inline-flex flex-column align-items-center">
