@@ -38,8 +38,6 @@ package object model {
     ModuleRegistry.add { case o: BasicSpace ⇒ new AddGreatQuestions(o) }
 
     ModuleRegistry.add { case o: BasicSpace ⇒ new InitializeMembersOctopus(o) }
-
-
-    //    ModuleRegistry.add { case o: Octopus ⇒ new ActionAddMember(o) }
+    ModuleRegistry.add { case o: WithMembers ⇒ new ActionAddMember(o) }
   }
 }

@@ -2,8 +2,10 @@ package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{OctopusReader, Main ⇒ dataMain}
+import life.plenty.model.actions.ActionAddMember
 import life.plenty.model.octopi._
 import life.plenty.model.{defaultCreator_=, initialize ⇒ mInit}
+import life.plenty.ui
 import life.plenty.ui.display.{Help, Login}
 import life.plenty.ui.model.{DisplayModel, Router, UiContext}
 import org.scalajs.dom.raw.Node
@@ -44,6 +46,16 @@ object Main {
           println(s"UI loading ${id}")
           OctopusReader.read(id) foreach { spaceOpt ⇒
             UiContext.startingSpace.value_=(spaceOpt map { s ⇒ s.asInstanceOf[Space] })
+
+            /* fixme this will go away at some point */
+            spaceOpt.foreach { o =>
+              ui.console.println(s"Trying to add member to space with modules ${o.modules}")
+              o.getTopModule({ case m: ActionAddMember => m }).foreach { m =>
+                ui.console.println("module found")
+                m.addMember(UiContext.userVar.value)
+              }
+            }
+            /* just meant for initial prototypes to add members on load of a page */
           }
         case None ⇒ println("Router params do not have a space id")
       }
@@ -59,6 +71,9 @@ object Main {
     println("Routing hash")
     println(Router.toHash(rp))
   }
+
+  @JSExport
+  def log() = println(UiContext.startingSpace.value.get.connections)
 
   @dom
   def mainSection(): Binding[Node] = {

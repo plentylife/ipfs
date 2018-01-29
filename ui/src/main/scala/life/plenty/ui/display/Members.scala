@@ -3,6 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Members, User}
+import life.plenty.ui
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.raw.Node
@@ -19,6 +20,7 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
       membersRx = withinOctopus.members.foreach(list ⇒ {
         _members.value.clear()
         _members.value.insertAll(0, list)
+        ui.console.println(s"MembersDisplay update ${list}")
       }
       )
     }

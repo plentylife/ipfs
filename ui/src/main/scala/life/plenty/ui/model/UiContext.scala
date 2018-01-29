@@ -11,14 +11,18 @@ object UiContext {
   val userVar: Var[User] = Var(null)
   val startingSpace: Var[Option[Space]] = Var(None)
 
-  def setUser(name: String, email: String) = {
+  def storeUser(name: String, email: String) = {
     window.localStorage.setItem("username", name)
     window.localStorage.setItem("useremail", email)
     createAndSetUser(name, email)
   }
 
+  def setUser(u: BasicUser) = {
+    userVar.value_=(u)
+  }
+
   def login(name: String, email: String) = {
-    setUser(name, email)
+    storeUser(name, email)
     //    Main.showUi()
   }
 
@@ -28,7 +32,7 @@ object UiContext {
     //    createAndSetUser(name, email)
     if (name != null && email != null) {
       OctopusReader.read(generateUserId(name, email)).foreach {
-        case Some(u) ⇒ userVar.value_=(u.asInstanceOf[BasicUser])
+        case Some(u) ⇒ setUser(u.asInstanceOf[BasicUser])
         case None ⇒ println("UiContext was unable to load user given the stored credentials")
       }
     }
@@ -41,7 +45,7 @@ object UiContext {
       println(s"createAndSetUser $name $email")
       val u = new BasicUser
       u.asNew(Id(generateUserId(name, email)), Name(name))
-      userVar.value_=(u)
+      setUser(u)
     } else {
       println(s"UI could not create user from name `${Option(name)}` and email `${Option(email)}`")
     }

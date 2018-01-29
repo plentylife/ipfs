@@ -33,12 +33,14 @@ class Wallet() extends Octopus {
   def getUsableThanksLimit: Int = 50
 
   def getUsableVotes: Int = {
+    // fixme always start at 10
+
     //    val allowance = user.connections.collect({ case Child(a: VoteAllowance) ⇒ a.size }).sum
     // fixme
     //    val used = user.connections.collect({ case Child(v: Vote) ⇒ v.sizeAndDirection.abs }).sum
     val used = 0
     //    allowance - used
-    0
+    10
   }
 
   /** per day */

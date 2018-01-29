@@ -1,8 +1,10 @@
 package life.plenty.model.actions
 
+import life.plenty.model
 import life.plenty.model.GraphUtils
-import life.plenty.model.connection.{Child, Connection, Contributor}
+import life.plenty.model.connection._
 import life.plenty.model.octopi._
+import rx.Ctx
 
 class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
   def add(userId: String) = {
@@ -16,31 +18,37 @@ class ActionAddContributor(override val withinOctopus: Contribution) extends Mod
   }
 }
 
-class ActionAddMember(override val withinOctopus: Octopus) extends ActionAfterGraphTransform {
-  private lazy val membersOctopus = {
-    findModule()
-  }
-  override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] =
-    connection match {
-      case Contributor(c: User) ⇒ addMember(c)
-      //      case Child(o: Octopus) ⇒
-      case _ ⇒ Right()
-    }
-  private def addMember(u: User) = membersOctopus match {
-    case Some(o) ⇒ o.addMember(u); Right()
-    case _ ⇒ Left(new Exception("no Members octopus"))
-  }
-  override def onConnectionRemove(connection: Connection[_]): Either[Exception, Unit] = ???
+class ActionAddMember(override val withinOctopus: WithMembers) extends Module[WithMembers] {
+  println("ActionAddMember")
 
-  private def findModule(starting: Octopus = withinOctopus): Option[Members] = {
+  private lazy val membersOctopus = {
+    findMembersOctopus()
+  }
+
+  def addMember(u: User) = membersOctopus match {
+    case Some(mem) ⇒
+      model.console.println("Trying to Adding a new member")
+      // should get gc'ed
+      implicit val ctx = Ctx.Owner.Unsafe
+      val existing = mem.rx.get({ case Member(m) if m.id == u.id ⇒ m })
+
+      if (existing.now.isEmpty) {
+        model.console.println("Adding a new member")
+        val w = new Wallet
+        w.asNew(Parent(u), Parent(mem))
+        u.addConnection(Child(w))
+        u.addConnection(Parent(mem))
+        mem.addConnection(Member(u))
+      }
+
+      Right()
+    case _ ⇒
+      model.console.error("Found no Members octopus")
+      Left(new Exception("no Members octopus"))
+  }
+
+  private def findMembersOctopus(starting: Octopus = withinOctopus): Option[Members] = {
+    model.console.println(s"Looking for Members in ${starting} ${starting.connections}")
     GraphUtils.findModuleUpParentTree(starting, { case Child(m: Members) ⇒ m })
   }
 }
-
-//class ActionAddParent[T <: Octopus](override val withinOctopus: WithParent[T]) extends
-//  ActionOnInitialize[WithParent[T]] {
-//  override def onInitialize(): Unit = {
-//    //    println("adding parent")
-//    withinOctopus addConnection Parent(withinOctopus.parent)
-//  }
-//}
