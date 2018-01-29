@@ -1,7 +1,12 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.{Body, Child, Connection, Title}
+import life.plenty.model.console
 import rx.Var
+import rx.async.Platform._
+import rx.async._
+
+import scala.concurrent.duration._
 
 trait Answer extends Space with WithParent[Space] {
   override def required = super.required + getBody
@@ -24,10 +29,9 @@ trait Answer extends Space with WithParent[Space] {
     //    println(s"vote came in ${v} ${v.sizeAndDirection.now}")
     v
   }).foreach(_.foreach { v ⇒
-    //.debounce(100 millis)
-    v.sizeAndDirection.foreach({ sdOpt ⇒
+    v.sizeAndDirection.debounce(100 millis).foreach({ sdOpt ⇒
       sdOpt foreach { sd ⇒
-        println(s"vote size added ${sd}")
+        console.trace(s"vote size added ${sd}")
         votes() = votes.now + sd
       }
     })

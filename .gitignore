@@ -6,3 +6,4 @@ ui/app/entry.js
 .sass-cache
 **/css/*
 **/iconic
+**/target/*

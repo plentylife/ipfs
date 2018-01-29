@@ -29,7 +29,7 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   protected var rxChildren: Obs = null
 
   override def update(): Unit = {
-    console.println(s"child updatde ${withinOctopus} $this rxChildren ${rxChildren}")
+    console.trace(s"child updatde ${withinOctopus} $this rxChildren ${rxChildren}")
     if (rxChildren == null) {
       rxChildren = getChildren.foreach { cs ⇒
         children.value.clear()
@@ -40,11 +40,11 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
 
 
   def getChildren: Rx[List[Octopus]] = {
-    console.println(s"getting children ${withinOctopus}")
+    console.trace(s"getting children ${withinOctopus}")
     val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.debounce(1000 millis)
       .map(_.collect({ case Child(c: Octopus) ⇒ c }))
     val ordered = modifiers.foldLeft(childrenRx)((cs, mod) ⇒ {
-      console.println(s"applying modifiers ${withinOctopus}")
+      console.trace(s"applying modifiers ${withinOctopus}")
       mod.applyRx(cs): Rx[List[Octopus]]
     })
     ordered
@@ -89,6 +89,7 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
     }}
     </div>
   }
+
 
   @dom
   private def generateHtmlForGroup(name: String, octopi: List[Octopus],

@@ -3,8 +3,6 @@ package life.plenty
 import life.plenty.model._
 import life.plenty.model.octopi._
 import life.plenty.model.utils.Console
-import life.plenty.ui.actions.{DisplayUpdateAnswerOrderChange, DisplayUpdateOnChildrenTransform,
-  DisplayUpdateWalletChange}
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions.CreateAnswer
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
@@ -20,7 +18,7 @@ package object ui {
 
     /* the modules should be added in a list fashion: the last overrides the first */
     ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
-    ModuleRegistry add { case o: User ⇒ new DisplayUpdateWalletChange(o) }
+    //    ModuleRegistry add { case o: User ⇒ new DisplayUpdateWalletChange(o) }
 
     //    ModuleRegistry add { case o: Space ⇒ new CurrentUserWallet(o) }
     ModuleRegistry add { case o: Space ⇒ new MenuBar(o) }
@@ -36,7 +34,7 @@ package object ui {
     ModuleRegistry add { case q: Question ⇒ new AnswerGroup(q) }
 
     ModuleRegistry add { case a: BasicAnswer ⇒ new BasicAnswerDisplay(a) }
-    ModuleRegistry add { case a: Answer ⇒ new DisplayUpdateAnswerOrderChange(a) }
+    //    ModuleRegistry add { case a: Answer ⇒ new DisplayUpdateAnswerOrderChange(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
     // following the model of one contributer per contribution/answer
     //    ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }
@@ -45,7 +43,7 @@ package object ui {
     //    ModuleRegistry add { case o: Octopus ⇒ new DiscussModuleFilter(o) }
     //    ModuleRegistry add { case o: Octopus ⇒ new RateEffortConnectionFilter(o) }
 
-    ModuleRegistry add { case o: Octopus ⇒ new DisplayUpdateOnChildrenTransform(o) }
+    //    ModuleRegistry add { case o: Octopus ⇒ new DisplayUpdateOnChildrenTransform(o) }
     // fixme just a test
     //    ModuleRegistry add { case o: Octopus if !o.isInstanceOf[Transaction] ⇒ new ChildDisplay(o) }
     ModuleRegistry add { case o: Octopus if !o.isInstanceOf[Vote] ⇒ new ChildDisplay(o) }

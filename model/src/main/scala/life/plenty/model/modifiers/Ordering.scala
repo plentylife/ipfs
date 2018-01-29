@@ -33,7 +33,7 @@ class AnswerVoteOrder(override val withinOctopus: Question) extends OctopusOrder
         case a: Answer ⇒ a -> a.votes()
         case o: Octopus ⇒ o -> 0
       }
-      console.println(s"rxSort answers ${byVote}")
+      console.trace(s"rxSort answers ${byVote}")
       byVote.sortBy(_._2).reverse.map(_._1)
   }
 }
