@@ -2,8 +2,9 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.{Octopus, Wallet, WithMembers}
+import life.plenty.model.octopi.{Octopus, User, Wallet, WithMembers}
 import life.plenty.ui
+import life.plenty.ui.model.Helpers._
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
@@ -25,55 +26,25 @@ object CurrentUserWallet {
       update(o)
       wallet.bind match {
         case None => <div class="current-user-wallet-outer-box">you are not part of this group</div>
-        case Some(w) => //displayWallet().bind
-          ???
+        case Some(w) => displayWallet(w).bind
       }
     case _ ⇒ <div>Walled display improperly contstructed</div>
   }
 
   def update(withinOctopus: WithMembers): Unit = {
     if (walletObs == null) {
-      walletObs = UiContext.getUser.getWallets.foreach(wallets ⇒ {
-        ui.console.println(s"Found wallets ${wallets}")
-        wallets.foreach(w ⇒
-          w.getInMembers.foreach {
-            case Some(m) if m.
-          }
-        )
-
-        wallets.find(_.getInMembers.).foreach(wallet.value_=)
-      })
+      walletObs = withinOctopus.getMembers.foreach(_.foreach(_.getMembers.foreach {
+        list ⇒
+          val w = list.collectFirst({ case u: User if u.id == UiContext.getUser.id ⇒ new Wallet(u) })
+          if (w.nonEmpty) wallet.value_=(w)
+      }))
     }
-
-    //    walletObs = withinOctopus.getMembers.foreach(_.foreach{mo ⇒
-    //      mo.getMembers.foreach { list ⇒
-    //        list.find(_.id == UiContext.getUser.id).foreach()
-    //      }
-    //    })
-
-    //    wallet.value_=(findWallet(withinOctopus))
-    //    wallet.value.foreach { w ⇒
-    //      thanksBalance.value_=(w.getUsableThanksAmount)
-    //      thanksLimit.value_=(w.getUsableThanksLimit)
-    //      thanksSpoilRate.value_=(w.getThanksSpoilRate)
-    //      voteBalance.value_=(w.getUsableVotes)
-    //    }
   }
 
-  private def findWallet(withinOctopus: Octopus): Option[Wallet] = {
-    //    println("trying to find wallet in ", withinOctopus, withinOctopus.connections)
-    //    GraphUtils.findModuleUpParentTree(withinOctopus, { case Child(m: Members) ⇒ m }).flatMap(m ⇒ {
-    //      m.members.find(_ == UiContext.getUser).flatMap(u ⇒ {
-    //        u.getTopConnectionData({
-    //          case Child(w: Wallet) ⇒ w
-    //        })
-    //      })
-    //    })
-    ???
-  }
+  implicit def intToStr(i: Int): String = i.toString
 
   @dom
-  private def displayWallet(): Binding[Node] = {
+  private def displayWallet(w: Wallet): Binding[Node] = {
     <div class="current-user-wallet-outer-box d-inline-flex flex-row mr-2">
       <div class="d-inline-flex flex-column align-items-center mr-2">
         <div class="balance" data:data-toggle="popover" data:data-content="Disabled popover">
@@ -91,7 +62,7 @@ object CurrentUserWallet {
       </div>
       <div class="d-inline-flex flex-column align-items-center">
         <div class="balance">
-          {voteBalance.bind.toString}
+          {BindableProperty(w.getUsableVotes).dom.bind}
         </div>
         <div class="text-muted" onclick={e: Event ⇒ Help.voteBalanceHelp}>Voting Power
           <img class="question-tooltip" src="iconic/svg/question-mark.svg" alt="help"/>

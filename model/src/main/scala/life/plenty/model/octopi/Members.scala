@@ -1,7 +1,7 @@
 package life.plenty.model.octopi
 
 import life.plenty.model
-import life.plenty.model.connection.{Child, Member, Parent}
+import life.plenty.model.connection.{Member, Parent}
 import rx.Rx
 
 class Members extends WithParent[Space] {
@@ -18,9 +18,9 @@ class Members extends WithParent[Space] {
     existing.foreach { ex ⇒
       if (!ex) {
         model.console.println(s"Adding a new member ${u} in ${this}")
-        val w = new Wallet
-        w.asNew(Parent(u), Parent(this))
-        u.addConnection(Child(w))
+        //        val w = new Wallet
+        //        w.asNew(Parent(u), Parent(this))
+        //        u.addConnection(Child(w))
         u.addConnection(Parent(this))
         addConnection(Member(u))
       }

@@ -6,7 +6,7 @@ import life.plenty.data.OctopusGunReaderModule
 import life.plenty.model.octopi.{Members, User}
 import life.plenty.ui
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.Helpers.BindableProperty
+import life.plenty.ui.model.Helpers.OptBindableProperty
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.raw.Node
 import rx.{Ctx, Obs}
