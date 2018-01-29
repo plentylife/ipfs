@@ -23,6 +23,8 @@ trait WithAmount extends Octopus {
   addToRequired(getAmount)
 
   def getAmount = rx.get({ case Amount(a) ⇒ a })
+
+  def getAmountOrZero: Rx[Int] = getAmount.map(_.getOrElse(0))
 }
 
 trait WithMembers extends Space {

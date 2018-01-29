@@ -3,7 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionTip
-import life.plenty.model.octopi.Contribution
+import life.plenty.model.octopi.{Contribution, User}
 import life.plenty.ui
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
@@ -11,7 +11,7 @@ import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Node
-import rx.{Ctx, Obs}
+import rx.{Ctx, Obs, Rx}
 
 import scala.util.{Failure, Success, Try}
 
@@ -52,7 +52,12 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
       </div>
       <div class="card-body">
         <h6 class="card-title">contribution</h6>
-        <h6 class="card-subtitle mb-2 text-muted">by sarah</h6>
+        <h6 class="card-subtitle mb-2 text-muted">by
+          {val c: Rx[Option[String]] = withinOctopus.getCreator.map((optU: Option[User]) => optU.map {
+          u: User => u.getNameOrEmpty(): String
+        });
+        c.dom.bind}
+        </h6>
         <p class="card-text">
           {withinOctopus.getBody.dom.bind}
         </p>
