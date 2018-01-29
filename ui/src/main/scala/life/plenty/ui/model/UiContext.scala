@@ -34,7 +34,7 @@ object UiContext {
     }
   }
 
-  private def generateUserId(n: String, e: String) = e + n
+  private def generateUserId(n: String, e: String) = e
 
   private def createAndSetUser(name: String, email: String) = {
     if (name != null && email != null && name.nonEmpty && email.nonEmpty) {
