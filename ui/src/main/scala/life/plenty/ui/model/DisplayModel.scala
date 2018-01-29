@@ -44,7 +44,8 @@ object DisplayModel {
 
     def overrides: List[ModuleOverride] = List()
 
-    def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride]): Option[Binding[Node]] = {
+    def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride]): Option[Binding[Node]] =
+      synchronized {
       overriddenBy(overrides) match {
         case Some(module) ⇒ module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {

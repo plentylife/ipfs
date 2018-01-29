@@ -3,9 +3,10 @@ package life.plenty
 import life.plenty.model.actions._
 import life.plenty.model.modifiers.AnswerVoteOrder
 import life.plenty.model.octopi._
-import life.plenty.model.utils.Hash
+import life.plenty.model.utils.{Console, Hash}
 
 package object model {
+  val console = new Console(true)
   private var _hasher: Hash = _
   private var _defaultCreator: Option[User] = None
 

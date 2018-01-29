@@ -13,7 +13,7 @@ object Main {
   def gun: Gun = _gun
 
   def main(): Unit = {
-    println("Data entry point")
+    console.println("Data entry point")
     model.setHasher(DataHash)
     modules()
 

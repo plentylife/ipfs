@@ -2,6 +2,7 @@ package life.plenty
 
 import life.plenty.model._
 import life.plenty.model.octopi._
+import life.plenty.model.utils.Console
 import life.plenty.ui.actions.{DisplayUpdateAnswerOrderChange, DisplayUpdateOnChildrenTransform,
   DisplayUpdateWalletChange}
 import life.plenty.ui.display._
@@ -11,6 +12,7 @@ import life.plenty.ui.filters.BasicSpaceDisplayOrder
 
 package object ui {
 
+  val console = new Console(true)
   val thanks = "\u20B8"
 
   def initialize(): Unit = {
@@ -46,7 +48,7 @@ package object ui {
     ModuleRegistry add { case o: Octopus ⇒ new DisplayUpdateOnChildrenTransform(o) }
     // fixme just a test
     //    ModuleRegistry add { case o: Octopus if !o.isInstanceOf[Transaction] ⇒ new ChildDisplay(o) }
-    ModuleRegistry add { case o: Octopus ⇒ new ChildDisplay(o) }
+    ModuleRegistry add { case o: Octopus if !o.isInstanceOf[Vote] ⇒ new ChildDisplay(o) }
 
     ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }
     ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }

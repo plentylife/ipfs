@@ -11,13 +11,13 @@ import scala.scalajs.js.JSON
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
-    println(s"writing octopus ${o} ${o.connections} ${o.id}")
+    console.println(s"writing octopus ${o} ${o.connections} ${o.id}")
     // fixme there should be a check that the class does not already exist
     val go = gun.get(o.id)
     go.put(js.Dynamic.literal(
       "class" → o.getClass.getSimpleName
     ), (d) ⇒ {
-      println(s"write of ${o.id} resulted in ${JSON.stringify(d)}")
+      console.println(s"write of ${o.id} resulted in ${JSON.stringify(d)}")
     })
     //    o.getTopModule({ case m: ConstructorWriterModule[_] ⇒ m }).foreach(_.write(go))
 
@@ -28,21 +28,21 @@ object OctopusWriter {
     val gcons = go.get("connections")
     for (c ← connections) {
       val conGun = ConnectionWriter.write(c)
-      //      println("writing connection", c, c.id)
+      //      console.println("writing connection", c, c.id)
       gcons.set(conGun, null)
     }
   }
 
   def writeSingleConnection(connection: Connection[_], go: Gun): Unit = {
-    println(s"writing single connection ${connection} ${connection.id}")
+    console.println(s"writing single connection ${connection} ${connection.id}")
     val gcons = go.get("connections")
     val conGun = ConnectionWriter.write(connection)
     gcons.set(conGun, (d) ⇒ {
-      println(s"done writing single connection ${JSON.stringify(d)}")
+      console.println(s"done writing single connection ${JSON.stringify(d)}")
     })
     //    go.`val`((d, k) ⇒ {
-    //      println(s"done writing single connection ${k}")
-    //      println(JSON.stringify(d))
+    //      console.println(s"done writing single connection ${k}")
+    //      console.println(JSON.stringify(d))
     //    })
   }
 }
@@ -52,7 +52,7 @@ object ConnectionWriter {
     val gc = Main.gun.get(c.id)
     gc.`val`((d, k) ⇒ {
       if (js.isUndefined(d)) {
-        println(s"writing connection ${c} ${c.id}")
+        console.println(s"writing connection ${c} ${c.id}")
         val v = getValue(c)
         c.value match {
           case o: Octopus ⇒ OctopusWriter.write(o)
@@ -64,7 +64,7 @@ object ConnectionWriter {
         )
         gc.put(obj)
       } else {
-        println(s"skipped writing connection ${c} ${c.id}")
+        console.println(s"skipped writing connection ${c} ${c.id}")
         // this might means that a connection to a different octopus is getting reused
       }
     })
@@ -82,10 +82,10 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
   private lazy val gun = Main.gun.get(withinOctopus.id)
 
   override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {
-    //    println(s"Gun Writer ${withinOctopus.id} ${connection} marker: ${connection.tmpMarker}")
+    //    console.println(s"Gun Writer ${withinOctopus.id} ${connection} marker: ${connection.tmpMarker}")
     //      withinOctopus.isNew &&
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
-      println(s"Gun Writer ${withinOctopus} [${withinOctopus.id}] ${connection} ")
+      console.println(s"Gun Writer ${withinOctopus} [${withinOctopus.id}] ${connection} ")
       OctopusWriter.writeSingleConnection(connection, gun)
     }
     Right()
@@ -98,7 +98,7 @@ class InstantiationGunWriterModule(override val withinOctopus: Octopus) extends 
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   withinOctopus.onNew {
-    println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
+    console.println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
     OctopusWriter.write(withinOctopus)
   }
 }

@@ -14,4 +14,14 @@ package object utils {
       o: Octopus ⇒ o.addConnection(c)
     })
   }
+
+  class Console(var active: Boolean, traceActive: Boolean = false) {
+    def println(s: String) = if (active) Predef.println(s)
+
+    def error(s: String) = Predef.println(s)
+
+    def error(e: Throwable) = Predef.println(e)
+
+    def trace(s: String) = if (traceActive) println(s)
+  }
 }

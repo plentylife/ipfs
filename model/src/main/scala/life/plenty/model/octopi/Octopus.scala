@@ -1,12 +1,11 @@
 package life.plenty.model.octopi
 
-import life.plenty.model.ModuleRegistry
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Connection, Marker}
+import life.plenty.model.{ModuleRegistry, console}
 import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
 import rx.{Ctx, Rx, Var}
-
 trait Octopus extends OctopusConstructor {
   implicit var ctx: Ctx.Owner = Ctx.Owner.safe()
 
@@ -112,7 +111,7 @@ trait Octopus extends OctopusConstructor {
     // duplicates are silently dropped
     //    println(s"adding connection ${connection} to ${this}")
     if (_connections.now.exists(_.id == connection.id)) {
-      println("Connection was not added since it exists")
+      console.trace("Connection was not added since it exists")
       return Right()
     }
 

@@ -2,6 +2,7 @@ package life.plenty.model.modifiers
 
 import life.plenty.model.connection.Connection
 import life.plenty.model.octopi.{Module, Octopus}
+import rx.{Ctx, Rx}
 
 trait CollectionModificationModule[+O <: Octopus, Elem, L <: Iterable[Elem]] extends Module[O] {
   def apply(what: L): L
@@ -20,6 +21,8 @@ trait ConnectionFilters[+O <: Octopus] extends FilterModule[O, Connection[_], Li
 
 trait OctopusModifier[+Within <: Octopus] extends
   CollectionModificationModule[Within, Octopus, List[Octopus]] {
+
+  def applyRx(whatRx: Rx[List[Octopus]])(implicit ctx: Ctx.Owner): Rx[List[Octopus]]
 }
 
 trait OctopusOrdering[+O <: Octopus] extends OctopusModifier[O] {

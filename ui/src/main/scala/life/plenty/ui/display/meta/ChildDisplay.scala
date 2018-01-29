@@ -5,41 +5,48 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
 import life.plenty.model.octopi.Octopus
+import life.plenty.ui.console
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
-import rx.{Ctx, Rx}
+import rx.async.Platform._
+import rx.async._
+import rx.{Ctx, Obs, Rx}
 
+import scala.concurrent.duration._
+import scala.language.postfixOps
 import scalaz.std.list._
 
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  private lazy val modifiers: List[OctopusModifier[Octopus]] =
+  private lazy val modifiers: List[OctopusModifier[Octopus]] = {
+    console.trace(s"child meta getting modifiers from ${withinOctopus.modules}")
     withinOctopus.getModules({ case m: OctopusModifier[Octopus] ⇒ m })
+  }
 
   protected val children: Vars[Octopus] = Vars[Octopus]()
+  protected var rxChildren: Obs = null
 
   override def update(): Unit = {
-    //    println("child display updatding", this)
-    children.value.clear()
-    children.value.insertAll(0, getChildren.now)
+    console.println(s"child updatde ${withinOctopus} $this rxChildren ${rxChildren}")
+    if (rxChildren == null) {
+      rxChildren = getChildren.foreach { cs ⇒
+        children.value.clear()
+        children.value.insertAll(0, cs)
+      }
+    }
   }
 
-  getChildren.foreach { cs ⇒
-    children.value.clear()
-    children.value.insertAll(0, cs)
-  }
 
   def getChildren: Rx[List[Octopus]] = {
-    println("getting children")
-    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.map(_.collect({ case Child(c: Octopus) ⇒ c }))
-    val ordered = childrenRx.map { children ⇒
-      modifiers.foldLeft(children)((cs, mod) ⇒ {
-        mod.apply(cs): List[Octopus]
-      })
-    }
-    println("got children", this, ordered.now)
+    console.println(s"getting children ${withinOctopus}")
+    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.debounce(1000 millis)
+      .map(_.collect({ case Child(c: Octopus) ⇒ c }))
+    val ordered = modifiers.foldLeft(childrenRx)((cs, mod) ⇒ {
+      console.println(s"applying modifiers ${withinOctopus}")
+      mod.applyRx(cs): Rx[List[Octopus]]
+    })
     ordered
   }
 

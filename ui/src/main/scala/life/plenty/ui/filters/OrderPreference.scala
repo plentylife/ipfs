@@ -2,6 +2,7 @@ package life.plenty.ui.filters
 
 import life.plenty.model.modifiers.OctopusOrdering
 import life.plenty.model.octopi.{BasicSpace, Members, Octopus}
+import rx.{Ctx, Rx}
 //
 //trait OrderPreference[IT, L<: Iterable[IT], T <: Octopus] extends Module[T] {
 //  def orderPreference(toReorder: L): L
@@ -10,6 +11,7 @@ import life.plenty.model.octopi.{BasicSpace, Members, Octopus}
 //trait ChildOrderPreference extends OrderPreference[Octopus, List[Octopus], BasicSpace]
 
 class BasicSpaceDisplayOrder(override val withinOctopus: BasicSpace) extends OctopusOrdering[BasicSpace] {
+  private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   override def order(what: List[Octopus]): List[Octopus] = {
     val i = what.indexWhere(_.isInstanceOf[Members])
@@ -20,4 +22,6 @@ class BasicSpaceDisplayOrder(override val withinOctopus: BasicSpace) extends Oct
       what
     }
   }
+
+  override def applyRx(whatRx: Rx[List[Octopus]])(implicit ctx: Ctx.Owner): Rx[List[Octopus]] = whatRx.map(order)
 }

@@ -37,7 +37,7 @@ object OctopusReader {
     // from cache
     val fromCache = Cache.get(id)
     if (fromCache.nonEmpty) {
-      //      println("Read from cache")
+      //      console.println("Read from cache")
       return Future(fromCache)
     }
 
@@ -49,12 +49,12 @@ object OctopusReader {
       try {
         className.success(d.toLocaleString())
       } catch {
-        case e: Throwable ⇒ println(s"Failed on ID `$id`"); throw e
+        case e: Throwable ⇒ console.error(s"Failed on ID `$id`"); throw e
       }
     })
 
     className.future.map(cs ⇒ {
-      println(s"Gun is constructing $cs")
+      console.println(s"Gun is constructing $cs")
       val r = availableClasses.flatMap(f ⇒ {
         try {
           val o = f(cs)
@@ -67,7 +67,7 @@ object OctopusReader {
           }
           o
         } catch {
-          case e: Throwable ⇒ println(e); e.printStackTrace(); None
+          case e: Throwable ⇒ console.error(e); e.printStackTrace(); None
         }
       }).headOption
       r
@@ -96,11 +96,11 @@ object ConnectionReader {
     val p = Promise[Boolean]()
     Main.gun.get(key).`val`((d, k) ⇒ {
       if (!js.isUndefined(d)) {
-        //        println(JSON.stringify(d))
-        //        println(s"key `$key` has a class property")
+        //        console.println(JSON.stringify(d))
+        //        console.println(s"key `$key` has a class property")
         p.success(true)
       } else {
-        //        println(s"key `$key` does not")
+        //        console.println(s"key `$key` does not")
         p.success(false)
       }
     })
@@ -115,7 +115,7 @@ object ConnectionReader {
     hasClass(con.value) flatMap { hc ⇒
       if (hc) {
         OctopusReader.read(con.value) map { optO ⇒
-          //          println(s"Read octopus $optO ${optO.map(_.connections).getOrElse(List())}")
+          //          console.println(s"Read octopus $optO ${optO.map(_.connections).getOrElse(List())}")
 
           if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
           optO flatMap { o ⇒
@@ -135,7 +135,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
   var loaded = false
 
   override def onConnectionsRequest(): Unit = if (!loaded) {
-    println(s"Gun Reader in ${withinOctopus.getClass} with ${withinOctopus.connections}")
+    console.println(s"Gun Reader in ${withinOctopus.getClass} with ${withinOctopus.connections}")
     val gun = Main.gun.get(withinOctopus.id)
     gun.`val`((d, k) ⇒ {
       if (!js.isUndefined(d)) load(gun)
@@ -145,9 +145,9 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
   private def load(gun: Gun) = {
     gun.get("connections").map().`val`((d, k) ⇒ {
       ConnectionReader.read(d, k) map { optCon ⇒ {
-        println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
+        console.println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
         if (optCon.isEmpty) {
-          println(JSON.stringify(d))
+          console.println(JSON.stringify(d))
           throw new Exception("Gun reader could not parse a connection.")
         }
 

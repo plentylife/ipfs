@@ -2,20 +2,21 @@ package life.plenty.ui.display.meta
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.model.console
 import life.plenty.model.octopi.Octopus
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
-
 class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
   protected val siblingModules: Vars[DisplayModule[Octopus]] = Vars()
 
   override def update(): Unit = {
-    //    println("modular display updating", this, withinOctopus, siblingModules.value)
     //    println("new modules", getSiblingModules(this))
+    val sms = getSiblingModules(this).reverse
     siblingModules.value.clear()
-    siblingModules.value.insertAll(0, getSiblingModules(this).reverse)
+    siblingModules.value.insertAll(0, sms)
+    console.trace(("modular display updating", this, withinOctopus, sms).toString())
   }
 
   @dom
