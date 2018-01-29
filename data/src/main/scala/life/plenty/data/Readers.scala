@@ -28,7 +28,7 @@ object OctopusReader {
     ci("Why", new Why()),
     ci("When", new When()),
     ci("Where", new Where()),
-    ci("BasicAnswer", new Proposal()),
+    ci("Proposal", new Proposal()),
     ci("Contribution", new Contribution()),
     ci("Vote", new Vote),
     ci("Transaction", new Transaction),

@@ -11,13 +11,14 @@ import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Node
-import rx.Ctx
+import rx.{Ctx, Obs}
 
 import scala.util.{Failure, Success, Try}
 
 class ContributionDisplay(override val withinOctopus: Contribution) extends DisplayModule[Contribution] {
   //  protected val body = Var[String](withinOctopus.body())
   private val tipsCollected = Var(0)
+  private var tipsCollectedRx: Obs = null
   private val open = Var(false)
   private var tipping: Int = 1
   private var error = Var("")
@@ -26,8 +27,9 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
 
 
   override def update(): Unit = {
-    tipsCollected.value_=(withinOctopus.countTips)
-    //    body.value_=(withinOctopus._body)
+    if (tipsCollectedRx == null) {
+      tipsCollectedRx = withinOctopus.tips.foreach(t ⇒ tipsCollected.value_=(t))
+    }
   }
 
   @dom
@@ -52,7 +54,6 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
         <h6 class="card-title">contribution</h6>
         <h6 class="card-subtitle mb-2 text-muted">by sarah</h6>
         <p class="card-text">
-          body
           {withinOctopus.getBody.dom.bind}
         </p>
       </div>
@@ -80,11 +81,10 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
   </span>
 
   private def onEnterTip(e: Event) = {
-    println("entering tip")
     val v = e.srcElement.asInstanceOf[Input].value
     Try(v.toInt) match {
-      case Success(t: Int) ⇒ println(s"s$t"); tipping = t; error.value_=("")
-      case Failure(_) ⇒ println("f"); error.value_=("Not a round number")
+      case Success(t: Int) ⇒ tipping = t; error.value_=("")
+      case Failure(_) ⇒ error.value_=("Not a round number")
     }
   }
 }

@@ -17,13 +17,14 @@ class Vote() extends WithAmount {
   }
 }
 
-//val size: Int, val owner: User, override val _basicInfo: BasicInfo
-class VoteAllowance() extends Octopus {
+class VoteAllowance() extends WithAmount {
 
-  override protected def preConstructor() = {
-    //    super.preConstructor()
-    //    addConnection(Parent(owner))
-    //    addConnection(Amount(size))
-    //    owner.addConnection(Child(this))
+  lazy val onTransaction = rx.get({ case Parent(t: Transaction) ⇒ t })
+
+  addToRequired(onTransaction)
+
+  onNew {
+    onTransaction.foreach(_.foreach(_.getFrom.addConnection(Child(this))))
+    onTransaction.addConnection(Child(this))
   }
 }

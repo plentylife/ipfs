@@ -20,7 +20,7 @@ trait OctopusConstructor {
   /** Either retrieves the id, or generates a new one, and sets it */
   def id: String = getTopConnectionData({ case Id(id) ⇒ id }) getOrElse {
     val gid = model.getHasher.b64(generateId)
-    set(Id(gid))
+    setInit(Id(gid))
     gid
   }
 
@@ -40,8 +40,8 @@ trait OctopusConstructor {
 
   final def required: Set[() ⇒ Rx[Option[_]]] = _required
 
-  /** alias for [[addConnection()]] */
-  def set(c: Connection[_]): Unit = addConnection(c)
+  /** alias for [[addConnection()]] with the connection marked */
+  def setInit(c: Connection[_]): Unit = addConnection(c.inst)
 
   private lazy val isNewVar = Var(false)
 
@@ -60,13 +60,13 @@ trait OctopusConstructor {
     println(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
     properties.foreach(p ⇒ {
       p.tmpMarker = AtInstantiation
-      self.set(p)
+      self.setInit(p)
     })
     val ct = CreationTime(new Date().getTime)
     ct.tmpMarker = AtInstantiation
     addConnection(ct)
 
-    model.defaultCreator.foreach(c ⇒ set(Creator(c).inst))
+    model.defaultCreator.foreach(c ⇒ setInit(Creator(c).inst))
     for (p ← required) {
       if (p().now.isEmpty) throw new Exception(s"Class ${this.getClass} was not properly instantiated. " +
         s"Connections ${this._connections.now}")

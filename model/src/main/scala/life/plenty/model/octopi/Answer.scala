@@ -28,7 +28,7 @@ trait Answer extends Space with WithParent[Space] {
 
   /** at least for now, answers do not have titles */
   override def asNew(properties: Connection[_]*): Unit = {
-    set(Title("").inst)
+    setInit(Title("").inst)
     super.asNew(properties: _*)
   }
 }
@@ -37,7 +37,9 @@ class Proposal extends Answer {
 }
 
 class Contribution extends Answer {
-  def countTips: Int = 0
+  val tips: Var[Int] = Var(0)
 
-  //  def countTips: Int = (0 :: this.connections.collect({ case Child(t: Transaction) ⇒ t.amount })).sum
+  rx.getWatch({ case Child(t: Transaction) ⇒ t }).foreach(_.foreach(t ⇒
+    t.getAmount.foreach(_.foreach(a ⇒ tips() = tips.now + a))
+  ))
 }
