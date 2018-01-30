@@ -11,7 +11,7 @@ import scala.scalajs.js.JSON
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
-    console.println(s"writing octopus ${o} ${o.connections} ${o.id}")
+    console.println(s"OctopusWriter octopus ${o} ${o.connections}")
     // fixme there should be a check that the class does not already exist
     val go = gun.get(o.id)
     go.put(js.Dynamic.literal(
@@ -33,11 +33,11 @@ object OctopusWriter {
   }
 
   def writeSingleConnection(connection: Connection[_], go: Gun): Unit = {
-    console.println(s"writing single connection ${connection} ${connection.id}")
+    console.println(s"OctopusWriter single connection ${connection} ${connection.id}")
     val gcons = go.get("connections")
     val conGun = ConnectionWriter.write(connection)
     gcons.set(conGun, (d) ⇒ {
-      console.println(s"done writing single connection ${JSON.stringify(d)}")
+      console.println(s"OctopusWriter done single connection ${JSON.stringify(d)}")
     })
   }
 }
@@ -47,7 +47,7 @@ object ConnectionWriter {
     val gc = Main.gun.get(c.id)
     gc.`val`((d, k) ⇒ {
       if (js.isUndefined(d)) {
-        console.println(s"writing connection ${c} ${c.id}")
+        console.println(s"ConnectionWriter connection ${c} ${c.id}")
         val v = getValue(c)
         c.value match {
           case o: Octopus ⇒ OctopusWriter.write(o)
@@ -63,6 +63,7 @@ object ConnectionWriter {
         // this might means that a connection to a different octopus is getting reused
       }
     })
+    gc
   }
 
   private def getValue(c: Connection[_]) = {

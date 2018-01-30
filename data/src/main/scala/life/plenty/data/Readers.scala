@@ -145,7 +145,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
 
   override def onConnectionsRequest(): Unit = synchronized {
     if (!instantiated) {
-      console.println(s"Gun Reader in ${withinOctopus.getClass} with ${withinOctopus.connections}")
+      console.println(s"Gun Reader onConsReq called in ${withinOctopus.getClass} with ${withinOctopus.connections}")
       val gun = Main.gun.get(withinOctopus.id)
       gun.`val`((d, k) ⇒ {
         if (!js.isUndefined(d)) {
@@ -157,12 +157,13 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
   }
 
   private def load(gun: Gun) = {
+    console.println(s"Gun reader setting up in load() of ${withinOctopus} ${withinOctopus.id}")
     val gc = gun.get("connections")
     gc.`val`((d, k) ⇒ {
-      console.trace(s"Gun raw connections to read ${JSON.stringify(d)}")
+      console.trace(s"Gun raw connections to read in ${withinOctopus} ${JSON.stringify(d)}")
       val l = js.Object.keys(d).length
       connectionsLeftToLoad() = l + connectionsLeftToLoad.now
-      console.trace(s"Gun raw connections length $l")
+      console.trace(s"Gun raw connections length $l ${connectionsLeftToLoad.now}")
     })
 
     gc.map().`val`((d, k) ⇒ {
