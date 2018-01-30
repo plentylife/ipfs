@@ -8,6 +8,7 @@ import scala.language.postfixOps
 import scalaz.std.list._
 
 object DisplayModel {
+  implicit def intToStr(i: Int): String = i.toString
 
   def display(o: Octopus, overrides: List[ModuleOverride] = List()): Binding[Node] = {
     o.modules.collectFirst({ case dm: DisplayModule[_] ⇒
@@ -34,6 +35,9 @@ object DisplayModel {
   /* the main trait */
 
   trait DisplayModule[+T <: Octopus] extends Module[T] {
+    implicit def its(i: Int): String = intToStr(i)
+
+
     private var _hasRenderedOnce = false
 
     def display(calledBy: DisplayModule[Octopus], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {

@@ -78,7 +78,7 @@ trait Octopus extends OctopusConstructor {
 
   object rx {
     def cons(implicit ctx: Ctx.Owner): Rx.Dynamic[List[Connection[_]]] = {
-      console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
+      console.println(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
 
       _connections map { cons ⇒
@@ -94,7 +94,7 @@ trait Octopus extends OctopusConstructor {
 
     def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       val current = Var(cons.now.collect(f))
-      getWatchOnce(f)(ctx).foreach(_.foreach(n ⇒ current() = n :: current.now))(ctx)
+      getWatch(f)(ctx).foreach(_.foreach(n ⇒ current() = n :: current.now))(ctx)
       current
     }
 
@@ -149,11 +149,9 @@ trait Octopus extends OctopusConstructor {
 
   /* Constructor */
   _modules = ModuleRegistry.getModules(this)
+  onConnectionsRequestedModules = getModules({ case m: ActionOnConnectionsRequest ⇒ m })
   console.trace(s"Loaded modules ${_modules}")
   modulesFinishedLoading() = true
-  onConnectionsRequestedModules = getModules({ case m: ActionOnConnectionsRequest ⇒ m })
-
-
 }
 
 

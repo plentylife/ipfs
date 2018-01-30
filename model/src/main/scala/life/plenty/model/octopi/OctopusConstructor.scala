@@ -38,6 +38,8 @@ trait OctopusConstructor {
 
   def addToRequired(r: ⇒ Rx[Option[_]]) = _required += { () ⇒ r }
 
+  def clearRequired() = _required = Set()
+
   final def required: Set[() ⇒ Rx[Option[_]]] = _required
 
   /** alias for [[addConnection()]] with the connection marked */

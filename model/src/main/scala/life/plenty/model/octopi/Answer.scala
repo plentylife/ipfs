@@ -14,17 +14,6 @@ trait Answer extends Space with WithParent[Space] {
     mags.sum
   }
 
-  //  rx.getWatch({ case Child(v: Vote) ⇒
-  //    v
-  //  }).foreach(_.foreach { v ⇒
-  //    v.sizeAndDirection.debounce(100 millis).foreach({ sdOpt ⇒
-  //      sdOpt foreach { sd ⇒
-  //        console.trace(s"vote size added ${sd}")
-  //        votes() = votes.now + sd
-  //      }
-  //    })
-  //  })
-
   /** at least for now, answers do not have titles */
   override def asNew(properties: Connection[_]*): Unit = {
     setInit(Title("").inst)

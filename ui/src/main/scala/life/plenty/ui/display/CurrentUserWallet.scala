@@ -4,6 +4,7 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Octopus, User, Wallet, WithMembers}
 import life.plenty.ui
+import life.plenty.ui.model.DisplayModel.intToStr
 import life.plenty.ui.model.Helpers._
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
@@ -40,8 +41,6 @@ object CurrentUserWallet {
       }))
     }
   }
-
-  implicit def intToStr(i: Int): String = i.toString
 
   @dom
   private def displayWallet(w: Wallet): Binding[Node] = {

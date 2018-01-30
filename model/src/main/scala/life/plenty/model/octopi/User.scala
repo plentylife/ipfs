@@ -5,6 +5,7 @@ import life.plenty.model.connection.{Child, Name}
 import rx.Rx
 
 trait User extends Octopus {
+  clearRequired()
   addToRequired(getRxId)
   addToRequired(getName)
 

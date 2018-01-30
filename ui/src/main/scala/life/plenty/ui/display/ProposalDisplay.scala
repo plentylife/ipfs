@@ -1,6 +1,5 @@
 package life.plenty.ui.display
 
-import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionUpDownVote
 import life.plenty.model.octopi._
@@ -10,13 +9,10 @@ import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 import rx.Ctx
+//import life.plenty.ui.model.DisplayModel.intToStr
 
-class BasicAnswerDisplay(override val withinOctopus: Proposal) extends DisplayModule[Proposal] {
+class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModule[Proposal] {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-
-  //  protected val body = Var[String](withinOctopus._body)
-  protected val votes = Var[Int](0)
-  withinOctopus.votes.foreach(v ⇒ votes.value_=(v))
 
   override def update(): Unit = {
     //    votes.value_=(withinOctopus.votes)
@@ -31,7 +27,7 @@ class BasicAnswerDisplay(override val withinOctopus: Proposal) extends DisplayMo
         <button type="button" class="btn btn-primary btn-sm" disabled={disabled} onclick={upVote _}>Up vote</button>
         <button type="button" class="btn btn-primary btn-sm" disabled={disabled} onclick={downVote _}>Down vote</button>
         <span>
-          {votes.bind.toString}
+          {withinOctopus.votes.dom.bind}
           votes</span>
       </div>
       <div class="card-body">
