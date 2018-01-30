@@ -47,7 +47,7 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   @dom
   private def textArea: Binding[TextArea] = <textarea cols={50} rows={10} placeholder="Write your answer here"
                                                       onchange={e: Event ⇒
-                                                        body.value_=(e.srcElement.asInstanceOf[TextArea].value)
+                                                        body.value_=(e.target.asInstanceOf[TextArea].value)
                                                       }></textarea>
 
   @dom
@@ -62,7 +62,7 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   }
 
   private def toggleContribution(e: Event) = {
-    val cbox = e.srcElement.asInstanceOf[Input].checked
+    val cbox = e.target.asInstanceOf[Input].checked
     println("post answer contr", cbox)
     isContribution.value_=(cbox)
   }

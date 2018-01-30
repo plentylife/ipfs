@@ -40,7 +40,7 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
   private def onEnter(e: KeyboardEvent) = {
     if (e.keyCode == 13) {
       withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m } foreach (a ⇒ {
-        a.create(e.srcElement.asInstanceOf[Input].value)
+        a.create(e.target.asInstanceOf[Input].value)
       })
     }
   }

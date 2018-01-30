@@ -35,7 +35,7 @@ object Login {
             <span style="display:none"></span>
           }}<label for="name">Your name</label> <br/>
             <input name="name" type="text" onchange={e: Event ⇒
-            name.value_=(e.srcElement.asInstanceOf[Input].value.trim)
+            name.value_=(e.target.asInstanceOf[Input].value.trim)
             nameEmpty.value_=(name.value.isEmpty)}/>
           </div>
           <div class="mt-2">
@@ -47,7 +47,7 @@ object Login {
             <span style="display:none"></span>
           }}<label for="email">Email</label> <br/>
             <input name="email" type="text" onchange={e: Event ⇒
-            email.value_=(e.srcElement.asInstanceOf[Input].value.trim)
+            email.value_=(e.target.asInstanceOf[Input].value.trim)
             emailEmpty.value_=(email.value.isEmpty)}/>
             <br/>
           </div>

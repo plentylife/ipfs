@@ -86,7 +86,7 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
   </span>
 
   private def onEnterTip(e: Event) = {
-    val v = e.srcElement.asInstanceOf[Input].value
+    val v = e.target.asInstanceOf[Input].value
     Try(v.toInt) match {
       case Success(t: Int) ⇒ tipping = t; error.value_=("")
       case Failure(_) ⇒ error.value_=("Not a round number")
