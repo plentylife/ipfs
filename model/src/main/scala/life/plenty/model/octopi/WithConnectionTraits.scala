@@ -13,7 +13,7 @@ trait WithParent[T <: Octopus] extends Octopus {
 
   onNew {
     getParent.foreach(_.foreach { p: Octopus ⇒
-      model.console.println(s"adding child to parent from ${this} to $p")
+      model.console.trace(s"adding child to parent from ${this} to $p")
       p.addConnection(Child(this))
     })
   }

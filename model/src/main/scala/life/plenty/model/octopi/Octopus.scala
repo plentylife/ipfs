@@ -78,7 +78,7 @@ trait Octopus extends OctopusConstructor {
 
   object rx {
     def cons(implicit ctx: Ctx.Owner): Rx.Dynamic[List[Connection[_]]] = {
-      console.println(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
+      console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
 
       _connections map { cons ⇒

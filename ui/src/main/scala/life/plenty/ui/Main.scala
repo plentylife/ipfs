@@ -17,7 +17,7 @@ import scalaz.std.list._
 object Main {
 
   @JSExport
-  def main(): Unit = {
+  def main(consolesActive: Boolean = true): Unit = {
     println("Entry point")
 
     // has to be first because it sets the hasher function
