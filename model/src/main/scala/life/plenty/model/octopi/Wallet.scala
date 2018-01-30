@@ -21,10 +21,10 @@ class Wallet(u: User)(implicit ctx: Ctx.Owner) {
   //  lazy val getUsableVotes: Rx[Int] = Rx {0}
   lazy val getUsableVotes: Rx[Int] = Rx {
     val allowances = u.getVoteAllowances().map(_.getAmountOrZero())
-    val used = u.getVotes().map(_.getAmountOrZero())
-    model.console.println(s"Wallet usable votes | allowed ${allowances} | used ${used}")
+    val used = u.getVotes().map(v ⇒ -Math.abs(v.getAmountOrZero()))
+    model.console.trace(s"Wallet usable votes | allowed ${allowances} | used ${used}")
 
-    (10 :: allowances ::: used.map(_ * -1)).sum
+    (10 :: allowances ::: used).sum
   }
 
   /** per day */
