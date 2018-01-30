@@ -14,8 +14,11 @@ object TestInstances {
     val ts = new BasicSpace()
     ts.asNew(Title("French"), getCreator)
 
-    ts.rx.get({ case q: Who ⇒ q }).foreach(_.foreach {
+    ts.rx.get({ case Child(q: Who) ⇒ q }).foreach(_.foreach {
       who ⇒
+
+        println("TestInst")
+
         //        who.asNew(Parent(ts), getCreator)
 
         val q = new BasicQuestion()

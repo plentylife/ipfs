@@ -12,6 +12,10 @@ import scala.scalajs.js.JSON
 object OctopusWriter {
   def write(o: Octopus): Unit = {
     console.println(s"OctopusWriter octopus ${o} ${o.connections}")
+    if (Cache.get(o.id).nonEmpty) {
+      console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
+      return
+    }
     // fixme there should be a check that the class does not already exist
     val go = gun.get(o.id)
     go.put(js.Dynamic.literal(
