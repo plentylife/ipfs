@@ -11,7 +11,8 @@ trait User extends Octopus {
   lazy val getTransactions = rx.getAll({ case Child(t: Transaction) ⇒ t })
   lazy val getTransactionsTo = filterTransactions(getTransactions, t ⇒ t.getTo)
   lazy val getTransactionsFrom = filterTransactions(getTransactions, t ⇒ t.getFrom)
-
+  lazy val getVoteAllowances: Rx[List[VoteAllowance]] = rx.getAll({ case Child(a: VoteAllowance) ⇒ a })
+  lazy val getVotes = rx.getAll({ case Child(v: Vote) ⇒ v })
 
   private def filterTransactions(rxList: Rx[List[Transaction]], field: (Transaction) ⇒ Rx[Option[User]])
   : Rx[List[Transaction]] = {

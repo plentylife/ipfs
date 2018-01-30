@@ -5,27 +5,26 @@ import rx.{Ctx, Rx, Var}
 
 class Wallet(u: User)(implicit ctx: Ctx.Owner) {
 
-  lazy val getUsableThanksAmount: Rx[Int] = {
-    Rx {
+  lazy val getUsableThanksAmount: Rx[Int] = Rx {
+    //    Rx {
       val fromAmounts = u.getTransactionsFrom().map(t ⇒ t.getAmountOrZero())
       val toAmounts = u.getTransactionsTo().map(t ⇒ t.getAmountOrZero())
 
-      model.console.println(s"Wallet thanks count | to ${toAmounts} | from ${fromAmounts}")
+    model.console.trace(s"Wallet thanks count | to ${toAmounts} | from ${fromAmounts}")
       (0 :: fromAmounts.map(_ * -1) ::: toAmounts).sum
-    }
+    //    }
+    //    0
   }
 
   lazy val getUsableThanksLimit: Rx[Int] = Var(50)
 
-  lazy val getUsableVotes: Rx[Int] = {
-    // fixme always start at 10
+  //  lazy val getUsableVotes: Rx[Int] = Rx {0}
+  lazy val getUsableVotes: Rx[Int] = Rx {
+    val allowances = u.getVoteAllowances().map(_.getAmountOrZero())
+    val used = u.getVotes().map(_.getAmountOrZero())
+    model.console.println(s"Wallet usable votes | allowed ${allowances} | used ${used}")
 
-    //    val allowance = user.connections.collect({ case Child(a: VoteAllowance) ⇒ a.size }).sum
-    // fixme
-    //    val used = user.connections.collect({ case Child(v: Vote) ⇒ v.sizeAndDirection.abs }).sum
-    val used = 0
-    //    allowance - used
-    Var(10)
+    (10 :: allowances ::: used.map(_ * -1)).sum
   }
 
   /** per day */
