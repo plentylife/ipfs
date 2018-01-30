@@ -28,7 +28,6 @@ object OctopusWriter {
     val gcons = go.get("connections")
     for (c ← connections) {
       val conGun = ConnectionWriter.write(c)
-      //      console.println("writing connection", c, c.id)
       gcons.set(conGun, null)
     }
   }
@@ -40,10 +39,6 @@ object OctopusWriter {
     gcons.set(conGun, (d) ⇒ {
       console.println(s"done writing single connection ${JSON.stringify(d)}")
     })
-    //    go.`val`((d, k) ⇒ {
-    //      console.println(s"done writing single connection ${k}")
-    //      console.println(JSON.stringify(d))
-    //    })
   }
 }
 

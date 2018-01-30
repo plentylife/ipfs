@@ -9,7 +9,7 @@ object TestInstances {
 
   def load(): Space = {
     val ts = new BasicSpace()
-    ts.asNew(Title("test"), getCreator)
+    ts.asNew(Title("French"), getCreator)
     val who = new Who()
     who.asNew(Parent(ts), getCreator)
     val q = new BasicQuestion()

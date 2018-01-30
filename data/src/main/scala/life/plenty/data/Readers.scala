@@ -1,5 +1,6 @@
 package life.plenty.data
 
+import life.plenty.data
 import life.plenty.model.actions.ActionOnConnectionsRequest
 import life.plenty.model.connection._
 import life.plenty.model.octopi.GreatQuestions._
@@ -42,7 +43,7 @@ object OctopusReader {
     // from cache
     val fromCache = Cache.get(id)
     if (fromCache.nonEmpty) {
-      //      console.println("Read from cache")
+      data.console.println(s"Read ${id} from cache")
       return Future(fromCache)
     }
 
