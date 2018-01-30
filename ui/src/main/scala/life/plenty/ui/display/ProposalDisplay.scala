@@ -8,7 +8,7 @@ import life.plenty.ui.model.Helpers._
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
-import rx.Ctx
+import rx.{Ctx, Rx}
 //import life.plenty.ui.model.DisplayModel.intToStr
 
 class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModule[Proposal] {
@@ -32,7 +32,11 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
       </div>
       <div class="card-body">
         <h6 class="card-title">proposal</h6>
-        <h6 class="card-subtitle mb-2 text-muted">by john</h6>
+        <h6 class="card-subtitle mb-2 text-muted">by
+          {Rx {
+          withinOctopus.getCreator().map(_.getNameOrEmpty())
+        }.dom.bind}
+        </h6>
         <p class="card-text">
           {withinOctopus.getBody.dom.bind}
         </p>
