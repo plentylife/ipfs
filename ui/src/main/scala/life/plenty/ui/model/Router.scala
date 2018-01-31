@@ -49,6 +49,10 @@ object Router {
 
   def changeViewState(s: ViewState, routingParams: RoutingParams) =
     routingParams.copy(stateId = s.id)
+
+  def navigateToOctopus(o: Octopus) = {
+    router.state.value_=(router.state.value.copy(spaceId = Option(o.id)))
+  }
 }
 
 object ViewState extends Enumeration {

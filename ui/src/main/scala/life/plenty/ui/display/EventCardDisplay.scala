@@ -5,24 +5,22 @@ import life.plenty.model.octopi.{Event, User}
 import life.plenty.ui.display.meta.{ChildDisplay, NoDisplay}
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import life.plenty.ui.model.Helpers._
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.{DisplayModel, Router, UiContext}
 import org.scalajs.dom.raw.{MouseEvent, Node}
-import rx.{Ctx, Rx}
+import rx.Rx
 
 class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[Event] {
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-
   override def update(): Unit = Unit
 
   override def doDisplay(): Boolean = UiContext.startingSpace.value.get.id != withinOctopus.id
 
-  private def navigateTo(e: MouseEvent) = ???
+  private def navigateTo(e: MouseEvent) = Router.navigateToOctopus(withinOctopus)
 
   @dom
   override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
-    <div class="card d-inline-flex mt-1 mr-1 flex-row event">
+    <div class="card d-inline-flex mt-1 mr-1 flex-row event" onclick={navigateTo _}>
       <div class="d-inline-flex flex-column controls">
-        <button type="button" class="btn btn-primary btn-sm" onclick={navigateTo _}>Explore</button>
+        <button type="button" class="btn btn-primary btn-sm">Explore</button>
       </div>
 
       <div class="card-body">

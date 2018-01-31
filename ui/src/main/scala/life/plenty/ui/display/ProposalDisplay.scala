@@ -8,12 +8,10 @@ import life.plenty.ui.model.Helpers._
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
-import rx.{Ctx, Rx}
+import rx.Rx
 //import life.plenty.ui.model.DisplayModel.intToStr
 
 class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModule[Proposal] {
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-
   override def update(): Unit = {
     //    votes.value_=(withinOctopus.votes)
     //    body.value_=(withinOctopus._body)

@@ -9,7 +9,7 @@ import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
 import life.plenty.ui.model.Helpers._
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
-import rx.{Ctx, Rx}
+import rx.Rx
 
 import scalaz.std.list._
 
@@ -61,8 +61,6 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   }
 
   val prefix: Var[String] = Var("")
-
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   // must be lazy since class is not instantiated at time of load
   private lazy val gqParent = {withinOctopus.rx.get({ case Parent(p: GreatQuestion) ⇒ p })}

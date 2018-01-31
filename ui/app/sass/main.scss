@@ -2,10 +2,15 @@
 @import "menu";
 @import "qna";
 
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
   display: flex;
   width: 100%;
+  min-height: 100%;
   justify-content: center;
   background-color: lightslategray;
 }

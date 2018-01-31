@@ -11,7 +11,7 @@ import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Node
-import rx.{Ctx, Obs, Rx}
+import rx.{Obs, Rx}
 
 import scala.util.{Failure, Success, Try}
 
@@ -22,9 +22,6 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
   private val open = Var(false)
   private var tipping: Int = 1
   private var error = Var("")
-
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-
 
   override def update(): Unit = {
     if (tipsCollectedRx == null) {

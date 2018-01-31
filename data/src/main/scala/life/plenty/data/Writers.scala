@@ -24,6 +24,7 @@ object OctopusWriter {
     go.put(js.Dynamic.literal(
       "class" → o.getClass.getSimpleName
     ), (d) ⇒ {
+      // fixme add error
       console.println(s"write of ${o.id} resulted in ${JSON.stringify(d)}")
     })
     //    o.getTopModule({ case m: ConstructorWriterModule[_] ⇒ m }).foreach(_.write(go))

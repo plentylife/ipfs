@@ -11,14 +11,13 @@ import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSibl
 import org.scalajs.dom.raw.Node
 import rx.async.Platform._
 import rx.async._
-import rx.{Ctx, Obs, Rx}
+import rx.{Obs, Rx}
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scalaz.std.list._
 
 class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   private lazy val modifiers: List[OctopusModifier[Octopus]] = {
     console.trace(s"child meta getting modifiers from ${withinOctopus.modules}")

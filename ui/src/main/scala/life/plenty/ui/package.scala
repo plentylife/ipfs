@@ -19,9 +19,6 @@ package object ui {
     /* the modules should be added in a list fashion: the last overrides the first */
     ModuleRegistry add { case o: Event ⇒ new EventCardDisplay(o) }
     ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
-    //    ModuleRegistry add { case o: User ⇒ new DisplayUpdateWalletChange(o) }
-
-    //    ModuleRegistry add { case o: Space ⇒ new CurrentUserWallet(o) }
     ModuleRegistry add { case o: Space ⇒ new MenuBar(o) }
     //    ModuleRegistry add { case o: Space ⇒ new ViewStateLinks(o) }
     //    ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortDisplay(o) }
@@ -35,7 +32,6 @@ package object ui {
     ModuleRegistry add { case q: Question ⇒ new AnswerGroup(q) }
 
     ModuleRegistry add { case a: Proposal ⇒ new ProposalDisplay(a) }
-    //    ModuleRegistry add { case a: Answer ⇒ new DisplayUpdateAnswerOrderChange(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
     // following the model of one contributer per contribution/answer
     //    ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }
@@ -44,9 +40,6 @@ package object ui {
     //    ModuleRegistry add { case o: Octopus ⇒ new DiscussModuleFilter(o) }
     //    ModuleRegistry add { case o: Octopus ⇒ new RateEffortConnectionFilter(o) }
 
-    //    ModuleRegistry add { case o: Octopus ⇒ new DisplayUpdateOnChildrenTransform(o) }
-    // fixme just a test
-    //    ModuleRegistry add { case o: Octopus if !o.isInstanceOf[Transaction] ⇒ new ChildDisplay(o) }
     ModuleRegistry add { case o: Octopus if !(o.isInstanceOf[Vote] || o.isInstanceOf[Question]) ⇒ new ChildDisplay(o) }
 
     ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }

@@ -1,5 +1,6 @@
 package life.plenty
 
+
 import life.plenty.model.actions._
 import life.plenty.model.modifiers.AnswerVoteOrder
 import life.plenty.model.octopi._
@@ -35,6 +36,7 @@ package object model {
     //    ModuleRegistry.add { case c: Contribution ⇒ new ActionAddContributor(c) }
 
     //    ModuleRegistry.add { case wp: WithParent[_] ⇒ new ActionAddParent(wp) }
+    ModuleRegistry.add { case o: Event ⇒ new AddGreatQuestions(o) }
     ModuleRegistry.add { case o: BasicSpace ⇒ new AddGreatQuestions(o) }
 
     ModuleRegistry.add { case o: BasicSpace ⇒ new InitializeMembersOctopus(o) }

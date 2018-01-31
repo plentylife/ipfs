@@ -3,6 +3,7 @@ package life.plenty.ui.model
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Module, Octopus}
 import org.scalajs.dom.raw.Node
+import rx.Ctx
 
 import scala.language.postfixOps
 import scalaz.std.list._
@@ -36,6 +37,8 @@ object DisplayModel {
 
   trait DisplayModule[+T <: Octopus] extends Module[T] {
     implicit def its(i: Int): String = intToStr(i)
+
+    implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
 
     private var _hasRenderedOnce = false

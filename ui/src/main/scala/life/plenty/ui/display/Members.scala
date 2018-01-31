@@ -9,9 +9,8 @@ import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers.OptBindableProperty
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.raw.Node
-import rx.{Ctx, Obs}
+import rx.Obs
 class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[Members] {
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   private val _members = Vars[User]()
   private var membersRx: Obs = null

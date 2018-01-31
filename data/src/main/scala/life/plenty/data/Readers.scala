@@ -137,6 +137,8 @@ object ConnectionReader {
   }
 }
 
+// todo create a module for user that filters out everything but transactions
+
 class OctopusGunReaderModule(override val withinOctopus: Octopus) extends ActionOnConnectionsRequest {
 
   var instantiated = false
