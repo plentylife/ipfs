@@ -5,7 +5,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateQuestion
 import life.plenty.model.connection.Parent
 import life.plenty.model.octopi.{GreatQuestion, Octopus, Space}
-import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
+import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
@@ -21,7 +21,7 @@ trait TitleDisplay extends DisplayModule[Octopus] {
 class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
 
   @dom
-  protected override def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
+  protected override def generateHtml(): Binding[Node] = {
     //println("title with inputt", withinOctopus.modules)
     val action = withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m }
 
@@ -53,7 +53,7 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   //      {Var(prefix + withinOctopus.title.dom).bind}{"?"}
 
   @dom
-  override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     //println("question title display")
     <div class="question-title">
       {gqTitle.dom.bind}{withinOctopus.getTitle.dom.bind}{"?"}

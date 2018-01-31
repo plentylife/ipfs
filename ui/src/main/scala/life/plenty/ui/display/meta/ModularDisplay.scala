@@ -20,7 +20,7 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
   }
 
   @dom
-  override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     //    println("modular display gen HTML", this)
 
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
@@ -44,9 +44,9 @@ abstract class GroupedModularDisplay(private val _withinOctopus: Octopus) extend
   protected def groupBy(o: DisplayModule[_]): String
 
   @dom
-  override protected def generateHtml(passedOverrides: List[ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     val grouped = siblingModules.value.groupBy(groupBy)
-    val overridesBelow = passedOverrides ::: siblingOverrides ::: overrides
+    val overridesBelow = cachedOverrides.bind.toList ::: siblingOverrides ::: overrides
 
     <div class="modular-display-box">
       {for (gName ← displayInOrder) yield generateHtmlForGroup(gName, grouped(gName).toList, overridesBelow).bind}

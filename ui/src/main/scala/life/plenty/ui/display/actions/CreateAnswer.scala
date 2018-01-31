@@ -5,7 +5,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateAnswer
 import life.plenty.model.octopi.Question
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
 import org.scalajs.dom.html.{Input, TextArea}
 import org.scalajs.dom.raw.Node
@@ -18,7 +18,7 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   private val body = Var("")
 
   @dom
-  override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     if (!opened.bind) {
       <div class={"closed-answer-box"}>
         {newAnswerButton.bind}

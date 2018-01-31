@@ -5,7 +5,7 @@ import life.plenty.model.modifiers.FilterModule
 import life.plenty.model.octopi.Octopus
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.ViewState.ViewState
-import life.plenty.ui.model.{DisplayModel, Router, ViewState}
+import life.plenty.ui.model.{Router, ViewState}
 import org.scalajs.dom.raw.Node
 
 trait RouterFilter[+O <: Octopus, Elem, L <: Iterable[Elem]] extends FilterModule[O, Elem, L] with
@@ -23,7 +23,7 @@ trait RouterFilter[+O <: Octopus, Elem, L <: Iterable[Elem]] extends FilterModul
   protected def filterInner(what: L): L
 
   @dom
-  override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     <span class="module-hook">
       {Router.reRender(withinOctopus, Router.router.state.bind); ""}
     </span>

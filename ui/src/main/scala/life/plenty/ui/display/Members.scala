@@ -7,7 +7,7 @@ import life.plenty.model.octopi.{Members, User}
 import life.plenty.ui
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers.OptBindableProperty
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.UiContext
 import org.scalajs.dom.raw.Node
 import rx.Obs
 class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[Members] {
@@ -37,7 +37,7 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
   }
 
   @dom
-  override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     <div class="card d-inline-flex mt-2">
       <div class="card-body">
 

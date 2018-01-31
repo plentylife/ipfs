@@ -17,7 +17,7 @@ class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[
   private def navigateTo(e: MouseEvent) = Router.navigateToOctopus(withinOctopus)
 
   @dom
-  override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     <div class="card d-inline-flex mt-1 mr-1 flex-row event" onclick={navigateTo _}>
       <div class="d-inline-flex flex-column controls">
         <button type="button" class="btn btn-primary btn-sm">Explore</button>

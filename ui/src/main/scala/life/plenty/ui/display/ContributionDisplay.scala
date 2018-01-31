@@ -7,7 +7,7 @@ import life.plenty.model.octopi.{Contribution, User}
 import life.plenty.ui
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Node
@@ -30,7 +30,7 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
   }
 
   @dom
-  override def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
+  protected override def generateHtml(): Binding[Node] = {
     val disabled = findTipModule.isEmpty
     <div class="card d-inline-flex mt-1 mr-1 flex-row contribution">
       <div class="d-inline-flex flex-column controls">

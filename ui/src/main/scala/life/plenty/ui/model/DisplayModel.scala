@@ -67,8 +67,7 @@ object DisplayModel {
           update()
           if (!_hasRenderedOnce) {
             _hasRenderedOnce = true
-            val html = generateHtml(overrides)
-            //            val html = generateHtml()
+            val html = generateHtml()
             htmlCache = html
             Option(html)
           } else Option(htmlCache)
@@ -82,8 +81,7 @@ object DisplayModel {
 
     def containerClasses: Set[String] = Set()
 
-    //    protected def generateHtml(): Binding[Node]
-    protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node]
+    protected def generateHtml(): Binding[Node]
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =
       overrides.collectFirst {

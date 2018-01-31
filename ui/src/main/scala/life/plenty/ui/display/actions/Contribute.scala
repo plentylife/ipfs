@@ -3,7 +3,6 @@ package life.plenty.ui.display.actions
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionAddContributor
 import life.plenty.model.octopi.Contribution
-import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
@@ -11,7 +10,7 @@ import org.scalajs.dom.raw.Node
 class Contribute(override val withinOctopus: Contribution) extends DisplayModule[Contribution] {
   override def update(): Unit = Unit
   @dom
-  override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     val action = findAction
 
     <div>

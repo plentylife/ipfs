@@ -21,7 +21,7 @@ class ViewStateLinks(override val withinOctopus: Space) extends DisplayModule[Sp
     ModuleOverride(this, new NoDisplay(withinOctopus), _.isInstanceOf[ViewStateLinks]) :: super.overrides
 
   @dom
-  override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     <ul>
       {for (vs <- viewStates) yield displayLink(vs).bind}
     </ul>

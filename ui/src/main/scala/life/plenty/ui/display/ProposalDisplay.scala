@@ -5,7 +5,7 @@ import life.plenty.model.actions.ActionUpDownVote
 import life.plenty.model.octopi._
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 import rx.Rx
@@ -18,7 +18,7 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
   }
 
   @dom
-  override protected def generateHtml(overrides: List[DisplayModel.ModuleOverride]): Binding[Node] = {
+  override protected def generateHtml(): Binding[Node] = {
     val disabled = findVoteModule.isEmpty
     <div class="card d-inline-flex mt-1 mr-1 flex-row answer">
       <div class="d-inline-flex flex-column controls">
