@@ -41,10 +41,6 @@ object OctopusWriter {
 
   def writeConnections(connections: Iterable[Connection[_]], go: Gun): Unit = {
     val gcons = go.get("connections")
-    //    val gcons = go.get("connections").put(null)
-    //    val gcons = go.put(js.Dynamic.literal(
-    //      "connections" → null
-    //    ))
     for (c ← connections) {
       val conGun = ConnectionWriter.write(c)
       gcons.set(conGun, null)

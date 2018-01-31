@@ -3,8 +3,6 @@ package life.plenty.model.connection
 import life.plenty.model
 import life.plenty.model.octopi.Octopus
 
-import scala.util.Random
-
 trait TmpMarker
 
 object NoMarker extends TmpMarker
@@ -24,9 +22,10 @@ trait Connection[T] {
     case other ⇒ model.getHasher.b64(other.toString)
   }
 
-    val bigIdSize = bigId.length
-    val smallId = (0 until 10).map(_ ⇒ bigId.charAt(Random.nextInt(bigIdSize)))
-    smallId.mkString
+    bigId
+    //    val bigIdSize = bigId.length
+    //    val smallId = (0 until 10).map(_ ⇒ bigId.charAt(Random.nextInt(bigIdSize)))
+    //    smallId.mkString
   }
 
   def inst: Connection[T] = {
