@@ -40,6 +40,8 @@ object DisplayModel {
 
     private var _hasRenderedOnce = false
 
+    private var htmlCache: Binding[Node] = _
+
     def display(calledBy: DisplayModule[Octopus], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
       this.display(Option(calledBy), overrides)
     }
@@ -55,9 +57,12 @@ object DisplayModel {
         case _ ⇒ if (doDisplay()) {
           //          println("displaying ", this, withinOctopus, calledBy)
           update()
-          val html = Option(generateHtml(overrides))
-          if (!_hasRenderedOnce) _hasRenderedOnce = true
-          html
+          if (!_hasRenderedOnce) {
+            _hasRenderedOnce = true
+            val html = generateHtml(overrides)
+            htmlCache = html
+            Option(html)
+          } else Option(htmlCache)
         } else None
       }
     }
@@ -67,8 +72,6 @@ object DisplayModel {
     def hasRendered = _hasRenderedOnce
 
     def containerClasses: Set[String] = Set()
-
-    //    def orderPreference(toReorder: List[Octopus]) = identity(toReorder)
 
     protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node]
 
