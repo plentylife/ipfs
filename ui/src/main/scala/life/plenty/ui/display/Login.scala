@@ -60,7 +60,7 @@ object Login {
             emailEmpty.value_=(email.value.isEmpty)}/>
             <br/>
           </div>
-          <input type="submit" class="btn btn-primary mt-2">Login</input>
+          <input type="submit" class="btn btn-primary mt-2" value="Login"/>
         </form>
       </div>
     } else {

@@ -12,12 +12,13 @@ object Main {
 
   def gun: Gun = _gun
 
-  def main(): Unit = {
+  def main(bootstrapPeers: js.Array[String]): Unit = {
     console.println("Data entry point")
     model.setHasher(DataHash)
     modules()
 
-    _gun = Gun(js.Array("http://localhost:8080/gun"))
+    _gun = Gun(bootstrapPeers)
+    //    _gun = Gun(js.Array("http://localhost:8080/gun"))
   }
 
   def modules(): Unit = {

@@ -1,16 +1,17 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.data
 import life.plenty.data.{OctopusReader, Main ⇒ dataMain}
 import life.plenty.model.octopi._
-import life.plenty.model.{defaultCreator_=, initialize ⇒ mInit}
+import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
 import life.plenty.ui.display.{Help, LoadIndicator, Login}
 import life.plenty.ui.model.{DisplayModel, Router, UiContext}
+import life.plenty.{data, ui}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.{Event, document}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 import scalaz.std.list._
 
@@ -18,11 +19,14 @@ import scalaz.std.list._
 object Main {
 
   @JSExport
-  def main(consolesActive: Boolean = true): Unit = {
+  def main(bootstrapPeers: js.Array[String], consolesActive: Boolean = true): Unit = {
     println("Entry point")
+    data.console.active = consolesActive
+    ui.console.active = consolesActive
+    modelConsole.active = consolesActive
 
     // has to be first because it sets the hasher function
-    dataMain.main()
+    dataMain.main(bootstrapPeers)
     UiContext.initialize()
     Router.initialize
     mInit()
