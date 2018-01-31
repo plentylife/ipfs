@@ -21,8 +21,8 @@
   border-bottom: 1px dashed lightblue;
 }
 
-.group-answers {
-  flex-direction: row;
+.group-answers, .group-event {
+  flex-direction: row !important;
 }
 
 .group-great {
