@@ -1,20 +1,20 @@
 package life.plenty.ui.display
 
-import life.plenty.model.connection.Child
-import life.plenty.model.octopi.{Answer, GreatQuestion, Octopus}
+import life.plenty.model.octopi.{Answer, Event, GreatQuestion, Octopus}
 import life.plenty.ui.display.actions.CreateAnswer
 import life.plenty.ui.display.meta.{GroupedChildDisplay, GroupedModularDisplay}
 import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.UiContext
 
-class GreatQuestionGroup(private val _withinOctopus: Octopus) extends GroupedChildDisplay(_withinOctopus) {
-  override protected val displayInOrder: List[String] = List("great", "other")
+class TopSpaceGroups(private val _withinOctopus: Octopus) extends GroupedChildDisplay(_withinOctopus) {
+  override protected val displayInOrder: List[String] = List("other", "event", "great")
+  override protected val titles: Map[String, String] = Map("great" → "Planning", "event" → "Events")
 
-  override def doDisplay() = {
-    withinOctopus.connections.collectFirst({ case Child(_: GreatQuestion) ⇒ Unit }).nonEmpty
-  }
+  override def doDisplay() = UiContext.startingSpace.value.get.id == _withinOctopus.id
 
   override protected def groupBy(o: Octopus): String = o match {
     case o: GreatQuestion ⇒ "great"
+    case o: Event ⇒ "event"
     case _ ⇒ "other"
   }
 }

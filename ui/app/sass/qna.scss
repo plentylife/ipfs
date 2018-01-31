@@ -33,7 +33,7 @@
   max-width: 50px;
 }
 
-.answer, .contribution {
+.answer, .contribution, .card {
   .controls {
     margin-top: $spacer * 0.25;
     margin-left: $spacer * 0.25;
@@ -54,6 +54,15 @@ $contribution-color: forestgreen;
   border-color: $contribution-color;
   .card-title {
     color: $contribution-color;
+  }
+}
+
+$event-color: #9f8600;
+
+.card.event {
+  border-color: $event-color;
+  .card-title {
+    color: $event-color;
   }
 }
 

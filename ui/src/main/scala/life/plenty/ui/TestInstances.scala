@@ -14,6 +14,9 @@ object TestInstances {
     val ts = new BasicSpace()
     ts.asNew(Title("French"), getCreator)
 
+    val e = new Event
+    e.asNew(Title("first event"), Parent(ts))
+
     ts.rx.get({ case Child(q: Who) ⇒ q }).foreach(_.foreach {
       who ⇒
 

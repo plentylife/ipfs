@@ -69,6 +69,7 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
 
 abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends ChildDisplay(_withinOctopus) {
   protected val displayInOrder: List[String]
+  protected val titles: Map[String, String] = Map()
 
   override def overrides: List[ModuleOverride] = {
     ModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
@@ -80,11 +81,13 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
 
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
-    val grouped = children.bind.groupBy(groupBy)
     val overridesBelow = overrides ::: getOverridesBelow
 
-    <div class="child-display-grouped-box d-flex flex-row flex-wrap">
-      {for (gName ← displayInOrder) yield {
+    <div class="child-display-grouped-box d-flex flex-column flex-wrap">
+      {val grouped = children.bind.groupBy(groupBy)
+    console.println(s"Grouped Child Display genHtml ${children.value}")
+
+    for (gName ← displayInOrder) yield {
       val octopi = grouped.get(gName).map(_.toList).getOrElse(List())
       generateHtmlForGroup(gName, octopi, overridesBelow).bind
     }}
@@ -94,9 +97,16 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
 
   @dom
   private def generateHtmlForGroup(name: String, octopi: List[Octopus],
-                                   overridesBelow: List[ModuleOverride]): Binding[Node] = {
-    <div class={s"d-flex group-$name flex-wrap"}>
-      {for (c <- octopi) yield DisplayModel.display(c, overridesBelow).bind}
+                                   overridesBelow: List[ModuleOverride]): Binding[Node] = if (octopi.nonEmpty) {
+    {console.println(s"generateHtmlForGroup $name $titles ${titles.get(name)}")}
+    <div class={s"d-flex group-$name flex-wrap flex-column"}>
+      {if (titles.get(name).nonEmpty) {
+      <h3 class="subsection-header">
+        {titles.get(name).getOrElse("")}
+      </h3>
+    } else {<span class="d-none"></span>}}{for (c <- octopi) yield DisplayModel.display(c, overridesBelow).bind}
     </div>
+  } else {
+    <span class="d-none"></span>
   }
 }

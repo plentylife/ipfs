@@ -17,6 +17,7 @@ package object ui {
     println("UI is adding modules into registry")
 
     /* the modules should be added in a list fashion: the last overrides the first */
+    ModuleRegistry add { case o: Event ⇒ new EventCardDisplay(o) }
     ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
     //    ModuleRegistry add { case o: User ⇒ new DisplayUpdateWalletChange(o) }
 
@@ -25,7 +26,7 @@ package object ui {
     //    ModuleRegistry add { case o: Space ⇒ new ViewStateLinks(o) }
     //    ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortDisplay(o) }
     ModuleRegistry add { case o: BasicSpace ⇒ new BasicSpaceDisplayOrder(o) }
-    ModuleRegistry add { case o: Space ⇒ new GreatQuestionGroup(o) }
+    ModuleRegistry add { case o: Space ⇒ new TopSpaceGroups(o) }
 
     ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithQuestionInput(o) }
 

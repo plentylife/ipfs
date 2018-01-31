@@ -26,9 +26,9 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
     val action = withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m }
 
     <div class="title-with-input d-flex mt-3">
-      <h3 class="title mr-3">
+      <h4 class="title mr-3">
         {withinOctopus.getTitle.dom.bind}
-      </h3>
+      </h4>
       <span class="d-inline-flex">
         <input type="text" disabled={action.isEmpty} onkeyup={onEnter _}
                placeholder="ask your question and hit `enter`"/>

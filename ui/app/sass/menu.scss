@@ -2,6 +2,8 @@
   background-color: theme-color("dark");
   color: color-yiq(theme-color("dark"));
   justify-content: space-around;
+  margin-left: -($spacer * 2);
+  margin-right: -($spacer * 2);
 }
 
 .current-user-wallet-outer-box {
@@ -17,5 +19,9 @@
     padding: 3px;
     border-radius: 7px;
     width: 20px;
+  }
+  .title {
+    margin-left: $spacer *0.5;
+    margin-right: $spacer *0.5;
   }
 }

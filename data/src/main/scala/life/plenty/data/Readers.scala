@@ -36,6 +36,7 @@ object OctopusReader {
     ci("Transaction", new Transaction),
     ci("VoteAllowance", new VoteAllowance),
     ci("Members", new Members),
+    ci("Event", new Event)
     //    ci("Wallet", new Wallet)
   )
 
