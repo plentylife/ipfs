@@ -1,5 +1,6 @@
 package life.plenty.model.octopi
 
+import life.plenty.model
 import life.plenty.model.connection.{Body, Child, Connection, Title}
 import rx.{Rx, Var}
 
@@ -11,6 +12,11 @@ trait Answer extends Space with WithParent[Space] {
   lazy val votes: Rx[Int] = Rx {
     val vs = rx.getAll({ case Child(v: Vote) ⇒ v })
     val mags = vs().flatMap(_.sizeAndDirection())
+    model.console.println(s"Answer votes ${this} ${vs.now}")
+    model.console.println(s"Answer votes magnitudes ${this} ${mags}")
+    rx.cons.now.collect({ case Child(v: Vote) ⇒
+      println(s"${v.sizeAndDirection.now} $v")
+    })
     mags.sum
   }
 

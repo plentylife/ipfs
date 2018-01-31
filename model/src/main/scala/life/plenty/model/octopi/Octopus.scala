@@ -94,7 +94,11 @@ trait Octopus extends OctopusConstructor {
 
     def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       val current = Var(cons.now.collect(f))
-      getWatch(f)(ctx).foreach(_.foreach(n ⇒ current() = n :: current.now))(ctx)
+      // this is needed because otherwise the last element is included
+      var firstWatch = current.now.nonEmpty
+      getWatch(f)(ctx).foreach(_.foreach(n ⇒ if (!firstWatch) {
+        current() = n :: current.now
+      } else firstWatch = false))(ctx)
       current
     }
 

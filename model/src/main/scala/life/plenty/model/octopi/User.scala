@@ -18,7 +18,7 @@ trait User extends Octopus {
   private def filterTransactions(rxList: Rx[List[Transaction]], field: (Transaction) ⇒ Rx[Option[User]])
   : Rx[List[Transaction]] = {
     rxList.map({ list: List[Transaction] ⇒
-      model.console.println(s"filterTransaction ${list}")
+      model.console.trace(s"User filterTransaction() ${list}")
       list.flatMap({ t: Transaction ⇒
         field(t)().collect({ case u: User if (u.id == this.id) ⇒ t }): Option[Transaction]
       })

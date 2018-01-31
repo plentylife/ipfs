@@ -54,7 +54,7 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   @dom
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     //    println("child display gen html", this, children.value)
-    <div class="child-display-box d-flex flex-column">
+    <div class="child-display-box d-flex flex-column flex-wrap">
       {for (c <- children) yield DisplayModel.display(c, overrides ::: getOverridesBelow).bind}
     </div>
   }
@@ -83,7 +83,7 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
     val grouped = children.bind.groupBy(groupBy)
     val overridesBelow = overrides ::: getOverridesBelow
 
-    <div class="child-display-grouped-box d-flex flex-row">
+    <div class="child-display-grouped-box d-flex flex-row flex-wrap">
       {for (gName ← displayInOrder) yield {
       val octopi = grouped.get(gName).map(_.toList).getOrElse(List())
       generateHtmlForGroup(gName, octopi, overridesBelow).bind
@@ -95,7 +95,7 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
   @dom
   private def generateHtmlForGroup(name: String, octopi: List[Octopus],
                                    overridesBelow: List[ModuleOverride]): Binding[Node] = {
-    <div class={s"d-flex group-$name"}>
+    <div class={s"d-flex group-$name flex-wrap"}>
       {for (c <- octopi) yield DisplayModel.display(c, overridesBelow).bind}
     </div>
   }
