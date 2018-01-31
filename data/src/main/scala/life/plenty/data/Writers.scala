@@ -15,8 +15,11 @@ object OctopusWriter {
     if (Cache.get(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
       return
+    } else {
+      // fixme this is danegerous because it does not check for success of the write
+      Cache.put(o)
     }
-    // fixme there should be a check that the class does not already exist
+
     val go = gun.get(o.id)
     go.put(js.Dynamic.literal(
       "class" → o.getClass.getSimpleName
@@ -85,7 +88,7 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
     //    console.println(s"Gun Writer ${withinOctopus.id} ${connection} marker: ${connection.tmpMarker}")
     //      withinOctopus.isNew &&
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
-      console.println(s"Gun Writer ${withinOctopus} [${withinOctopus.id}] ${connection} ")
+      console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")
       OctopusWriter.writeSingleConnection(connection, gun)
     }
     Right()

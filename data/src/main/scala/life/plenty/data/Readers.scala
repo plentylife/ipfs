@@ -117,12 +117,11 @@ object ConnectionReader {
     val con = d.asInstanceOf[JsConnection]
     // Id is a special case, since it's value points to an octopus, but it's really a leaf connection
     if (con.`class` == "Id") return Future {Option {Id(con.value)}}
+    console.trace(s"ConnectionReader ${con.`class`} ${con.value}")
 
     hasClass(con.value) flatMap { hc ⇒
       if (hc) {
         OctopusReader.read(con.value) map { optO ⇒
-          //          console.println(s"Read octopus $optO ${optO.map(_.connections).getOrElse(List())}")
-
           if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
           optO flatMap { o ⇒
             octopusReaders flatMap { f ⇒ f(con.`class`, o) } headOption;
