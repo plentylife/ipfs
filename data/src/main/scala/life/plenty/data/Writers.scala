@@ -6,6 +6,8 @@ import life.plenty.model.connection.{AtInstantiation, Connection}
 import life.plenty.model.octopi.{Module, Octopus}
 import rx.Ctx
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 
@@ -21,23 +23,28 @@ object OctopusWriter {
     }
 
     val go = gun.get(o.id)
-    go.put(js.Dynamic.literal(
-      "class" → o.getClass.getSimpleName
-    ), (d) ⇒ {
-      // fixme add error
-      console.println(s"OctopusWriter write of ${o.id} resulted in ${JSON.stringify(d)}")
-      val ack = d.asInstanceOf[Ack]
-      if (!js.isUndefined(ack.err) && ack.err != null) {
-        console.error(s"E: OctopusWriter write of ${o} ${o.id} resulted in error ${ack.err}")
-      }
-    })
-    //    o.getTopModule({ case m: ConstructorWriterModule[_] ⇒ m }).foreach(_.write(go))
 
-    writeConnections(o.allConnections, go)
+    Future {
+      go.put(js.Dynamic.literal(
+        "class" → o.getClass.getSimpleName
+      ), (d) ⇒ {
+        // fixme add error
+        console.println(s"OctopusWriter write of ${o.id} resulted in ${JSON.stringify(d)}")
+        val ack = d.asInstanceOf[Ack]
+        if (!js.isUndefined(ack.err) && ack.err != null) {
+          console.error(s"E: OctopusWriter write of ${o} ${o.id} resulted in error ${ack.err}")
+        }
+      })
+      writeConnections(o.allConnections, go)
+    }
   }
 
   def writeConnections(connections: Iterable[Connection[_]], go: Gun): Unit = {
     val gcons = go.get("connections")
+    //    val gcons = go.get("connections").put(null)
+    //    val gcons = go.put(js.Dynamic.literal(
+    //      "connections" → null
+    //    ))
     for (c ← connections) {
       val conGun = ConnectionWriter.write(c)
       gcons.set(conGun, null)
@@ -61,30 +68,27 @@ object OctopusWriter {
 object ConnectionWriter {
   def write(c: Connection[_]): Gun = {
     val gc = Main.gun.get(c.id)
-    gc.`val`((d, k) ⇒ {
-      console.println(s"ConnectionWriter write val is triggered ${c.id}")
-      if (js.isUndefined(d)) {
-        console.println(s"ConnectionWriter connection ${c} ${c.id}")
-        val v = getValue(c)
-        c.value match {
-          case o: Octopus ⇒ OctopusWriter.write(o)
-          case _ ⇒
-        }
-        val obj = js.Dynamic.literal(
-          "class" → c.getClass.getSimpleName,
-          "value" → v
-        )
-        gc.put(obj, (d) ⇒ {
-          val ack = d.asInstanceOf[Ack]
-          if (!js.isUndefined(ack.err) && ack.err != null) {
-            console.error(s"E: ConnectionWriter write of ${c} ${c.id} resulted in error ${ack.err}")
-          }
-        })
-      } else {
-        console.println(s"skipped writing connection ${c} ${c.id}")
-        // this might means that a connection to a different octopus is getting reused
+    if (c.tmpMarker != GunMarker) {
+      console.println(s"ConnectionWriter connection ${c} ${c.id}")
+
+      // making sure that we aren't writing it again
+      c.tmpMarker = GunMarker
+      val v = getValue(c)
+      c.value match {
+        case o: Octopus ⇒ OctopusWriter.write(o)
+        case _ ⇒
       }
-    })
+      val obj = js.Dynamic.literal(
+        "class" → c.getClass.getSimpleName,
+        "value" → v
+      )
+      gc.put(obj, (d) ⇒ {
+        val ack = d.asInstanceOf[Ack]
+        if (!js.isUndefined(ack.err) && ack.err != null) {
+          console.error(s"E: ConnectionWriter write of ${c} ${c.id} resulted in error ${ack.err}")
+        }
+      })
+    }
     gc
   }
 
