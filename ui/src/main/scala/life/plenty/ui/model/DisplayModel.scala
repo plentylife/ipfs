@@ -1,5 +1,6 @@
 package life.plenty.ui.model
 
+import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Module, Octopus}
 import org.scalajs.dom.raw.Node
@@ -45,6 +46,8 @@ object DisplayModel {
 
     private var htmlCache: Binding[Node] = _
 
+    protected val cachedOverrides = Vars[ModuleOverride]()
+
     def display(calledBy: DisplayModule[Octopus], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
       this.display(Option(calledBy), overrides)
     }
@@ -59,10 +62,13 @@ object DisplayModel {
         case Some(module) ⇒ module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {
           //          println("displaying ", this, withinOctopus, calledBy)
+          cachedOverrides.value.clear()
+          cachedOverrides.value.insertAll(0, overrides)
           update()
           if (!_hasRenderedOnce) {
             _hasRenderedOnce = true
             val html = generateHtml(overrides)
+            //            val html = generateHtml()
             htmlCache = html
             Option(html)
           } else Option(htmlCache)
@@ -76,6 +82,7 @@ object DisplayModel {
 
     def containerClasses: Set[String] = Set()
 
+    //    protected def generateHtml(): Binding[Node]
     protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node]
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =

@@ -23,7 +23,8 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
   override protected def generateHtml(overrides: List[ModuleOverride]): Binding[Node] = {
     //    println("modular display gen HTML", this)
 
-    val displayable = siblingModules map { m ⇒ m.display(this, siblingOverrides ::: overrides)
+    val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
+    val displayable = siblingModules map { m ⇒ m.display(this, siblingOverrides ::: cos.toList)
     } withFilter (_.nonEmpty) map (_.get)
 
     <div class="modular-display-box d-inline-flex flex-column">
