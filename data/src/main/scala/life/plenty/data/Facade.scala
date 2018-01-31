@@ -10,6 +10,10 @@ object Gun extends js.Object {
   def apply(opts: js.Object): Gun = js.native
 }
 
+trait Ack extends js.Object {
+  val err: String = js.native
+}
+
 //@js.native
 //trait GunUser extends Gun {
 //  def create(userName: String, password: String, callback: js.Function1[js.Object, Unit]): Gun = js.native

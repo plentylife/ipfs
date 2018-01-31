@@ -1,5 +1,7 @@
 package life.plenty.ui
 
+import java.util.Date
+
 import life.plenty.model.connection._
 import life.plenty.model.octopi.GreatQuestions.Who
 import life.plenty.model.octopi._
@@ -12,7 +14,7 @@ object TestInstances {
 
   def load(): Space = {
     val ts = new BasicSpace()
-    ts.asNew(Title("French"), getCreator)
+    ts.asNew(Title("French" + new Date().getHours + new Date().getMinutes.toString), getCreator)
 
     val e = new Event
     e.asNew(Title("first event"), Parent(ts))

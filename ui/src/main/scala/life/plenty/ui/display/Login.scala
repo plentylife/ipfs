@@ -21,11 +21,20 @@ object Login {
     UiContext.userVar.bind == null
   }
 
+  private def onSubmit(e: Event) = {
+    if (name.value.nonEmpty && email.value.nonEmpty) {
+      UiContext.login(name.value, email.value)
+      //              open.value_=(isOpen)
+    }
+  }
+
   @dom
   def display(): Binding[Node] = {
     if (isOpen.bind) {
       <div class="login-outer-box d-flex justify-content-center align-items-center">
-        <div class="login-box d-inline-flex flex-column">
+        <form class="login-box d-inline-flex flex-column" onsubmit={e: Event ⇒
+          e.preventDefault()
+          onSubmit(e)}>
           <div>
             {if (nameEmpty.bind) {
             <div class="bg-danger text-white">
@@ -51,12 +60,8 @@ object Login {
             emailEmpty.value_=(email.value.isEmpty)}/>
             <br/>
           </div>
-          <button type="button" class="btn btn-primary mt-2" onclick={e: Event ⇒
-            if (name.value.nonEmpty && email.value.nonEmpty) {
-              UiContext.login(name.value, email.value)
-              //              open.value_=(isOpen)
-            }}>Login</button>
-        </div>
+          <input type="submit" class="btn btn-primary mt-2">Login</input>
+        </form>
       </div>
     } else {
       <span style="display:none"></span>

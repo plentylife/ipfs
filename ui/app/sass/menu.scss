@@ -6,6 +6,10 @@
   margin-right: -($spacer * 2);
 }
 
+.navigation-back {
+  border-left: none;
+}
+
 .current-user-wallet-outer-box {
   .balance {
     color: #34ce57;

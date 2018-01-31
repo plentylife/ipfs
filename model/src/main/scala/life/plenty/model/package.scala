@@ -7,7 +7,7 @@ import life.plenty.model.octopi._
 import life.plenty.model.utils.{Console, Hash}
 
 package object model {
-  val console = new Console(true)
+  val console = new Console(true, true, "UI")
   private var _hasher: Hash = _
   private var _defaultCreator: Option[User] = None
 

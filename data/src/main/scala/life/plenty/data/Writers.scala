@@ -11,7 +11,7 @@ import scala.scalajs.js.JSON
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
-    console.println(s"OctopusWriter octopus ${o} ${o.connections}")
+    console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.connections}")
     if (Cache.get(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
       return
@@ -25,7 +25,11 @@ object OctopusWriter {
       "class" → o.getClass.getSimpleName
     ), (d) ⇒ {
       // fixme add error
-      console.println(s"write of ${o.id} resulted in ${JSON.stringify(d)}")
+      console.println(s"OctopusWriter write of ${o.id} resulted in ${JSON.stringify(d)}")
+      val ack = d.asInstanceOf[Ack]
+      if (!js.isUndefined(ack.err) && ack.err != null) {
+        console.error(s"E: OctopusWriter write of ${o} ${o.id} resulted in error ${ack.err}")
+      }
     })
     //    o.getTopModule({ case m: ConstructorWriterModule[_] ⇒ m }).foreach(_.write(go))
 
@@ -46,6 +50,10 @@ object OctopusWriter {
     val conGun = ConnectionWriter.write(connection)
     gcons.set(conGun, (d) ⇒ {
       console.println(s"OctopusWriter done single connection ${JSON.stringify(d)}")
+      val ack = d.asInstanceOf[Ack]
+      if (!js.isUndefined(ack.err) && ack.err != null) {
+        console.error(s"E: write of single connection ${connection} ${connection.id} resulted in error ${ack.err}")
+      }
     })
   }
 }
@@ -54,6 +62,7 @@ object ConnectionWriter {
   def write(c: Connection[_]): Gun = {
     val gc = Main.gun.get(c.id)
     gc.`val`((d, k) ⇒ {
+      console.println(s"ConnectionWriter write val is triggered ${c.id}")
       if (js.isUndefined(d)) {
         console.println(s"ConnectionWriter connection ${c} ${c.id}")
         val v = getValue(c)
@@ -65,7 +74,12 @@ object ConnectionWriter {
           "class" → c.getClass.getSimpleName,
           "value" → v
         )
-        gc.put(obj)
+        gc.put(obj, (d) ⇒ {
+          val ack = d.asInstanceOf[Ack]
+          if (!js.isUndefined(ack.err) && ack.err != null) {
+            console.error(s"E: ConnectionWriter write of ${c} ${c.id} resulted in error ${ack.err}")
+          }
+        })
       } else {
         console.println(s"skipped writing connection ${c} ${c.id}")
         // this might means that a connection to a different octopus is getting reused

@@ -84,7 +84,7 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
 
     <div class="child-display-grouped-box d-flex flex-column flex-wrap">
       {val grouped = children.bind.groupBy(groupBy)
-    console.println(s"Grouped Child Display genHtml ${children.value}")
+    console.trace(s"Grouped Child Display genHtml ${children.value}")
 
     for (gName ← displayInOrder) yield {
       val octopi = grouped.get(gName).map(_.toList).getOrElse(List())

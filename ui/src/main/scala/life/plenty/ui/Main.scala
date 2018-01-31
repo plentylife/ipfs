@@ -1,6 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.data
 import life.plenty.data.{OctopusReader, Main ⇒ dataMain}
 import life.plenty.model.octopi._
 import life.plenty.model.{defaultCreator_=, initialize ⇒ mInit}
@@ -58,10 +59,18 @@ object Main {
     val rp = Router.defaultRoutingParams.copy(spaceId = Option(ts.id))
     println("Routing hash")
     println(Router.toHash(rp))
+    Router.navigateToOctopus(ts)
   }
 
   @JSExport
   def log() = println(UiContext.startingSpace.value.get.connections)
+
+  @JSExport
+  def logDataCache() = println(data.Cache.cache)
+
+  @JSExport
+  def clearDataCache() = data.Cache.cache.clear()
+
 
   @dom
   def mainSection(): Binding[Node] = {
