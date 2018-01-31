@@ -100,6 +100,9 @@ object ConnectionReader {
   )
 
   private def hasClass(key: String): Future[Boolean] = {
+    // for stuff like empty titles
+    if (key.isEmpty) return Future(false)
+
     val p = Promise[Boolean]()
     Main.gun.get(key).`val`((d, k) ⇒ {
       if (!js.isUndefined(d)) {
@@ -118,7 +121,7 @@ object ConnectionReader {
     val con = d.asInstanceOf[JsConnection]
     // Id is a special case, since it's value points to an octopus, but it's really a leaf connection
     if (con.`class` == "Id") return Future {Option {Id(con.value)}}
-    console.trace(s"ConnectionReader ${con.`class`} ${con.value}")
+    console.trace(s"ConnectionReader ${con.`class`} ${con.value} $key")
 
     hasClass(con.value) flatMap { hc ⇒
       if (hc) {
@@ -130,7 +133,10 @@ object ConnectionReader {
         }
       } else {
         Future {
-          leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption
+          console.trace(s"ConnectionReader leafReader ${con.`class`} ${con.value} $key")
+          val res = leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption;
+          console.trace(s"ConnectionReader leafReader ${con.`class`} ${con.value} $key $res")
+          res
         }
       }
     }
@@ -172,7 +178,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
       ConnectionReader.read(d, k) map { optCon ⇒ {
         console.println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
         if (optCon.isEmpty) {
-          console.println(JSON.stringify(d))
+          console.error(JSON.stringify(d))
           throw new Exception("Gun reader could not parse a connection.")
         }
 

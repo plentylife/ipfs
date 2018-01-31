@@ -4,7 +4,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{OctopusReader, Main ⇒ dataMain}
 import life.plenty.model.octopi._
 import life.plenty.model.{defaultCreator_=, initialize ⇒ mInit}
-import life.plenty.ui.display.{Help, Login}
+import life.plenty.ui.display.{Help, LoadIndicator, Login}
 import life.plenty.ui.model.{DisplayModel, Router, UiContext}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.{Event, document}
@@ -66,6 +66,7 @@ object Main {
   @dom
   def mainSection(): Binding[Node] = {
     <div id="viewport" onclick={e: Event ⇒ Help.triggerClose()}>
+      {LoadIndicator.show().bind}
       {showUi().bind}
       {Help.display().bind}{Login.display().bind}{if (UiContext.startingSpace.bind.nonEmpty)
       DisplayModel.display(UiContext.startingSpace.bind.get).bind else
