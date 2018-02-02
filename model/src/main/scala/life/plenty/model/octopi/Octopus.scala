@@ -21,7 +21,6 @@ trait Octopus extends OctopusConstructor {
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
   def modules: List[Module[Octopus]] = {
-    console.trace(s"trying to get modules ${_modules}")
     console.trace(s"trying to get modules ${_modules} filters ${moduleFilters}")
     moduleFilters.foldLeft(_modules)((ms, f) ⇒ {
       f(ms)
@@ -119,6 +118,9 @@ trait Octopus extends OctopusConstructor {
 
   def hasMarker(marker: MarkerEnum): Boolean = connections.collect { case Marker(m) if m == marker ⇒ true } contains true
 
+  private lazy val actionsOnGraphTransform = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*)
+  private lazy val actionsAfterGraphTransfrom = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*)
+
   def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
     // duplicates are silently dropped
     //    println(s"adding connection ${connection} to ${this}")
@@ -127,7 +129,7 @@ trait Octopus extends OctopusConstructor {
       return Right()
     }
 
-    var onErrorList = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*) map { m ⇒
+    var onErrorList = actionsOnGraphTransform map { m ⇒
       m.onConnectionAdd(connection)
     }
 
@@ -145,7 +147,7 @@ trait Octopus extends OctopusConstructor {
         _lastAddedConnection() = filteredCon
         //        println(s"added connection ${connection} to ${this} ${_connections.now}")
 
-        onErrorList = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*) map { m ⇒
+        onErrorList = actionsAfterGraphTransfrom map { m ⇒
           m.onConnectionAdd(connection)
         }
         onErrorList.collectFirst({ case e: Left[Exception, Unit] ⇒ e }) match {

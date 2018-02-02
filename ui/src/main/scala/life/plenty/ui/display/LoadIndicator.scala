@@ -14,6 +14,8 @@ object LoadIndicator {
 
   val listOfModules = Var(List[OctopusGunReaderModule]())
 
+  //  lazy val cachedGunReader =
+
   data.Cache.lastAddedRx.foreach { o ⇒
     if (o != null) {
       o.onModulesLoad {

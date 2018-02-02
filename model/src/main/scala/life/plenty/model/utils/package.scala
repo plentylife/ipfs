@@ -17,13 +17,13 @@ package object utils {
   }
 
   class Console(var active: Boolean, traceActive: Boolean = false, _prefix: String = "") {
-    def println(s: String) = if (active) Predef.println(prefix + s)
+    def println(s: ⇒ String) = if (active) Predef.println(prefix + s)
 
-    def error(s: String) = Predef.println(prefix + s)
+    def error(s: ⇒ String) = Predef.println(prefix + s)
 
     def error(e: Throwable) = Predef.println(prefix + e)
 
-    def trace(s: String) = if (traceActive) println(s)
+    def trace(s: ⇒ String) = if (traceActive) println(s)
 
     def prefix = if (_prefix.nonEmpty) _prefix + " : " else ""
   }

@@ -62,7 +62,7 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
     </div>
   }
 
-  private def findTipModule = withinOctopus.getTopModule({ case m: ActionTip ⇒ m })
+  private lazy val findTipModule = withinOctopus.getTopModule({ case m: ActionTip ⇒ m })
 
   private def onTip(e: Event) = {
     if (open.value) {

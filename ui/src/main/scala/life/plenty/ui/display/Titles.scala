@@ -24,11 +24,11 @@ trait TitleDisplay extends DisplayModule[Octopus] {
 class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
 
   private val inputValue = Var("")
+  private lazy val action = withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m }
 
   @dom
   protected override def generateHtml(): Binding[Node] = {
     //println("title with inputt", withinOctopus.modules)
-    val action = withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m }
 
     <div class="title-with-input d-flex mt-3">
       <h4 class="title mr-3">
@@ -47,8 +47,9 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
     if (e.keyCode == 13) createQuestion
 
 
+
   private def createQuestion = {
-    withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m } foreach (a ⇒ {
+    action foreach (a ⇒ {
       a.create(inputValue.value)
       inputValue
     })
