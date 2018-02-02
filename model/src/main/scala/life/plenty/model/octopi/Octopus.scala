@@ -12,6 +12,7 @@ trait Octopus extends OctopusConstructor {
   protected var _modules: List[Module[Octopus]] = List()
   protected lazy val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
   protected lazy val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
+  protected lazy val _connectionsRx: Var[List[Rx[Option[Connection[_]]]]] = Var(List.empty[Rx[Option[Connection[_]]]])
 
   //protected lazy val _connections: Rx.Dynamic[List[Connection[_]]] =
   //    _lastAddedConnection.fold(List.empty[Connection[_]])(
@@ -54,7 +55,7 @@ trait Octopus extends OctopusConstructor {
   /** filters are no longer applied */
   @deprecated("This is not reliable due to the nature of gun loading")
   def connections: List[Connection[_]] = {
-    _connections.now
+    allConnections
     //    connectionFilters.foldLeft(_connections.now)((cs, f) ⇒ f(cs))
   }
 
@@ -85,12 +86,7 @@ trait Octopus extends OctopusConstructor {
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
       //      _connections
 
-      _connections
-
-      connectionFilters.foldLeft[RxConsList](_connections)((cs, f) ⇒ {
-        //        println(s"fold ${cs} ${cs.now}")
-        f(cs)
-      })
+      _connectionsRx.map(_.flatMap(rx ⇒ rx()))
     }
 
     def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
@@ -139,6 +135,12 @@ trait Octopus extends OctopusConstructor {
       case Some(e) ⇒ e
 
       case None ⇒
+        /*filtering block*/
+        val filteredCon: Rx[Option[Connection[_]]] = connectionFilters.foldLeft[Rx[Option[Connection[_]]]](
+          Var {Option(connection)}
+        )((c, f) ⇒ f(c))
+        _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[Connection[_]]]])
+        /* end block */
         _connections() = connection :: _connections.now
         _lastAddedConnection() = Option(connection)
         //        println(s"added connection ${connection} to ${this} ${_connections.now}")

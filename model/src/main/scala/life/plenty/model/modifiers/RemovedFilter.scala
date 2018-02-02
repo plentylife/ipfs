@@ -9,14 +9,17 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
 
   override def apply(what: Rx[Option[Connection[_]]])(implicit ctx: Ctx.Owner): Rx[Option[Connection[_]]] = {
     println(s"filter rx $what ${what.now}")
-    val filtered: Rx[Option[Connection[_]]] = what.map {
-      _ flatMap { con ⇒
-        con.value match {
+    val filtered: Rx[Option[Connection[_]]] = what.map { optCon: Option[Connection[_]] ⇒
+      optCon flatMap { con: Connection[_] ⇒
+        val resCon: Option[Connection[_]] = con.value match {
           case o: Octopus ⇒
             val rc = o.rx.get({ case m@Marker(REMOVED) ⇒ m })
-            if (rc().isEmpty) Option(con) else None
-          case _ ⇒ None
+            val rcOpt = rc map { marker ⇒ if (marker.isEmpty) optCon else None }
+            rcOpt()
+          //            rc() map {_ ⇒ con}
+          case _ ⇒ optCon
         }
+        resCon
       }
     }
     println(s"filtered rx ${filtered}")
