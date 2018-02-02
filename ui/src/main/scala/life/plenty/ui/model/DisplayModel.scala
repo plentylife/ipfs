@@ -3,7 +3,7 @@ package life.plenty.ui.model
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Module, Octopus}
-import org.scalajs.dom.raw.Node
+import org.scalajs.dom.Node
 import rx.Ctx
 
 import scala.language.postfixOps
@@ -33,6 +33,11 @@ object DisplayModel {
   def getSiblingModules(self: DisplayModule[Octopus]): List[DisplayModule[Octopus]] = self.withinOctopus.getModules {
     case m: DisplayModule[_] if m != self ⇒ m
   }
+
+  @dom
+  def nospan: Binding[Node] = <span class="d-none"></span>
+
+  //  lazy val nospan: Elem = <span class="d-none"></span>
 
   /* the main trait */
 
@@ -87,13 +92,31 @@ object DisplayModel {
       overrides.collectFirst {
         case ModuleOverride(creator, by, condition) if creator != this && condition(this) ⇒ by
       }
-
   }
 
   case class ModuleOverride(creator: DisplayModule[Octopus], by: DisplayModule[Octopus], condition:
   (DisplayModule[Octopus]) ⇒ Boolean)
 
-  trait Insertable {
+  trait ActionDisplay[T <: Octopus] extends DisplayModule[T] {
     val active = Var(false)
+    protected val isEmpty = Var(false)
+
+    def activeDisplay: Binding[Node]
+
+    def inactiveDisplay: Binding[Node]
+
+    @dom
+    override protected def generateHtml(): Binding[Node] = <span>
+      {if (!isEmpty.bind) {
+        if (active.bind) {
+          activeDisplay.bind
+        } else {
+          inactiveDisplay.bind
+        }
+      } else {
+        DisplayModel.nospan.bind
+      }}
+    </span>
+
   }
 }

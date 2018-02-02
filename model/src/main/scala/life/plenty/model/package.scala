@@ -2,12 +2,12 @@ package life.plenty
 
 
 import life.plenty.model.actions._
-import life.plenty.model.modifiers.AnswerVoteOrder
+import life.plenty.model.modifiers.{AnswerVoteOrder, RemovedFilter}
 import life.plenty.model.octopi._
 import life.plenty.model.utils.{Console, Hash}
 
 package object model {
-  val console = new Console(true, true, "UI")
+  val console = new Console(false, true, "Model")
   private var _hasher: Hash = _
   private var _defaultCreator: Option[User] = None
 
@@ -42,7 +42,8 @@ package object model {
     ModuleRegistry.add { case o: BasicSpace ⇒ new InitializeMembersOctopus(o) }
     ModuleRegistry.add { case o: WithMembers ⇒ new ActionAddMember(o) }
 
-    ModuleRegistry.add { case o: Octopus ⇒ new ActionDelete(o) }
+    ModuleRegistry.add { case o: Octopus ⇒ new ActionRemove(o) }
+    ModuleRegistry.add { case o: Octopus ⇒ new RemovedFilter(o) }
 
   }
 }

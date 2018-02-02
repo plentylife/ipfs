@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.console
 import life.plenty.model.octopi.Octopus
-import life.plenty.ui.model.DisplayModel.{DisplayModule, Insertable, ModuleOverride, getSiblingModules}
+import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
@@ -13,7 +13,7 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 
   override def update(): Unit = {
     //    println("new modules", getSiblingModules(this))
-    val sms = getSiblingModules(this).filterNot(_.isInstanceOf[Insertable]).reverse
+    val sms = getSiblingModules(this).filterNot(_.isInstanceOf[ActionDisplay[_]]).reverse
     siblingModules.value.clear()
     siblingModules.value.insertAll(0, sms)
     console.trace(("modular display updating", this, withinOctopus, sms).toString())

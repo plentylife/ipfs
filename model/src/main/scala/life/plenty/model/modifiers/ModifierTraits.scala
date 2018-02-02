@@ -19,6 +19,11 @@ trait ModuleFilters[+O <: Octopus] extends FilterModule[O, Module[Octopus], List
 
 trait ConnectionFilters[+O <: Octopus] extends FilterModule[O, Connection[_], List[Connection[_]]]
 
+//trait RxConnectionFilters[+O <: Octopus] extends FilterModule[O, Connection[_], Rx[List[Connection[_]]]]
+trait RxConnectionFilters[+O <: Octopus] extends Module[O] {
+  def apply(what: Rx[Option[Connection[_]]])(implicit ctx: Ctx.Owner): Rx[Option[Connection[_]]]
+}
+
 trait OctopusModifier[+Within <: Octopus] extends
   CollectionModificationModule[Within, Octopus, List[Octopus]] {
 

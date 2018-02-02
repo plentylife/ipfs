@@ -1,19 +1,34 @@
 package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.model.actions.ActionRemove
 import life.plenty.model.octopi.Question
-import life.plenty.ui.model.DisplayModel.{DisplayModule, Insertable}
+import life.plenty.ui.model.DisplayModel.ActionDisplay
+import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 
-class EditQuestion(override val withinOctopus: Question) extends DisplayModule[Question] with Insertable {
-  override def update(): Unit = Unit
-
-  @dom
-  override protected def generateHtml(): Binding[Node] = if (!active.bind) {
-    <div class="d-inline-flex">"edit q"</div>
-  } else {
-    <div class="d-inline-flex">"editing..."</div>
+class EditQuestion(override val withinOctopus: Question) extends ActionDisplay[Question] {
+  override def update(): Unit = {
+    isEmpty.value_=(actionRemove.isEmpty)
   }
 
+  @dom
+  def inactiveDisplay: Binding[Node] =
+    <button type="button" class="btn btn-dark btn-sm">
+      <span class="oi oi-pencil" title="edit" data:aria-hidden="true" onclick={(e: Event) => active.value_=(true)
+      }></span>
+    </button>
 
+  @dom
+  def activeDisplay: Binding[Node] = <div class="d-inline-flex">
+    <button type="button" class="btn btn-dark btn-sm symbolic">
+      <span class="oi oi-trash" title="remove" data:aria-hidden="true" onclick={(e: Event) =>
+        active.value_=(false); actionRemove.get.remove()}></span>
+    </button>
+  </div>
+
+  private lazy val actionRemove = {
+    val a = withinOctopus.getTopModule({ case a: ActionRemove ⇒ a })
+    a
+  }
 }

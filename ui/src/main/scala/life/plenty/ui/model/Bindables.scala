@@ -2,7 +2,7 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.ui.model.DisplayModel.{DisplayModule, Insertable}
+import life.plenty.ui.model.DisplayModel.ActionDisplay
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
 
@@ -48,7 +48,7 @@ object Helpers {
     }
   }
 
-  implicit class BindableModule[T <: DisplayModule[_] with Insertable](val module: Option[T]) {
+  implicit class BindableAction[T <: ActionDisplay[_]](val module: Option[T]) {
     val active: Var[Boolean] = module.map(_.active) getOrElse Var(false)
 
     @dom

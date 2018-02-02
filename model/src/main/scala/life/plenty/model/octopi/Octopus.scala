@@ -3,7 +3,7 @@ package life.plenty.model.octopi
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Connection, Marker}
-import life.plenty.model.modifiers.{ConnectionFilters, ModuleFilters}
+import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
 trait Octopus extends OctopusConstructor {
@@ -49,12 +49,13 @@ trait Octopus extends OctopusConstructor {
   }
 
   /* Connections */
-  private lazy val connectionFilters = getAllModules({ case m: ConnectionFilters[_] ⇒ m })
+  private lazy val connectionFilters = getAllModules({ case m: RxConnectionFilters[_] ⇒ m })
 
-  /** filters applied */
+  /** filters are no longer applied */
   @deprecated("This is not reliable due to the nature of gun loading")
   def connections: List[Connection[_]] = {
-    connectionFilters.foldLeft(_connections.now)((cs, f) ⇒ f(cs))
+    _connections.now
+    //    connectionFilters.foldLeft(_connections.now)((cs, f) ⇒ f(cs))
   }
 
   /** no filters applied */
@@ -77,13 +78,19 @@ trait Octopus extends OctopusConstructor {
   }
 
   object rx {
-    def cons(implicit ctx: Ctx.Owner): Rx.Dynamic[List[Connection[_]]] = {
+    type RxConsList = Rx[List[Connection[_]]]
+
+    def cons(implicit ctx: Ctx.Owner): RxConsList = {
       console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
+      //      _connections
 
-      _connections map { cons ⇒
-        connectionFilters.foldLeft(cons)((cs, f) ⇒ f(cs))
-      }
+      _connections
+
+      connectionFilters.foldLeft[RxConsList](_connections)((cs, f) ⇒ {
+        //        println(s"fold ${cs} ${cs.now}")
+        f(cs)
+      })
     }
 
     def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =

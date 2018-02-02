@@ -19,11 +19,14 @@ import scalaz.std.list._
 object Main {
 
   @JSExport
-  def main(bootstrapPeers: js.Array[String], consolesActive: Boolean = true): Unit = {
+  def main(bootstrapPeers: js.Array[String], consolesActive: String): Unit = {
     println("Entry point")
-    data.console.active = consolesActive
-    ui.console.active = consolesActive
-    modelConsole.active = consolesActive
+    if (consolesActive.nonEmpty) {
+      data.console.active = consolesActive == "true"
+      ui.console.active = consolesActive == "true"
+      modelConsole.active = consolesActive == "true"
+    }
+    println(ui.console.active, consolesActive, consolesActive.nonEmpty)
 
     // has to be first because it sets the hasher function
     dataMain.main(bootstrapPeers)

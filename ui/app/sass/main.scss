@@ -84,7 +84,11 @@ body {
 }
 
 .btn {
-  border-radius: 0;
+  //border-radius: 0;
+}
+
+.btn.symbolic {
+  border: none;
 }
 
 .subsection-header {

@@ -51,14 +51,16 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
   override def doDisplay(): Boolean = !withinOctopus.modules.exists(_.isInstanceOf[TitleWithQuestionInput])
 
-  private lazy val editor: BindableModule[EditQuestion] = withinOctopus.getTopModule({ case m: EditQuestion ⇒ m })
+  private lazy val editor: BindableAction[EditQuestion] = withinOctopus.getTopModule({ case m: EditQuestion ⇒ m })
 
+  // todo add
+  //<span class={if (!editor.active.bind) "" else "d-none"}>
   @dom
   override protected def generateHtml(): Binding[Node] = {
     ui.console.println(s"question title display ${editor.module}")
     <div class="question-title">
 
-      {editor.dom.bind}<span class={if (!editor.active.bind) "" else "d-none"}>
+      {editor.dom.bind}<span>
       {gqTitle.dom.bind}{withinOctopus.getTitle.dom.bind}
       ?
     </span>
