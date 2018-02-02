@@ -5,6 +5,8 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateQuestion
 import life.plenty.model.connection.Parent
 import life.plenty.model.octopi.{GreatQuestion, Octopus, Space}
+import life.plenty.ui
+import life.plenty.ui.display.actions.EditQuestion
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
 import org.scalajs.dom.html.Input
@@ -49,14 +51,19 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
   override def doDisplay(): Boolean = !withinOctopus.modules.exists(_.isInstanceOf[TitleWithQuestionInput])
 
-  //  implicit val parser: (String) ⇒ String = {(s) ⇒ prefix + s}
-  //      {Var(prefix + withinOctopus.title.dom).bind}{"?"}
+  private lazy val editor: BindableModule[EditQuestion] = withinOctopus.getTopModule({ case m: EditQuestion ⇒ m })
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
-    //println("question title display")
+    ui.console.println(s"question title display ${editor.module}")
     <div class="question-title">
-      {gqTitle.dom.bind}{withinOctopus.getTitle.dom.bind}{"?"}
+
+      {editor.dom.bind}<span class={if (!editor.active.bind) "" else "d-none"}>
+      {gqTitle.dom.bind}{withinOctopus.getTitle.dom.bind}
+      ?
+    </span>
+
+
     </div>
   }
 

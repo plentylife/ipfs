@@ -1,6 +1,6 @@
 package life.plenty.ui.model
 
-import com.thoughtworks.binding.Binding.Vars
+import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Module, Octopus}
 import org.scalajs.dom.raw.Node
@@ -93,4 +93,7 @@ object DisplayModel {
   case class ModuleOverride(creator: DisplayModule[Octopus], by: DisplayModule[Octopus], condition:
   (DisplayModule[Octopus]) ⇒ Boolean)
 
+  trait Insertable {
+    val active = Var(false)
+  }
 }

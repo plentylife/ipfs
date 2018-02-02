@@ -19,5 +19,7 @@ object Hashes extends js.Any {
 object DataHash extends Hash {
   private val h = new Hashes.SHA256
 
+  println(s"DataHash ${h}")
+
   override def b64(str: String): String = h.b64(str)
 }

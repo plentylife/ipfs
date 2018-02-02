@@ -41,5 +41,8 @@ package object model {
 
     ModuleRegistry.add { case o: BasicSpace ⇒ new InitializeMembersOctopus(o) }
     ModuleRegistry.add { case o: WithMembers ⇒ new ActionAddMember(o) }
+
+    ModuleRegistry.add { case o: Octopus ⇒ new ActionDelete(o) }
+
   }
 }

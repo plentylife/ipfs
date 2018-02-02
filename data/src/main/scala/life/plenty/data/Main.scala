@@ -13,7 +13,7 @@ object Main {
   def gun: Gun = _gun
 
   def main(bootstrapPeers: js.Array[String]): Unit = {
-    console.println("Data entry point")
+    println(s"Data entry point with peers ${bootstrapPeers.toList}")
     model.setHasher(DataHash)
     modules()
 

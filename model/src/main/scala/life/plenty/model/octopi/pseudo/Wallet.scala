@@ -1,6 +1,7 @@
-package life.plenty.model.octopi
+package life.plenty.model.octopi.pseudo
 
 import life.plenty.model
+import life.plenty.model.octopi.User
 import rx.{Ctx, Rx, Var}
 
 class Wallet(u: User)(implicit ctx: Ctx.Owner) {

@@ -11,7 +11,7 @@ import upickle.default.{macroRW, ReadWriter ⇒ RW, _}
 import scala.util.Try
 
 object Router {
-  val router: Route.Hash[RoutingParams] = Route.Hash(defaultRoutingParams)(new Route.Format[RoutingParams] {
+  lazy val router: Route.Hash[RoutingParams] = Route.Hash(defaultRoutingParams)(new Route.Format[RoutingParams] {
     override def unapply(hashText: String): Option[RoutingParams] = {
       fromHash(hashText)
     }

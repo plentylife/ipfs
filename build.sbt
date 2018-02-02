@@ -33,5 +33,7 @@ lazy val ui = project.enablePlugins(ScalaJSPlugin, SbtJsEngine).in(file("ui"))
     "com.thoughtworks.binding" %%% "route" % "11.0.1"),
 )
 
+lazy val root = project.in(file(".")).aggregate(ui, data, model).dependsOn(ui, data, model)
+
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
