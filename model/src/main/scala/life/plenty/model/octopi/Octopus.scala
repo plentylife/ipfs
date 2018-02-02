@@ -10,7 +10,7 @@ trait Octopus extends OctopusConstructor {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   protected var _modules: List[Module[Octopus]] = List()
-  protected lazy val _lastAddedConnection: Var[Option[Connection[_]]] = Var(None)
+  protected lazy val _lastAddedConnection: Var[Rx[Option[Connection[_]]]] = Var(Var(None))
   protected lazy val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
   protected lazy val _connectionsRx: Var[List[Rx[Option[Connection[_]]]]] = Var(List.empty[Rx[Option[Connection[_]]]])
 
@@ -107,11 +107,11 @@ trait Octopus extends OctopusConstructor {
 
     // todo make it kill itself
     def getWatchOnce[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      _lastAddedConnection.map(_.collect(f))(ctx).filter(_.nonEmpty)(ctx)
+      _lastAddedConnection.map(rx ⇒ rx().collect(f))(ctx).filter(_.nonEmpty)(ctx)
     }
 
     def getWatch[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      _lastAddedConnection.map(_.collect(f))(ctx).filter(_.nonEmpty)(ctx)
+      _lastAddedConnection.map(rx ⇒ rx().collect(f))(ctx).filter(_.nonEmpty)(ctx)
     }
 
     //    def getAll[T <: Connection[_]](implicit ctx: Ctx.Owner): Rx[Iterable[T]] = _connections.
@@ -123,7 +123,7 @@ trait Octopus extends OctopusConstructor {
     // duplicates are silently dropped
     //    println(s"adding connection ${connection} to ${this}")
     if (_connections.now.exists(_.id == connection.id)) {
-      console.trace("Connection was not added since it exists")
+      console.trace(s"Connection was not added since it exists ${connection}")
       return Right()
     }
 
@@ -142,7 +142,7 @@ trait Octopus extends OctopusConstructor {
         _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[Connection[_]]]])
         /* end block */
         _connections() = connection :: _connections.now
-        _lastAddedConnection() = Option(connection)
+        _lastAddedConnection() = filteredCon
         //        println(s"added connection ${connection} to ${this} ${_connections.now}")
 
         onErrorList = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*) map { m ⇒

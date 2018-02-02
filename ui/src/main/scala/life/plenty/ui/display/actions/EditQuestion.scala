@@ -14,14 +14,14 @@ class EditQuestion(override val withinOctopus: Question) extends ActionDisplay[Q
 
   @dom
   def inactiveDisplay: Binding[Node] =
-    <button type="button" class="btn btn-dark btn-sm">
+    <button type="button" class="btn btn-outline-dark symbolic btn-sm">
       <span class="oi oi-pencil" title="edit" data:aria-hidden="true" onclick={(e: Event) => active.value_=(true)
       }></span>
     </button>
 
   @dom
   def activeDisplay: Binding[Node] = <div class="d-inline-flex">
-    <button type="button" class="btn btn-dark btn-sm symbolic">
+    <button type="button" class="btn btn-outline-dark btn-sm symbolic">
       <span class="oi oi-trash" title="remove" data:aria-hidden="true" onclick={(e: Event) =>
         active.value_=(false); actionRemove.get.remove()}></span>
     </button>

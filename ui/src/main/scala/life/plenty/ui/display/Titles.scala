@@ -9,6 +9,7 @@ import life.plenty.ui
 import life.plenty.ui.display.actions.EditQuestion
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
+import org.scalajs.dom.Event
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
 import rx.Rx
@@ -22,6 +23,8 @@ trait TitleDisplay extends DisplayModule[Octopus] {
 
 class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
 
+  private val inputValue = Var("")
+
   @dom
   protected override def generateHtml(): Binding[Node] = {
     //println("title with inputt", withinOctopus.modules)
@@ -32,19 +35,23 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
         {withinOctopus.getTitle.dom.bind}
       </h4>
       <span class="d-inline-flex">
-        <input type="text" disabled={action.isEmpty} onkeyup={onEnter _}
-               placeholder="ask your question and hit `enter`"/>
-        ?
+        <input type="text" disabled={action.isEmpty} onkeyup={onEnter _} value={inputValue.bind}
+               placeholder="ask your question and hit `enter`" oninput={e: Event =>
+        inputValue.value_=(e.target.asInstanceOf[Input].value)}/>
+        <span class="btn btn-sm btn-primary symbolic" onclick={e: Event ⇒ createQuestion}>?</span>
       </span>
     </div>
   }
 
-  private def onEnter(e: KeyboardEvent) = {
-    if (e.keyCode == 13) {
-      withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m } foreach (a ⇒ {
-        a.create(e.target.asInstanceOf[Input].value)
-      })
-    }
+  private def onEnter(e: KeyboardEvent) =
+    if (e.keyCode == 13) createQuestion
+
+
+  private def createQuestion = {
+    withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m } foreach (a ⇒ {
+      a.create(inputValue.value)
+      inputValue
+    })
   }
 }
 
