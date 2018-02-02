@@ -51,7 +51,7 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
   private def createQuestion = {
     action foreach (a ⇒ {
       a.create(inputValue.value)
-      inputValue
+      inputValue.value_=("")
     })
   }
 }
