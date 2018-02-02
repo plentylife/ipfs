@@ -73,10 +73,10 @@ object Main {
   def log() = println(UiContext.startingSpace.value.get.connections)
 
   @JSExport
-  def logDataCache() = println(data.Cache.cache)
+  def logDataCache() = println(data.Cache.octopusCache)
 
   @JSExport
-  def clearDataCache() = data.Cache.cache.clear()
+  def clearDataCache() = data.Cache.octopusCache.clear()
 
 
   @dom

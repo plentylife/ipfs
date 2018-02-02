@@ -10,11 +10,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.JSON
+import scala.scalajs.js.timers._
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.connections}")
-    if (Cache.get(o.id).nonEmpty) {
+    if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
       return
     } else {
@@ -22,9 +23,9 @@ object OctopusWriter {
       Cache.put(o)
     }
 
-    val go = gun.get(o.id)
-
     Future {
+      val go = gun.get(o.id)
+
       go.put(js.Dynamic.literal(
         "class" → o.getClass.getSimpleName
       ), (d) ⇒ {
@@ -103,8 +104,12 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
     //    console.println(s"Gun Writer ${withinOctopus.id} ${connection} marker: ${connection.tmpMarker}")
     //      withinOctopus.isNew &&
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
-      console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")
-      OctopusWriter.writeSingleConnection(connection, gun)
+      Future {
+        setTimeout(10) {
+          console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")
+          OctopusWriter.writeSingleConnection(connection, gun)
+        }
+      }
     }
     Right()
   }
@@ -116,7 +121,11 @@ class InstantiationGunWriterModule(override val withinOctopus: Octopus) extends 
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   withinOctopus.onNew {
-    console.println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
-    OctopusWriter.write(withinOctopus)
+    Future {
+      setTimeout(5) {
+        console.println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
+        OctopusWriter.write(withinOctopus)
+      }
+    }
   }
 }

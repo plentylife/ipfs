@@ -42,7 +42,7 @@ object OctopusReader {
 
   def read(id: String): Future[Option[Octopus]] = {
     // from cache
-    val fromCache = Cache.get(id)
+    val fromCache = Cache.getOctopus(id)
     if (fromCache.nonEmpty) {
       data.console.println(s"Read ${id} from cache")
       return Future(fromCache)
@@ -146,10 +146,13 @@ object ConnectionReader {
 // todo create a module for user that filters out everything but transactions
 
 class OctopusGunReaderModule(override val withinOctopus: Octopus) extends ActionOnConnectionsRequest {
+  private implicit val ctx = withinOctopus.ctx
 
   var instantiated = false
   val connectionsLeftToLoad = Var(-1)
   console.println(s"Gun Reader instantiated in ${withinOctopus.getClass}")
+
+  private lazy val allCons = withinOctopus.rx.cons.map(_.map(_.id))
 
   override def onConnectionsRequest(): Unit = synchronized {
     if (!instantiated) {
@@ -157,7 +160,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
       console.println(s"Gun Reader onConsReq called in ${withinOctopus.getClass} with ${withinOctopus.connections}")
       val gun = Main.gun.get(withinOctopus.id)
       gun.`val`((d, k) ⇒ {
-        if (!js.isUndefined(d) || d != null) {
+        if (!js.isUndefined(d) && d != null) {
           console.trace(s"Gun Reader onConsReq before load() ${withinOctopus.id} ${JSON.stringify(d)}")
           load(gun)
         }
@@ -165,31 +168,39 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
     }
   }
 
-  private def load(gun: Gun) = {
+  private def load(gun: Gun) = Future {
     console.println(s"Gun reader setting up in load() of ${withinOctopus} ${withinOctopus.id}")
     val gc = gun.get("connections")
-    gc.`val`((d, k) ⇒ {
-      console.trace(s"Gun raw connections to read in ${withinOctopus} ${withinOctopus.id} ${connectionsLeftToLoad}")
-      console.trace(s"${JSON.stringify(d)}")
-      val l = js.Object.keys(d).length
-      connectionsLeftToLoad() = l + connectionsLeftToLoad.now
-      console.trace(s"Gun raw connections length $l ${connectionsLeftToLoad.now}")
-    })
+
+    Future {
+      gc.`val`((d, k) ⇒ {
+        console.trace(s"Gun raw connections to read in ${withinOctopus} ${withinOctopus.id} ${connectionsLeftToLoad}")
+        console.trace(s"${JSON.stringify(d)}")
+        val l = js.Object.keys(d).length
+        connectionsLeftToLoad() = l + connectionsLeftToLoad.now
+        console.trace(s"Gun raw connections length $l ${connectionsLeftToLoad.now}")
+      })
+    }
 
     gc.map().`val`((d, k) ⇒ {
-      ConnectionReader.read(d, k) map { optCon ⇒ {
-        console.println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
-        if (optCon.isEmpty) {
-          console.error(JSON.stringify(d))
-          throw new Exception("Gun reader could not parse a connection.")
-        }
+      if (allCons.now.contains(k)) {
+        connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+        console.trace(s"Skipping loading connection $k")
+      } else {
+        ConnectionReader.read(d, k) map { optCon ⇒ {
+          console.println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
+          if (optCon.isEmpty) {
+            console.error(JSON.stringify(d))
+            throw new Exception("Gun reader could not parse a connection.")
+          }
 
-        optCon foreach { c ⇒
-          connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-          c.tmpMarker = GunMarker
-          withinOctopus.addConnection(c)
+          optCon foreach { c ⇒
+            connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+            c.tmpMarker = GunMarker
+            withinOctopus.addConnection(c)
+          }
         }
-      }
+        }
       }
     })
   }
