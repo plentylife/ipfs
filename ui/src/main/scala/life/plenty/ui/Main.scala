@@ -1,7 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.data.{OctopusReader, Main ⇒ dataMain}
+import life.plenty.data.{OctopusGunReaderModule, OctopusReader, Main ⇒ dataMain}
 import life.plenty.model.octopi._
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
 import life.plenty.ui.display.{Help, LoadIndicator, Login}
@@ -77,6 +77,29 @@ object Main {
 
   @JSExport
   def clearDataCache() = data.Cache.octopusCache.clear()
+
+  @JSExport
+  def unloaded() = {
+    data.Cache.octopusCache.foreach(entry ⇒ {
+      val (_, o) = entry
+      o.getTopModule({ case m: OctopusGunReaderModule ⇒ m }).foreach {
+        m ⇒ println(s"${m.connectionsLeftToLoad} ${m.withinOctopus} ${m.withinOctopus.id}")
+      }
+    })
+  }
+
+  @JSExport
+  def loadIndicator() = {
+    println(LoadIndicator.left)
+    LoadIndicator.listOfModules.now.foreach(m ⇒ {
+      println(s"${m.connectionsLeftToLoad} ${m.withinOctopus} ${m.withinOctopus.id}")
+    })
+  }
+
+  @JSExport
+  def logSpecMods() = {
+    data.Cache.octopusCache.get("GDvfPd9a337klT/if8J7BLzZDbyTuPNjZ/gI+8/kfuU=")
+  }
 
 
   @dom

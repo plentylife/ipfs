@@ -17,15 +17,16 @@ trait Connection[T] {
   def id: String = idGivenValue(value) + this.getClass.getSimpleName
 
   protected def idGivenValue(v: T): String = {
-    val bigId = v match {
-    case o: Octopus ⇒ model.getHasher.b64(o.id + "connection")
-    case other ⇒ model.getHasher.b64(other.toString)
-  }
+    try {
+      val bigId = v match {
+        case o: Octopus ⇒ model.getHasher.b64(o.id + "connection")
+        case other ⇒ model.getHasher.b64(other.toString)
+      }
 
-    bigId
-    //    val bigIdSize = bigId.length
-    //    val smallId = (0 until 10).map(_ ⇒ bigId.charAt(Random.nextInt(bigIdSize)))
-    //    smallId.mkString
+      bigId
+    } catch {
+      case e: Throwable ⇒ model.console.error(s"Error in connection id generator with value ${value}"); throw e
+    }
   }
 
   def inst: Connection[T] = {

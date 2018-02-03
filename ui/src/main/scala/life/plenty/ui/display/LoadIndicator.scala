@@ -10,7 +10,7 @@ import rx.{Ctx, Rx, Var}
 object LoadIndicator {
   private implicit var ctx = Ctx.Owner.safe()
 
-  private val connectionsLeft = bVar(0)
+  val connectionsLeft = bVar(0)
 
   val listOfModules = Var(List[OctopusGunReaderModule]())
 

@@ -14,14 +14,19 @@ object Cache {
 
   val lastAddedRx: Var[Octopus] = Var {null}
 
-  def put(octopus: Octopus): Unit = {
-    octopusCache.put(octopus.id, octopus)
-    if (lastAddedRx.now != octopus) lastAddedRx() = octopus
+  def put(octopus: Octopus): Unit = synchronized {
+    val existing = getOctopus(octopus.id)
+    if (existing.isEmpty) {
+      octopusCache.put(octopus.id, octopus)
+      if (lastAddedRx.now != octopus) lastAddedRx() = octopus
+    }
   }
 
-  def getOctopus(id: String): Option[Octopus] = octopusCache.get(id)
+  def getOctopus(id: String): Option[Octopus] = synchronized {
+    octopusCache.get(id)
+  }
 
-  def put(c: Connection[_]): Unit = connectionCache.put(c.id, c)
+  //  def put(c: Connection[_]): Unit = connectionCache.put(c.id, c)
 
-  def getConnection(id: String): Option[Connection[_]] = connectionCache.get(id)
+  //  def getConnection(id: String): Option[Connection[_]] = connectionCache.get(id)
 }

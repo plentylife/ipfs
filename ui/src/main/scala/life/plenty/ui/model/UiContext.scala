@@ -6,6 +6,7 @@ import life.plenty.model.octopi._
 import org.scalajs.dom.window
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 object UiContext {
   val userVar: Var[User] = Var(null)
@@ -14,7 +15,9 @@ object UiContext {
   def storeUser(name: String, email: String) = {
     window.localStorage.setItem("username", name)
     window.localStorage.setItem("useremail", email)
-    createAndSetUser(name, email)
+    Try(loadUser()).recover({
+      case e: Throwable ⇒ createAndSetUser(name, email)
+    })
   }
 
   def setUser(u: BasicUser) = {

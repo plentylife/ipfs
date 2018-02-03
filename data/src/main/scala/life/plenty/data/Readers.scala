@@ -72,7 +72,9 @@ object OctopusReader {
             Cache.put(o)
             //            o.addModule(new OctopusGunReaderModule(o, gun))
           }
-          o
+          // fixme this is just a quick fix. for not double loading
+          Cache.getOctopus(id)
+          //          o
         } catch {
           case e: Throwable ⇒ console.error(e); e.printStackTrace(); None
         }
@@ -133,9 +135,9 @@ object ConnectionReader {
         }
       } else {
         Future {
-          console.trace(s"ConnectionReader leafReader ${con.`class`} ${con.value} $key")
+          //          console.trace(s"ConnectionReader leafReader ${con.`class`} ${con.value} $key")
           val res = leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption;
-          console.trace(s"ConnectionReader leafReader ${con.`class`} ${con.value} $key $res")
+          //          console.trace(s"ConnectionReader leafReader ${con.`class`} ${con.value} $key $res")
           res
         }
       }
@@ -157,7 +159,10 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
   override def onConnectionsRequest(): Unit = synchronized {
     if (!instantiated) {
       instantiated = true
-      console.println(s"Gun Reader onConsReq called in ${withinOctopus.getClass} with ${withinOctopus.connections}")
+      console.println(s"Gun Reader ${this} onConsReq called in ${withinOctopus.getClass} with ${
+        withinOctopus
+          .connections
+      }")
       val gun = Main.gun.get(withinOctopus.id)
       gun.`val`((d, k) ⇒ {
         if (!js.isUndefined(d) && d != null) {
@@ -169,7 +174,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
   }
 
   private def load(gun: Gun) = Future {
-    console.println(s"Gun reader setting up in load() of ${withinOctopus} ${withinOctopus.id}")
+    console.println(s"Gun reader ${this} setting up in load() of ${withinOctopus} ${withinOctopus.id}")
     val gc = gun.get("connections")
 
     Future {
