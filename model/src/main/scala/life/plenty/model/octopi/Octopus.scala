@@ -6,6 +6,7 @@ import life.plenty.model.connection.{Connection, Marker}
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
+
 trait Octopus extends OctopusConstructor {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
@@ -13,10 +14,6 @@ trait Octopus extends OctopusConstructor {
   protected lazy val _lastAddedConnection: Var[Rx[Option[Connection[_]]]] = Var(Var(None))
   protected lazy val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
   protected lazy val _connectionsRx: Var[List[Rx[Option[Connection[_]]]]] = Var(List.empty[Rx[Option[Connection[_]]]])
-
-  //protected lazy val _connections: Rx.Dynamic[List[Connection[_]]] =
-  //    _lastAddedConnection.fold(List.empty[Connection[_]])(
-  //      (list: List[Connection[_]], elem: Option[Connection[_]]) ⇒ {elem.map(_ :: list).getOrElse(list)})
 
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
@@ -79,6 +76,8 @@ trait Octopus extends OctopusConstructor {
 
   object rx {
     type RxConsList = Rx[List[Connection[_]]]
+
+    //    def allCons(implicit ctx: Ctx.Owner): RxConsList =
 
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
       console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
