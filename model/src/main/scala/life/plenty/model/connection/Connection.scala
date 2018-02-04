@@ -25,7 +25,10 @@ trait Connection[T] {
 
       bigId
     } catch {
-      case e: Throwable ⇒ model.console.error(s"Error in connection id generator with value ${value}"); throw e
+      case e: Throwable ⇒
+        model.console.error(s"Error in connection id generator with value ${value}");
+        e.printStackTrace();
+        throw e
     }
   }
 

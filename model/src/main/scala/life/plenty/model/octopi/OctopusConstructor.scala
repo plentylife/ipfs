@@ -74,6 +74,7 @@ trait OctopusConstructor {
       p.tmpMarker = AtInstantiation
       self.setInit(p)
     })
+    model.console.trace("New octopus has connections")
     val ct = CreationTime(new Date().getTime)
     ct.tmpMarker = AtInstantiation
     addConnection(ct)

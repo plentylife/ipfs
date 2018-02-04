@@ -52,11 +52,11 @@ object OctopusReader {
 
     val className = Promise[String]()
     gun.get("class").`val`((d, k) ⇒ {
-      // fixme throws an error if id is not present in db
-      try {
+      if (!js.isUndefined(d) && d != null) {
         className.success(d.toLocaleString())
-      } catch {
-        case e: Throwable ⇒ console.error(s"Failed on ID `$id`"); throw e
+      } else {
+        console.error(s"Failed loading on ID `$id`")
+        className.failure(new Exception(s"Could not find id $id in the database"))
       }
     })
 

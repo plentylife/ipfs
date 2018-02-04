@@ -2,11 +2,13 @@ package life.plenty.model.modifiers
 
 import life.plenty.model
 import life.plenty.model.connection.MarkerEnum._
-import life.plenty.model.connection.{Connection, Marker, Removed}
+import life.plenty.model.connection.{AtInstantiation, Connection, Marker, Removed}
 import life.plenty.model.octopi.Octopus
 import rx.{Ctx, Rx}
 
 class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFilters[Octopus] {
+
+  private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   private lazy val removedConIds: Rx[List[String]] = withinOctopus.rx.getAll({ case Removed(id: String) ⇒ id })
 
@@ -14,7 +16,9 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
     val filtered: Rx[Option[Connection[_]]] = what.map { optCon: Option[Connection[_]] ⇒
       optCon flatMap { con: Connection[_] ⇒
         // checking if removed based on connection
-        if (removedConIds().contains(con.id)) {
+        // the AtInstantiation is added for 2 reasons: not to trip an error of idGen and because those are required
+        // (usually)
+        if (con.tmpMarker == AtInstantiation || !removedConIds().contains(con.id)) {
           val resCon: Option[Connection[_]] = con.value match {
             // checking if removed based on octopus
             case o: Octopus ⇒
