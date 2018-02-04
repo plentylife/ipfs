@@ -195,7 +195,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
         ConnectionReader.read(d, k) map { optCon ⇒ {
           console.println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
           if (optCon.isEmpty) {
-            console.error(JSON.stringify(d))
+            console.error(s"Reader could not parse connection ${JSON.stringify(d)}")
             throw new Exception("Gun reader could not parse a connection.")
           }
 

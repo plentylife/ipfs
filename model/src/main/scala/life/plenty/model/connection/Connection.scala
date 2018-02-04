@@ -23,7 +23,7 @@ trait Connection[T] {
         case other ⇒ model.getHasher.b64(other.toString)
       }
 
-      bigId + this.getClass.getSimpleName
+      bigId
     } catch {
       case e: Throwable ⇒
         model.console.error(s"Error in connection id generator with value ${value}");
