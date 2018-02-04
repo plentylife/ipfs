@@ -56,13 +56,10 @@ object UiContext {
     if (name != null && email != null && name.nonEmpty && email.nonEmpty) {
       println(s"createAndSetUser $name $email")
       val u = new BasicUser
-      println(s"1")
       u.asNew(Id(generateUserId(name, email)), Name(name))
-      println(s"2 $u")
       setUser(u)
-      println("3")
     } else {
-      println(s"UI could not create user from name `${Option(name)}` and email `${Option(email)}`")
+      ui.console.error(s"UI could not create user from name `${Option(name)}` and email `${Option(email)}`")
     }
   }
 

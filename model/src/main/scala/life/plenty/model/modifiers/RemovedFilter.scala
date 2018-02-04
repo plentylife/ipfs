@@ -2,7 +2,7 @@ package life.plenty.model.modifiers
 
 import life.plenty.model
 import life.plenty.model.connection.MarkerEnum._
-import life.plenty.model.connection.{AtInstantiation, Connection, Marker, Removed}
+import life.plenty.model.connection._
 import life.plenty.model.octopi.Octopus
 import rx.{Ctx, Rx}
 
@@ -18,7 +18,10 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
         // checking if removed based on connection
         // the AtInstantiation is added for 2 reasons: not to trip an error of idGen and because those are required
         // (usually)
-        if (con.tmpMarker == AtInstantiation || !removedConIds().contains(con.id)) {
+        if (!con.isInstanceOf[Id]) { // not loaded from db or instantiated
+          model.console.trace(s"Removed connections list ${removedConIds.now} ${withinOctopus}")
+        }
+        if (con.isInstanceOf[Id] || con.tmpMarker == AtInstantiation || !removedConIds().contains(con.id)) {
           val resCon: Option[Connection[_]] = con.value match {
             // checking if removed based on octopus
             case o: Octopus ⇒
