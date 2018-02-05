@@ -12,32 +12,35 @@ import scalaz.std.option._
 
 object ChangeParent extends ControlDisplayWithState[ActionMove] {
 
-  protected override def findDependant(o: Octopus) = if (!activeModule.exists(_.withinOctopus.id == o.id)) {
+  protected override def findDependant(o: Octopus) =
     o.getTopModule({ case a: ActionMove ⇒ a })
-  } else None
 
   private var activeModule: Option[ActionMove] = None
 
   @dom
   def inactiveDisplay(o: Octopus)(implicit d: ActionMove): Binding[Node] =
     <button type="button" class="btn btn-outline-dark btn-sm" onclick={(e: Event) =>
-      active.value_=(true)
-      activeModule = Option(d)}>
+      activeModule = Option(d)
+      active.value_=(true)}>
       Change space
     </button>
 
   @dom
   def activeDisplay(o: Octopus)(implicit d: ActionMove): Binding[Node] =
     <div class="d-inline-flex">
-    <button type="button" class="btn btn-outline-dark btn-sm btn-active" onclick={(e: Event) =>
-      changeParent(o)
-      active.value_=(false)}>
-      Move here
-    </button>
-      <button type="button" class="btn btn-outline-warning btn-sm btn-active" onclick={(e: Event) =>
+      {println(s"active dispaly mod ${activeModule} ${activeModule.map(_.withinOctopus.id)} oct ${o.id}")
+    if (!activeModule.exists(_.withinOctopus.id == o.id)) {
+      <button type="button" class="btn btn-outline-dark btn-sm btn-active" onclick={(e: Event) =>
+        changeParent(o)
+        active.value_=(false)}>
+        Move here
+      </button>
+    } else {
+      <button type="button" class="btn btn-warning btn-sm" onclick={(e: Event) =>
         cancelMove}>
         Cancel move
       </button>
+    }}
     </div>
 
   def cancelMove = {

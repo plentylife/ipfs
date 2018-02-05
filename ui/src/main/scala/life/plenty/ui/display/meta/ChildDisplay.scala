@@ -9,11 +9,8 @@ import life.plenty.ui.console
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
-import rx.async.Platform._
-import rx.async._
 import rx.{Obs, Rx}
 
-import scala.concurrent.duration._
 import scala.language.postfixOps
 import scalaz.std.list._
 
@@ -31,8 +28,16 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
     console.trace(s"child updatde ${withinOctopus} $this rxChildren ${rxChildren}")
     if (rxChildren == null) {
       rxChildren = getChildren.foreach { cs ⇒
-        children.value.clear()
-        children.value.insertAll(0, cs)
+        //        children.value.clear()
+        //        children.value.insertAll(0, cs)
+        for ((c, i) ← cs.zipWithIndex) {
+          children.value.lift(i).fold({
+            children.value += c
+          })({ v ⇒
+            if (v.id != c.id) children.value(i) = c
+            null
+          })
+        }
         console.trace(s"child updated ${withinOctopus} $cs")
       }
     }
@@ -41,8 +46,9 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
 
   def getChildren: Rx[List[Octopus]] = {
     console.trace(s"getting children ${withinOctopus}")
-    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.debounce(100 millis)
-      .map(_.collect({ case Child(c: Octopus) ⇒ c }))
+    //    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.debounce(100 millis)
+    //      .map(_.collect({ case Child(c: Octopus) ⇒ c }))
+    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.getAll({ case Child(c: Octopus) ⇒ c })
     val ordered = modifiers.foldLeft(childrenRx)((cs, mod) ⇒ {
       console.trace(s"applying modifiers ${withinOctopus}")
       mod.applyRx(cs): Rx[List[Octopus]]
