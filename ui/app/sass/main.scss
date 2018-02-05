@@ -95,6 +95,10 @@ body {
   justify-content: center;
 }
 
+.btn-active {
+  border-color: theme-color("primary");
+}
+
 .subsection-header {
   margin-top: $spacer * 0.5;
   margin-left: -$spacer;
