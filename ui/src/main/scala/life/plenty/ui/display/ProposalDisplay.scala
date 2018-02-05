@@ -3,6 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionUpDownVote
 import life.plenty.model.octopi._
+import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
 import life.plenty.ui.model.UiContext
@@ -16,6 +17,10 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
     //    votes.value_=(withinOctopus.votes)
     //    body.value_=(withinOctopus._body)
   }
+
+  private lazy val editor: BindableAction[EditSpace] = new BindableAction(withinOctopus.getTopModule({ case
+    m: EditSpace ⇒ m
+  }), this)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -38,6 +43,10 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
         <p class="card-text">
           {withinOctopus.getBody.dom.bind}
         </p>
+      </div>
+
+      <div class="card-controls-bottom d-inline-flex">
+        {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}
       </div>
     </div>
   }

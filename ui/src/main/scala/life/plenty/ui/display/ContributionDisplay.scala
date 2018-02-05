@@ -5,6 +5,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionTip
 import life.plenty.model.octopi.{Contribution, User}
 import life.plenty.ui
+import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
 import life.plenty.ui.model.UiContext
@@ -22,6 +23,10 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
   private val open = Var(false)
   private var tipping: Int = 1
   private var error = Var("")
+
+  private lazy val editor: BindableAction[EditSpace] = new BindableAction(withinOctopus.getTopModule({ case
+    m: EditSpace ⇒ m
+  }), this)
 
   override def update(): Unit = {
     if (tipsCollectedRx == null) {
@@ -59,6 +64,11 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
           {withinOctopus.getBody.dom.bind}
         </p>
       </div>
+
+      <div class="card-controls-bottom d-inline-flex">
+        {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}
+      </div>
+
     </div>
   }
 
