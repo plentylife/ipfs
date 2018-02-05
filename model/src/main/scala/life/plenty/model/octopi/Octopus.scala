@@ -76,11 +76,6 @@ trait Octopus extends OctopusConstructor {
 
   object rx {
     type RxConsList = Rx[List[Connection[_]]]
-    //  type PacketedRxList[Inside] = Var[List[Rx[Option[Inside]]]]
-
-    //    def allCons(implicit ctx: Ctx.Owner): RxConsList =
-
-    //    private implicit def packetedToNormal(pl: PacketedRxConList): RxConsList = pl
 
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
       console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")

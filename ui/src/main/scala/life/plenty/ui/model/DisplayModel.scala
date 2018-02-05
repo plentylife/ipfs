@@ -109,9 +109,12 @@ object DisplayModel {
     val active = Var(false)
     protected val isEmpty = Var(false)
 
+    protected def setInactive = active.value_=(false)
+
     def activeDisplay: Binding[Node]
 
     def inactiveDisplay: Binding[Node]
+
 
     @dom
     override protected def generateHtml(): Binding[Node] = <span>

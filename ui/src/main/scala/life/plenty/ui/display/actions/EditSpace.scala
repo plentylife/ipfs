@@ -23,8 +23,12 @@ class EditSpace(override val withinOctopus: Space) extends ActionDisplay[Space] 
     <button type="button" class="btn btn-outline-danger btn-sm symbolic" onclick={(e: Event) =>
       active.value_=(false); actionRemove.get.remove()}>
       <span class="oi oi-trash" title="remove" data:aria-hidden="true"></span>
-    </button>{ChangeParent.displayInactiveOnly(withinOctopus).bind}
+    </button>{ChangeParent.displayInactiveOnly(withinOctopus, Option(close _)).bind}
   </div>
+
+  private def close() = {
+    active.value_=(false)
+  }
 
   private lazy val actionRemove = {
     val a = withinOctopus.getTopModule({ case a: ActionRemove ⇒ a })

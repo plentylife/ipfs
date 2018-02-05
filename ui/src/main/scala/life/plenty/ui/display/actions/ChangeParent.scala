@@ -18,12 +18,13 @@ object ChangeParent extends ControlDisplayWithState[ActionMove] {
   private var activeModule: Option[ActionMove] = None
 
   @dom
-  def inactiveDisplay(o: Octopus)(implicit d: ActionMove): Binding[Node] =
+  def inactiveDisplay(o: Octopus)(implicit d: ActionMove): Binding[Node] = {
     <button type="button" class="btn btn-outline-dark btn-sm" onclick={(e: Event) =>
       activeModule = Option(d)
       active.value_=(true)}>
       Change space
     </button>
+  }
 
   @dom
   def activeDisplay(o: Octopus)(implicit d: ActionMove): Binding[Node] =
@@ -46,22 +47,30 @@ object ChangeParent extends ControlDisplayWithState[ActionMove] {
   def cancelMove = {
     activeModule = None
     active.value_=(false)
+    onComplete()
   }
 
   def changeParent(o: Octopus) = {
     activeModule foreach { a => a.moveParent(o) }
     activeModule = None
+    onComplete()
   }
 }
 
 trait ControlDisplayWithState[Dependant] {
   protected val active: Var[Boolean] = Var(false)
+  protected var listeners: Set[() ⇒ Unit] = Set()
 
   protected def inactiveDisplay(o: Octopus)(implicit d: Dependant): Binding[Node]
 
   protected def activeDisplay(o: Octopus)(implicit d: Dependant): Binding[Node]
 
   protected def findDependant(o: Octopus): Option[Dependant]
+
+  protected def onComplete(): Unit = {
+    listeners foreach { f ⇒ f() }
+    //    listeners = Set()
+  }
 
   @dom
   def displayAny(o: Octopus): Binding[Node] = findDependant(o) map { implicit d ⇒
@@ -74,8 +83,11 @@ trait ControlDisplayWithState[Dependant] {
   } else DisplayModel.nospan.bind
 
   @dom
-  def displayInactiveOnly(o: Octopus): Binding[Node] = if (!active.bind) {
-    findDependant(o) map { implicit d ⇒ inactiveDisplay(o).bind } getOrElse DisplayModel.nospan.bind
+  def displayInactiveOnly(o: Octopus, listener: Option[() ⇒ Unit] = None): Binding[Node] = if (!active.bind) {
+    findDependant(o) map { implicit d ⇒
+      listener foreach { l ⇒ listeners += l }
+      inactiveDisplay(o).bind
+    } getOrElse DisplayModel.nospan.bind
   } else DisplayModel.nospan.bind
 
 }
