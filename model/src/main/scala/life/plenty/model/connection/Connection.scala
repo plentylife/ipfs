@@ -12,10 +12,13 @@ object AtInstantiation extends TmpMarker
 trait Connection[T] {
   def value: T
 
-  //  private var active: Var[Boolean] = true
-  //  def isActive = active
-  //  def activate = active = true
-  //  def deactivate = active = false
+  private var active: Boolean = true
+
+  def isActive = active
+
+  def activate = active = true
+
+  def deactivate = active = false
 
   var tmpMarker: TmpMarker = NoMarker
 
