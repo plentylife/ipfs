@@ -17,7 +17,9 @@ class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[
 
   private def navigateTo(e: MouseEvent) = Router.navigateToOctopus(withinOctopus)
 
-  private lazy val editor: BindableAction[EditSpace] = withinOctopus.getTopModule({ case m: EditSpace ⇒ m })
+  private lazy val editor: BindableAction[EditSpace] = new BindableAction(withinOctopus.getTopModule({ case
+    m: EditSpace ⇒ m
+  }), this)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {

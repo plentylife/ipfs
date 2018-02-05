@@ -12,9 +12,10 @@ import scalaz.std.list._
 object DisplayModel {
   implicit def intToStr(i: Int): String = i.toString
 
-  def display(o: Octopus, overrides: List[ModuleOverride] = List()): Binding[Node] = {
+  def display(o: Octopus, overrides: List[ModuleOverride] = List(),
+              calledBy: Option[DisplayModule[_]] = None): Binding[Node] = {
     o.modules.collectFirst({ case dm: DisplayModule[_] ⇒
-      dm.display(None, overrides)
+      dm.display(calledBy, overrides)
     }).flatten getOrElse noDisplay
   }
 
@@ -48,6 +49,8 @@ object DisplayModel {
 
 
     private var _hasRenderedOnce = false
+    private var lastCaller: Option[DisplayModule[_]] = None
+    private var needsRefresh: Boolean = false
 
     private var htmlCache: Binding[Node] = _
 
@@ -70,12 +73,17 @@ object DisplayModel {
           cachedOverrides.value.clear()
           cachedOverrides.value.insertAll(0, overrides)
           update()
-          if (!_hasRenderedOnce) {
+          needsRefresh = !lastCaller.contains(calledBy.orNull) || calledBy.exists(_.needsRefresh)
+          val displayResult = if (!_hasRenderedOnce || needsRefresh) {
             _hasRenderedOnce = true
             val html = generateHtml()
             htmlCache = html
             Option(html)
-          } else Option(htmlCache)
+          } else {
+            Option(htmlCache)
+          }
+          lastCaller = calledBy
+          displayResult
         } else None
       }
     }

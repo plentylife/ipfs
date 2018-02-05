@@ -8,10 +8,13 @@ import life.plenty.ui.model.DisplayModel
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 
+import scalaz.std.option._
 
 object ChangeParent extends ControlDisplayWithState[ActionMove] {
 
-  protected override def findDependant(o: Octopus) = o.getTopModule({ case a: ActionMove ⇒ a })
+  protected override def findDependant(o: Octopus) = if (!activeModule.exists(_.withinOctopus == o)) {
+    o.getTopModule({ case a: ActionMove ⇒ a })
+  } else None
 
   private var activeModule: Option[ActionMove] = None
 

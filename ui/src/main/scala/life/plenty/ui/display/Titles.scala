@@ -31,9 +31,9 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
     //println("title with inputt", withinOctopus.modules)
 
     <div class="title-with-input d-flex mt-3">
-      <h4 class="title mr-3">
+      {ChangeParent.displayActiveOnly(withinOctopus).bind}<h5 class="title mr-3">
         {withinOctopus.getTitle.dom.bind}
-      </h4>
+    </h5>
       <span class="d-inline-flex">
         <input type="text" disabled={action.isEmpty} onkeyup={onEnter _} value={inputValue.bind}
                placeholder="ask your question and hit `enter`" oninput={e: Event =>
@@ -59,14 +59,16 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
 class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
   override def doDisplay(): Boolean = !withinOctopus.modules.exists(_.isInstanceOf[TitleWithQuestionInput])
 
-  private lazy val editor: BindableAction[EditSpace] = withinOctopus.getTopModule({ case m: EditSpace ⇒ m })
+  private lazy val editor: BindableAction[EditSpace] = new BindableAction(withinOctopus.getTopModule({ case
+    m: EditSpace ⇒ m
+  }), this)
 
   // todo add
   //<span class={if (!editor.active.bind) "" else "d-none"}>
   @dom
   override protected def generateHtml(): Binding[Node] = {
     ui.console.println(s"question title display ${editor.module}")
-    <div class="question-title">
+    <div class="question-title" id={withinOctopus.id}>
       {ChangeParent.displayActiveOnly(withinOctopus).bind}
       {editor.dom.bind}<span>
       {gqTitle.dom.bind}{withinOctopus.getTitle.dom.bind}
