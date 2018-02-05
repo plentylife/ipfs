@@ -2,7 +2,7 @@ package life.plenty.model.octopi
 
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
-import life.plenty.model.connection.{Connection, Marker}
+import life.plenty.model.connection.{Connection, Marker, Removed}
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
@@ -77,12 +77,14 @@ trait Octopus extends OctopusConstructor {
   object rx {
     type RxConsList = Rx[List[Connection[_]]]
 
+    implicit def toRxConsList(in: Var[scala.List[Rx[Option[Connection[_]]]]]): RxConsList = in.map(_.flatMap(rx ⇒ rx()))
+
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
       console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
       //      _connections
 
-      _connectionsRx.map(_.flatMap(rx ⇒ rx()))
+      _connectionsRx
     }
 
     def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
@@ -128,12 +130,21 @@ trait Octopus extends OctopusConstructor {
   private lazy val actionsOnGraphTransform = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*)
   private lazy val actionsAfterGraphTransfrom = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*)
 
-  def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
+  def addConnection(preliminaryConnection: Connection[_]): Either[Exception, Unit] = {
+    console.trace(s"adding connection ${preliminaryConnection} to ${this.getClass.getSimpleName}")
+    // dealing with the special case of removes
+    var connection = preliminaryConnection
     // duplicates are silently dropped
-    //    println(s"adding connection ${connection} to ${this}")
     if (_connections.now.exists(_.id == connection.id)) {
-      console.trace(s"Connection was not added since it exists ${connection}")
-      return Right()
+      val idOfExistingRemoved = rx.toRxConsList(_connectionsRx).now
+        .collectFirst({ case c@Removed(cid: String) if cid == connection.id ⇒ c.id })
+      if (idOfExistingRemoved.nonEmpty) {
+        console.trace(s"The existing `Removed` on ${connection} is being lifted $idOfExistingRemoved")
+        connection = Removed(idOfExistingRemoved.get)
+      } else {
+        console.trace(s"Connection was not added since it exists ${connection}")
+        return Right()
+      }
     }
 
     var onErrorList = actionsOnGraphTransform map { m ⇒
