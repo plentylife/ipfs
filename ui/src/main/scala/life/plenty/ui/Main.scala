@@ -9,6 +9,7 @@ import life.plenty.ui.model.{DisplayModel, Router, UiContext}
 import life.plenty.{data, ui}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.{Event, document}
+import rx.Ctx
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
@@ -99,6 +100,14 @@ object Main {
   @JSExport
   def logSpecMods() = {
     data.Cache.octopusCache.get("GDvfPd9a337klT/if8J7BLzZDbyTuPNjZ/gI+8/kfuU=")
+  }
+
+  private implicit val ctx = Ctx.Owner.safe()
+
+  @JSExport
+  def logConnections(of: String) = {
+    println(data.Cache.getOctopus(of).get.rx.cons.now.mkString("\n"))
+    println(s"raw ${data.Cache.getOctopus(of).get.connections.mkString("\n")}")
   }
 
 

@@ -17,15 +17,16 @@ class ActionMove(override val withinOctopus: Octopus) extends Module[Octopus] {
       child.foreach(_.foreach { cCon ⇒
         child.kill()
         pCon.parent.addConnection(Removed(cCon.id))
-        println(s"moveParent within removed ${withinOctopus} ${withinOctopus.id} ${withinOctopus.rx.cons.now} ")
-        println(s"moveParent within removed ${pCon.parent} ${pCon.parent.id} ${pCon.parent.rx.cons.now}")
+        //        println(s"moveParent within removed ${withinOctopus} ${withinOctopus.id} ${withinOctopus.rx.cons
+        // .now} ")
+        //        println(s"moveParent within removed ${pCon.parent} ${pCon.parent.id} ${pCon.parent.rx.cons.now}")
       })
     })
 
     newParent.addConnection(Child(withinOctopus))
     withinOctopus.addConnection(Parent(newParent))
-    println(s"moveParent within added ${withinOctopus} ${withinOctopus.id} ${withinOctopus.rx.cons.now}")
-    println(s"moveParent within added ${newParent} ${newParent.id} ${newParent.rx.cons.now}")
+    //    println(s"moveParent within added ${withinOctopus} ${withinOctopus.id} ${withinOctopus.rx.cons.now}")
+    //    println(s"moveParent within added ${newParent} ${newParent.id} ${newParent.rx.cons.now}")
 
   }
 }

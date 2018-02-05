@@ -123,6 +123,7 @@ object ConnectionReader {
     val con = d.asInstanceOf[JsConnection]
     // Id is a special case, since it's value points to an octopus, but it's really a leaf connection
     if (con.`class` == "Id") return Future {Option {Id(con.value)}}
+    if (con.`class` == "Removed") return Future {Option {Removed(con.value)}}
     console.trace(s"ConnectionReader ${con.`class`} ${con.value} $key")
 
     hasClass(con.value) flatMap { hc ⇒

@@ -12,7 +12,7 @@ import scalaz.std.option._
 
 object ChangeParent extends ControlDisplayWithState[ActionMove] {
 
-  protected override def findDependant(o: Octopus) = if (!activeModule.exists(_.withinOctopus == o)) {
+  protected override def findDependant(o: Octopus) = if (!activeModule.exists(_.withinOctopus.id == o.id)) {
     o.getTopModule({ case a: ActionMove ⇒ a })
   } else None
 
@@ -28,11 +28,22 @@ object ChangeParent extends ControlDisplayWithState[ActionMove] {
 
   @dom
   def activeDisplay(o: Octopus)(implicit d: ActionMove): Binding[Node] =
+    <div class="d-inline-flex">
     <button type="button" class="btn btn-outline-dark btn-sm btn-active" onclick={(e: Event) =>
       changeParent(o)
       active.value_=(false)}>
       Move here
     </button>
+      <button type="button" class="btn btn-outline-warning btn-sm btn-active" onclick={(e: Event) =>
+        cancelMove}>
+        Cancel move
+      </button>
+    </div>
+
+  def cancelMove = {
+    activeModule = None
+    active.value_=(false)
+  }
 
   def changeParent(o: Octopus) = {
     activeModule foreach { a => a.moveParent(o) }
