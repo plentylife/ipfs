@@ -30,7 +30,7 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
   protected override def generateHtml(): Binding[Node] = {
     //println("title with inputt", withinOctopus.modules)
 
-    <div class="title-with-input d-flex mt-3">
+    <div class="title-with-input d-flex mt-3" id={withinOctopus.id}>
       {ChangeParent.displayActiveOnly(withinOctopus).bind}<h5 class="title mr-3">
         {withinOctopus.getTitle.dom.bind}
     </h5>

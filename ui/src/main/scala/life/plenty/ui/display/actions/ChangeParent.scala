@@ -28,7 +28,7 @@ object ChangeParent extends ControlDisplayWithState[ActionMove] {
   @dom
   def activeDisplay(o: Octopus)(implicit d: ActionMove): Binding[Node] =
     <div class="d-inline-flex">
-      {println(s"active dispaly mod ${activeModule} ${activeModule.map(_.withinOctopus.id)} oct ${o.id}")
+      {
     if (!activeModule.exists(_.withinOctopus.id == o.id)) {
       <button type="button" class="btn btn-outline-dark btn-sm btn-active" onclick={(e: Event) =>
         changeParent(o)

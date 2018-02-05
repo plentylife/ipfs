@@ -25,19 +25,11 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   protected var rxChildren: Obs = null
 
   override def update(): Unit = {
-    console.trace(s"child updatde ${withinOctopus} $this rxChildren ${rxChildren}")
+    console.trace(s"child update ${withinOctopus} $this rxChildren ${rxChildren}")
     if (rxChildren == null) {
       rxChildren = getChildren.foreach { cs ⇒
-        //        children.value.clear()
-        //        children.value.insertAll(0, cs)
-        for ((c, i) ← cs.zipWithIndex) {
-          children.value.lift(i).fold({
-            children.value += c
-          })({ v ⇒
-            if (v.id != c.id) children.value(i) = c
-            null
-          })
-        }
+        children.value.clear()
+        children.value.insertAll(0, cs)
         console.trace(s"child updated ${withinOctopus} $cs")
       }
     }

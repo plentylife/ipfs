@@ -107,7 +107,13 @@ object Main {
   @JSExport
   def logConnections(of: String) = {
     println(data.Cache.getOctopus(of).get.rx.cons.now.mkString("\n"))
-    println(s"raw ${data.Cache.getOctopus(of).get.connections.mkString("\n")}")
+    println("raw")
+    println(s"${
+      data.Cache.getOctopus(of).get.connections.map(c ⇒ c → {
+        if (c.value.isInstanceOf[Octopus]) c.value
+          .asInstanceOf[Octopus].id else ""
+      }).mkString("\n")
+    }")
   }
 
 

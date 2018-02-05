@@ -18,7 +18,7 @@ trait Octopus extends OctopusConstructor {
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
   def modules: List[Module[Octopus]] = {
-    console.trace(s"trying to get modules ${_modules} filters ${moduleFilters}")
+    //    console.trace(s"trying to get modules ${_modules} filters ${moduleFilters}")
     moduleFilters.foldLeft(_modules)((ms, f) ⇒ {
       f(ms)
     })

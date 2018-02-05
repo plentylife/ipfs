@@ -38,7 +38,7 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
       }
     }
     //    println(s"RemoveFilter $what -> ${filtered}")
-    model.console.trace(s"RemoveFilter ${withinOctopus} ${withinOctopus.id} $what -> ${filtered}")
+    model.console.trace(s"RemoveFilter $what -> ${filtered}")
     filtered
   }
 }
