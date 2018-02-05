@@ -76,8 +76,11 @@ trait Octopus extends OctopusConstructor {
 
   object rx {
     type RxConsList = Rx[List[Connection[_]]]
+    //  type PacketedRxList[Inside] = Var[List[Rx[Option[Inside]]]]
 
     //    def allCons(implicit ctx: Ctx.Owner): RxConsList =
+
+    //    private implicit def packetedToNormal(pl: PacketedRxConList): RxConsList = pl
 
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
       console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
@@ -94,14 +97,24 @@ trait Octopus extends OctopusConstructor {
       }
 
     def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
-      val current = Var(cons.now.collect(f))
-      // this is needed because otherwise the last element is included
-      var firstWatch = current.now.nonEmpty
-      getWatch(f)(ctx).foreach(_.foreach(n ⇒ if (!firstWatch) {
-        current() = n :: current.now
-      } else firstWatch = false))(ctx)
-      current
+      _connectionsRx.map(_ map { rx ⇒
+        rx map { opt ⇒ opt.collect(f) }
+      } flatMap { rx ⇒ rx() })
     }
+
+    //    def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
+    //      val current: Var[List[Rx[Option[T]]]] = Var(_connectionsRx.now.map(rx ⇒ {
+    //        rx map {opt ⇒ opt.collect(f)}
+    //      }))
+    //
+    //      // this is needed because otherwise the last element is included
+    //      var firstWatch = current.now.nonEmpty
+    //      if (!firstWatch) {
+    //        current() = getWatch(f)(ctx) :: current.now
+    //      } else firstWatch = false
+    //
+    //      current.map(_.flatMap(rx ⇒ rx()))
+    //    }
 
     // todo make it kill itself
     def getWatchOnce[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
