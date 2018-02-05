@@ -75,8 +75,10 @@ object ConnectionWriter {
         case o: Octopus ⇒ OctopusWriter.write(o)
         case _ ⇒
       }
+      /* fixme switch to the trait used in reader */
       val obj = js.Dynamic.literal(
         "class" → c.getClass.getSimpleName,
+        "active" → c.isActive,
         "value" → v
       )
       gc.put(obj, (d) ⇒ {

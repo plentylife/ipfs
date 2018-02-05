@@ -109,14 +109,8 @@ trait Octopus extends OctopusConstructor {
       toRxConsList(_connectionsRx)
     }
 
-    def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      val test = cons
-      //      console.trace(s"aaa ${cons(ctx).isInstanceOf[Rx[_]]}")
-      //      console.trace(s"aaa-bbb ${cons(ctx) != null}")
-      //      console.trace(s"aaa-c ${_connectionsRx.kill}")
-      //      console.trace(s"aaa-d ${_connectionsRx.now.map(_ ⇒ ".").mkString}")
-      //      console.trace(s"aaa-list ${cons(ctx).now.isInstanceOf[List[_]]}")
-      cons(ctx).now.collectFirst(f) match {
+    def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
+      cons.now.collectFirst(f) match {
         case Some(c) ⇒ Var(Option(c))
         case None ⇒ getWatch(f)(ctx)
       }

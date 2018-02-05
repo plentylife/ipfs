@@ -90,6 +90,7 @@ object ConnectionReader {
   @js.native
   trait JsConnection extends js.Object {
     val `class`: String
+    val active: Boolean
     val value: String
   }
 
@@ -131,14 +132,15 @@ object ConnectionReader {
         OctopusReader.read(con.value) map { optO ⇒
           if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
           optO flatMap { o ⇒
-            octopusReaders flatMap { f ⇒ f(con.`class`, o) } headOption;
+            val res = octopusReaders flatMap { f ⇒ f(con.`class`, o) } headOption;
+            if (!con.active) res foreach {_.deactivate}
+            res
           }
         }
       } else {
         Future {
-          //          console.trace(s"ConnectionReader leafReader ${con.`class`} ${con.value} $key")
           val res = leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption;
-          //          console.trace(s"ConnectionReader leafReader ${con.`class`} ${con.value} $key $res")
+          if (!con.active) res foreach {_.deactivate}
           res
         }
       }
