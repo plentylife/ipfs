@@ -155,7 +155,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
   val connectionsLeftToLoad = Var(-1)
   console.println(s"Gun Reader instantiated in ${withinOctopus.getClass}")
 
-  private lazy val allCons = withinOctopus.rx.cons.map(_.map(_.id))
+  private lazy val allCons = withinOctopus.rx.allCons.map(_.map(_.id))
 
   override def onConnectionsRequest(): Unit = synchronized {
     if (!instantiated) {

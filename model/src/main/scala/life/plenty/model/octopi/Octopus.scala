@@ -79,6 +79,12 @@ trait Octopus extends OctopusConstructor {
 
     implicit def toRxConsList(in: Var[scala.List[Rx[Option[Connection[_]]]]]): RxConsList = in.map(_.flatMap(rx ⇒ rx()))
 
+    def allCons(implicit ctx: Ctx.Owner): RxConsList = {
+      console.trace(s"rx.allCons ${onConnectionsRequestedModules} ${_connections}")
+      onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
+      _connections
+    }
+
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
       console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
