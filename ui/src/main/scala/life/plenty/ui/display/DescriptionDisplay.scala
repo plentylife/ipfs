@@ -5,8 +5,8 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionAddDescription
 import life.plenty.model.connection.Body
 import life.plenty.model.octopi.Space
-import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.{Event, Node}
 import rx.Obs
@@ -19,6 +19,9 @@ class DescriptionDisplay(override val withinOctopus: Space) extends DisplayModul
       description.value_=(d.getOrElse(""))
     })
   }
+
+  override def doDisplay(): Boolean = UiContext.startingSpace.value.get.id == withinOctopus.id
+
 
   private lazy val description: Var[String] = Var("")
   private lazy val descriptionRx = withinOctopus.rx.get({ case Body(d) ⇒ d })
