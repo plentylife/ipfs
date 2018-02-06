@@ -69,7 +69,7 @@ trait OctopusConstructor {
   }
 
   def asNew(properties: Connection[_]*): Unit = {
-    println(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
+    model.console.trace(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
     properties.foreach(p ⇒ {
       p.tmpMarker = AtInstantiation
       self.setInit(p)
@@ -91,6 +91,6 @@ trait OctopusConstructor {
     isNewVar() = true
 
     getModules({ case m: ActionOnNew[_] ⇒ m }).foreach({_.onNew()})
-    println(s"successfully instantiated ${this} ${this.id}")
+    model.console.println(s"successfully instantiated ${this} ${this.id}")
   }
 }

@@ -1,5 +1,6 @@
 package life.plenty.model.octopi
 
+import life.plenty.model
 import life.plenty.model.connection.{Child, Parent}
 import life.plenty.model.utils._
 
@@ -14,7 +15,7 @@ class Vote() extends WithAmount {
   onNew {
     parentAnswer.addConnection(Child(this))
     getCreator.foreach(_.foreach(u ⇒ u.addConnection(Child(this))))
-    println(s"New vote added as a child to ${parentAnswer.now} | ${parentAnswer.now.get.connections}")
+    model.console.trace(s"New vote added as a child to ${parentAnswer.now} | ${parentAnswer.now.get.connections}")
   }
 }
 
