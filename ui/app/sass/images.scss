@@ -1,0 +1,11 @@
+.login-outer-box {
+  .logo {
+    img {
+      width: 100%;
+      object-fit: contain;
+    }
+    //margin-bottom: $spacer;
+    width: 250px;
+    max-width: 90%;
+  }
+}

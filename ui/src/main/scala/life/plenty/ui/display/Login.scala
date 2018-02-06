@@ -31,7 +31,10 @@ object Login {
   @dom
   def display(): Binding[Node] = {
     if (isOpen.bind) {
-      <div class="login-outer-box d-flex justify-content-center align-items-center">
+      <div class="login-outer-box d-flex flex-column justify-content-center align-items-center">
+        <div class="d-flex logo">
+          <img src="images/plenty_logo-400.png"/>
+        </div>
         <form class="login-box d-inline-flex flex-column" onsubmit={e: Event ⇒
           e.preventDefault()
           onSubmit(e)}>
