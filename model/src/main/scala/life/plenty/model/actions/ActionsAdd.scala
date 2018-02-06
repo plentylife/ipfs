@@ -1,5 +1,6 @@
 package life.plenty.model.actions
 
+import life.plenty.model.connection.{Body, Removed}
 import life.plenty.model.octopi._
 
 class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
@@ -20,4 +21,18 @@ class ActionAddMember(override val withinOctopus: WithMembers) extends Module[Wi
     ???
   }
 
+}
+
+class ActionAddDescription(override val withinOctopus: Space) extends Module[Space] {
+  private implicit val ctx = withinOctopus.ctx
+  def add(body: String) = {
+    val existing = withinOctopus.rx.get({ case c: Body ⇒ c })
+    existing.foreach { cOpt ⇒
+      existing.kill()
+      cOpt foreach { c ⇒
+        withinOctopus.addConnection(Removed(c.id))
+      }
+    }
+    withinOctopus.addConnection(Body(body))
+  }
 }

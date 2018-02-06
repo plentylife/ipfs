@@ -29,7 +29,9 @@ class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[
       </div>
 
       <div class="card-body" onclick={navigateTo _}>
-        <h6 class="card-title">event</h6>
+        <h6 class="card-title">Event:
+          {withinOctopus.getTitle.dom.bind}
+        </h6>
         <h6 class="card-subtitle mb-2 text-muted">by
           {val c: Rx[Option[String]] = withinOctopus.getCreator.map((optU: Option[User]) => optU.map {
           u: User => u.getNameOrEmpty(): String
@@ -37,7 +39,7 @@ class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[
         c.dom.bind}
         </h6>
         <p class="card-text">
-          {withinOctopus.getTitle.dom.bind}
+          Look for details inside
         </p>
       </div>
 

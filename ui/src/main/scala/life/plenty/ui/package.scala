@@ -18,10 +18,15 @@ package object ui {
 
     /* the modules should be added in a list fashion: the last overrides the first */
 
+
     ModuleRegistry add { case o: Event ⇒ new EventCardDisplay(o) }
     ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
     ModuleRegistry add { case o: Space ⇒ new MenuBar(o) }
     ModuleRegistry add { case o: Space ⇒ new EditSpace(o) }
+
+    ModuleRegistry add { case o: BasicSpace ⇒ new DescriptionDisplay(o) }
+    ModuleRegistry add { case o: Event ⇒ new DescriptionDisplay(o) }
+
     //    ModuleRegistry add { case o: Space ⇒ new ViewStateLinks(o) }
     //    ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortDisplay(o) }
     ModuleRegistry add { case o: BasicSpace ⇒ new BasicSpaceDisplayOrder(o) }
