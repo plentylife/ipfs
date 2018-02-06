@@ -7,9 +7,23 @@ import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
 
+import scalaz.std.list._
+
 object Helpers {
 
-  trait Bindable[T] {
+  @dom
+  def strIntoParagraphs(str: String): Binding[Node] = {
+    val split = str.split("\n").toList
+    <span>
+      {for (line ← split) yield {
+      <p>
+        {line.trim}
+      </p>
+    }}
+    </span>
+  }
+
+  trait BindableDom[T] {
     val rxv: Rx[T]
     implicit val parser: T ⇒ String
 
@@ -25,7 +39,7 @@ object Helpers {
   }
 
   implicit class OptBindableProperty[T](override val rxv: Rx[Option[T]])(implicit _parser: T ⇒ String) extends
-    Bindable[Option[T]] {
+    BindableDom[Option[T]] {
     @dom
     def dom: Binding[Node] = {
       if (inner.bind.nonEmpty) {
@@ -40,7 +54,7 @@ object Helpers {
     override implicit val parser: Option[T] ⇒ String = opt ⇒ opt.map(_parser).getOrElse("")
   }
 
-  implicit class BindableProperty[T](override val rxv: Rx[T])(implicit val parser: T ⇒ String) extends Bindable[T] {
+  implicit class BindableProperty[T](override val rxv: Rx[T])(implicit val parser: T ⇒ String) extends BindableDom[T] {
     @dom
     def dom: Binding[Node] = {
       <span class={s"${rxv.getClass.getSimpleName}"}>

@@ -17,8 +17,15 @@
   @extend .d-flex;
   @extend .flex-row;
   @extend .my-2;
-  @extend .pb-1;
-  border-bottom: 1px dashed lightblue;
+  //@extend .pb-1;
+  background-color: #ffffffa3;
+  padding-left: 2em;
+  margin-left: -2em;
+  padding-top: 0.7em;
+  padding-bottom: 0.7em;
+  border-bottom-left-radius: 1em;
+  border-top-right-radius: 1em;
+  //border-bottom: 1px dashed lightblue;
 }
 
 .group-answers, .group-event {
@@ -44,7 +51,7 @@
     align-items: center;
   }
   .card-controls-bottom {
-    border-top: 1px solid lightblue;
+    border-top: 1px solid rgba(62, 77, 82, 0.24);
   }
   .vote-breakdown span {
     margin-right: $spacer * 0.25;
@@ -54,6 +61,8 @@
 .answer.card, .contribution.card, .event.card {
   flex-grow: 0;
   flex-wrap: wrap;
+  background-color: white;
+  //border: none !important;
   .card-body {
     max-width: 300px;
     padding: $spacer * 0.25;
@@ -74,7 +83,7 @@
 //}
 
 .card.answer {
-  border-color: saddlebrown;
+  border-color: rgba(139, 69, 19, 0.3);
   .card-title {
     color: saddlebrown;
   }
@@ -83,7 +92,8 @@
 $contribution-color: forestgreen;
 
 .card.contribution {
-  border-color: $contribution-color;
+  //border-color: $contribution-color;
+  border-color: rgba(34, 139, 34, 0.30);
   .card-title {
     color: $contribution-color;
   }
@@ -92,9 +102,11 @@ $contribution-color: forestgreen;
 $event-color: #9f8600;
 
 .card.event {
-  border-color: $event-color;
+  //border-color: $event-color;
+  border-color: rgba(218, 115, 0, 0.3);
   .card-title {
-    color: $event-color;
+    //color: $event-color;
+    color: rgb(218, 136, 35);
   }
 }
 

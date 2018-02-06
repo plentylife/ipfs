@@ -37,35 +37,38 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
   @dom
   protected override def generateHtml(): Binding[Node] = {
     val disabled = findTipModule.isEmpty
-    <div class="card d-inline-flex mt-1 mr-1 flex-row contribution">
-      <div class="d-inline-flex flex-column controls">
-        {if (error.bind.nonEmpty) {
-        <div class="text-danger">
-          {error.bind}
+    <div class="card d-inline-flex mt-1 mr-1 flex-column contribution">
+      <div class="d-inline-flex flex-row flex-nowrap">
+
+        <div class="d-inline-flex flex-column controls">
+          {if (error.bind.nonEmpty) {
+          <div class="text-danger">
+            {error.bind}
+          </div>
+        } else {
+          <span></span>
+        }}{if (open.bind) {inputDisplay.bind} else <span></span>}<button type="button" class="btn btn-primary btn-sm"
+                                                                         disabled={disabled}
+                                                                         onclick={onTip _}>Tip</button>
+          <span>collected
+            {s"${tipsCollected.bind} ${ui.thanks}hanks"}
+          </span>
         </div>
-      } else {
-        <span></span>
-      }}{if (open.bind) {inputDisplay.bind} else <span></span>}<button type="button" class="btn btn-primary btn-sm"
-                                                                       disabled={disabled}
-                                                                       onclick={onTip _}>Tip</button>
-        <span>collected
-          {s"${tipsCollected.bind} ${ui.thanks}hanks"}
-        </span>
-      </div>
-      <div class="card-body">
-        <h6 class="card-title">contribution</h6>
-        <h6 class="card-subtitle mb-2 text-muted">by
-          {val c: Rx[Option[String]] = withinOctopus.getCreator.map((optU: Option[User]) => optU.map {
-          u: User => u.getNameOrEmpty(): String
-        });
-        c.dom.bind}
-        </h6>
-        <p class="card-text">
-          {withinOctopus.getBody.dom.bind}
-        </p>
+        <div class="card-body">
+          <h6 class="card-title">contribution</h6>
+          <h6 class="card-subtitle mb-2 text-muted">by
+            {val c: Rx[Option[String]] = withinOctopus.getCreator.map((optU: Option[User]) => optU.map {
+            u: User => u.getNameOrEmpty(): String
+          });
+          c.dom.bind}
+          </h6>
+          <p class="card-text">
+            {withinOctopus.getBody.dom.bind}
+          </p>
+        </div>
       </div>
 
-      <div class="card-controls-bottom d-inline-flex">
+      <div class="card-controls-bottom d-flex">
         {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}
       </div>
 

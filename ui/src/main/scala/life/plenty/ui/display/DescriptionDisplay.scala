@@ -6,7 +6,7 @@ import life.plenty.model.actions.ActionAddDescription
 import life.plenty.model.connection.Body
 import life.plenty.model.octopi.Space
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.{DisplayModel, Helpers, UiContext}
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.{Event, Node}
 import rx.Obs
@@ -68,7 +68,9 @@ class DescriptionDisplay(override val withinOctopus: Space) extends DisplayModul
   private def buttonTitle: Binding[String] = if (editorOpen.bind) "Post" else "Add description"
 
   @dom
-  private def descriptionView: Binding[String] = if (description.bind.isEmpty) "no description yet..." else
-    description.bind
+  private def descriptionView: Binding[Node] = if (description.bind.isEmpty)
+    <span>"no description yet..."</span>
+  else
+    Helpers.strIntoParagraphs(description.bind).bind
 
 }

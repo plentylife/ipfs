@@ -12,11 +12,11 @@ body {
   width: 100%;
   min-height: 100%;
   justify-content: center;
-  background-color: lightslategray;
+  background-color: rgba(49, 72, 80, 0.12);
 }
 
 #viewport {
-  background-color: white;
+  //background-color: white;
   max-width: 1000px;
   min-width: 320px;
   padding: $spacer * 2;
