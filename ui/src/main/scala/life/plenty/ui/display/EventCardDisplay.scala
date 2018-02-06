@@ -23,27 +23,30 @@ class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
-    <div class="card d-inline-flex mt-1 mr-1 flex-row event">
-      <div class="d-inline-flex flex-column controls">
-        <button type="button" class="btn btn-primary btn-sm" onclick={navigateTo _}>Explore</button>
+    <div class="card d-inline-flex mt-1 mr-1 flex-column event">
+      <div class="d-inline-flex flex-row flex-nowrap">
+
+        <div class="d-inline-flex flex-column controls">
+          <button type="button" class="btn btn-primary btn-sm" onclick={navigateTo _}>Explore</button>
+        </div>
+
+        <div class="card-body" onclick={navigateTo _}>
+          <h6 class="card-title">Event:
+            {withinOctopus.getTitle.dom.bind}
+          </h6>
+          <h6 class="card-subtitle mb-2 text-muted">by
+            {val c: Rx[Option[String]] = withinOctopus.getCreator.map((optU: Option[User]) => optU.map {
+            u: User => u.getNameOrEmpty(): String
+          });
+          c.dom.bind}
+          </h6>
+          <p class="card-text">
+            Look for details inside
+          </p>
+        </div>
       </div>
 
-      <div class="card-body" onclick={navigateTo _}>
-        <h6 class="card-title">Event:
-          {withinOctopus.getTitle.dom.bind}
-        </h6>
-        <h6 class="card-subtitle mb-2 text-muted">by
-          {val c: Rx[Option[String]] = withinOctopus.getCreator.map((optU: Option[User]) => optU.map {
-          u: User => u.getNameOrEmpty(): String
-        });
-        c.dom.bind}
-        </h6>
-        <p class="card-text">
-          Look for details inside
-        </p>
-      </div>
-
-      <div class="card-controls-bottom d-inline-flex">
+      <div class="card-controls-bottom d-flex">
         {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}
       </div>
     </div>

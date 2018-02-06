@@ -1,0 +1,16 @@
+.load-indicator {
+  max-width: 100%;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  align-items: center;
+  display: flex;
+
+  .loading-text {
+    opacity: 0.8;
+    word-break: keep-all;
+    max-width: 90%;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

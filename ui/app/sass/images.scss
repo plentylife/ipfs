@@ -1,11 +1,21 @@
+.logo {
+  img {
+    width: 100%;
+    object-fit: contain;
+  }
+}
+
 .login-outer-box {
   .logo {
-    img {
-      width: 100%;
-      object-fit: contain;
-    }
-    //margin-bottom: $spacer;
     width: 250px;
     max-width: 90%;
+  }
+}
+
+.load-indicator {
+  .logo {
+    padding: $spacer * 0.25;
+    height: 3em;
+    width: 3em;
   }
 }

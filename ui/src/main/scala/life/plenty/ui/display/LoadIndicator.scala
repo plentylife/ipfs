@@ -40,11 +40,17 @@ object LoadIndicator {
 
   private def loadStr(end: Int): String = (0 to end).map(_ ⇒ ".").mkString
 
+  private val classes = "load-indicator"
+
   @dom
   def show(): Binding[Node] = {
-    <div class={if (connectionsLeft.bind <= 0) "d-none" else ""}>
-      Loading
-      {loadStr(connectionsLeft.bind)}
+    <div class={if (connectionsLeft.bind <= 0) "d-none " + classes else classes}>
+      <div class="d-inline-flex logo">
+        <img src="images/plenty_logo-400.png"/>
+      </div>
+      <span class="loading-text d-inline-flex">
+        {"Loading" + loadStr(connectionsLeft.bind)}
+      </span>
     </div>
   }
 }
