@@ -188,7 +188,8 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
       })
     }
 
-    gc.map().`val`((d, k) ⇒ {
+    gc.map().`val`((d, k) ⇒ Future {
+      //      setTimeout(10) {
       if (allCons.now.contains(k)) {
         connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
         console.trace(s"Skipping loading connection $k")
@@ -208,6 +209,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
         }
         }
       }
+      //      }
     })
   }
 }
