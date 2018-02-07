@@ -1,13 +1,13 @@
 package life.plenty.model
 
-import life.plenty.model.connection.Connection
+import life.plenty.model.connection.{Connection, Marker, MarkerEnum}
 import life.plenty.model.octopi.Octopus
 import rx.{Ctx, Rx}
 
 package object utils {
 
   /** unsafe */
-  implicit def getRx[T](r: Rx[Option[T]]): T = r.now.get
+  //  implicit def getRx[T](r: Rx[Option[T]]): T = r.now.get
 
   implicit class OptRxOctopus[T <: Octopus](rx: Rx[Option[T]])(implicit ctx: Ctx.Owner) {
     console.trace(s"Util OptRxOcto ${rx.now}")
@@ -26,5 +26,10 @@ package object utils {
     def trace(s: ⇒ String) = if (traceActive) println(s)
 
     def prefix = if (_prefix.nonEmpty) _prefix + " : " else ""
+  }
+
+  object ConFinders {
+    def markedConfirmed(o: Octopus)(implicit ctx: Ctx.Owner): Rx[Boolean] =
+      o.rx.get({ case Marker(m) if m == MarkerEnum.CONFIRMED ⇒ m }).map(_.nonEmpty)
   }
 }

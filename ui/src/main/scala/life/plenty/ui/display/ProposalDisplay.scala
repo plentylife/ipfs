@@ -4,7 +4,8 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionUpDownVote
 import life.plenty.model.octopi._
-import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
+import life.plenty.model.utils.ConFinders
+import life.plenty.ui.display.actions.{ChangeParent, ConfirmActionDisplay, EditSpace}
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
 import life.plenty.ui.model.{DisplayModel, UiContext}
@@ -26,13 +27,19 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
   private lazy val editor: BindableAction[EditSpace] = new BindableAction(withinOctopus.getTopModule({ case
     m: EditSpace ⇒ m
   }), this)
+  private lazy val confirmAction: BindableAction[ConfirmActionDisplay] = new BindableAction(withinOctopus
+    .getTopModule({ case
+    m: ConfirmActionDisplay ⇒ m
+  }), this)
+  private lazy val isConfirmed = ConFinders.markedConfirmed(withinOctopus): BasicBindable[Boolean]
 
   private lazy val creatorNameRx = withinOctopus.getCreator.map(_.map(_.getNameOrEmpty()))
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val disabled = findVoteModule.isEmpty
-    <div class="card d-inline-flex mt-1 mr-1 flex-column answer">
+    val _class = "card d-inline-flex mt-1 mr-1 flex-column answer"
+    <div class={if (isConfirmed().bind) _class + " confirmed " else _class}>
       <div class="d-inline-flex flex-row flex-nowrap">
         <div class="d-inline-flex flex-column controls">
           <button type="button" class="btn btn-primary btn-sm" disabled={disabled} onclick={upVote _}>Up vote</button>
@@ -55,7 +62,7 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
 
       <div class="card-controls-bottom d-inline-flex flex-column">
         {displayVotesByUser(votesByUser.bind).bind}<div class="d-inline-flex">
-        {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}
+        {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}{confirmAction.dom.bind}
       </div>
       </div>
     </div>

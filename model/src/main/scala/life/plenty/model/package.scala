@@ -22,11 +22,13 @@ package object model {
   def initialize(): Unit = {
     println("Model is adding modules to registry")
 
+    ModuleRegistry.add { case q: Question ⇒ new ActionAddConfirmedMarker(q) }
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateQuestion(q) }
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateAnswer(q) }
     ModuleRegistry.add { case q: Question ⇒ new AnswerVoteOrder(q) }
     ModuleRegistry.add { case q: GreatQuestion ⇒ new ActionCreateQuestion(q) }
 
+    ModuleRegistry.add { case a: Answer ⇒ new ActionAddConfirmedMarker(a) }
     ModuleRegistry.add { case a: Answer ⇒ new ActionCreateQuestion(a) }
     ModuleRegistry.add { case a: Answer ⇒ new ActionUpDownVote(a) }
 

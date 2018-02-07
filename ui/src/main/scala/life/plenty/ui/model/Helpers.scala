@@ -23,11 +23,8 @@ object Helpers {
     </span>
   }
 
-  trait BindableDom[T] {
+  trait Bindable[T] {
     val rxv: Rx[T]
-    implicit val parser: T ⇒ String
-
-    def dom: Binding[Node]
 
     val inner = Var(rxv.now)
 
@@ -36,7 +33,17 @@ object Helpers {
     rxv.foreach(p ⇒ {
       inner.value_=(p)
     })
+
+    def apply(): Var[T] = inner
   }
+
+  trait BindableDom[T] extends Bindable[T] {
+    implicit val parser: T ⇒ String
+
+    def dom: Binding[Node]
+  }
+
+  implicit class BasicBindable[T](override val rxv: Rx[T]) extends Bindable[T]
 
   implicit class OptBindableProperty[T](override val rxv: Rx[Option[T]])(implicit _parser: T ⇒ String) extends
     BindableDom[Option[T]] {

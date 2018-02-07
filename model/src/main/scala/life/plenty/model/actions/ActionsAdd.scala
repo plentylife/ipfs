@@ -1,6 +1,6 @@
 package life.plenty.model.actions
 
-import life.plenty.model.connection.{Body, Removed}
+import life.plenty.model.connection.{Body, Marker, MarkerEnum, Removed}
 import life.plenty.model.octopi._
 
 class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
@@ -34,5 +34,13 @@ class ActionAddDescription(override val withinOctopus: Space) extends Module[Spa
       }
     }
     withinOctopus.addConnection(Body(body))
+  }
+}
+
+class ActionAddConfirmedMarker(override val withinOctopus: Octopus) extends Module[Octopus] {
+  private implicit val ctx = withinOctopus.ctx
+
+  def confirm() = {
+    withinOctopus.addConnection(Marker(MarkerEnum.CONFIRMED))
   }
 }
