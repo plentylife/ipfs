@@ -1,10 +1,12 @@
 package life.plenty.model.octopi.definition
 
 import life.plenty.model.connection.Connection
-import rx.Var
+import rx.{Rx, Var}
 
 trait ConnectionManager[CT] {
   protected lazy val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
+
+  def connections: Rx[List[Connection[_]]] = _connections
 
   object sc {
     def all: List[Connection[_]] = _connections.now
@@ -15,5 +17,4 @@ trait ConnectionManager[CT] {
 
     def exf[T](f: PartialFunction[Connection[_], T]): T = ex(f).get
   }
-
 }
