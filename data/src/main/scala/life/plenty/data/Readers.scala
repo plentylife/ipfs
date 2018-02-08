@@ -133,14 +133,14 @@ object ConnectionReader {
           if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
           optO flatMap { o ⇒
             val res = octopusReaders flatMap { f ⇒ f(con.`class`, o) } headOption;
-            if (!con.active) res foreach {_.deactivate}
+            //            if (!js.isUndefined(con.active) && !con.active) res foreach {_.deactivate}
             res
           }
         }
       } else {
         Future {
           val res = leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption;
-          if (!con.active) res foreach {_.deactivate}
+          //          if (!js.isUndefined(con.active) && !con.active) res foreach {_.deactivate}
           res
         }
       }

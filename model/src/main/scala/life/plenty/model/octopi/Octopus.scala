@@ -66,7 +66,9 @@ trait Octopus extends OctopusConstructor {
   def getTopConnectionData[T](f: PartialFunction[Connection[_], T]): Option[T] =
     connections.collectFirst(f)
 
-  object s {
+  object sc {
+    def all = connections
+
     def get[T](f: PartialFunction[Connection[_], Connection[T]]): Option[Connection[T]] = getTopConnection(f)
 
     def ex[T](f: PartialFunction[Connection[_], T]): Option[T] = getTopConnectionData(f)
@@ -109,7 +111,7 @@ trait Octopus extends OctopusConstructor {
       toRxConsList(_connectionsRx)
     }
 
-    def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
+    def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
       cons.now.collectFirst(f) match {
         case Some(c) ⇒ Var(Option(c))
         case None ⇒ getWatch(f)(ctx)

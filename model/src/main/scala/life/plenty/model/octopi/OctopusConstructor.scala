@@ -28,7 +28,7 @@ trait OctopusConstructor {
 
   protected def generateId: String = {
     val res = rand.nextLong().toString +
-      s.exf({ case CreationTime(t) ⇒ t }).toString + s.exf({ case Creator(c) ⇒ c }).id
+      sc.exf({ case CreationTime(t) ⇒ t }).toString + sc.exf({ case Creator(c) ⇒ c }).id
     res
   }
 
