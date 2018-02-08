@@ -16,6 +16,7 @@ trait Answer extends Space with WithParent[Space] {
   lazy val votes: Rx[Int] = Rx {
     val mags = allVotes().flatMap(_.sizeAndDirection())
     model.console.trace(s"Answer votes magnitudes ${this} ${mags}")
+    println(s"Answer votes magnitudes ${this} ${mags}")
     mags.sum
   }
 
@@ -36,9 +37,9 @@ class Proposal extends Answer {
 }
 
 class Contribution extends Answer {
-  private val transactions = rx.getAll({ case Child(t: Transaction) ⇒ t })
+  private lazy val transactions = rx.getAll({ case Child(t: Transaction) ⇒ t })
   // check this might fail
-  val tips: Rx[Int] = Rx {
+  lazy val tips: Rx[Int] = Rx {
     (0 :: transactions().map({ t ⇒ t.getAmountOrZero() })).sum
   }
 
