@@ -34,8 +34,8 @@ class QuestionModuleGroup(private val _withinOctopus: Octopus) extends GroupedMo
   override protected val displayInOrder: List[String] = List("question-nav", "other")
 
   override def doDisplay() = {
-    println(s"Question module group starting ${UiContext.startingSpace.value} ${_withinOctopus.id}")
-    UiContext.startingSpace.value.getOrElse("") != _withinOctopus.id
+    println(s"Question module group starting ${UiContext.startingSpace.value.get.id} ${_withinOctopus.id}")
+    UiContext.startingSpace.value.map(_.id).getOrElse("") != _withinOctopus.id
   }
 
   override protected def groupBy(m: DisplayModule[_]): String = m match {

@@ -116,7 +116,7 @@ trait Octopus extends OctopusConstructor {
     }
 
     object Lazy {
-      def cons(implicit ctx: Ctx.Owner): RxConsList = {_connectionsRx}
+      def cons(implicit ctx: Ctx.Owner): RxConsList = _connectionsRx
 
       def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
         cons.now.collectFirst(f) match {

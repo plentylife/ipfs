@@ -14,9 +14,14 @@ object DisplayModel {
 
   def display(o: Octopus, overrides: List[ModuleOverride] = List(),
               calledBy: Option[DisplayModule[_]] = None): Binding[Node] = {
-    o.modules.collectFirst({ case dm: DisplayModule[_] ⇒
-      dm.display(calledBy, overrides)
-    }).flatten getOrElse noDisplay
+    o.modules.find {
+      case dm: DisplayModule[_] ⇒ dm.doDisplay()
+      case _ ⇒ false
+    } flatMap {_.asInstanceOf[DisplayModule[_]].display(calledBy, overrides)} getOrElse noDisplay
+
+    //    o.modules.collectFirst({ case dm: DisplayModule[_] ⇒
+    //      dm.display(calledBy, overrides)
+    //    }).flatten getOrElse noDisplay
   }
 
   @dom
