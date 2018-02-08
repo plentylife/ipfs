@@ -155,14 +155,13 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
   val connectionsLeftToLoad = Var(-1)
   console.println(s"Gun Reader instantiated in ${withinOctopus.getClass}")
 
-  private lazy val allCons = withinOctopus.rx.allCons.map(_.map(_.id))
+  //  private lazy val allCons = withinOctopus.rx.allCons.map(_.map(_.id))
 
   override def onConnectionsRequest(): Unit = synchronized {
     if (!instantiated) {
       instantiated = true
       console.println(s"Gun Reader ${this} onConsReq called in ${withinOctopus.getClass} with ${
-        withinOctopus
-          .connections
+        withinOctopus.connections
       }")
       val gun = Main.gun.get(withinOctopus.id)
       gun.`val`((d, k) ⇒ {
@@ -190,7 +189,8 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
 
     gc.map().`val`((d, k) ⇒ Future {
       //      setTimeout(10) {
-      if (allCons.now.contains(k)) {
+      // fixme this will bug out if we are re-using connections
+      if (Cache.getConnection(k).nonEmpty) {
         connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
         console.trace(s"Skipping loading connection $k")
       } else {
@@ -202,6 +202,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
           }
 
           optCon foreach { c ⇒
+            Cache.put(c)
             connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
             c.tmpMarker = GunMarker
             withinOctopus.addConnection(c)

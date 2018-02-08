@@ -25,7 +25,7 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
           val resCon: Option[Connection[_]] = con.value match {
             // checking if removed based on octopus
             case o: Octopus ⇒
-              val rc = o.rx.get({ case m@Marker(REMOVED) ⇒ m })
+              val rc = o.rx.Lazy.get({ case m@Marker(REMOVED) ⇒ m })
               val rcOpt = rc map { marker ⇒ if (marker.isEmpty) optCon else None }
               rcOpt()
             //            rc() map {_ ⇒ con}

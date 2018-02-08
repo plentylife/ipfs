@@ -26,7 +26,7 @@ object Cache {
     octopusCache.get(id)
   }
 
-  //  def put(c: Connection[_]): Unit = connectionCache.put(c.id, c)
+  def put(c: Connection[_]): Unit = synchronized {connectionCache.put(c.id, c)}
 
-  //  def getConnection(id: String): Option[Connection[_]] = connectionCache.get(id)
+  def getConnection(id: String): Option[Connection[_]] = connectionCache.get(id)
 }

@@ -74,6 +74,8 @@ trait Octopus extends OctopusConstructor {
     def exf[T](f: PartialFunction[Connection[_], T]): T = ex(f).get
   }
 
+  private val _this = this
+
   object rx {
     type RxConsList = Rx[List[Connection[_]]]
 
@@ -87,8 +89,11 @@ trait Octopus extends OctopusConstructor {
 
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
       console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
+      if (_this.isInstanceOf[Contribution]) {
+        println("Contribution cons called")
+        (new Exception).printStackTrace()
+      }
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
-      //      _connections
 
       _connectionsRx
     }
@@ -100,27 +105,25 @@ trait Octopus extends OctopusConstructor {
       }
 
     def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
+      // todo. this can be optimized with getWatch
       _connectionsRx.map(_ map { rx ⇒
         rx map { opt ⇒ opt.collect(f) }
       } flatMap { rx ⇒ rx() })
     }
 
-    //    def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
-    //      val current: Var[List[Rx[Option[T]]]] = Var(_connectionsRx.now.map(rx ⇒ {
-    //        rx map {opt ⇒ opt.collect(f)}
-    //      }))
-    //
-    //      // this is needed because otherwise the last element is included
-    //      var firstWatch = current.now.nonEmpty
-    //      if (!firstWatch) {
-    //        current() = getWatch(f)(ctx) :: current.now
-    //      } else firstWatch = false
-    //
-    //      current.map(_.flatMap(rx ⇒ rx()))
-    //    }
-
     def getWatch[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
       _lastAddedConnection.map(rx ⇒ rx().collect(f))(ctx).filter(_.nonEmpty)(ctx)
+    }
+
+    object Lazy {
+      def cons(implicit ctx: Ctx.Owner): RxConsList = {_connectionsRx}
+
+      def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
+        cons.now.collectFirst(f) match {
+          case Some(c) ⇒ Var(Option(c))
+          case None ⇒ getWatch(f)(ctx)
+        }
+
     }
 
     //    def getAll[T <: Connection[_]](implicit ctx: Ctx.Owner): Rx[Iterable[T]] = _connections.

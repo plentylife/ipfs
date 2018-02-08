@@ -68,6 +68,7 @@ object ConnectionWriter {
       console.println(s"ConnectionWriter connection ${c} ${c.id}")
 
       // making sure that we aren't writing it again
+      Cache.put(c)
       c.tmpMarker = GunMarker
       val v = getValue(c)
       c.value match {
