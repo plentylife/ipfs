@@ -13,6 +13,8 @@ import scala.util.Random
 trait OctopusConstructor {
   self: Octopus ⇒
 
+  //  implicit private[this] val ctxConstructor: Ctx.Owner = self.ctx
+
   private val rand = Random
 
   def getRxId: Rx[Option[String]] = rx.get({ case Id(id) ⇒ id })
@@ -30,9 +32,9 @@ trait OctopusConstructor {
     res
   }
 
-  def getCreationTime: Rx[Option[Long]] = rx.get({ case CreationTime(t) ⇒ t })
+  lazy val getCreationTime: Rx[Option[Long]] = rx.get({ case CreationTime(t) ⇒ t })
 
-  def getCreator: Rx[Option[User]] = rx.get({ case Creator(t) ⇒ t })
+  lazy val getCreator: Rx[Option[User]] = rx.get({ case Creator(t) ⇒ t })
 
   private var _required: Set[() ⇒ Rx[Option[_]]] = Set(() ⇒ getCreator)
 

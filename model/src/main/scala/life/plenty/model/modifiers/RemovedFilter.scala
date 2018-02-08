@@ -10,7 +10,7 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
 
   private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  private lazy val removedConIds: Rx[List[String]] = withinOctopus.rx.getAll({ case Removed(id: String) ⇒ id })
+  private lazy val removedConIds: Rx[List[String]] = withinOctopus.rx.Lazy.getAll({ case Removed(id: String) ⇒ id })
 
   override def apply(what: Rx[Option[Connection[_]]])(implicit ctx: Ctx.Owner): Rx[Option[Connection[_]]] = {
     val filtered: Rx[Option[Connection[_]]] = what.map { optCon: Option[Connection[_]] ⇒
@@ -25,7 +25,7 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
           val resCon: Option[Connection[_]] = con.value match {
             // checking if removed based on octopus
             case o: Octopus ⇒
-              val rc = o.rx.Lazy.get({ case m@Marker(REMOVED) ⇒ m })
+              val rc = o.rx.Lazy.lazyGet({ case m@Marker(REMOVED) ⇒ m })
               val rcOpt = rc map { marker ⇒ if (marker.isEmpty) optCon else None }
               rcOpt()
             //            rc() map {_ ⇒ con}
@@ -38,7 +38,7 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
       }
     }
     //    println(s"RemoveFilter $what -> ${filtered}")
-    model.console.trace(s"RemoveFilter $what -> ${filtered}")
+    //    model.console.trace(s"RemoveFilter $what -> ${filtered}")
     filtered
   }
 }

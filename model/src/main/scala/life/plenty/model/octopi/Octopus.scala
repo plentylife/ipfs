@@ -5,7 +5,7 @@ import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Connection, Marker, Removed}
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
 import life.plenty.model.{ModuleRegistry, console}
-import rx.{Ctx, Obs, Rx, Var}
+import rx.{Ctx, Rx, Var}
 
 trait Octopus extends OctopusConstructor {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
@@ -74,12 +74,25 @@ trait Octopus extends OctopusConstructor {
     def exf[T](f: PartialFunction[Connection[_], T]): T = ex(f).get
   }
 
-  private val _this = this
-
   object rx {
     type RxConsList = Rx[List[Connection[_]]]
 
-    implicit def toRxConsList(in: Var[scala.List[Rx[Option[Connection[_]]]]]): RxConsList = in.map(_.flatMap(rx ⇒ rx()))
+    def toRxConsList(in: Var[scala.List[Rx[Option[Connection[_]]]]]): RxConsList = {
+      //      println("rx cons list converter")
+      //      try {
+      //        println(in.now.headOption)
+      //      } catch {
+      //        case e: Throwable ⇒ println(s"rx cons list converter error ${e.getMessage}"); e.printStackTrace();
+      // throw e
+      //      }
+      //      println("rx cons list converter after")
+      in.map({ list ⇒
+        //        println(s"converting toRxConsList ${list}")
+        list.flatMap(rx ⇒ {
+          rx()
+        })
+      })
+    }
 
     def allCons(implicit ctx: Ctx.Owner): RxConsList = {
       console.trace(s"rx.allCons ${onConnectionsRequestedModules} ${_connections}")
@@ -88,44 +101,36 @@ trait Octopus extends OctopusConstructor {
     }
 
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
-      console.trace(s"rx.cons ${onConnectionsRequestedModules} ${_connections}")
+      console.trace(s"rx.cons ${this.getClass} ${_connections} ${onConnectionsRequestedModules}")
+      //      val test = _connectionsRx
+      //      console.trace(s"rx.cons ${if (_connectionsRx != null) _connectionsRx else "NULL"} ${_connections}")
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
 
-      _connectionsRx
+      toRxConsList(_connectionsRx)
     }
 
-    def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
-      cons.now.collectFirst(f) match {
+    def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
+      val test = cons
+      //      console.trace(s"aaa ${cons(ctx).isInstanceOf[Rx[_]]}")
+      //      console.trace(s"aaa-bbb ${cons(ctx) != null}")
+      //      console.trace(s"aaa-c ${_connectionsRx.kill}")
+      //      console.trace(s"aaa-d ${_connectionsRx.now.map(_ ⇒ ".").mkString}")
+      //      console.trace(s"aaa-list ${cons(ctx).now.isInstanceOf[List[_]]}")
+      cons(ctx).now.collectFirst(f) match {
         case Some(c) ⇒ Var(Option(c))
         case None ⇒ getWatch(f)(ctx)
       }
+    }
 
     /** todo. rename this function later on.
       * figuring out exactly why the bug of unregistered updates happens */
-    def getSmart[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
-
-      val returnRx: Var[Rx[Option[T]]] = Var {null}
-      val found: Obs = _connectionsRx.foreach(list ⇒ {
-        list.find { elem ⇒
-          println(s"get smart looking in ${elem()} ${elem() exists f.isDefinedAt}")
-            elem() exists f.isDefinedAt
-        } map { elem ⇒ elem map { c: Option[Connection[_]] ⇒ c map f } } foreach {
-          rx ⇒
-            println(s"get smart obs got $rx")
-            returnRx() = rx
-        }
-        })
-
-      returnRx flatMap { rx ⇒ if (rx == null) Var {Option.empty[T]} else rx }
+    def getContinious[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
+      cons(ctx) map {_.collectFirst(f)}
     }
 
     def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
-      // todo. this can be optimized with getWatch
-      _connectionsRx.map(_ map { rx ⇒
-        rx map { opt ⇒ opt.collect(f) }
-      } flatMap { rx ⇒ rx() })
+      Lazy.getAll(f)
     }
 
     def getWatch[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
@@ -134,14 +139,20 @@ trait Octopus extends OctopusConstructor {
     }
 
     object Lazy {
-      def cons(implicit ctx: Ctx.Owner): RxConsList = _connectionsRx
+      def lazyCons(implicit ctx: Ctx.Owner): RxConsList = toRxConsList(_connectionsRx)
 
-      def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
-        cons.now.collectFirst(f) match {
+      def lazyGet[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
+        lazyCons.now.collectFirst(f) match {
           case Some(c) ⇒ Var(Option(c))
           case None ⇒ getWatch(f)(ctx)
         }
 
+      def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
+        // todo. this can be optimized with getWatch
+        _connectionsRx.map(_ map { rx ⇒
+          rx.map({ opt ⇒ opt.collect(f) })(ctx)
+        } flatMap { rx ⇒ rx() })(ctx)
+      }
     }
 
     //    def getAll[T <: Connection[_]](implicit ctx: Ctx.Owner): Rx[Iterable[T]] = _connections.

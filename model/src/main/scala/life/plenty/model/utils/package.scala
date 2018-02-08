@@ -30,7 +30,7 @@ package object utils {
 
   object ConFinders {
     def markedConfirmed(o: Octopus)(implicit ctx: Ctx.Owner): Rx[Boolean] =
-      o.rx.getSmart({ case Marker(m) if m == MarkerEnum.CONFIRMED ⇒ m }).map(m ⇒ {
+      o.rx.getContinious({ case Marker(m) if m == MarkerEnum.CONFIRMED ⇒ m }).map(m ⇒ {
         println(s"rx confirmed changing ${m}")
         m.nonEmpty
       })

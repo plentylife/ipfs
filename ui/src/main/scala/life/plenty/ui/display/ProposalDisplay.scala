@@ -95,6 +95,7 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
   private lazy val findVoteModule = withinOctopus.getTopModule({ case m: ActionUpDownVote ⇒ m })
 
   private def upVote(e: Event) = {
+    //    println(s"Proposal Display ui context user ${UiContext.getUser}")
     findVoteModule.foreach(_.up(UiContext.getUser))
     //    votes.value_=(withinOctopus.votes)
   }
