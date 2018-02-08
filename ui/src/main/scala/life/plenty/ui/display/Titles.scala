@@ -4,7 +4,8 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateQuestion
 import life.plenty.model.connection.Parent
-import life.plenty.model.octopi.{GreatQuestion, Octopus, Space}
+import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.{GreatQuestion, Space}
 import life.plenty.ui
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
 import life.plenty.ui.model.DisplayModel.DisplayModule

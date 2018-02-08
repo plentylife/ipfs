@@ -3,6 +3,7 @@ package life.plenty.ui
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{OctopusGunReaderModule, OctopusReader, Main ⇒ dataMain}
 import life.plenty.model.octopi._
+import life.plenty.model.octopi.definition.Octopus
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
 import life.plenty.ui.display.{Help, LoadIndicator, Login}
 import life.plenty.ui.model.{DisplayModel, Router, RoutingParams, UiContext}

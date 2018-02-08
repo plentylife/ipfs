@@ -2,8 +2,9 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.model.octopi.definition.Octopus
 import life.plenty.model.octopi.pseudo.Wallet
-import life.plenty.model.octopi.{Octopus, User, WithMembers}
+import life.plenty.model.octopi.{User, WithMembers}
 import life.plenty.ui
 import life.plenty.ui.model.DisplayModel.intToStr
 import life.plenty.ui.model.Helpers._

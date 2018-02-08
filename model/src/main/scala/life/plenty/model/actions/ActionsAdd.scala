@@ -2,6 +2,7 @@ package life.plenty.model.actions
 
 import life.plenty.model.connection.{Body, Marker, MarkerEnum, Removed}
 import life.plenty.model.octopi._
+import life.plenty.model.octopi.definition.{Module, Octopus}
 
 class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
   def add(userId: String) = {

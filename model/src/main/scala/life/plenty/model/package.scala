@@ -4,6 +4,7 @@ package life.plenty
 import life.plenty.model.actions._
 import life.plenty.model.modifiers.{AnswerVoteOrder, RemovedFilter}
 import life.plenty.model.octopi._
+import life.plenty.model.octopi.definition.Octopus
 import life.plenty.model.utils.{Console, Hash}
 
 package object model {

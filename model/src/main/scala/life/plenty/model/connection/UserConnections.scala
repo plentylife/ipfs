@@ -1,6 +1,7 @@
 package life.plenty.model.connection
 
-import life.plenty.model.octopi.{Octopus, User}
+import life.plenty.model.octopi.User
+import life.plenty.model.octopi.definition.Octopus
 
 trait UserConnection extends Connection[User] {
   val user: User

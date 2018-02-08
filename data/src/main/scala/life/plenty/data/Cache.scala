@@ -1,7 +1,7 @@
 package life.plenty.data
 
 import life.plenty.model.connection.Connection
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 import rx.{Ctx, Var}
 
 import scala.collection.mutable

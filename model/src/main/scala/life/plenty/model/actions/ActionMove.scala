@@ -1,7 +1,7 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection.{Child, Parent, Removed}
-import life.plenty.model.octopi.{Module, Octopus}
+import life.plenty.model.octopi.definition.{Module, Octopus}
 import rx.Ctx
 
 class ActionMove(override val withinOctopus: Octopus) extends Module[Octopus] {

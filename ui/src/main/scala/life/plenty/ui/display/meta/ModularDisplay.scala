@@ -2,7 +2,7 @@ package life.plenty.ui.display.meta
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 import life.plenty.ui.console
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node

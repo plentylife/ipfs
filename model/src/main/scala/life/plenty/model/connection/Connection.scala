@@ -1,7 +1,7 @@
 package life.plenty.model.connection
 
 import life.plenty.model
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 
 trait TmpMarker
 

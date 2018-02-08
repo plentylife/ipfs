@@ -1,4 +1,4 @@
-package life.plenty.model.octopi
+package life.plenty.model.octopi.definition
 
 import life.plenty.model.connection.Connection
 import rx.Var

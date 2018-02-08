@@ -2,6 +2,7 @@ package life.plenty.model.actions
 
 import life.plenty.model.connection.{Amount, Creator, Parent}
 import life.plenty.model.octopi._
+import life.plenty.model.octopi.definition.Module
 
 
 class ActionUpDownVote(override val withinOctopus: Answer) extends Module[Answer] {

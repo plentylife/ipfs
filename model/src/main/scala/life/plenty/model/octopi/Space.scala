@@ -1,6 +1,7 @@
 package life.plenty.model.octopi
 
 import life.plenty.model.connection.Title
+import life.plenty.model.octopi.definition.Octopus
 
 //trait Space extends Octopus {
 trait Space extends Octopus {

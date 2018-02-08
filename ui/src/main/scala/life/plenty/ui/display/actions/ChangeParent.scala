@@ -3,7 +3,7 @@ package life.plenty.ui.display.actions
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionMove
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 import life.plenty.ui.model.DisplayModel
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node

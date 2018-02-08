@@ -2,6 +2,7 @@ package life.plenty.model.octopi
 
 import life.plenty.model
 import life.plenty.model.connection.{Amount, Child, Parent}
+import life.plenty.model.octopi.definition.Octopus
 import rx.Rx
 
 trait WithParent[T <: Octopus] extends Octopus {

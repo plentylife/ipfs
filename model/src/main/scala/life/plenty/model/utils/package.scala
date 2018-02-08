@@ -1,7 +1,7 @@
 package life.plenty.model
 
 import life.plenty.model.connection.{Connection, Marker, MarkerEnum}
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 import rx.{Ctx, Rx}
 
 package object utils {

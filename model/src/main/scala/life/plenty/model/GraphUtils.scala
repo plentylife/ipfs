@@ -1,7 +1,7 @@
 package life.plenty.model
 
 import life.plenty.model.connection.{Connection, Parent}
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 
 object GraphUtils {
 

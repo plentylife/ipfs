@@ -3,7 +3,7 @@ package life.plenty.data
 import life.plenty.data.Main.gun
 import life.plenty.model.actions.ActionAfterGraphTransform
 import life.plenty.model.connection.{AtInstantiation, Connection}
-import life.plenty.model.octopi.{Module, Octopus}
+import life.plenty.model.octopi.definition.{Module, Octopus}
 import rx.Ctx
 
 import scala.concurrent.ExecutionContext.Implicits.global

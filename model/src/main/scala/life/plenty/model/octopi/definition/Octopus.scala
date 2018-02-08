@@ -1,4 +1,4 @@
-package life.plenty.model.octopi
+package life.plenty.model.octopi.definition
 
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
@@ -192,9 +192,4 @@ trait Octopus extends OctopusConstructor with ConnectionManager[Any] {
   onConnectionsRequestedModules = getModules({ case m: ActionOnConnectionsRequest ⇒ m })
   console.trace(s"Loaded modules ${_modules}")
   modulesFinishedLoading() = true
-}
-
-
-trait Module[+T <: Octopus] {
-  val withinOctopus: T
 }

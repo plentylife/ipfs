@@ -3,7 +3,7 @@ package life.plenty.model.modifiers
 import life.plenty.model
 import life.plenty.model.connection.MarkerEnum._
 import life.plenty.model.connection._
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 import rx.{Ctx, Rx}
 
 class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFilters[Octopus] {

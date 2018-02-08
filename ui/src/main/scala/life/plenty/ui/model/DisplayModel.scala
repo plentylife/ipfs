@@ -2,7 +2,7 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.{Module, Octopus}
+import life.plenty.model.octopi.definition.{Module, Octopus}
 import life.plenty.ui
 import org.scalajs.dom.Node
 import rx.Ctx

@@ -2,7 +2,7 @@ package life.plenty.data
 
 import life.plenty.model
 import life.plenty.model.ModuleRegistry
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 
 import scala.scalajs.js
 

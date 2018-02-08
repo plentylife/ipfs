@@ -1,6 +1,6 @@
 package life.plenty.model.connection
 
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 
 case class Child[T <: Octopus](child: T) extends Connection[T] {
   override def value = child

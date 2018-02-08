@@ -2,6 +2,7 @@ package life.plenty.model.actions
 
 import life.plenty.model.connection.{Body, Parent, Title}
 import life.plenty.model.octopi._
+import life.plenty.model.octopi.definition.Module
 
 class ActionCreateQuestion(override val withinOctopus: Space) extends Module[Space] {
   def create(title: String) = {

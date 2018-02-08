@@ -3,7 +3,7 @@ package life.plenty.ui.model
 import java.util.Base64
 
 import com.thoughtworks.binding.Route
-import life.plenty.model.octopi.Octopus
+import life.plenty.model.octopi.definition.Octopus
 import life.plenty.ui.model.ViewState.ViewState
 import org.scalajs.dom.window
 import upickle.default.{macroRW, ReadWriter ⇒ RW, _}
