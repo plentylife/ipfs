@@ -96,7 +96,7 @@ trait Octopus extends OctopusConstructor {
     def get[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
       cons.now.collectFirst(f) match {
         case Some(c) ⇒ Var(Option(c))
-        case None ⇒ getWatchOnce(f)(ctx)
+        case None ⇒ getWatch(f)(ctx)
       }
 
     def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
@@ -118,11 +118,6 @@ trait Octopus extends OctopusConstructor {
     //
     //      current.map(_.flatMap(rx ⇒ rx()))
     //    }
-
-    // todo make it kill itself
-    def getWatchOnce[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      _lastAddedConnection.map(rx ⇒ rx().collect(f))(ctx).filter(_.nonEmpty)(ctx)
-    }
 
     def getWatch[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
       _lastAddedConnection.map(rx ⇒ rx().collect(f))(ctx).filter(_.nonEmpty)(ctx)
@@ -179,6 +174,10 @@ trait Octopus extends OctopusConstructor {
           case None ⇒ Right()
         }
     }
+  }
+
+  def removeConnection(c: Connection[_]): Either[Exception, Unit] = {
+    addConnection(Removed(c.id))
   }
 
   /** must be filled before accessed */

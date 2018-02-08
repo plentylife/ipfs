@@ -2,7 +2,7 @@ package life.plenty.model.octopi
 
 import life.plenty.model
 import life.plenty.model.connection.{Body, Child, Connection, Title}
-import rx.{Rx, Var}
+import rx.Rx
 
 import scala.collection.immutable
 
@@ -36,9 +36,14 @@ class Proposal extends Answer {
 }
 
 class Contribution extends Answer {
-  val tips: Var[Int] = Var(0)
+  private val transactions = rx.getAll({ case Child(t: Transaction) ⇒ t })
+  // check this might fail
+  val tips: Rx[Int] = Rx {
+    (0 :: transactions().map({ t ⇒ t.getAmountOrZero() })).sum
+  }
 
-  rx.getWatchOnce({ case Child(t: Transaction) ⇒ t }).foreach(_.foreach(t ⇒
-    t.getAmount.foreach(_.foreach(a ⇒ tips() = tips.now + a))
-  ))
+  // fixme make tips just count
+  //  rx.getWatchOnce({ case Child(t: Transaction) ⇒ t }).foreach(_.foreach(t ⇒
+  //    t.getAmount.foreach(_.foreach(a ⇒ tips() = tips.now + a))
+  //  ))
 }

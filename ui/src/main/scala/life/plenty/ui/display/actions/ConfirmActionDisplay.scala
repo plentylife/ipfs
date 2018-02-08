@@ -19,6 +19,7 @@ class ConfirmActionDisplay(override val withinOctopus: Space) extends ActionDisp
     isEmpty.value_=(actionConfirm.isEmpty)
     if (obs == null) {
       isConfirmed.foreach(active.value_=)
+      println("isconfirmed changed")
     }
   }
 
@@ -26,18 +27,14 @@ class ConfirmActionDisplay(override val withinOctopus: Space) extends ActionDisp
   def inactiveDisplay: Binding[Node] =
     <button type="button" class="btn btn-outline-dark symbolic btn-sm confirm-control" onclick={(e: Event) =>
       actionConfirm.get.confirm()}>
-      <span class="oi oi-task" title="edit" data:aria-hidden="true"></span>
+      <span class="oi oi-task" title="confirm" data:aria-hidden="true"></span>
     </button>
 
   @dom
   def activeDisplay: Binding[Node] = <div class="d-inline-flex">
-    {ChangeParent.displayInactiveOnly(withinOctopus, Option(close _)).bind}<button type="button" class="btn
-    btn-outline-danger btn-sm symbolic confirm-control" onclick={(e: Event) => ???}>
-      <span class="oi oi-task" title="remove" data:aria-hidden="true"></span>
+    <button type="button" class="btn btn-sm symbolic confirm-control" onclick={(e: Event) =>
+      actionConfirm.get.deconfirm()}>
+      <span class="oi oi-task" title="de-confirm" data:aria-hidden="true"></span>
     </button>
   </div>
-
-  private def close() = {
-    active.value_=(false)
-  }
 }

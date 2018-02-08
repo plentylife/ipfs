@@ -222,6 +222,7 @@ object OctopusGunReaderModule {
         m ⇒
           m.connectionsLeftToLoad.foreach(count ⇒ if (count == 0) {
             f()
+            m.connectionsLeftToLoad.kill()
           })
       }
     }

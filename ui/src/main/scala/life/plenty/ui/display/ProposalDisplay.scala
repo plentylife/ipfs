@@ -39,7 +39,7 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
   override protected def generateHtml(): Binding[Node] = {
     val disabled = findVoteModule.isEmpty
     val _class = "card d-inline-flex mt-1 mr-1 flex-column answer"
-    <div class={if (isConfirmed().bind) _class + " confirmed " else _class}>
+    <div class={if (isConfirmed().bind) _class + " confirmed " else _class} id={withinOctopus.id}>
       <div class="d-inline-flex flex-row flex-nowrap">
         <div class="d-inline-flex flex-column controls">
           <button type="button" class="btn btn-primary btn-sm" disabled={disabled} onclick={upVote _}>Up vote</button>

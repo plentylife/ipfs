@@ -74,13 +74,12 @@
   .card-controls-bottom {
     //order: 3
   }
+
+  &.confirmed {
+    background-color: rgba(36, 82, 30, 0.31);
+  }
 }
 
-//.answer.card::before, .contribution.card::before, .event.card::before {
-//  content: '';
-//  width: 100%;
-//  order: 2;
-//}
 
 .card.answer {
   border-color: rgba(139, 69, 19, 0.3);

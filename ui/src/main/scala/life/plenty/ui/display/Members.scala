@@ -50,7 +50,7 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
   }
 
   @dom
-  private def displayMember(u: User): Binding[Node] = <li>
+  private def displayMember(u: User): Binding[Node] = <li id={u.id}>
     {u.getName.dom.bind}
   </li>
 }

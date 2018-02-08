@@ -10,7 +10,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import scala.scalajs.js.timers._
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
@@ -105,10 +104,10 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
     //      withinOctopus.isNew &&
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       Future {
-        setTimeout(10) {
+        //        setTimeout(10) {
           console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")
           OctopusWriter.writeSingleConnection(connection, gun)
-        }
+        //        }
       }
     }
     Right()
@@ -122,10 +121,10 @@ class InstantiationGunWriterModule(override val withinOctopus: Octopus) extends 
 
   withinOctopus.onNew {
     Future {
-      setTimeout(5) {
+      //      setTimeout(5) {
         console.println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
         OctopusWriter.write(withinOctopus)
-      }
+      //      }
     }
   }
 }
