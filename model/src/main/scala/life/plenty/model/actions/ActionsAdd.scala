@@ -42,6 +42,7 @@ class ActionAddConfirmedMarker(override val withinOctopus: Octopus) extends Modu
 
   def confirm() = {
     withinOctopus.addConnection(Marker(MarkerEnum.CONFIRMED))
+    println(s"added confirm marker ${withinOctopus.connections}")
   }
 
   def deconfirm() = {

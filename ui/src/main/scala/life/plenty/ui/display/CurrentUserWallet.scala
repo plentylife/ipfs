@@ -30,7 +30,7 @@ object CurrentUserWallet {
         case None => <div class="current-user-wallet-outer-box">you are not part of this group</div>
         case Some(w) => displayWallet(w).bind
       }
-    case _ ⇒ <div>Walled display improperly contstructed</div>
+    case _ ⇒ <div>Wallet cannot be displayed</div>
   }
 
   def update(withinOctopus: WithMembers): Unit = {

@@ -100,6 +100,25 @@ trait Octopus extends OctopusConstructor {
         case None ⇒ getWatch(f)(ctx)
       }
 
+    /** todo. rename this function later on.
+      * figuring out exactly why the bug of unregistered updates happens */
+    def getSmart[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
+      onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
+
+      Rx {
+        var returnRx: Rx[Option[T]] = null
+        val foundInList: Rx[Option[Rx[Option[Any]]]] = _connectionsRx.map(list ⇒ {
+          // getting the exact rx from the global connections list
+          val found: Option[Rx[Option[T]]] = list find { elem ⇒
+            elem() exists f.isDefinedAt
+          } map { elem ⇒ elem map { c: Option[Connection[_]] ⇒ c map f } }
+          found
+        })
+
+        if (returnRx != null) returnRx() else None
+      }
+    }
+
     def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
       // todo. this can be optimized with getWatch
@@ -110,6 +129,7 @@ trait Octopus extends OctopusConstructor {
 
     def getWatch[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
       _lastAddedConnection.map(rx ⇒ rx().collect(f))(ctx).filter(_.nonEmpty)(ctx)
+      //      _lastAddedConnection.map(rx ⇒ rx().collect(f))(ctx)
     }
 
     object Lazy {

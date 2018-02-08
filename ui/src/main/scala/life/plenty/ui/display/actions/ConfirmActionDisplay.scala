@@ -13,13 +13,15 @@ class ConfirmActionDisplay(override val withinOctopus: Space) extends ActionDisp
 
   private lazy val actionConfirm = withinOctopus.getTopModule({ case a: ActionAddConfirmedMarker ⇒ a })
   private lazy val isConfirmed = ConFinders.markedConfirmed(withinOctopus)
-  private lazy val obs: Obs = null
+  private var obs: Obs = null
 
   override def update(): Unit = {
     isEmpty.value_=(actionConfirm.isEmpty)
     if (obs == null) {
-      isConfirmed.foreach(active.value_=)
-      println("isconfirmed changed")
+      obs = isConfirmed.foreach(is ⇒ {
+        println(s"isconfirmed changed ${is}")
+        active.value_=(is)
+      })
     }
   }
 
