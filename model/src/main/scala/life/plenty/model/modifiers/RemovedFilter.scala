@@ -19,7 +19,8 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
         // the AtInstantiation is added for 2 reasons: not to trip an error of idGen and because those are required
         // (usually)
         if (!con.isInstanceOf[Id]) { // not loaded from db or instantiated
-          model.console.trace(s"Removed connections list ${removedConIds.now} ${withinOctopus}")
+          model.console.trace(s"Removed connections list ${removedConIds.now} ${con} ${con.id} ${withinOctopus}")
+          println(s"Removed connections list ${removedConIds.now} in ${con} ${con.id} ${withinOctopus}")
         }
         if (con.isInstanceOf[Id] || con.tmpMarker == AtInstantiation || !removedConIds().contains(con.id)) {
           val resCon: Option[Connection[_]] = con.value match {
@@ -31,13 +32,15 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
             //            rc() map {_ ⇒ con}
             case _ ⇒ optCon
           }
+          println(s"connection passed ${con} ${con.id} ")
           resCon
         } else {
+          println(s"connection filtered ${con} ${con.id} ")
           None
         }
       }
     }
-    //    println(s"RemoveFilter $what -> ${filtered}")
+    println(s"RemoveFilter $what -> ${filtered}")
     //    model.console.trace(s"RemoveFilter $what -> ${filtered}")
     filtered
   }

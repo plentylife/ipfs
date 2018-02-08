@@ -171,11 +171,14 @@ trait Octopus extends OctopusConstructor {
     if (_connections.now.exists(_.id == connection.id)) {
       val idOfExistingRemoved = rx.toRxConsList(_connectionsRx).now
         .collectFirst({ case c@Removed(cid: String) if cid == connection.id ⇒ c.id })
+      println(s"looking for existing ids in ${_connectionsRx.now}")
       if (idOfExistingRemoved.nonEmpty) {
         console.trace(s"The existing `Removed` on ${connection} is being lifted $idOfExistingRemoved")
+        println(s"The existing `Removed` on ${connection} is being lifted $idOfExistingRemoved")
         connection = Removed(idOfExistingRemoved.get)
       } else {
         console.trace(s"Connection was not added since it exists ${connection}")
+        println(s"Connection was not added since it exists ${connection}")
         return Right()
       }
     }

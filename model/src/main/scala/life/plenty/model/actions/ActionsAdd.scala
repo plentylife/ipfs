@@ -43,14 +43,20 @@ class ActionAddConfirmedMarker(override val withinOctopus: Octopus) extends Modu
   def confirm() = {
     withinOctopus.addConnection(Marker(MarkerEnum.CONFIRMED))
     println(s"added confirm marker ${withinOctopus.connections}")
+    println(s"${withinOctopus.rx.cons}")
   }
 
   def deconfirm() = {
-    val obs = withinOctopus.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
-    obs.foreach(_ foreach { m ⇒
-      println(s"Found confirm marker. Deconfirming ${m}")
-      obs.kill()
-      withinOctopus.removeConnection(m)
-    })
+    // try just adding the same remove!
+    withinOctopus.removeConnection(Marker(MarkerEnum.CONFIRMED))
+    println(s"removed marker ${withinOctopus.connections}")
+    println(s"${withinOctopus.rx.cons}")
+    //    val obs = withinOctopus.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
+    //    obs.foreach(_ foreach { m ⇒
+    //      println(s"Found confirm marker. Deconfirming ${m}")
+    //      obs.kill()
+    //      withinOctopus.removeConnection(m)
+    //      println(s"removed marker ${withinOctopus.connections}")
+    //    })
   }
 }
