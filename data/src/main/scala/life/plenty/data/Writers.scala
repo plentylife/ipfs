@@ -13,7 +13,7 @@ import scala.scalajs.js.JSON
 
 object OctopusWriter {
   def write(o: Octopus): Unit = {
-    console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.connections}")
+    console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
       return
@@ -35,7 +35,7 @@ object OctopusWriter {
           console.error(s"E: OctopusWriter write of ${o} ${o.id} resulted in error ${ack.err}")
         }
       })
-      writeConnections(o.allConnections, go)
+      writeConnections(o.sc.all, go)
     }
   }
 

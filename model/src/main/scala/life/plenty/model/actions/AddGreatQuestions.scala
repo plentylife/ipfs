@@ -24,7 +24,7 @@ class AddGreatQuestions(override val withinOctopus: Space) extends ActionOnNew[S
   }
 
   private def addIfNotExists(check: Connection[_] ⇒ Boolean, constr: GreatQuestion) = {
-    if (!withinOctopus.connections.exists(check)) {
+    if (!withinOctopus.sc.all.exists(check)) {
       constr.asNew(Parent(withinOctopus))
     }
   }

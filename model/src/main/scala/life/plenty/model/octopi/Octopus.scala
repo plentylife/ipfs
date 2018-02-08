@@ -48,30 +48,13 @@ trait Octopus extends OctopusConstructor {
   /* Connections */
   private lazy val connectionFilters = getAllModules({ case m: RxConnectionFilters[_] ⇒ m })
 
-  /** filters are no longer applied */
-  @deprecated("This is not reliable due to the nature of gun loading")
-  def connections: List[Connection[_]] = {
-    allConnections
-    //    connectionFilters.foldLeft(_connections.now)((cs, f) ⇒ f(cs))
-  }
-
-  /** no filters applied */
-  def allConnections: List[Connection[_]] = _connections.now
-
-  @deprecated("This is not reliable due to the nature of gun loading")
-  def getTopConnection[T](f: PartialFunction[Connection[_], Connection[T]]): Option[Connection[T]] =
-    connections.collectFirst(f)
-
-  @deprecated("This is not reliable due to the nature of gun loading")
-  def getTopConnectionData[T](f: PartialFunction[Connection[_], T]): Option[T] =
-    connections.collectFirst(f)
 
   object sc {
-    def all = connections
+    def all = _connections.now
 
-    def get[T](f: PartialFunction[Connection[_], Connection[T]]): Option[Connection[T]] = getTopConnection(f)
+    def get[T](f: PartialFunction[Connection[_], Connection[T]]): Option[Connection[T]] = sc.all.collectFirst(f)
 
-    def ex[T](f: PartialFunction[Connection[_], T]): Option[T] = getTopConnectionData(f)
+    def ex[T](f: PartialFunction[Connection[_], T]): Option[T] = sc.all.collectFirst(f)
 
     def exf[T](f: PartialFunction[Connection[_], T]): T = ex(f).get
   }
@@ -154,7 +137,7 @@ trait Octopus extends OctopusConstructor {
     //    def getAll[T <: Connection[_]](implicit ctx: Ctx.Owner): Rx[Iterable[T]] = _connections.
   }
 
-  def hasMarker(marker: MarkerEnum): Boolean = connections.collect { case Marker(m) if m == marker ⇒ true } contains true
+  def hasMarker(marker: MarkerEnum): Boolean = sc.all.collect { case Marker(m) if m == marker ⇒ true } contains true
 
   private lazy val actionsOnGraphTransform = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*)
   private lazy val actionsAfterGraphTransfrom = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*)

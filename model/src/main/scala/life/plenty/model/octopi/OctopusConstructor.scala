@@ -20,7 +20,7 @@ trait OctopusConstructor {
   def getRxId: Rx[Option[String]] = rx.get({ case Id(id) ⇒ id })
 
   /** Either retrieves the id, or generates a new one, and sets it */
-  def id: String = getTopConnectionData({ case Id(id) ⇒ id }) getOrElse {
+  def id: String = sc.ex({ case Id(id) ⇒ id }) getOrElse {
     val gid = model.getHasher.b64(generateId)
     setInit(Id(gid))
     gid

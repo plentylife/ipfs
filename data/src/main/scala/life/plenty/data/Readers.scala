@@ -163,7 +163,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
     if (!instantiated) {
       instantiated = true
       console.println(s"Gun Reader ${this} onConsReq called in ${withinOctopus.getClass} with ${
-        withinOctopus.connections
+        withinOctopus.sc.all
       }")
       val gun = Main.gun.get(withinOctopus.id)
       gun.`val`((d, k) ⇒ {

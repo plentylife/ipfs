@@ -71,7 +71,7 @@ object Main {
   }
 
   @JSExport
-  def log() = println(UiContext.startingSpace.value.get.connections)
+  def log() = println(UiContext.startingSpace.value.get.sc.all)
 
   @JSExport
   def logDataCache() = println(data.Cache.octopusCache)
@@ -104,7 +104,7 @@ object Main {
     println(data.Cache.getOctopus(of).get.rx.cons.now.mkString("\n"))
     println("raw")
     println(s"${
-      data.Cache.getOctopus(of).get.connections.map(c ⇒ c → {
+      data.Cache.getOctopus(of).get.sc.all.map(c ⇒ c → {
         if (c.value.isInstanceOf[Octopus]) c.value
           .asInstanceOf[Octopus].id else ""
       }).mkString("\n")

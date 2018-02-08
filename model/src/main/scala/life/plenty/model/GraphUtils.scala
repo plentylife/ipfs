@@ -10,10 +10,10 @@ object GraphUtils {
   def findModuleUpParentTree[T](in: Octopus, matchBy: PartialFunction[Connection[_], T]): Option[T] = {
     {
       //      println(s"graph utils", in)
-      val within = in.getTopConnectionData(matchBy)
+      val within = in.sc.ex(matchBy)
       //                  println("graph utils", within, in, in.connections)
       within orElse {
-        in.getTopConnectionData({ case Parent(p: Octopus) ⇒ p }) flatMap {
+        in.sc.ex({ case Parent(p: Octopus) ⇒ p }) flatMap {
           p ⇒
             if (p == in) {
               println("Error in findModule of ActionAddMember: same parent")
