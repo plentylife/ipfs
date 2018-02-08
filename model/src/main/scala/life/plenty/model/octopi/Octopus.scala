@@ -5,7 +5,7 @@ import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Connection, Marker, Removed}
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
 import life.plenty.model.{ModuleRegistry, console}
-import rx.{Ctx, Rx, Var}
+import rx.{Ctx, Obs, Rx, Var}
 
 trait Octopus extends OctopusConstructor {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
@@ -105,18 +105,19 @@ trait Octopus extends OctopusConstructor {
     def getSmart[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
       onConnectionsRequestedModules.foreach(_.onConnectionsRequest())
 
-      Rx {
-        var returnRx: Rx[Option[T]] = null
-        val foundInList: Rx[Option[Rx[Option[Any]]]] = _connectionsRx.map(list ⇒ {
-          // getting the exact rx from the global connections list
-          val found: Option[Rx[Option[T]]] = list find { elem ⇒
+      val returnRx: Var[Rx[Option[T]]] = Var {null}
+      val found: Obs = _connectionsRx.foreach(list ⇒ {
+        list.find { elem ⇒
+          println(s"get smart looking in ${elem()} ${elem() exists f.isDefinedAt}")
             elem() exists f.isDefinedAt
-          } map { elem ⇒ elem map { c: Option[Connection[_]] ⇒ c map f } }
-          found
+        } map { elem ⇒ elem map { c: Option[Connection[_]] ⇒ c map f } } foreach {
+          rx ⇒
+            println(s"get smart obs got $rx")
+            returnRx() = rx
+        }
         })
 
-        if (returnRx != null) returnRx() else None
-      }
+      returnRx flatMap { rx ⇒ if (rx == null) Var {Option.empty[T]} else rx }
     }
 
     def getAll[T](f: PartialFunction[Connection[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
