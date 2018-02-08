@@ -3,6 +3,7 @@ package life.plenty.ui.model
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Module, Octopus}
+import life.plenty.ui
 import org.scalajs.dom.Node
 import rx.Ctx
 
@@ -72,7 +73,9 @@ object DisplayModel {
     def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride]): Option[Binding[Node]] =
       synchronized {
       overriddenBy(overrides) match {
-        case Some(module) ⇒ module.display(calledBy, overrides)
+        case Some(module) ⇒
+          ui.console.trace(s"${this} overriden by $module according to ${overrides}")
+          module.display(calledBy, overrides)
         case _ ⇒ if (doDisplay()) {
           //          println("displaying ", this, withinOctopus, calledBy)
           cachedOverrides.value.clear()
@@ -103,7 +106,9 @@ object DisplayModel {
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =
       overrides.collectFirst {
-        case ModuleOverride(creator, by, condition) if creator != this && condition(this) ⇒ by
+        case ModuleOverride(creator, by, condition) if creator != this && condition(this) ⇒
+          println(s"$creator $this $by ${creator == this}")
+          by
       }
   }
 

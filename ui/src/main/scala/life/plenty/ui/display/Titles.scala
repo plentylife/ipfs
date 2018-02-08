@@ -9,6 +9,7 @@ import life.plenty.ui
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.Router
 import org.scalajs.dom.Event
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.{KeyboardEvent, Node}
@@ -69,8 +70,8 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   override protected def generateHtml(): Binding[Node] = {
     ui.console.println(s"question title display ${editor.module}")
     <div class="question-title" id={withinOctopus.id}>
-      {ChangeParent.displayActiveOnly(withinOctopus).bind}
-      {editor.dom.bind}<span>
+      {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}<span class="title-text" onclick={e: Event
+    => Router.navigateToOctopus(withinOctopus)}>
       {gqTitle.dom.bind}{withinOctopus.getTitle.dom.bind}
       ?
     </span>

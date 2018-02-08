@@ -97,11 +97,6 @@ object Main {
     })
   }
 
-  @JSExport
-  def logSpecMods() = {
-    data.Cache.octopusCache.get("GDvfPd9a337klT/if8J7BLzZDbyTuPNjZ/gI+8/kfuU=")
-  }
-
   private implicit val ctx = Ctx.Owner.safe()
 
   @JSExport

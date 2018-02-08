@@ -52,13 +52,13 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
 
   @dom
   private def newAnswerButton: Binding[Node] = {
-      <input type="button" value={"+answer"} disabled={!action.bind} onclick={e: Event ⇒
-      opened.value_=(true);}/>
+    <div class="btn btn-primary answer-button" disabled={!action.bind} onclick={e: Event ⇒
+      opened.value_=(true);}>+answer</div>
   }
 
   @dom
   private def postAnswerButton: Binding[Node] = {
-      <input type="button" value="post answer" onclick={postAnswer _}/>
+    <div class="btn btn-primary answer-button" onclick={postAnswer _}>post answer</div>
   }
 
   private def toggleContribution(e: Event) = {

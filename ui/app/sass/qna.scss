@@ -28,6 +28,19 @@
   //border-bottom: 1px dashed lightblue;
 }
 
+.modular-display-box > .question-title {
+  @extend .group-question-nav;
+  .answer-button {
+    @extend .btn-lg
+  }
+}
+
+.question-title {
+  .title-text {
+    cursor: pointer;
+  }
+}
+
 .group-answers, .group-event {
   flex-direction: row !important;
 }

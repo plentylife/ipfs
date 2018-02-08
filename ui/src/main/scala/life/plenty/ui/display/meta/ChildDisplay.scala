@@ -70,7 +70,7 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
 
   override def overrides: List[ModuleOverride] = {
     ModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
-      dm.isInstanceOf[ChildDisplay] && dm.withinOctopus == withinOctopus
+      dm.isInstanceOf[ChildDisplay] && !dm.isInstanceOf[GroupedChildDisplay] && dm.withinOctopus == withinOctopus
     }) :: super.overrides
   }
 

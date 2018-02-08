@@ -38,7 +38,7 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
-    <div class="card d-inline-flex mt-2">
+    <div class="card d-inline-flex mt-2" id={withinOctopus.id}>
       <div class="card-body">
 
         <div class="card-title">members of this space:</div>

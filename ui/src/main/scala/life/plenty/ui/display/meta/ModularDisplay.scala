@@ -2,8 +2,8 @@ package life.plenty.ui.display.meta
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.console
 import life.plenty.model.octopi.Octopus
+import life.plenty.ui.console
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
 
@@ -16,7 +16,7 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
     val sms = getSiblingModules(this).filterNot(_.isInstanceOf[ActionDisplay[_]]).reverse
     siblingModules.value.clear()
     siblingModules.value.insertAll(0, sms)
-    console.trace(("modular display updating", this, withinOctopus, sms).toString())
+    console.trace(s"modular display updating $this $withinOctopus $sms overrides ${this.cachedOverrides.value}")
   }
 
   @dom
@@ -26,6 +26,8 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
     val displayable = siblingModules map { m ⇒ m.display(this, siblingOverrides ::: cos.toList)
     } withFilter (_.nonEmpty) map (_.get)
+
+    console.trace(s"modular display displaying with sibling overrides ${siblingOverrides}")
 
     <div class="modular-display-box d-inline-flex flex-column">
       {for (d <- displayable) yield d.bind}
