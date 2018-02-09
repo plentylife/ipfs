@@ -2,7 +2,7 @@ package life.plenty.ui.filters
 
 import life.plenty.model.modifiers.OctopusOrdering
 import life.plenty.model.octopi.definition.Octopus
-import life.plenty.model.octopi.{BasicSpace, Members}
+import life.plenty.model.octopi.{ContainerSpace, Members}
 import rx.{Ctx, Rx}
 //
 //trait OrderPreference[IT, L<: Iterable[IT], T <: Octopus] extends Module[T] {
@@ -11,7 +11,7 @@ import rx.{Ctx, Rx}
 //
 //trait ChildOrderPreference extends OrderPreference[Octopus, List[Octopus], BasicSpace]
 
-class BasicSpaceDisplayOrder(override val withinOctopus: BasicSpace) extends OctopusOrdering[BasicSpace] {
+class BasicSpaceDisplayOrder(override val withinOctopus: ContainerSpace) extends OctopusOrdering[ContainerSpace] {
   private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   override def order(what: List[Octopus]): List[Octopus] = {

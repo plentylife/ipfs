@@ -38,14 +38,10 @@ package object model {
     // one contributor per contribution (the creator)
     //    ModuleRegistry.add { case c: Contribution ⇒ new ActionAddContributor(c) }
 
-    //    ModuleRegistry.add { case wp: WithParent[_] ⇒ new ActionAddParent(wp) }
-    ModuleRegistry.add { case o: Event ⇒ new AddGreatQuestions(o) }
-    ModuleRegistry.add { case o: BasicSpace ⇒ new AddGreatQuestions(o) }
-
-    ModuleRegistry.add { case o: BasicSpace ⇒ new ActionAddDescription(o) }
+    ModuleRegistry.add { case o: ContainerSpace ⇒ new ActionAddDescription(o) }
     ModuleRegistry.add { case o: Event ⇒ new ActionAddDescription(o) }
 
-    ModuleRegistry.add { case o: BasicSpace ⇒ new InitializeMembersOctopus(o) }
+    ModuleRegistry.add { case o: ContainerSpace ⇒ new InitializeMembersOctopus(o) }
     ModuleRegistry.add { case o: WithMembers ⇒ new ActionAddMember(o) }
 
     ModuleRegistry.add { case o: Space ⇒ new ActionMove(o) }

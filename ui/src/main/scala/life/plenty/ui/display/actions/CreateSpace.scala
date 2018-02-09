@@ -3,7 +3,7 @@ package life.plenty.ui.display.actions
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.{Body, Title}
-import life.plenty.model.octopi.BasicSpace
+import life.plenty.model.octopi.ContainerSpace
 import life.plenty.ui.display.Login._
 import life.plenty.ui.display.Modal
 import org.scalajs.dom.{Event, Node}
@@ -23,7 +23,7 @@ object CreateSpace {
     event.preventDefault()
 
     for (t ← title.get; d ← description.get) {
-      val space = new BasicSpace
+      val space = new ContainerSpace
       space.asNew(Title(t), Body(d))
 
       println(space.sc.all)

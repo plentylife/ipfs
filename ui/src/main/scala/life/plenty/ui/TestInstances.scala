@@ -13,7 +13,7 @@ object TestInstances {
   implicit val ctx = Ctx.Owner.safe()
 
   def load(): Space = {
-    val ts = new BasicSpace()
+    val ts = new ContainerSpace()
     ts.asNew(Title("French" + new Date().getHours + new Date().getMinutes.toString), getCreator)
 
     val e = new Event

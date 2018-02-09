@@ -25,12 +25,12 @@ package object ui {
     ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
     ModuleRegistry add { case o: Space ⇒ new EditSpace(o) }
 
-    ModuleRegistry add { case o: BasicSpace ⇒ new DescriptionDisplay(o) }
+    ModuleRegistry add { case o: ContainerSpace ⇒ new DescriptionDisplay(o) }
     ModuleRegistry add { case o: Event ⇒ new DescriptionDisplay(o) }
 
     //    ModuleRegistry add { case o: Space ⇒ new ViewStateLinks(o) }
     //    ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortDisplay(o) }
-    ModuleRegistry add { case o: BasicSpace ⇒ new BasicSpaceDisplayOrder(o) }
+    ModuleRegistry add { case o: ContainerSpace ⇒ new BasicSpaceDisplayOrder(o) }
     ModuleRegistry add { case o: Space ⇒ new TopSpaceGroups(o) }
 
     ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithQuestionInput(o) }

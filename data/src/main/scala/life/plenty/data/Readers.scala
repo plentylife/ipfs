@@ -23,7 +23,7 @@ object OctopusReader {
 
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
     ci("BasicUser", new BasicUser()),
-    ci("BasicSpace", new BasicSpace()),
+    ci("BasicSpace", new ContainerSpace()),
     ci("BasicQuestion", new BasicQuestion()),
     ci("Who", new Who()),
     ci("How", new How()),
