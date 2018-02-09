@@ -5,7 +5,8 @@ import life.plenty.data.{OctopusGunReaderModule, OctopusReader, Main ⇒ dataMai
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Octopus
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
-import life.plenty.ui.display.{Help, LoadIndicator, Login}
+import life.plenty.ui.display.actions.CreateSpace
+import life.plenty.ui.display.{Help, LoadIndicator, Login, Modal}
 import life.plenty.ui.model.{DisplayModel, Router, RoutingParams, UiContext}
 import life.plenty.{data, ui}
 import org.scalajs.dom.raw.Node
@@ -43,8 +44,6 @@ object Main {
 
   @dom
   def showUi(): Binding[Node] = {
-    //    val id = "02PgqlznC6LmE6FJNettMmLVxztTemvxdb3ChgXTsOk="
-
     <span style="display:none">
       {if (UiContext.userVar.bind != null) {
       println(s"Setting default creator to ${UiContext.userVar.bind}")
@@ -55,7 +54,7 @@ object Main {
           OctopusReader.read(id) foreach { spaceOpt ⇒
             UiContext.startingSpace.value_=(spaceOpt map { s ⇒ s.asInstanceOf[Space] })
           }
-        case None ⇒ println("Router params do not have a space id")
+        case None ⇒ CreateSpace.openInModal()
       }
       ""
     } else ""}
@@ -119,6 +118,7 @@ object Main {
   @dom
   def mainSection(): Binding[Node] = {
     <div id="viewport" onclick={e: Event ⇒ Help.triggerClose()}>
+      {Modal.display().bind}
       {LoadIndicator.show().bind}
       {showUi().bind}
       {Help.display().bind}{Login.display().bind}{if (UiContext.startingSpace.bind.nonEmpty)

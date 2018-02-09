@@ -20,7 +20,7 @@ body {
 
 #viewport {
   //background-color: white;
-  max-width: 1000px;
+  //max-width: 1000px;
   min-width: 320px;
   padding: $spacer * 2;
   padding-top: 0;
@@ -62,6 +62,16 @@ body {
   /*background-color: pink;*/
   /*display: block;*/
   /*margin-bottom: 3px;*/
+}
+
+.modal-outer-box {
+  z-index: 200;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
 }
 
 .main-help {
@@ -107,4 +117,8 @@ body {
   margin-left: -$spacer;
   color: darkcyan;
   width: 100%;
+}
+
+textarea {
+  resize: both;
 }

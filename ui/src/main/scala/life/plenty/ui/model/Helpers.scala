@@ -5,6 +5,8 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.definition.Octopus
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
 import org.scalajs.dom.Node
+import org.scalajs.dom.html.Input
+import org.scalajs.dom.raw.Event
 import rx.{Ctx, Rx}
 
 import scalaz.std.list._
@@ -82,4 +84,21 @@ object Helpers {
     }
   }
 
+  class InputVar(innerVar: Var[String] = Var("")) {
+    val isEmpty = Var(false)
+
+    def input(e: Event) = {
+      val v = e.target.asInstanceOf[Input].value.trim
+      isEmpty.value_=(v.isEmpty)
+      println(v, isEmpty.value)
+      innerVar.value_=(v)
+    }
+
+    def get: Option[String] = {
+      val v = innerVar.value
+      if (isEmpty.value) None else Option(v)
+    }
+
+    def reset = innerVar.value_=("")
+  }
 }
