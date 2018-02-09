@@ -23,7 +23,6 @@ trait RxConnectionManager {
     /* end block */
   })
 
-
   object rx {
     type RxConsList = Rx[List[Connection[_]]]
 

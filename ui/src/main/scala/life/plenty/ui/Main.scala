@@ -68,7 +68,7 @@ object Main {
     val rp = Router.defaultRoutingParams.copy(spaceId = Option(ts.id))
     println("Routing hash")
     println(Router.toHash(rp))
-    Router.navigateToOctopus(ts)
+//    Router.navigateToOctopus(ts)
   }
 
   @JSExport

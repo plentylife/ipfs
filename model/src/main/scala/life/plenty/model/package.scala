@@ -51,7 +51,7 @@ package object model {
     ModuleRegistry.add { case o: Space ⇒ new ActionMove(o) }
 
     ModuleRegistry.add { case o: Octopus ⇒ new ActionRemove(o) }
-    ModuleRegistry.add { case o: Octopus ⇒ new RemovedFilter(o) }
+//    ModuleRegistry.add { case o: Octopus ⇒ new RemovedFilter(o) }
 
   }
 }
