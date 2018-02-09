@@ -3,14 +3,27 @@ package life.plenty.model.octopi.definition
 import life.plenty.model.actions.ActionOnConnectionsRequest
 import life.plenty.model.connection.Connection
 import life.plenty.model.console
+import life.plenty.model.modifiers.RxConnectionFilters
 import rx.{Ctx, Rx, Var}
 
-trait RxConnectionManager {
+trait RxConnectionManager {self: Octopus ⇒
   protected lazy val _connectionsRx: Var[List[Rx[Option[Connection[_]]]]] = Var(List.empty[Rx[Option[Connection[_]]]])
+
+  private lazy val connectionFilters = getAllModules({ case m: RxConnectionFilters[_] ⇒ m })
 
   private var onConnectionsRequest: List[() ⇒ Unit] = List()
 
-  def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]) = onConnectionsRequest :::= fList
+  def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]): Unit = onConnectionsRequest :::= fList
+
+  // fixme add the filters
+
+//  /*filtering block*/
+//  val filteredCon: Rx[Option[Connection[_]]] = connectionFilters.foldLeft[Rx[Option[Connection[_]]]](
+//    Var {Option(connection)}
+//  )((c, f) ⇒ f(c))
+//  _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[Connection[_]]]])
+//  /* end block */
+
 
   object rx {
     type RxConsList = Rx[List[Connection[_]]]

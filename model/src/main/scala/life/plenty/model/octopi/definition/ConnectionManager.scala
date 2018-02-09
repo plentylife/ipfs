@@ -1,9 +1,10 @@
 package life.plenty.model.octopi.definition
 
+import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnGraphTransform}
 import life.plenty.model.connection.Connection
 import rx.{Rx, Var}
 
-trait ConnectionManager[CT] {
+trait ConnectionManager[CT] {self: Octopus ⇒
   protected lazy val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
 
   def connections: Rx[List[Connection[_]]] = _connections
@@ -17,4 +18,35 @@ trait ConnectionManager[CT] {
 
     def exf[T](f: PartialFunction[Connection[_], T]): T = ex(f).get
   }
+
+  private lazy val actionsOnGraphTransform = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*)
+  private lazy val actionsAfterGraphTransform = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*)
+
+  def addConnection(connection: Connection[_]): Either[Exception, Unit] = {
+    // duplicates are silently dropped
+    if (sc.all.contains {c: Connection[_] ⇒ c.id == connection.id}) {
+      return Right()
+    }
+
+    var onErrorList = actionsOnGraphTransform map { m ⇒
+      m.onConnectionAdd(connection)
+    }
+
+    onErrorList.collectFirst({ case e: Left[Exception, Unit] ⇒ e }) match {
+      case Some(e) ⇒ e
+
+      case None ⇒
+        _connections() = connection :: _connections.now
+        //        println(s"added connection ${connection} to ${this} ${_connections.now}")
+
+        onErrorList = actionsAfterGraphTransform map { m ⇒
+          m.onConnectionAdd(connection)
+        }
+        onErrorList.collectFirst({ case e: Left[Exception, Unit] ⇒ e }) match {
+          case Some(e) ⇒ e
+          case None ⇒ Right()
+        }
+    }
+  }
+
 }

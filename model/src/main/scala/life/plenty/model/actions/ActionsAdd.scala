@@ -1,6 +1,6 @@
 package life.plenty.model.actions
 
-import life.plenty.model.connection.{Body, Marker, MarkerEnum, Removed}
+import life.plenty.model.connection.{Body, Marker, MarkerEnum}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.{Module, Octopus}
 
@@ -31,7 +31,8 @@ class ActionAddDescription(override val withinOctopus: Space) extends Module[Spa
     existing.foreach { cOpt ⇒
       existing.kill()
       cOpt foreach { c ⇒
-        withinOctopus.addConnection(Removed(c.id))
+        // fixme
+//        withinOctopus.addConnection(Removed(c.id))
       }
     }
     withinOctopus.addConnection(Body(body))
@@ -49,7 +50,8 @@ class ActionAddConfirmedMarker(override val withinOctopus: Octopus) extends Modu
 
   def deconfirm() = {
     // try just adding the same remove!
-    withinOctopus.removeConnection(Marker(MarkerEnum.CONFIRMED))
+    //fixme
+//    withinOctopus.removeConnection(Marker(MarkerEnum.CONFIRMED))
     println(s"removed marker ${withinOctopus.sc.all}")
     println(s"${withinOctopus.rx.cons}")
     //    val obs = withinOctopus.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })

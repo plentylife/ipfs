@@ -9,7 +9,7 @@ object NoMarker extends TmpMarker
 
 object AtInstantiation extends TmpMarker
 
-trait Connection[T] {
+trait Connection[T] extends Octopus {
   def value: T
 
   private var active: Boolean = true
@@ -22,7 +22,7 @@ trait Connection[T] {
 
   var tmpMarker: TmpMarker = NoMarker
 
-  def id: String = idGivenValue(value) + this.getClass.getSimpleName
+  override def id: String = idGivenValue(value) + this.getClass.getSimpleName
 
   protected def idGivenValue(v: T): String = {
     try {

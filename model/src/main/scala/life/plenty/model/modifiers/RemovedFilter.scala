@@ -10,19 +10,13 @@ class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFil
 
   private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  private lazy val removedConIds: Rx[List[String]] = withinOctopus.rx.Lazy.getAll({ case Removed(id: String) ⇒ id })
-
   override def apply(what: Rx[Option[Connection[_]]])(implicit ctx: Ctx.Owner): Rx[Option[Connection[_]]] = {
     val filtered: Rx[Option[Connection[_]]] = what.map { optCon: Option[Connection[_]] ⇒
       optCon flatMap { con: Connection[_] ⇒
         // checking if removed based on connection
         // the AtInstantiation is added for 2 reasons: not to trip an error of idGen and because those are required
         // (usually)
-        if (!con.isInstanceOf[Id]) { // not loaded from db or instantiated
-          model.console.trace(s"Removed connections list ${removedConIds.now} ${con} ${con.id} ${withinOctopus}")
-          println(s"Removed connections list ${removedConIds.now} in ${con} ${con.id} ${withinOctopus}")
-        }
-        if (con.isInstanceOf[Id] || con.tmpMarker == AtInstantiation || !removedConIds().contains(con.id)) {
+        if (con.isInstanceOf[Id] || con.tmpMarker == AtInstantiation) {
           val resCon: Option[Connection[_]] = con.value match {
             // checking if removed based on octopus
             case o: Octopus ⇒

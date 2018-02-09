@@ -96,7 +96,7 @@ object ConnectionReader {
   }
 
   private val leafReaders = Stream[(String, String) ⇒ Option[Connection[_]]](
-    Title(_, _), Body(_, _), Amount(_, _), Id(_, _), Name(_, _), CreationTime(_, _), Marker(_, _), Removed(_, _)
+    Title(_, _), Body(_, _), Amount(_, _), Id(_, _), Name(_, _), CreationTime(_, _), Marker(_, _)
   )
 
   private val octopusReaders = Stream[(String, Octopus) ⇒ Option[Connection[_]]](
@@ -125,7 +125,6 @@ object ConnectionReader {
     val con = d.asInstanceOf[JsConnection]
     // Id is a special case, since it's value points to an octopus, but it's really a leaf connection
     if (con.`class` == "Id") return Future {Option {Id(con.value)}}
-    if (con.`class` == "Removed") return Future {Option {Removed(con.value)}}
     console.trace(s"ConnectionReader ${con.`class`} ${con.value} $key")
 
     hasClass(con.value) flatMap { hc ⇒
