@@ -1,12 +1,11 @@
 package life.plenty.model.octopi.definition
 
-import life.plenty.model.actions.ActionOnConnectionsRequest
 import life.plenty.model.connection.Connection
-import life.plenty.model.console
 import life.plenty.model.modifiers.RxConnectionFilters
 import rx.{Ctx, Rx, Var}
 
-trait RxConnectionManager {self: Octopus ⇒
+trait RxConnectionManager {
+  self: Octopus ⇒
   protected lazy val _connectionsRx: Var[List[Rx[Option[Connection[_]]]]] = Var(List.empty[Rx[Option[Connection[_]]]])
 
   private lazy val connectionFilters = getAllModules({ case m: RxConnectionFilters[_] ⇒ m })
@@ -15,21 +14,23 @@ trait RxConnectionManager {self: Octopus ⇒
 
   def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]): Unit = onConnectionsRequest :::= fList
 
-  // fixme add the filters
-
-//  /*filtering block*/
-//  val filteredCon: Rx[Option[Connection[_]]] = connectionFilters.foldLeft[Rx[Option[Connection[_]]]](
-//    Var {Option(connection)}
-//  )((c, f) ⇒ f(c))
-//  _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[Connection[_]]]])
-//  /* end block */
+  onConnectionAddedOperation(connection ⇒ {
+    /*filtering block*/
+    val filteredCon: Rx[Option[Connection[_]]] = connectionFilters.foldLeft[Rx[Option[Connection[_]]]](
+      Var {Option(connection)}
+    )((c, f) ⇒ f(c))
+    _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[Connection[_]]]])
+    /* end block */
+  })
 
 
   object rx {
     type RxConsList = Rx[List[Connection[_]]]
 
-    def toRxConsList(in: Var[scala.List[Rx[Option[Connection[_]]]]])(implicit ctx: Ctx.Owner): RxConsList = {in.map({ list ⇒
-        list.flatMap(rx ⇒ {rx()})})
+    def toRxConsList(in: Var[scala.List[Rx[Option[Connection[_]]]]])(implicit ctx: Ctx.Owner): RxConsList = {
+      in.map({ list ⇒
+        list.flatMap(rx ⇒ {rx()})
+      })
     }
 
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
@@ -59,6 +60,7 @@ trait RxConnectionManager {self: Octopus ⇒
         } flatMap { rx ⇒ rx() })(ctx)
       }
     }
+
   }
 
 }

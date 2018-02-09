@@ -5,7 +5,12 @@ import life.plenty.model.connection.Connection
 import rx.{Rx, Var}
 
 trait ConnectionManager[CT] {self: Octopus ⇒
+  private var onConnectionAddedOperations: List[(Connection[_]) ⇒ Unit] = List()
   protected lazy val _connections: Var[List[Connection[_]]] = Var(List.empty[Connection[_]])
+
+  protected def onConnectionAddedOperation(op: (Connection[_]) ⇒ Unit): Unit = {
+    onConnectionAddedOperations +:= op
+  }
 
   def connections: Rx[List[Connection[_]]] = _connections
 
@@ -37,7 +42,7 @@ trait ConnectionManager[CT] {self: Octopus ⇒
 
       case None ⇒
         _connections() = connection :: _connections.now
-        //        println(s"added connection ${connection} to ${this} ${_connections.now}")
+        onConnectionAddedOperations.foreach(f ⇒ f(connection))
 
         onErrorList = actionsAfterGraphTransform map { m ⇒
           m.onConnectionAdd(connection)
