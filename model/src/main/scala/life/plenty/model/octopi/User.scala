@@ -2,10 +2,10 @@ package life.plenty.model.octopi
 
 import life.plenty.model
 import life.plenty.model.connection.{Child, Name}
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import rx.Rx
 
-trait User extends Octopus {
+trait User extends Hub {
   clearRequired()
   addToRequired(getRxId)
   addToRequired(getName)

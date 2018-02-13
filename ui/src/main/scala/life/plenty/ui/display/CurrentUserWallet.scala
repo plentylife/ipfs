@@ -2,7 +2,7 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.octopi.pseudo.Wallet
 import life.plenty.model.octopi.{User, WithMembers}
 import life.plenty.ui
@@ -24,7 +24,7 @@ object CurrentUserWallet {
   private val voteBalance = Var[Int](0)
 
   @dom
-  def generateHtml(withinOctopus: Octopus): Binding[Node] = withinOctopus match {
+  def generateHtml(withinOctopus: Hub): Binding[Node] = withinOctopus match {
     case o: WithMembers ⇒
       update(o)
       wallet.bind match {

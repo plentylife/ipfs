@@ -2,7 +2,7 @@ package life.plenty
 
 import life.plenty.model._
 import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.utils.Console
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions.{ConfirmActionDisplay, CreateAnswer, EditSpace}
@@ -50,9 +50,9 @@ package object ui {
     //    ModuleRegistry add { case o: Octopus ⇒ new DiscussModuleFilter(o) }
     //    ModuleRegistry add { case o: Octopus ⇒ new RateEffortConnectionFilter(o) }
 
-    ModuleRegistry add { case o: Octopus if !(o.isInstanceOf[Vote] || o.isInstanceOf[Question]) ⇒ new ChildDisplay(o) }
+    ModuleRegistry add { case o: Hub if !(o.isInstanceOf[Vote] || o.isInstanceOf[Question]) ⇒ new ChildDisplay(o) }
 
-    ModuleRegistry add { case o: Octopus ⇒ new ModularDisplay(o) }
+    ModuleRegistry add { case o: Hub ⇒ new ModularDisplay(o) }
     ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }
   }
 

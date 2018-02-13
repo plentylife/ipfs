@@ -2,7 +2,7 @@ package life.plenty.model.actions
 
 import life.plenty.model.connection.{Body, Marker, MarkerEnum}
 import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.{Module, Octopus}
+import life.plenty.model.octopi.definition.{Module, Hub}
 
 class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
   def add(userId: String) = {
@@ -39,7 +39,7 @@ class ActionAddDescription(override val withinOctopus: Space) extends Module[Spa
   }
 }
 
-class ActionAddConfirmedMarker(override val withinOctopus: Octopus) extends Module[Octopus] {
+class ActionAddConfirmedMarker(override val withinOctopus: Hub) extends Module[Hub] {
   private implicit val ctx = withinOctopus.ctx
 
   def confirm() = {

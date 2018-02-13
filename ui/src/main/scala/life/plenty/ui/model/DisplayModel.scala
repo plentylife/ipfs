@@ -2,7 +2,7 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.definition.{Module, Octopus}
+import life.plenty.model.octopi.definition.{Module, Hub}
 import life.plenty.ui
 import org.scalajs.dom.Node
 import rx.Ctx
@@ -13,7 +13,7 @@ import scalaz.std.list._
 object DisplayModel {
   implicit def intToStr(i: Int): String = i.toString
 
-  def display(o: Octopus, overrides: List[ModuleOverride] = List(),
+  def display(o: Hub, overrides: List[ModuleOverride] = List(),
               calledBy: Option[DisplayModule[_]] = None): Binding[Node] = {
     o.modules.find {
       case dm: DisplayModule[_] ⇒ dm.doDisplay()
@@ -28,7 +28,7 @@ object DisplayModel {
   @dom
   private def noDisplay: Binding[Node] = <div>This octopus has no display</div>
 
-  def reRender(o: Octopus, moduleSelector: PartialFunction[Module[Octopus], DisplayModule[Octopus]] = {
+  def reRender(o: Hub, moduleSelector: PartialFunction[Module[Hub], DisplayModule[Hub]] = {
     case m: DisplayModule[_] ⇒ m
   }): Unit =
     o.getModules(moduleSelector).foreach(m ⇒ {
@@ -37,7 +37,7 @@ object DisplayModel {
         m.update()
       }
     })
-  def getSiblingModules(self: DisplayModule[Octopus]): List[DisplayModule[Octopus]] = self.withinOctopus.getModules {
+  def getSiblingModules(self: DisplayModule[Hub]): List[DisplayModule[Hub]] = self.withinOctopus.getModules {
     case m: DisplayModule[_] if m != self ⇒ m
   }
 
@@ -48,7 +48,7 @@ object DisplayModel {
 
   /* the main trait */
 
-  trait DisplayModule[+T <: Octopus] extends Module[T] {
+  trait DisplayModule[+T <: Hub] extends Module[T] {
     implicit def its(i: Int): String = intToStr(i)
 
     implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
@@ -62,7 +62,7 @@ object DisplayModel {
 
     protected val cachedOverrides = Vars[ModuleOverride]()
 
-    def display(calledBy: DisplayModule[Octopus], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
+    def display(calledBy: DisplayModule[Hub], overrides: List[ModuleOverride] = List()): Option[Binding[Node]] = {
       this.display(Option(calledBy), overrides)
     }
 
@@ -112,10 +112,10 @@ object DisplayModel {
       }
   }
 
-  case class ModuleOverride(creator: DisplayModule[Octopus], by: DisplayModule[Octopus], condition:
-  (DisplayModule[Octopus]) ⇒ Boolean)
+  case class ModuleOverride(creator: DisplayModule[Hub], by: DisplayModule[Hub], condition:
+  (DisplayModule[Hub]) ⇒ Boolean)
 
-  trait ActionDisplay[T <: Octopus] extends DisplayModule[T] {
+  trait ActionDisplay[T <: Hub] extends DisplayModule[T] {
     val active = Var(false)
     protected val isEmpty = Var(false)
 

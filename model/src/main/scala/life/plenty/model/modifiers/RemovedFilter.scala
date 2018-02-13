@@ -3,23 +3,23 @@ package life.plenty.model.modifiers
 import life.plenty.model
 import life.plenty.model.connection.MarkerEnum._
 import life.plenty.model.connection._
-import life.plenty.model.octopi.definition.{AtInstantiation, Octopus}
+import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
 import rx.{Ctx, Rx}
 
-class RemovedFilter(override val withinOctopus: Octopus) extends RxConnectionFilters[Octopus] {
+class RemovedFilter(override val withinOctopus: Hub) extends RxConnectionFilters[Hub] {
 
   private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  override def apply(what: Rx[Option[Connection[_]]])(implicit ctx: Ctx.Owner): Rx[Option[Connection[_]]] = {
-    val filtered: Rx[Option[Connection[_]]] = what.map { optCon: Option[Connection[_]] ⇒
-      optCon flatMap { con: Connection[_] ⇒
+  override def apply(what: Rx[Option[DataHub[_]]])(implicit ctx: Ctx.Owner): Rx[Option[DataHub[_]]] = {
+    val filtered: Rx[Option[DataHub[_]]] = what.map { optCon: Option[DataHub[_]] ⇒
+      optCon flatMap { con: DataHub[_] ⇒
         // checking if removed based on connection
         // the AtInstantiation is added for 2 reasons: not to trip an error of idGen and because those are required
         // (usually)
         if (con.isInstanceOf[Id] || con.tmpMarker == AtInstantiation) {
-          val resCon: Option[Connection[_]] = con.value match {
+          val resCon: Option[DataHub[_]] = con.value match {
             // checking if removed based on octopus
-            case o: Octopus ⇒
+            case o: Hub ⇒
               val rc = o.rx.Lazy.lazyGet({ case m@Marker(REMOVED) ⇒ m })
               val rcOpt = rc map { marker ⇒ if (marker.isEmpty) optCon else None }
               rcOpt()

@@ -3,7 +3,7 @@ package life.plenty.model.modifiers
 import life.plenty.model
 import life.plenty.model.console
 import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import rx.{Ctx, Rx}
 
 class AnswerVoteOrder(override val withinOctopus: Question) extends OctopusOrdering[Question] {
@@ -12,13 +12,13 @@ class AnswerVoteOrder(override val withinOctopus: Question) extends OctopusOrder
 
   //  private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  override def order(what: List[Octopus]): List[Octopus] = {
+  override def order(what: List[Hub]): List[Hub] = {
     var answers = List[Answer]()
-    var others = List[Octopus]()
+    var others = List[Hub]()
     for (o ← what) {
       o match {
         case a: Answer ⇒ answers = a :: answers
-        case o: Octopus ⇒ others = o :: others
+        case o: Hub ⇒ others = o :: others
       }
     }
 
@@ -28,11 +28,11 @@ class AnswerVoteOrder(override val withinOctopus: Question) extends OctopusOrder
     answers ::: others
   }
 
-  override def applyRx(whatRx: Rx[List[Octopus]])(implicit ctx: Ctx.Owner): Rx[List[Octopus]] = whatRx.map {
+  override def applyRx(whatRx: Rx[List[Hub]])(implicit ctx: Ctx.Owner): Rx[List[Hub]] = whatRx.map {
     what ⇒
-      val byVote: List[(Octopus, Int)] = what.map {
+      val byVote: List[(Hub, Int)] = what.map {
         case a: Answer ⇒ a -> a.votes()
-        case o: Octopus ⇒ o -> 0
+        case o: Hub ⇒ o -> 0
       }
       console.trace(s"rxSort answers ${byVote}")
       byVote.sortBy(_._2).reverse.map(_._1)

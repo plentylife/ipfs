@@ -2,7 +2,7 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
 import org.scalajs.dom.Node
 import org.scalajs.dom.html.Input
@@ -72,7 +72,7 @@ object Helpers {
     }
   }
 
-  class BindableAction[T <: ActionDisplay[_]](val module: Option[T], calledBy: DisplayModule[Octopus]) {
+  class BindableAction[T <: ActionDisplay[_]](val module: Option[T], calledBy: DisplayModule[Hub]) {
     val active: Var[Boolean] = module.map(_.active) getOrElse Var(false)
 
     @dom

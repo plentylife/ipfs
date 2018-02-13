@@ -1,7 +1,7 @@
 package life.plenty.ui.filters
 
 import life.plenty.model.modifiers.ModuleFilters
-import life.plenty.model.octopi.definition.{Module, Octopus}
+import life.plenty.model.octopi.definition.{Module, Hub}
 import life.plenty.ui.display._
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
 import life.plenty.ui.model.DisplayModel.DisplayModule
@@ -9,10 +9,10 @@ import life.plenty.ui.model.ViewState
 import life.plenty.ui.model.ViewState.ViewState
 
 //
-abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
-  RouterFilter[Octopus, Module[Octopus], List[Module[Octopus]]] with ModuleFilters[Octopus] {
+abstract class RouterModuleFilter(override val withinOctopus: Hub) extends
+  RouterFilter[Hub, Module[Hub], List[Module[Hub]]] with ModuleFilters[Hub] {
 
-  override protected def filterInner(what: List[Module[Octopus]]): List[Module[Octopus]] = {
+  override protected def filterInner(what: List[Module[Hub]]): List[Module[Hub]] = {
     val f = what filter { m ⇒
       acceptable exists (cf ⇒ cf(m))
     }
@@ -24,7 +24,7 @@ abstract class RouterModuleFilter(override val withinOctopus: Octopus) extends
     _.isInstanceOf[ModularDisplay], _.isInstanceOf[RouterFilter[_, _, _]])
 }
 
-class RateEffortModuleFilter(private val _withinOctopus: Octopus) extends RouterModuleFilter(_withinOctopus) {
+class RateEffortModuleFilter(private val _withinOctopus: Hub) extends RouterModuleFilter(_withinOctopus) {
   override protected val engageOnState: ViewState = ViewState.RATING
   private val _acceptable = {
     Set(
@@ -38,7 +38,7 @@ class RateEffortModuleFilter(private val _withinOctopus: Octopus) extends Router
   override protected def acceptable: Set[Module[_] ⇒ Boolean] = super.acceptable ++ _acceptable
 }
 
-class DiscussModuleFilter(private val _withinOctopus: Octopus) extends RouterModuleFilter(_withinOctopus) {
+class DiscussModuleFilter(private val _withinOctopus: Hub) extends RouterModuleFilter(_withinOctopus) {
   override protected val engageOnState: ViewState = ViewState.DISCUSSION
   private val _acceptable = {
     Set(

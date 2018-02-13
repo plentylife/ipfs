@@ -2,19 +2,19 @@ package life.plenty.model.octopi.definition
 
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
-import life.plenty.model.connection.{Connection, Marker}
+import life.plenty.model.connection.{DataHub, Marker}
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
 
-trait Octopus extends OctopusConstructor with ConnectionManager[Any] with RxConnectionManager {
+trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnectionManager {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  protected var _modules: List[Module[Octopus]] = List()
+  protected var _modules: List[Module[Hub]] = List()
 
   private lazy val moduleFilters = getAllModules({ case m: ModuleFilters[_] ⇒ m })
 
-  def modules: List[Module[Octopus]] = {
+  def modules: List[Module[Hub]] = {
     //    console.trace(s"trying to get modules ${_modules} filters ${moduleFilters}")
     moduleFilters.foldLeft(_modules)((ms, f) ⇒ {
       f(ms)
@@ -22,19 +22,19 @@ trait Octopus extends OctopusConstructor with ConnectionManager[Any] with RxConn
   }
 
   /** these modules are filtered */
-  def getModules[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): List[T] =
+  def getModules[T <: Module[Hub]](matchBy: PartialFunction[Module[Hub], T]): List[T] =
     modules.collect(matchBy)
 
   /** these modules do not have any filters applied */
-  def getAllModules[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): List[T] = {
+  def getAllModules[T <: Module[Hub]](matchBy: PartialFunction[Module[Hub], T]): List[T] = {
     _modules.collect(matchBy)
   }
 
-  def getTopModule[T <: Module[Octopus]](matchBy: PartialFunction[Module[Octopus], T]): Option[T] = {
+  def getTopModule[T <: Module[Hub]](matchBy: PartialFunction[Module[Hub], T]): Option[T] = {
     modules.collectFirst(matchBy)
   }
 
-  def addModule(module: Module[Octopus]): Unit = {
+  def addModule(module: Module[Hub]): Unit = {
     _modules = module :: _modules
     module match {
       case m: ActionOnAddToModuleStack[_] ⇒ m.onAddToStack()

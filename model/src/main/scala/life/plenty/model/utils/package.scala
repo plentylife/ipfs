@@ -1,7 +1,7 @@
 package life.plenty.model
 
-import life.plenty.model.connection.{Connection, Marker, MarkerEnum}
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.connection.{DataHub, Marker, MarkerEnum}
+import life.plenty.model.octopi.definition.Hub
 import rx.{Ctx, Rx}
 
 package object utils {
@@ -9,10 +9,10 @@ package object utils {
   /** unsafe */
   //  implicit def getRx[T](r: Rx[Option[T]]): T = r.now.get
 
-  implicit class OptRxOctopus[T <: Octopus](rx: Rx[Option[T]])(implicit ctx: Ctx.Owner) {
+  implicit class OptRxOctopus[T <: Hub](rx: Rx[Option[T]])(implicit ctx: Ctx.Owner) {
     console.trace(s"Util OptRxOcto ${rx.now}")
-    def addConnection(c: Connection[_]) = rx.foreach(_.foreach {
-      o: Octopus ⇒ o.addConnection(c)
+    def addConnection(c: DataHub[_]) = rx.foreach(_.foreach {
+      o: Hub ⇒ o.addConnection(c)
     })
   }
 
@@ -29,7 +29,7 @@ package object utils {
   }
 
   object ConFinders {
-    def markedConfirmed(o: Octopus)(implicit ctx: Ctx.Owner): Rx[Boolean] =
+    def markedConfirmed(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] =
       o.rx.get({ case Marker(m) if m == MarkerEnum.CONFIRMED ⇒ m }).map(m ⇒ {
         println(s"rx confirmed changing ${m}")
         m.nonEmpty

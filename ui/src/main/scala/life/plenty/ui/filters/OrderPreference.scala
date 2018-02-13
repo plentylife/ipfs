@@ -1,7 +1,7 @@
 package life.plenty.ui.filters
 
 import life.plenty.model.modifiers.OctopusOrdering
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.octopi.{ContainerSpace, Members}
 import rx.{Ctx, Rx}
 //
@@ -14,7 +14,7 @@ import rx.{Ctx, Rx}
 class BasicSpaceDisplayOrder(override val withinOctopus: ContainerSpace) extends OctopusOrdering[ContainerSpace] {
   private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  override def order(what: List[Octopus]): List[Octopus] = {
+  override def order(what: List[Hub]): List[Hub] = {
     val i = what.indexWhere(_.isInstanceOf[Members])
     if (i != -1) {
       val s = what.splitAt(i)
@@ -24,5 +24,5 @@ class BasicSpaceDisplayOrder(override val withinOctopus: ContainerSpace) extends
     }
   }
 
-  override def applyRx(whatRx: Rx[List[Octopus]])(implicit ctx: Ctx.Owner): Rx[List[Octopus]] = whatRx.map(order)
+  override def applyRx(whatRx: Rx[List[Hub]])(implicit ctx: Ctx.Owner): Rx[List[Hub]] = whatRx.map(order)
 }

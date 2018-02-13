@@ -2,8 +2,8 @@ package life.plenty.data
 
 import life.plenty.data.Main.gun
 import life.plenty.model.actions.ActionAfterGraphTransform
-import life.plenty.model.connection.Connection
-import life.plenty.model.octopi.definition.{AtInstantiation, Module, Octopus}
+import life.plenty.model.connection.DataHub
+import life.plenty.model.octopi.definition.{AtInstantiation, Module, Hub}
 import rx.Ctx
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -12,7 +12,7 @@ import scala.scalajs.js
 import scala.scalajs.js.JSON
 
 object OctopusWriter {
-  def write(o: Octopus): Future[Gun] = {
+  def write(o: Hub): Future[Gun] = {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
@@ -28,7 +28,7 @@ object OctopusWriter {
 
       val info = js.Dynamic.literal("class" → o.getClass.getSimpleName)
       o match {
-        case c: Connection[_] ⇒ info.updateDynamic("value")(stringifyData(c))
+        case c: DataHub[_] ⇒ info.updateDynamic("value")(stringifyData(c))
         case _ ⇒
       }
 
@@ -44,14 +44,14 @@ object OctopusWriter {
     }
   }
 
-  private def stringifyData(c: Connection[_]): String = {
+  private def stringifyData(c: DataHub[_]): String = {
     c.value match {
-      case o: Octopus ⇒ o.id
+      case o: Hub ⇒ o.id
       case other ⇒ other.toString()
     }
   }
 
-  def writeConnections(connections: Iterable[Connection[_]], go: Gun): Unit = {
+  def writeConnections(connections: Iterable[DataHub[_]], go: Gun): Unit = {
     val consgun = connectionsGun(go)
     for (c ← connections) {
       OctopusWriter.write(c) foreach { cgun ⇒
@@ -60,7 +60,7 @@ object OctopusWriter {
     }
   }
 
-  def writeSingleConnection(connection: Connection[_], go: Gun): Unit = {
+  def writeSingleConnection(connection: DataHub[_], go: Gun): Unit = {
     console.println(s"OctopusWriter single connection ${connection} ${connection.id}")
     val consgun = connectionsGun(go)
     OctopusWriter.write(connection) foreach {cgun ⇒
@@ -84,10 +84,10 @@ object OctopusWriter {
   }
 }
 
-class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGraphTransform {
+class GunWriterModule(override val withinOctopus: Hub) extends ActionAfterGraphTransform {
   private lazy val gun = Main.gun.get(withinOctopus.id)
 
-  override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {
+  override def onConnectionAdd(connection: DataHub[_]): Either[Exception, Unit] = {
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       Future {
           console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")
@@ -97,10 +97,10 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
     Right()
   }
 
-  override def onConnectionRemove(connection: Connection[_]): Either[Exception, Unit] = ???
+  override def onConnectionRemove(connection: DataHub[_]): Either[Exception, Unit] = ???
 }
 
-class InstantiationGunWriterModule(override val withinOctopus: Octopus) extends Module[Octopus] {
+class InstantiationGunWriterModule(override val withinOctopus: Hub) extends Module[Hub] {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   withinOctopus.onNew {

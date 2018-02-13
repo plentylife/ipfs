@@ -12,7 +12,7 @@ import rx.{Rx, Var}
 import scala.util.Random
 
 trait OctopusConstructor {
-  self: Octopus ⇒
+  self: Hub ⇒
 
   //  implicit private[this] val ctxConstructor: Ctx.Owner = self.ctx
 
@@ -46,7 +46,7 @@ trait OctopusConstructor {
   final def required: Set[() ⇒ Rx[Option[_]]] = _required
 
   /** alias for [[addConnection()]] with the connection marked */
-  def setInit(c: Connection[_]): Unit = addConnection(c.inst)
+  def setInit(c: DataHub[_]): Unit = addConnection(c.inst)
 
   private lazy val isNewVar = Var(false)
 
@@ -71,7 +71,7 @@ trait OctopusConstructor {
     })
   }
 
-  def asNew(properties: Connection[_]*): Unit = {
+  def asNew(properties: DataHub[_]*): Unit = {
     model.console.trace(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
     properties.foreach(p ⇒ {
       p.tmpMarker = AtInstantiation

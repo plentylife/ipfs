@@ -2,25 +2,25 @@ package life.plenty.model.octopi
 
 import life.plenty.model
 import life.plenty.model.connection.{Amount, Child, Parent}
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import rx.Rx
 
-trait WithParent[T <: Octopus] extends Octopus {
+trait WithParent[T <: Hub] extends Hub {
   addToRequired(getParent)
 
-  def getParent: Rx[Option[Octopus]] = rx.get({ case Parent(p: Octopus) ⇒ p })
+  def getParent: Rx[Option[Hub]] = rx.get({ case Parent(p: Hub) ⇒ p })
 
   //  override def idGenerator: String = super.idGenerator + getParent.now.get.id
 
   onNew {
-    getParent.foreach(_.foreach { p: Octopus ⇒
+    getParent.foreach(_.foreach { p: Hub ⇒
       model.console.trace(s"adding child to parent from ${this} to $p")
       p.addConnection(Child(this))
     })
   }
 }
 
-trait WithAmount extends Octopus {
+trait WithAmount extends Hub {
   addToRequired(getAmount)
 
   def getAmount = rx.get({ case Amount(a) ⇒ a })

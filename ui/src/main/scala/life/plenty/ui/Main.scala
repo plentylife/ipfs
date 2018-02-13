@@ -3,7 +3,7 @@ package life.plenty.ui
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{OctopusGunReaderModule, OctopusReader, Main ⇒ dataMain}
 import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
 import life.plenty.ui.display.actions.CreateSpace
 import life.plenty.ui.display.{Help, LoadIndicator, Login, Modal}
@@ -117,8 +117,8 @@ object Main {
     println("raw")
     println(s"${
       data.Cache.getOctopus(of).get.sc.all.map(c ⇒ c → {
-        if (c.value.isInstanceOf[Octopus]) c.value
-          .asInstanceOf[Octopus].id else ""
+        if (c.value.isInstanceOf[Hub]) c.value
+          .asInstanceOf[Hub].id else ""
       }).mkString("\n")
     }")
   }

@@ -1,13 +1,13 @@
 package life.plenty.model
 
-import life.plenty.model.octopi.definition.{Module, Octopus}
+import life.plenty.model.octopi.definition.{Module, Hub}
 
 object ModuleRegistry {
-  private var _registry: List[PartialFunction[Octopus, Module[Octopus]]] = List()
-  def getModules(octopus: Octopus): List[Module[Octopus]] = {
+  private var _registry: List[PartialFunction[Hub, Module[Hub]]] = List()
+  def getModules(octopus: Hub): List[Module[Hub]] = {
     //        println("giving modules", _registry)
     registry.flatMap(f ⇒ f(octopus))
   }
-  def registry: List[Octopus ⇒ Option[Module[Octopus]]] = _registry.map(_.lift)
-  def add(f: PartialFunction[Octopus, Module[Octopus]]): Unit = _registry = f :: _registry
+  def registry: List[Hub ⇒ Option[Module[Hub]]] = _registry.map(_.lift)
+  def add(f: PartialFunction[Hub, Module[Hub]]): Unit = _registry = f :: _registry
 }

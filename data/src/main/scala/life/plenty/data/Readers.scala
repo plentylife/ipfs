@@ -5,7 +5,7 @@ import life.plenty.model.actions.ActionOnConnectionsRequest
 import life.plenty.model.connection._
 import life.plenty.model.octopi.GreatQuestions._
 import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.{Octopus, TmpMarker}
+import life.plenty.model.octopi.definition.{Hub, TmpMarker}
 import rx.Var
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -17,11 +17,11 @@ import scala.scalajs.js.JSON
 object GunMarker extends TmpMarker
 
 object OctopusReader {
-  def ci(className: String, inst: ⇒ Octopus) = {
+  def ci(className: String, inst: ⇒ Hub) = {
     (cn: String) ⇒ if (className == cn) Option(inst) else None
   }
 
-  private val availableClasses = Stream[String ⇒ Option[Octopus]](
+  private val availableClasses = Stream[String ⇒ Option[Hub]](
     ci("BasicUser", new BasicUser()),
     ci("ContainerSpace", new ContainerSpace()),
     ci("BasicQuestion", new BasicQuestion()),
@@ -41,7 +41,7 @@ object OctopusReader {
     //    ci("Wallet", new Wallet)
   )
 
-  def read(id: String): Future[Option[Octopus]] = {
+  def read(id: String): Future[Option[Hub]] = {
     // from cache
     val fromCache = Cache.getOctopus(id)
     if (fromCache.nonEmpty) {
@@ -96,11 +96,11 @@ object ConnectionReader {
     val value: String
   }
 
-  private val leafReaders = Stream[(String, String) ⇒ Option[Connection[_]]](
+  private val leafReaders = Stream[(String, String) ⇒ Option[DataHub[_]]](
     Title(_, _), Body(_, _), Amount(_, _), Id(_, _), Name(_, _), CreationTime(_, _), Marker(_, _)
   )
 
-  private val octopusReaders = Stream[(String, Octopus) ⇒ Option[Connection[_]]](
+  private val octopusReaders = Stream[(String, Hub) ⇒ Option[DataHub[_]]](
     Child(_, _), Parent(_, _), Created(_, _), Creator(_, _), Contributor(_, _), Member(_, _), To(_, _), From(_, _)
   )
 
@@ -115,7 +115,7 @@ object ConnectionReader {
     p.future
   }
 
-  def read(d: js.Object, key: String): Future[Option[Connection[_]]] = {
+  def read(d: js.Object, key: String): Future[Option[DataHub[_]]] = {
     val con = d.asInstanceOf[JsConnection]
     // Id is a special case, since it's value points to an octopus, but it's really a leaf connection
     if (con.`class` == "Id") return Future {Option {Id(con.value)}}
@@ -142,7 +142,7 @@ object ConnectionReader {
 
 // todo create a module for user that filters out everything but transactions
 
-class OctopusGunReaderModule(override val withinOctopus: Octopus) extends ActionOnConnectionsRequest {
+class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnConnectionsRequest {
   private implicit val ctx = withinOctopus.ctx
 
   var instantiated = false
@@ -209,7 +209,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
 }
 
 object OctopusGunReaderModule {
-  def onFinishLoad(o: Octopus, f: () ⇒ Unit) = {
+  def onFinishLoad(o: Hub, f: () ⇒ Unit) = {
     implicit val _ctx = o.ctx
     o.onModulesLoad {
       o.getTopModule({ case m: OctopusGunReaderModule ⇒ m }).foreach {

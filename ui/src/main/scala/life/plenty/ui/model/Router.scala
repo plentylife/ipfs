@@ -3,7 +3,7 @@ package life.plenty.ui.model
 import java.util.Base64
 
 import com.thoughtworks.binding.Route
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.model.ViewState.ViewState
 import org.scalajs.dom.window
 import upickle.default.{macroRW, ReadWriter ⇒ RW, _}
@@ -29,7 +29,7 @@ object Router {
     router.watch()
   }
 
-  def reRender(o: Octopus, p: RoutingParams) = {
+  def reRender(o: Hub, p: RoutingParams) = {
     //    println("routing params (current, last)", p, lastParams.orNull)
     if (p != lastParams.orNull) {
       //      println("Router re-render")
@@ -50,7 +50,7 @@ object Router {
   def changeViewState(s: ViewState, routingParams: RoutingParams) =
     routingParams.copy(stateId = s.id)
 
-  def navigateToOctopus(o: Octopus) = {
+  def navigateToOctopus(o: Hub) = {
     router.state.value_=(router.state.value.copy(spaceId = Option(o.id)))
   }
 }

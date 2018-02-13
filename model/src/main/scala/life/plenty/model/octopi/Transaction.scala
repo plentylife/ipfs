@@ -13,7 +13,7 @@ class Transaction() extends WithAmount {
 
   def getFrom = getCreator
 
-  override def asNew(properties: Connection[_]*): Unit = {
+  override def asNew(properties: DataHub[_]*): Unit = {
     properties.collectFirst {
       case Parent(c: Contribution) ⇒ {
         model.console.trace(s"New transaction setting To with ${c.getCreator.now} ${c.sc.all}")

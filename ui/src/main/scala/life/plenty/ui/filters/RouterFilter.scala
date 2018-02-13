@@ -2,14 +2,14 @@ package life.plenty.ui.filters
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.modifiers.FilterModule
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.ViewState.ViewState
 import life.plenty.ui.model.{Router, ViewState}
 import org.scalajs.dom.raw.Node
 
-trait RouterFilter[+O <: Octopus, Elem, L <: Iterable[Elem]] extends FilterModule[O, Elem, L] with
-  DisplayModule[Octopus] {
+trait RouterFilter[+O <: Hub, Elem, L <: Iterable[Elem]] extends FilterModule[O, Elem, L] with
+  DisplayModule[Hub] {
   protected val engageOnState: ViewState
 
   def filter(what: L): L = if (isEngaged) {filterInner(what)} else what

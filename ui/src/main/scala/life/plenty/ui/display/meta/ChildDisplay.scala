@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.console
 import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
@@ -14,14 +14,14 @@ import rx.{Obs, Rx}
 import scala.language.postfixOps
 import scalaz.std.list._
 
-class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
+class ChildDisplay(override val withinOctopus: Hub) extends DisplayModule[Hub] {
 
-  private lazy val modifiers: List[OctopusModifier[Octopus]] = {
+  private lazy val modifiers: List[OctopusModifier[Hub]] = {
     console.trace(s"child meta getting modifiers from ${withinOctopus.modules}")
-    withinOctopus.getModules({ case m: OctopusModifier[Octopus] ⇒ m })
+    withinOctopus.getModules({ case m: OctopusModifier[Hub] ⇒ m })
   }
 
-  protected val children: Vars[Octopus] = Vars[Octopus]()
+  protected val children: Vars[Hub] = Vars[Hub]()
   protected var rxChildren: Obs = null
 
   override def update(): Unit = {
@@ -36,14 +36,14 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   }
 
 
-  def getChildren: Rx[List[Octopus]] = {
+  def getChildren: Rx[List[Hub]] = {
     console.trace(s"getting children ${withinOctopus}")
     //    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.debounce(100 millis)
     //      .map(_.collect({ case Child(c: Octopus) ⇒ c }))
-    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.getAll({ case Child(c: Octopus) ⇒ c })
+    val childrenRx: Rx[List[Hub]] = withinOctopus.rx.getAll({ case Child(c: Hub) ⇒ c })
     val ordered = modifiers.foldLeft(childrenRx)((cs, mod) ⇒ {
       console.trace(s"applying modifiers ${withinOctopus}")
-      mod.applyRx(cs): Rx[List[Octopus]]
+      mod.applyRx(cs): Rx[List[Hub]]
     })
     ordered
   }
@@ -64,7 +64,7 @@ class ChildDisplay(override val withinOctopus: Octopus) extends DisplayModule[Oc
   }
 }
 
-abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends ChildDisplay(_withinOctopus) {
+abstract class GroupedChildDisplay(private val _withinOctopus: Hub) extends ChildDisplay(_withinOctopus) {
   protected val displayInOrder: List[String]
   protected val titles: Map[String, String] = Map()
 
@@ -74,7 +74,7 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
     }) :: super.overrides
   }
 
-  protected def groupBy(o: Octopus): String
+  protected def groupBy(o: Hub): String
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -93,7 +93,7 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Octopus) extends 
 
 
   @dom
-  private def generateHtmlForGroup(name: String, octopi: List[Octopus],
+  private def generateHtmlForGroup(name: String, octopi: List[Hub],
                                    overridesBelow: List[ModuleOverride]): Binding[Node] = if (octopi.nonEmpty) {
     {console.println(s"generateHtmlForGroup $name $titles ${titles.get(name)}")}
     <div class={s"d-flex group-$name flex-wrap flex-column"}>

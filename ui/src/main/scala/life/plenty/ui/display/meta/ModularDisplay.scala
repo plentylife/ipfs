@@ -2,14 +2,14 @@ package life.plenty.ui.display.meta
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.console
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
-class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[Octopus] {
-  protected val siblingModules: Vars[DisplayModule[Octopus]] = Vars()
+class ModularDisplay(override val withinOctopus: Hub) extends DisplayModule[Hub] {
+  protected val siblingModules: Vars[DisplayModule[Hub]] = Vars()
 
   override def update(): Unit = {
     //    println("new modules", getSiblingModules(this))
@@ -40,7 +40,7 @@ class ModularDisplay(override val withinOctopus: Octopus) extends DisplayModule[
 }
 
 
-abstract class GroupedModularDisplay(private val _withinOctopus: Octopus) extends ModularDisplay(_withinOctopus) {
+abstract class GroupedModularDisplay(private val _withinOctopus: Hub) extends ModularDisplay(_withinOctopus) {
   protected val displayInOrder: List[String]
 
   protected def groupBy(o: DisplayModule[_]): String
