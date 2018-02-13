@@ -12,11 +12,11 @@ import scala.scalajs.js
 import scala.scalajs.js.JSON
 
 object OctopusWriter {
-  def write(o: Octopus): Unit = {
+  def write(o: Octopus): Future[Gun] = {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
-      return
+      return Future {Main.gun.get(o.id)}
     } else {
       // fixme this is danegerous because it does not check for success of the write
       Cache.put(o)
@@ -25,10 +25,13 @@ object OctopusWriter {
     Future {
       val go = gun.get(o.id)
 
-      go.put(js.Dynamic.literal(
-        "class" → o.getClass.getSimpleName
-      ), (d) ⇒ {
-        // fixme add error
+      val info = js.Dynamic.literal("class" → o.getClass.getSimpleName)
+      o match {
+        case c: Connection[_] ⇒ info.updateDynamic("data")(stringifyData(c))
+        case _ ⇒
+      }
+
+      go.put(info, (d) ⇒ {
         console.println(s"OctopusWriter write of ${o.id} resulted in ${JSON.stringify(d)}")
         val ack = d.asInstanceOf[Ack]
         if (!js.isUndefined(ack.err) && ack.err != null) {
@@ -36,14 +39,23 @@ object OctopusWriter {
         }
       })
       writeConnections(o.sc.all, go)
+      go
+    }
+  }
+
+  private def stringifyData(c: Connection[_]): String = {
+    c.value match {
+      case o: Octopus ⇒ o.id
+      case other ⇒ other.toString()
     }
   }
 
   def writeConnections(connections: Iterable[Connection[_]], go: Gun): Unit = {
     val gcons = go.get("connections")
     for (c ← connections) {
-      val conGun = ConnectionWriter.write(c)
-      gcons.set(conGun, null)
+      OctopusWriter.write(c) foreach { conGun ⇒
+        gcons.set(conGun, null)
+      }
     }
   }
 
@@ -70,32 +82,9 @@ object ConnectionWriter {
       // making sure that we aren't writing it again
       Cache.put(c)
       c.tmpMarker = GunMarker
-      val v = getValue(c)
-      c.value match {
-        case o: Octopus ⇒ OctopusWriter.write(o)
-        case _ ⇒
-      }
-      /* fixme switch to the trait used in reader */
-      val obj = js.Dynamic.literal(
-        "class" → c.getClass.getSimpleName,
-        "active" → c.isActive,
-        "value" → v
-      )
-      gc.put(obj, (d) ⇒ {
-        val ack = d.asInstanceOf[Ack]
-        if (!js.isUndefined(ack.err) && ack.err != null) {
-          console.error(s"E: ConnectionWriter write of ${c} ${c.id} resulted in error ${ack.err}")
-        }
-      })
+      // write
     }
     gc
-  }
-
-  private def getValue(c: Connection[_]) = {
-    c.value match {
-      case o: Octopus ⇒ o.id
-      case other ⇒ other.toString()
-    }
   }
 }
 
@@ -107,10 +96,8 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
     //      withinOctopus.isNew &&
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       Future {
-        //        setTimeout(10) {
           console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")
           OctopusWriter.writeSingleConnection(connection, gun)
-        //        }
       }
     }
     Right()
@@ -124,10 +111,8 @@ class InstantiationGunWriterModule(override val withinOctopus: Octopus) extends 
 
   withinOctopus.onNew {
     Future {
-      //      setTimeout(5) {
         console.println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
         OctopusWriter.write(withinOctopus)
-      //      }
     }
   }
 }

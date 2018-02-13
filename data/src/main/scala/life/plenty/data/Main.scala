@@ -1,6 +1,8 @@
 package life.plenty.data
 
 import life.plenty.model
+import life.plenty.model.ModuleRegistry
+import life.plenty.model.octopi.definition.Octopus
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,7 +37,7 @@ object Main {
 
   def modules(): Unit = {
     //    ModuleRegistry add { case o: Octopus ⇒ new GunWriterModule(o) }
-    //    ModuleRegistry add { case o: Octopus ⇒ new InstantiationGunWriterModule(o) }
+        ModuleRegistry add { case o: Octopus ⇒ new InstantiationGunWriterModule(o) }
     //    ModuleRegistry add { case o: Octopus ⇒ new OctopusGunReaderModule(o) }
   }
 }
