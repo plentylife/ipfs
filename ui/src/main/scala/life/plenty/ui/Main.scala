@@ -29,17 +29,16 @@ object Main {
       ui.console.active = consolesActive == "true"
       modelConsole.active = consolesActive == "true"
     }
-    println(ui.console.active, consolesActive, consolesActive.nonEmpty)
 
     // has to be first because it sets the hasher function
-    dataMain.main(bootstrapPeers)
-    UiContext.initialize()
-    Router.initialize
-    mInit()
-    initialize()
+    dataMain.main(bootstrapPeers) foreach {_ ⇒
+      UiContext.initialize()
+      Router.initialize
+      mInit()
+      initialize()
 
-    dom.render(document.body, mainSection())
-    //    if (UiContext.getUser != null) showUi()
+      dom.render(document.body, mainSection())
+    }
   }
 
   @dom

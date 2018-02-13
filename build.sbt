@@ -10,7 +10,8 @@ lazy val data = project.enablePlugins(ScalaJSPlugin, SbtJsEngine).in(file("data"
   .dependsOn(model)
   .settings(
     relativeSourceMaps := true,
-    emitSourceMaps := true
+    emitSourceMaps := true,
+    scalacOptions += "-P:scalajs:sjsDefinedByDefault"
   )
 
 lazy val model = project.enablePlugins(ScalaJSPlugin).in(file("model"))
