@@ -9,6 +9,7 @@ import life.plenty.ui.display.Modal
 import org.scalajs.dom.{Event, Node}
 import org.scalajs.dom.html.Input
 import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.Router
 
 //<div class="d-flex flex-column align-items-center">
 //
@@ -28,12 +29,16 @@ object CreateSpace {
 
       println(space.sc.all)
 
+      Router.navigateToOctopus(space)
+      Modal.close()
       title.reset
       description.reset
     }
   }
 
-  def openInModal(): Unit = Modal.setContentAndOpen(createSpaceDisplay())
+  def openInModal(): Unit = {
+    Modal.setContentAndOpen(createSpaceDisplay())
+  }
 
   @dom
   def createSpaceDisplay(): Binding[Node] = {
@@ -46,7 +51,7 @@ object CreateSpace {
         } else {
           <span style="display:none"></span>
         }}<label for="title">Space title</label> <br/>
-          <input name="title" type="text" oninput={title.input(_)}/>
+          <input name="title" type="text" oninput={title.input _}/>
         </div>
         <div class="mt-2">
           {if (description.isEmpty.bind) {
@@ -56,8 +61,7 @@ object CreateSpace {
         } else {
           <span style="display:none"></span>
         }}<label for="description">Description</label> <br/>
-          <textarea name="description" oninput={description.input(_)}>
-            </textarea>
+          <textarea name="description" oninput={description.input _}></textarea>
           <br/>
         </div>
         <input type="submit" class="btn btn-primary mt-2" value="Create Space"/>

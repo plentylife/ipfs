@@ -19,6 +19,12 @@ object Modal {
     isOpen.value_=(true)
   }
 
+  def close() = {
+    isOpen.value_=(false)
+    content.value_=(null)
+    outerClasses.value_=("")
+  }
+
   @dom
   def display(): Binding[Node] = {
     if (isOpen.bind) {
