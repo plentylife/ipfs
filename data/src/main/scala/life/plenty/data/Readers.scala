@@ -23,7 +23,7 @@ object OctopusReader {
 
   private val availableClasses = Stream[String ⇒ Option[Octopus]](
     ci("BasicUser", new BasicUser()),
-    ci("BasicSpace", new ContainerSpace()),
+    ci("ContainerSpace", new ContainerSpace()),
     ci("BasicQuestion", new BasicQuestion()),
     ci("Who", new Who()),
     ci("How", new How()),
@@ -73,6 +73,7 @@ object OctopusReader {
             Cache.put(o)
             //            o.addModule(new OctopusGunReaderModule(o, gun))
           }
+          if(o.isEmpty) console.error(s"Could not find loader with class ${}")
           // fixme this is just a quick fix. for not double loading
           Cache.getOctopus(id)
           //          o
@@ -109,14 +110,7 @@ object ConnectionReader {
 
     val p = Promise[Boolean]()
     Main.gun.get(key).`val`((d, k) ⇒ {
-      if (!js.isUndefined(d)) {
-        //        console.println(JSON.stringify(d))
-        //        console.println(s"key `$key` has a class property")
-        p.success(true)
-      } else {
-        //        console.println(s"key `$key` does not")
-        p.success(false)
-      }
+      if (!js.isUndefined(d)) p.success(true) else p.success(false)
     })
     p.future
   }
@@ -133,14 +127,12 @@ object ConnectionReader {
           if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
           optO flatMap { o ⇒
             val res = octopusReaders flatMap { f ⇒ f(con.`class`, o) } headOption;
-            //            if (!js.isUndefined(con.active) && !con.active) res foreach {_.deactivate}
             res
           }
         }
       } else {
         Future {
           val res = leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption;
-          //          if (!js.isUndefined(con.active) && !con.active) res foreach {_.deactivate}
           res
         }
       }
@@ -162,9 +154,7 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
   override def onConnectionsRequest(): Unit = synchronized {
     if (!instantiated) {
       instantiated = true
-      console.println(s"Gun Reader ${this} onConsReq called in ${withinOctopus.getClass} with ${
-        withinOctopus.sc.all
-      }")
+      console.println(s"Gun Reader ${this} onConsReq called in ${withinOctopus.getClass} with ${withinOctopus.sc.all}")
       val gun = Main.gun.get(withinOctopus.id)
       gun.`val`((d, k) ⇒ {
         if (!js.isUndefined(d) && d != null) {
@@ -190,7 +180,6 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
     }
 
     gc.map().`val`((d, k) ⇒ Future {
-      //      setTimeout(10) {
       // fixme this will bug out if we are re-using connections
       val cachedCon = Cache.getConnection(k)
       if (cachedCon.nonEmpty) {
@@ -207,14 +196,14 @@ class OctopusGunReaderModule(override val withinOctopus: Octopus) extends Action
 
           optCon foreach { c ⇒
             Cache.put(c)
+            val vc = Cache.getConnection(c.id).get // should never fail
             connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-            c.tmpMarker = GunMarker
-            withinOctopus.addConnection(c)
+            vc.tmpMarker = GunMarker
+            withinOctopus.addConnection(vc)
           }
         }
         }
       }
-      //      }
     })
   }
 }

@@ -28,7 +28,7 @@ object OctopusWriter {
 
       val info = js.Dynamic.literal("class" → o.getClass.getSimpleName)
       o match {
-        case c: Connection[_] ⇒ info.updateDynamic("data")(stringifyData(c))
+        case c: Connection[_] ⇒ info.updateDynamic("value")(stringifyData(c))
         case _ ⇒
       }
 
