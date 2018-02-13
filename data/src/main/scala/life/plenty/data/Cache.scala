@@ -26,13 +26,5 @@ object Cache {
     octopusCache.get(id)
   }
 
-  def put(c: DataHub[_]): Unit = synchronized {
-    val existing = getConnection(c.id)
-    if (existing.isEmpty) {
-      connectionCache.put(c.id, c)
-    }
-    connectionCache.put(c.id, c)
-  }
-
-  def getConnection(id: String): Option[DataHub[_]] = connectionCache.get(id)
+  def getConnection(id: String): Option[DataHub[_]] = getOctopus(id).map(_.asInstanceOf[DataHub[_]]) // shouldn't fail
 }
