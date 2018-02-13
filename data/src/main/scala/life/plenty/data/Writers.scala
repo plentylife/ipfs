@@ -2,8 +2,8 @@ package life.plenty.data
 
 import life.plenty.data.Main.gun
 import life.plenty.model.actions.ActionAfterGraphTransform
-import life.plenty.model.connection.{AtInstantiation, Connection}
-import life.plenty.model.octopi.definition.{Module, Octopus}
+import life.plenty.model.connection.Connection
+import life.plenty.model.octopi.definition.{AtInstantiation, Module, Octopus}
 import rx.Ctx
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -16,10 +16,11 @@ object OctopusWriter {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
-      return Future {Main.gun.get(o.id)}
+      return Future {Main.gun.get(o.id)} // todo. this can be significantly improved if made optional
     } else {
       // fixme this is danegerous because it does not check for success of the write
       Cache.put(o)
+      o.tmpMarker = GunMarker
     }
 
     Future {
@@ -51,40 +52,35 @@ object OctopusWriter {
   }
 
   def writeConnections(connections: Iterable[Connection[_]], go: Gun): Unit = {
-    val gcons = go.get("connections")
+    val consgun = connectionsGun(go)
     for (c ← connections) {
-      OctopusWriter.write(c) foreach { conGun ⇒
-        gcons.set(conGun, null)
+      OctopusWriter.write(c) foreach { cgun ⇒
+        setWithError(consgun, cgun)
       }
     }
   }
 
   def writeSingleConnection(connection: Connection[_], go: Gun): Unit = {
     console.println(s"OctopusWriter single connection ${connection} ${connection.id}")
-    val gcons = go.get("connections")
-    val conGun = ConnectionWriter.write(connection)
-    gcons.set(conGun, (d) ⇒ {
-      console.println(s"OctopusWriter done single connection ${JSON.stringify(d)}")
+    val consgun = connectionsGun(go)
+    OctopusWriter.write(connection) foreach {cgun ⇒
+      setWithError(consgun, cgun)
+    }
+  }
+
+  private def connectionsGun(ogun: Gun): Gun = ogun.get("connections")
+
+  /**
+    * @param consgun Gun instance pointing to the `connections` field */
+  private def setWithError(consgun: Gun, cgun: Gun) = {
+    consgun.set(cgun, (d) ⇒ {
+      console.println(s"OctopusWriter in `set` for connection ${JSON.stringify(d)}")
       val ack = d.asInstanceOf[Ack]
       if (!js.isUndefined(ack.err) && ack.err != null) {
-        console.error(s"E: write of single connection ${connection} ${connection.id} resulted in error ${ack.err}")
+        // todo. improve error
+        console.error(s"E: write of connection resulted in error ${ack.err}")
       }
     })
-  }
-}
-
-object ConnectionWriter {
-  def write(c: Connection[_]): Gun = {
-    val gc = Main.gun.get(c.id)
-    if (c.tmpMarker != GunMarker) {
-      console.println(s"ConnectionWriter connection ${c} ${c.id}")
-
-      // making sure that we aren't writing it again
-      Cache.put(c)
-      c.tmpMarker = GunMarker
-      // write
-    }
-    gc
   }
 }
 
@@ -92,8 +88,6 @@ class GunWriterModule(override val withinOctopus: Octopus) extends ActionAfterGr
   private lazy val gun = Main.gun.get(withinOctopus.id)
 
   override def onConnectionAdd(connection: Connection[_]): Either[Exception, Unit] = {
-    //    console.println(s"Gun Writer ${withinOctopus.id} ${connection} marker: ${connection.tmpMarker}")
-    //      withinOctopus.isNew &&
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       Future {
           console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")

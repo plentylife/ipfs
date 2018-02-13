@@ -5,7 +5,7 @@ import life.plenty.model.actions.ActionOnConnectionsRequest
 import life.plenty.model.connection._
 import life.plenty.model.octopi.GreatQuestions._
 import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Octopus
+import life.plenty.model.octopi.definition.{Octopus, TmpMarker}
 import rx.Var
 
 import scala.concurrent.ExecutionContext.Implicits.global

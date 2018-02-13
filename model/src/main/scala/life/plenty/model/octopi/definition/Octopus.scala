@@ -2,7 +2,7 @@ package life.plenty.model.octopi.definition
 
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
-import life.plenty.model.connection.{Connection, Marker, NoMarker, TmpMarker}
+import life.plenty.model.connection.{Connection, Marker}
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
@@ -57,7 +57,7 @@ trait Octopus extends OctopusConstructor with ConnectionManager[Any] with RxConn
   modulesFinishedLoading() = true
 }
 
-sealed trait TmpMarker
+trait TmpMarker
 
 object NoMarker extends TmpMarker
 
