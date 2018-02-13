@@ -28,6 +28,12 @@ object Login {
     }
   }
 
+  private val emailRegex =
+    """(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])""".r
+  private def parseValidEmail(str: String): Option[String] = {
+    emailRegex.findFirstIn(str)
+  }
+
   @dom
   def display(): Binding[Node] = {
     if (isOpen.bind) {
@@ -46,20 +52,20 @@ object Login {
           } else {
             <span style="display:none"></span>
           }}<label for="name">Your name</label> <br/>
-            <input name="name" type="text" onchange={e: Event ⇒
+            <input name="name" type="text" oninput={e: Event ⇒
             name.value_=(e.target.asInstanceOf[Input].value.trim)
             nameEmpty.value_=(name.value.isEmpty)}/>
           </div>
           <div class="mt-2">
             {if (emailEmpty.bind) {
             <div class="bg-danger text-white">
-              Email can't be empty
+              Email can't be invalid or empty
             </div>
           } else {
             <span style="display:none"></span>
           }}<label for="email">Email</label> <br/>
-            <input name="email" type="text" onchange={e: Event ⇒
-            email.value_=(e.target.asInstanceOf[Input].value.trim)
+            <input name="email" type="text" oninput={e: Event ⇒
+            email.value_=(parseValidEmail(e.target.asInstanceOf[Input].value.trim).getOrElse(""))
             emailEmpty.value_=(email.value.isEmpty)}/>
             <br/>
           </div>
