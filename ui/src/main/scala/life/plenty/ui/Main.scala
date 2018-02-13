@@ -60,6 +60,19 @@ object Main {
     </span>
   }
 
+  @dom
+  def mainSection(): Binding[Node] = {
+    <div id="viewport" onclick={e: Event ⇒ Help.triggerClose()}>
+      {Modal.display().bind}
+      {LoadIndicator.show().bind}
+      {showUi().bind}
+      {Help.display().bind}{Login.display().bind}{if (UiContext.startingSpace.bind.nonEmpty)
+      DisplayModel.display(UiContext.startingSpace.bind.get).bind else
+      <span>nothing to show</span>}
+    </div>
+  }
+
+
   @JSExport
   def newSpace() = {
     val ts = TestInstances.load()
@@ -115,17 +128,4 @@ object Main {
 
   @JSExport
   def gun = data.Main.gun
-
-  @dom
-  def mainSection(): Binding[Node] = {
-    <div id="viewport" onclick={e: Event ⇒ Help.triggerClose()}>
-      {Modal.display().bind}
-      {LoadIndicator.show().bind}
-      {showUi().bind}
-      {Help.display().bind}{Login.display().bind}{if (UiContext.startingSpace.bind.nonEmpty)
-      DisplayModel.display(UiContext.startingSpace.bind.get).bind else
-      <span>nothing to show</span>}
-    </div>
-  }
-
 }
