@@ -8,20 +8,9 @@ const levelup = require('levelup');
 const encode = require('encoding-down');
 const jslevel = require("level-js");
 
-window.levelDB = levelup(
+window.LevelDB = levelup(
   encode(
     jslevel('data'),
     { valueEncoding: 'json' }
   )
 );
-
-
-levelDB.open().then(db => {
-  console.log(db);
-  window.igun = new Gun({
-    file: false,
-    localStorage: false,
-    level: db
-    // level: levelDB
-  })
-});
