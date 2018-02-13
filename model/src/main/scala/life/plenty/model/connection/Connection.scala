@@ -1,13 +1,7 @@
 package life.plenty.model.connection
 
 import life.plenty.model
-import life.plenty.model.octopi.definition.Octopus
-
-trait TmpMarker
-
-object NoMarker extends TmpMarker
-
-object AtInstantiation extends TmpMarker
+import life.plenty.model.octopi.definition.{AtInstantiation, Octopus}
 
 trait Connection[T] extends Octopus {
   def value: T
@@ -20,7 +14,6 @@ trait Connection[T] extends Octopus {
 
   def deactivate = active = false
 
-  var tmpMarker: TmpMarker = NoMarker
 
   override def id: String = idGivenValue(value) + this.getClass.getSimpleName
 

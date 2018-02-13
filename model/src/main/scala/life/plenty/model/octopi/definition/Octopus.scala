@@ -2,7 +2,7 @@ package life.plenty.model.octopi.definition
 
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
-import life.plenty.model.connection.{Connection, Marker}
+import life.plenty.model.connection.{Connection, Marker, NoMarker, TmpMarker}
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
@@ -42,11 +42,10 @@ trait Octopus extends OctopusConstructor with ConnectionManager[Any] with RxConn
     }
   }
 
-  def hasMarker(marker: MarkerEnum): Boolean = sc.all.collect { case Marker(m) if m == marker ⇒ true } contains true
+  /** easy hook for external code */
+  var tmpMarker: TmpMarker = NoMarker
 
   /** must be filled before accessed */
-//  private var onConnectionsRequestedModules: List[ActionOnConnectionsRequest] = null
-
   protected val modulesFinishedLoading = Var(false)
 
   /* Constructor */
@@ -57,3 +56,9 @@ trait Octopus extends OctopusConstructor with ConnectionManager[Any] with RxConn
   console.trace(s"Loaded modules ${_modules}")
   modulesFinishedLoading() = true
 }
+
+sealed trait TmpMarker
+
+object NoMarker extends TmpMarker
+
+object AtInstantiation extends TmpMarker
