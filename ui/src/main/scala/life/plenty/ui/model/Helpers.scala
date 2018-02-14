@@ -25,6 +25,8 @@ object Helpers {
     </span>
   }
 
+  def sameAsUiStarting(h: Hub): Boolean = UiContext.startingSpace.value.exists(_.id == h.id)
+
   trait Bindable[T] {
     val rxv: Rx[T]
 
@@ -72,15 +74,16 @@ object Helpers {
     }
   }
 
-  class BindableAction[T <: ActionDisplay[_]](val module: Option[T], calledBy: DisplayModule[Hub]) {
+  class BindableAction[T <: ActionDisplay[_]](override val module: Option[T], calledBy: DisplayModule[Hub]) extends
+  BindableModule[T](module, calledBy) {
     val active: Var[Boolean] = module.map(_.active) getOrElse Var(false)
+  }
 
-    @dom
-    private def empty: Binding[Node] = <span class="d-none"></span>
 
+  class BindableModule[T <: DisplayModule[_]](val module: Option[T], calledBy: DisplayModule[Hub]) {
     def dom: Binding[Node] = {
       val opt: Option[Binding[Node]] = module flatMap {_.display(Option(calledBy), Nil)}
-      opt getOrElse empty
+      opt getOrElse DisplayModel.nospan
     }
   }
 

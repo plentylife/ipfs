@@ -5,7 +5,7 @@ import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.utils.Console
 import life.plenty.ui.display._
-import life.plenty.ui.display.actions.{ConfirmActionDisplay, CreateAnswer, EditSpace, TopSpaceActions}
+import life.plenty.ui.display.actions._
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
 import life.plenty.ui.filters.BasicSpaceDisplayOrder
 
@@ -21,6 +21,8 @@ package object ui {
 
     ModuleRegistry add { case o: Space ⇒ new MenuBar(o) } // here so that it is displayed on top
     ModuleRegistry add { case o: Space ⇒ new TopSpaceActions(o) }
+    ModuleRegistry add { case o: Space ⇒ new CreateAnswerButton(o) }
+    ModuleRegistry add { case o: Space ⇒ new CreateQuestionButton(o) }
 
     ModuleRegistry add { case o: Event ⇒ new EventCardDisplay(o) }
     ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
@@ -43,6 +45,8 @@ package object ui {
     ModuleRegistry add { case a: Answer ⇒ new ConfirmActionDisplay(a) }
     ModuleRegistry add { case a: Proposal ⇒ new ProposalDisplay(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
+
+    ModuleRegistry add { case o: Space ⇒ new CardSpaceDisplay(o) }
 
     // following the model of one contributer per contribution/answer
     //    ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }

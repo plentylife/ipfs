@@ -27,7 +27,7 @@ package object model {
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateQuestion(q) }
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateAnswer(q) }
     ModuleRegistry.add { case q: Question ⇒ new AnswerVoteOrder(q) }
-    ModuleRegistry.add { case q: GreatQuestion ⇒ new ActionCreateQuestion(q) }
+    ModuleRegistry.add { case q: Space ⇒ new ActionCreateQuestion(q) }
 
     ModuleRegistry.add { case a: Answer ⇒ new ActionAddConfirmedMarker(a) }
     ModuleRegistry.add { case a: Answer ⇒ new ActionCreateQuestion(a) }

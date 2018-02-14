@@ -139,6 +139,19 @@ object DisplayModel {
         DisplayModel.nospan.bind
       }}
     </span>
+  }
 
+  trait SingleActionModuleDisplay[T <: Hub] extends DisplayModule[T] {
+    protected val module: Option[Module[T]]
+
+    protected def presentGenerateHtml(): Binding[Node]
+
+    @dom
+    override protected def generateHtml(): Binding[Node] =
+      {if (module.nonEmpty) {
+        presentGenerateHtml().bind
+      } else {
+        DisplayModel.nospan.bind
+      }}
   }
 }
