@@ -30,6 +30,7 @@ object Modal {
     if (isOpen.bind) {
       <div class={defualtClasses + outerClasses.bind}>
         {content.bind.bind}
+        <div class="btn-sm btn-danger" onclick={_:Event => close()}>cancel</div>
       </div>
     } else {
       <span style="display:none"></span>

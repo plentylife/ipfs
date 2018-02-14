@@ -3,12 +3,14 @@ package life.plenty.ui.model
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.definition.Hub
+import life.plenty.ui.display.actions.CreateSpace.title
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
 import org.scalajs.dom.Node
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Event
 import rx.{Ctx, Rx}
 
+import scala.xml.Elem
 import scalaz.std.list._
 
 object Helpers {
@@ -104,5 +106,33 @@ object Helpers {
     }
 
     def reset = innerVar.value_=("")
+  }
+
+  class InputVarWithDisplay(label: String,
+                             innerVar: Var[String] = Var("")) extends InputVar() {
+
+    @dom
+    def dom = {
+      <div class="mt-2">
+        {if (this.isEmpty.bind) {
+        <div class="bg-danger text-white">
+          {label} can't be empty
+        </div>
+      } else {
+        <span style="display:none"></span>
+      }}<label for={this.toString}>{label}</label> <br/>
+        {inputElem.bind}
+      </div>
+    }
+
+    @dom
+    protected def inputElem: Binding[Node] = <input name={this.toString} type="text" oninput={this.input _}/>
+  }
+
+  class InputVarWithTextarea(label: String, innerVar: Var[String] = Var(""))
+    extends InputVarWithDisplay(label, innerVar) {
+
+    @dom
+    override protected def inputElem = <textarea name={this.toString} oninput={this.input _}></textarea>
   }
 }
