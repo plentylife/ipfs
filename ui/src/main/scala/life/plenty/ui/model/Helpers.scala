@@ -90,9 +90,10 @@ object Helpers {
     def input(e: Event) = {
       val v = e.target.asInstanceOf[Input].value.trim
       isEmpty.value_=(v.isEmpty)
-      println(v, isEmpty.value)
       innerVar.value_=(v)
     }
+
+    def check = isEmpty.value_=(innerVar.value.isEmpty)
 
     def get: Option[String] = {
       val v = innerVar.value

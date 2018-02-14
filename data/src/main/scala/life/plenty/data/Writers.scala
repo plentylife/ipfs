@@ -84,7 +84,6 @@ object OctopusWriter {
   /**
     * @param hubgun Gun instance pointing to the hub */
   private def setWithError(hubgun: Gun, cgun: Gun, onAck: () ⇒ Unit = () ⇒ Unit) = {
-    println(s"set with error, ${hubgun.`_`.soul} -> ${cgun.`_`.soul}")
     connectionsGun(hubgun).set(cgun, (d) ⇒ {
       console.println(s"OctopusWriter in `set` for connection (soul ${cgun.`_`.soul})" +
         s"${JSON.stringify(d)}")

@@ -1,6 +1,6 @@
 package life.plenty.ui.display.meta
 
-import com.thoughtworks.binding.Binding.Vars
+import com.thoughtworks.binding.Binding.{BindingSeq, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
@@ -44,6 +44,14 @@ class ChildDisplay(override val withinOctopus: Hub) extends DisplayModule[Hub] {
       mod.applyRx(cs): Rx[List[Hub]]
     })
     ordered
+  }
+
+  @dom
+  protected def displayList(seq: BindingSeq[Hub]#WithFilter, cssClass: String)(implicit os: List[ModuleOverride])
+  :Binding[Node] = {
+    <div class={cssClass}>
+      {for (c <- seq) yield DisplayModel.display(c, os, Option(this)).bind}
+    </div>
   }
 
   @dom

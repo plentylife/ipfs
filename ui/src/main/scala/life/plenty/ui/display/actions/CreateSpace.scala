@@ -2,14 +2,16 @@ package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.connection.{Body, Parent, Title}
+import life.plenty.model.connection.{Body, DataHub, Parent, Title}
 import life.plenty.model.octopi.{ContainerSpace, Space}
+import life.plenty.ui
 import life.plenty.ui.display.Login._
 import life.plenty.ui.display.Modal
 import org.scalajs.dom.{Event, Node}
 import org.scalajs.dom.html.Input
 import life.plenty.ui.model.Helpers._
 import life.plenty.ui.model.{DisplayModel, Router}
+import shapeless.Nat._0
 
 import scalaz.std.option._
 
@@ -18,14 +20,18 @@ object CreateSpace {
   private val description = new InputVar
   private var parentSpace: Var[Option[Space]] = Var(None)
 
-
+  // fixme submits with empty fields
   private def onSubmit(event: Event): Unit = {
     event.preventDefault()
+    title.check; description.check
 
     for (t ← title.get; d ← description.get) {
       val space = new ContainerSpace
-      space.asNew(Title(t), Body(d))
-      parentSpace.value foreach {ps ⇒ space.addConnection(Parent(ps))}
+      var params: List[DataHub[_]] = Title(t) :: Body(d) :: Nil
+      parentSpace.value map {Parent(_)} foreach {params +:= _}
+      ui.console.trace(s"Creating space with params $params `$t` `$d`")
+      space.asNew(params:_*)
+
 
       println(space.sc.all)
 
