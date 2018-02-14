@@ -32,7 +32,7 @@ package object ui {
     //    ModuleRegistry add { case o: Space ⇒ new ViewStateLinks(o) }
     //    ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortDisplay(o) }
 //    ModuleRegistry add { case o: ContainerSpace ⇒ new BasicSpaceDisplayOrder(o) }
-    ModuleRegistry add { case o: Space ⇒ new TopSpaceGroups(o) }
+//    ModuleRegistry add { case o: Space ⇒ new TopSpaceGroups(o) }
 
     ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithQuestionInput(o) }
 
@@ -51,7 +51,10 @@ package object ui {
     //    ModuleRegistry add { case o: Octopus ⇒ new DiscussModuleFilter(o) }
     //    ModuleRegistry add { case o: Octopus ⇒ new RateEffortConnectionFilter(o) }
 
-    ModuleRegistry add { case o: Hub if !(o.isInstanceOf[Vote] || o.isInstanceOf[Question]) ⇒ new ChildDisplay(o) }
+    ModuleRegistry add { case o: Hub if !(o.isInstanceOf[Vote] || o.isInstanceOf[Question] ||
+      o.isInstanceOf[Space]) ⇒      new ChildDisplay(o) }
+    ModuleRegistry add { case o: Space ⇒ new TopSpaceChildDisplay(o) }
+
 
     ModuleRegistry add { case o: Hub ⇒ new ModularDisplay(o) }
     ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }

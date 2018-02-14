@@ -32,6 +32,7 @@
 
 .top-space-actions {
   justify-content: center;
+  @extend .mt-1;
 }
 
 .create-space-form {
