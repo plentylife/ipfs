@@ -9,7 +9,7 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.console
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay, ModularDisplayTrait}
 import life.plenty.ui.model.{DisplayModel, UiContext}
-import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, ModuleOverride, getSiblingModules}
+import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, ModuleOverride, SingleActionModuleDisplay, getSiblingModules}
 import org.scalajs.dom.raw.Node
 import rx.{Obs, Rx}
 
@@ -41,16 +41,14 @@ class TopSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[Sp
       for (m <- menuBar) yield m.display(this, os) map {_.bind} getOrElse DisplayModel.nospan.bind
       }
 
-      <div class="top-space-menu">
-
-      </div>
+      {displayModules(siblingModules.withFilter(_.isInstanceOf[SingleActionModuleDisplay[_]]), "top-space-menu").bind}
 
     <div class="top-space-child-display">
-      {displayList(getMembers(children), "administrative").bind}
+      {displayHubs(getMembers(children), "administrative").bind}
       <div class="questions">
 
       </div>
-      {displayList(getSubSpaces(children), "sub-spaces").bind}
+      {displayHubs(getSubSpaces(children), "sub-spaces").bind}
     </div>
 
     </div>
@@ -93,11 +91,20 @@ trait LayoutModule[T <: Hub] extends DisplayModule[T] {
   }
 
   @dom
-  protected def displayList(seq: BindingSeq[Hub]#WithFilter, cssClass: String)(implicit os: List[ModuleOverride])
+  protected def displayHubs(seq: BindingSeq[Hub]#WithFilter, cssClass: String)(implicit os: List[ModuleOverride])
   :Binding[Node] = {
-    console.trace(s"Layout display list $seq")
+    console.trace(s"Layout display list (hubs) $seq")
     <div class={cssClass}>
       {for (c <- seq) yield DisplayModel.display(c, os, Option(this)).bind}
+    </div>
+  }
+
+  @dom
+  protected def displayModules(seq: BindingSeq[DisplayModule[_]]#WithFilter, cssClass: String)
+                              (implicit os: List[ModuleOverride]) :Binding[Node] = {
+    console.trace(s"Layout display list (modules) $seq")
+    <div class={cssClass}>
+      {for (m <- seq) yield m.display(this, os) map {_.bind} getOrElse DisplayModel.nospan.bind}
     </div>
   }
 
