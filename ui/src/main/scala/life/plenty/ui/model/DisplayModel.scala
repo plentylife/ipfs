@@ -68,6 +68,7 @@ object DisplayModel {
 
     def doDisplay(): Boolean = true
 
+    /** for child classes to override*/
     def overrides: List[ModuleOverride] = List()
 
     def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride]): Option[Binding[Node]] =

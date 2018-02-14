@@ -31,7 +31,7 @@ package object ui {
 
     //    ModuleRegistry add { case o: Space ⇒ new ViewStateLinks(o) }
     //    ModuleRegistry add { case o: BasicSpace ⇒ new RateEffortDisplay(o) }
-    ModuleRegistry add { case o: ContainerSpace ⇒ new BasicSpaceDisplayOrder(o) }
+//    ModuleRegistry add { case o: ContainerSpace ⇒ new BasicSpaceDisplayOrder(o) }
     ModuleRegistry add { case o: Space ⇒ new TopSpaceGroups(o) }
 
     ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithQuestionInput(o) }

@@ -36,10 +36,8 @@ class ChildDisplay(override val withinOctopus: Hub) extends DisplayModule[Hub] {
   }
 
 
-  def getChildren: Rx[List[Hub]] = {
+  private def getChildren: Rx[List[Hub]] = {
     console.trace(s"getting children ${withinOctopus} ${withinOctopus.id}")
-    //    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.debounce(100 millis)
-    //      .map(_.collect({ case Child(c: Octopus) ⇒ c }))
     val childrenRx: Rx[List[Hub]] = withinOctopus.rx.getAll({ case Child(c: Hub) ⇒ c })
     val ordered = modifiers.foldLeft(childrenRx)((cs, mod) ⇒ {
       console.trace(s"applying modifiers ${withinOctopus}")
@@ -51,8 +49,9 @@ class ChildDisplay(override val withinOctopus: Hub) extends DisplayModule[Hub] {
   @dom
   override protected def generateHtml(): Binding[Node] = {
     //    println("child display gen html", this, children.value)
+    val os = getOverridesBelow
     <div class="child-display-box d-flex flex-column flex-wrap">
-      {for (c <- children) yield DisplayModel.display(c, overrides ::: getOverridesBelow, Option(this)).bind}
+      {for (c <- children) yield DisplayModel.display(c, os, Option(this)).bind}
     </div>
   }
 
