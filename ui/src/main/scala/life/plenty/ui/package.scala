@@ -20,7 +20,7 @@ package object ui {
     /* the modules should be added in a list fashion: the last overrides the first */
 
     ModuleRegistry add { case o: Space ⇒ new MenuBar(o) } // here so that it is displayed on top
-    ModuleRegistry add { case o: Space ⇒ new TopSpaceActions(o) }
+    ModuleRegistry add { case o: Space ⇒ new SpaceActionsBar(o) }
     ModuleRegistry add { case o: Space ⇒ new CreateAnswerButton(o) }
     ModuleRegistry add { case o: Space ⇒ new CreateQuestionButton(o) }
     ModuleRegistry add { case o: Space ⇒ new CreateSpaceButton(o) }
@@ -47,8 +47,6 @@ package object ui {
     ModuleRegistry add { case a: Proposal ⇒ new ProposalDisplay(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
 
-    ModuleRegistry add { case o: Space ⇒ new CardSpaceDisplay(o) }
-
     // following the model of one contributer per contribution/answer
     //    ModuleRegistry add { case c: Contribution ⇒ new Contribute(c) }
 
@@ -61,6 +59,8 @@ package object ui {
 
     ModuleRegistry add { case o: Hub ⇒ new ModularDisplay(o) }
     ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }
+
+    ModuleRegistry add { case o: Space ⇒ new CardSpaceDisplay(o) }
     ModuleRegistry add { case o: Space ⇒ new TopSpaceDisplay(o) }
 
   }

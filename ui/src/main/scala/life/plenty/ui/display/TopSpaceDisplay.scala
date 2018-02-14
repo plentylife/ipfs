@@ -7,6 +7,7 @@ import life.plenty.model.modifiers.OctopusModifier
 import life.plenty.model.octopi.{ContainerSpace, Members, Space}
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.console
+import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.{ChildDisplay, LayoutModule, ModularDisplay, ModularDisplayTrait}
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, ModuleOverride, SingleActionModuleDisplay, getSiblingModules}
@@ -28,6 +29,7 @@ class TopSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[Sp
 
   def getSubSpaces(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[ContainerSpace])
 
+//      {displayModules(siblingModules.withFilter(_.isInstanceOf[SingleActionModuleDisplay[_]]), "top-space-menu").bind}
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -41,7 +43,7 @@ class TopSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[Sp
       for (m <- menuBar) yield m.display(this, os) map {_.bind} getOrElse DisplayModel.nospan.bind
       }
 
-      {displayModules(siblingModules.withFilter(_.isInstanceOf[SingleActionModuleDisplay[_]]), "top-space-menu").bind}
+      {displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}
 
     <div class="top-space-child-display">
       {displayHubs(getMembers(children), "administrative").bind}

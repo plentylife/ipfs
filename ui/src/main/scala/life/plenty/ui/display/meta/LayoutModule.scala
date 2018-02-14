@@ -10,6 +10,8 @@ import life.plenty.ui.model.DisplayModel
 import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
 import org.scalajs.dom.raw.Node
 import rx.{Obs, Rx}
+import scalaz.std.option._
+import scalaz.std.list._
 
 trait LayoutModule[T <: Hub] extends DisplayModule[T] {
 
