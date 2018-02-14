@@ -45,7 +45,15 @@
     text-decoration: underline;
     background: #f1f1f1;
   }
-  input, textarea {
-    width: 100%;
+}
+
+.modal-outer-box {
+  form {
+    .input-var {
+      @extend .mt-2
+    }
+    input, textarea {
+      width: 100%;
+    }
   }
 }

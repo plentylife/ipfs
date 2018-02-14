@@ -92,29 +92,29 @@ object Helpers {
   class InputVar(innerVar: Var[String] = Var("")) {
     val isEmpty = Var(false)
 
-    def input(e: Event) = {
+    def input(e: Event): Unit = {
       val v = e.target.asInstanceOf[Input].value.trim
       isEmpty.value_=(v.isEmpty)
       innerVar.value_=(v)
     }
 
-    def check = isEmpty.value_=(innerVar.value.isEmpty)
+    def check(): Unit = isEmpty.value_=(innerVar.value.isEmpty)
 
     def get: Option[String] = {
       val v = innerVar.value
+      check()
       if (isEmpty.value) None else Option(v)
     }
 
-    def reset = innerVar.value_=("")
+    def reset(): Unit = innerVar.value_=("")
   }
 
-  class InputVarWithDisplay(label: String,
-                             innerVar: Var[String] = Var("")) extends InputVar() {
+  class InputVarWithDisplay(inputVar: InputVar, label: String, cssClasses: String = "") {
 
     @dom
-    def dom = {
-      <div class="mt-2">
-        {if (this.isEmpty.bind) {
+    def dom: Binding[Node] = {
+      <div class={cssClasses + " input-var"}>
+        {if (inputVar.isEmpty.bind) {
         <div class="bg-danger text-white">
           {label} can't be empty
         </div>
@@ -126,13 +126,11 @@ object Helpers {
     }
 
     @dom
-    protected def inputElem: Binding[Node] = <input name={this.toString} type="text" oninput={this.input _}/>
+    protected def inputElem: Binding[Node] = <input name={this.toString} type="text" oninput={inputVar.input _}/>
   }
 
-  class InputVarWithTextarea(label: String, innerVar: Var[String] = Var(""))
-    extends InputVarWithDisplay(label, innerVar) {
-
+  class InputVarWithTextarea(inputVar: InputVar, label: String) extends InputVarWithDisplay(inputVar, label) {
     @dom
-    override protected def inputElem = <textarea name={this.toString} oninput={this.input _}></textarea>
+    override protected def inputElem = <textarea name={this.toString} oninput={inputVar.input _}></textarea>
   }
 }

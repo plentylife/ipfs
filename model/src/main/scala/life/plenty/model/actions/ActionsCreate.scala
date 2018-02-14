@@ -5,9 +5,9 @@ import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Module
 
 class ActionCreateQuestion(override val withinOctopus: Space) extends Module[Space] {
-  def create(title: String) = {
+  def create(title: String, description: String) = {
     val q = new BasicQuestion
-    q.asNew(Parent(withinOctopus), Title(title))
+    q.asNew(Parent(withinOctopus), Title(title), Body(description))
   }
 }
 

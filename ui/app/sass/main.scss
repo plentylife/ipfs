@@ -72,6 +72,7 @@ body {
   right: 0;
   bottom: 0;
   background-color: white;
+  flex-direction: column;
 }
 
 .main-help {
@@ -98,6 +99,7 @@ body {
 
 .btn {
   //border-radius: 0;
+  cursor: pointer;
 }
 
 .btn.symbolic {
