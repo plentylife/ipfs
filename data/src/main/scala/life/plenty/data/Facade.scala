@@ -17,7 +17,7 @@ trait Ack extends js.Object {
 
 @js.native
 @JSGlobal
-object LevelDB extends js.Object {
+object LevelDB extends LevelUp   {
   def open(): js.Promise[LevelUp] = js.native
 }
 
@@ -54,7 +54,13 @@ trait Gun extends js.Object {
 
   def set(data: js.Object, callback: js.Function1[js.Object, Unit]): Gun = js.native
 
+  val `_`: Gun_ = js.native
   //  def user(): GunUser = js.native
+}
+
+@js.native
+trait Gun_ extends js.Object {
+  val soul: String = js.native
 }
 
 //@js.native

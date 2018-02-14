@@ -32,12 +32,13 @@ object Main {
 
       _gun = Gun(config)
     })
+
   }
 
   def modules(): Unit = {
     ModuleRegistry add { case o: Hub ⇒ new GunWriterModule(o) }
     ModuleRegistry add { case o: Hub ⇒ new InstantiationGunWriterModule(o) }
-    ModuleRegistry add { case o: Hub ⇒ new OctopusGunReaderModule(o) }
+//    ModuleRegistry add { case o: Hub ⇒ new OctopusGunReaderModule(o) }
   }
 }
 

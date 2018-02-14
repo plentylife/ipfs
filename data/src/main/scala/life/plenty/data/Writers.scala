@@ -26,7 +26,7 @@ object OctopusWriter {
     Future {
       val go = gun.get(o.id)
 
-      val info = js.Dynamic.literal("class" → o.getClass.getSimpleName)
+      val info = js.Dynamic.literal("class" → o.getClass.getSimpleName, "connections" → null)
       o match {
         case c: DataHub[_] ⇒ info.updateDynamic("value")(stringifyData(c))
         case _ ⇒
@@ -52,29 +52,38 @@ object OctopusWriter {
   }
 
   def writeConnections(connections: Iterable[DataHub[_]], go: Gun): Unit = {
-    val consgun = connectionsGun(go)
-    for (c ← connections) {
-      OctopusWriter.write(c) foreach { cgun ⇒
-        setWithError(consgun, cgun)
+    if (connections.isEmpty) return
+
+    val gHubs = for (c ← connections) yield OctopusWriter.write(c)
+    val singleF = Future.sequence(gHubs)
+    singleF foreach {gunsIter ⇒
+      val guns = gunsIter.toIndexedSeq
+      val s = guns.size
+      def recSwE(last: Int): Unit = {
+        val i = last + 1
+        if (i < s) setWithError(go, guns(i), () ⇒ recSwE(i))
       }
+      setWithError(go, guns.head, () ⇒ recSwE(0))
     }
   }
 
   def writeSingleConnection(connection: DataHub[_], go: Gun): Unit = {
     console.println(s"OctopusWriter single connection ${connection} ${connection.id}")
-    val consgun = connectionsGun(go)
     OctopusWriter.write(connection) foreach {cgun ⇒
-      setWithError(consgun, cgun)
+      setWithError(go, cgun)
     }
   }
 
   private def connectionsGun(ogun: Gun): Gun = ogun.get("connections")
 
   /**
-    * @param consgun Gun instance pointing to the `connections` field */
-  private def setWithError(consgun: Gun, cgun: Gun) = {
-    consgun.set(cgun, (d) ⇒ {
-      console.println(s"OctopusWriter in `set` for connection ${JSON.stringify(d)}")
+    * @param hubgun Gun instance pointing to the hub */
+  private def setWithError(hubgun: Gun, cgun: Gun, onAck: () ⇒ Unit = () ⇒ Unit) = {
+    println(s"set with error, ${hubgun.`_`.soul} -> ${cgun.`_`.soul}")
+    connectionsGun(hubgun).set(cgun, (d) ⇒ {
+      console.println(s"OctopusWriter in `set` for connection (soul ${cgun.`_`.soul})" +
+        s"${JSON.stringify(d)}")
+      onAck()
       val ack = d.asInstanceOf[Ack]
       if (!js.isUndefined(ack.err) && ack.err != null) {
         // todo. improve error
