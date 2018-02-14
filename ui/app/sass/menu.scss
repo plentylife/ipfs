@@ -29,3 +29,22 @@
     margin-right: $spacer *0.5;
   }
 }
+
+.top-space-actions {
+  justify-content: center;
+}
+
+.create-space-form {
+  justify-items: center;
+  & > div {
+    width: 100%;
+    flex-grow: 1;
+  }
+  .parent-space span {
+    text-decoration: underline;
+    background: #f1f1f1;
+  }
+  input, textarea {
+    width: 100%;
+  }
+}
