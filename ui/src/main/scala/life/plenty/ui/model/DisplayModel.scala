@@ -16,7 +16,9 @@ object DisplayModel {
   def display(o: Hub, overrides: List[ModuleOverride] = List(),
               calledBy: Option[DisplayModule[_]] = None): Binding[Node] = {
     o.modules.find {
-      case dm: DisplayModule[_] ⇒ dm.doDisplay()
+      case dm: DisplayModule[_] ⇒
+        ui.console.trace(s"DisplayModel searching for an available display module: ${dm} ${dm.doDisplay()}")
+        dm.doDisplay()
       case _ ⇒ false
     } flatMap {_.asInstanceOf[DisplayModule[_]].display(calledBy, overrides)} getOrElse noDisplay
 
