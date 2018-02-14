@@ -61,7 +61,12 @@ object OctopusWriter {
       val s = guns.size
       def recSwE(last: Int): Unit = {
         val i = last + 1
-        if (i < s) setWithError(go, guns(i), () ⇒ recSwE(i))
+        // acks can happen several times
+        var exec = false
+        if (!exec && i < s) {
+          exec = true
+          setWithError(go, guns(i), () ⇒ recSwE(i))
+        }
       }
       setWithError(go, guns.head, () ⇒ recSwE(0))
     }
