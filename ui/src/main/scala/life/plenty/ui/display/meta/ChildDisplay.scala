@@ -37,7 +37,7 @@ class ChildDisplay(override val withinOctopus: Hub) extends DisplayModule[Hub] {
 
 
   def getChildren: Rx[List[Hub]] = {
-    console.trace(s"getting children ${withinOctopus}")
+    console.trace(s"getting children ${withinOctopus} ${withinOctopus.id}")
     //    val childrenRx: Rx[List[Octopus]] = withinOctopus.rx.cons.debounce(100 millis)
     //      .map(_.collect({ case Child(c: Octopus) ⇒ c }))
     val childrenRx: Rx[List[Hub]] = withinOctopus.rx.getAll({ case Child(c: Hub) ⇒ c })

@@ -73,7 +73,6 @@ object OctopusReader {
             Cache.put(o)
             //            o.addModule(new OctopusGunReaderModule(o, gun))
           }
-          if(o.isEmpty) console.error(s"Could not find loader with class ${}")
           // fixme this is just a quick fix. for not double loading
           Cache.getOctopus(id)
           //          o
@@ -81,6 +80,7 @@ object OctopusReader {
           case e: Throwable ⇒ console.error(e); e.printStackTrace(); None
         }
       }).headOption
+      if(r.isEmpty) console.error(s"Could not find loader with class ${cs}")
       r
     })
   }
@@ -118,8 +118,8 @@ object ConnectionReader {
   def read(d: js.Object, key: String): Future[Option[DataHub[_]]] = {
     val con = d.asInstanceOf[JsConnection]
     // Id is a special case, since it's value points to an octopus, but it's really a leaf connection
-    if (con.`class` == "Id") return Future {Option {Id(con.value)}}
     console.trace(s"ConnectionReader ${con.`class`} ${con.value} $key")
+    if (con.`class` == "Id") return Future {Option {Id(con.value)}}
 
     hasClass(con.value) flatMap { hc ⇒
       if (hc) {
