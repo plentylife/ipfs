@@ -14,6 +14,6 @@ class CreateAnswerButton(override val withinOctopus: Hub) extends SingleActionMo
 
   @dom
   override protected def presentGenerateHtml(): Binding[Node] = {
-    <div class="btn btn-lg btn-primary">Answer</div>
+    <div class="btn btn-primary">answer</div>
   }
 }

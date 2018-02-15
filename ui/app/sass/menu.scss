@@ -30,9 +30,24 @@
   }
 }
 
+.top-space-menu {
+  display: flex;
+  justify-content: center;
+  .btn {
+    @extend .btn-lg
+  }
+}
+
 .space-actions-bar {
   justify-content: center;
+  align-self: center;
+  //width: 100%;
   @extend .mt-1;
+  .btn {
+    @extend .mr-1;
+    align-items: center;
+    flex-wrap: wrap;
+  }
 }
 
 .create-space-form {

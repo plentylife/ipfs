@@ -18,9 +18,9 @@ class CreateQuestionButton(override val withinOctopus: Hub) extends SingleAction
 
   @dom
   override protected def presentGenerateHtml(): Binding[Node] = {
-    <div class="btn btn-lg btn-primary" onclick={e: Event ⇒
+    <div class="btn btn-primary" onclick={e: Event ⇒
       Modal.setContentAndOpen(createDialog())
-    }>ask</div>
+    }>ask a question</div>
   }
 
   private val title = new InputVar
