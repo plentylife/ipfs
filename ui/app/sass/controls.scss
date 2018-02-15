@@ -3,3 +3,14 @@
     color: forestgreen;
   }
 }
+
+.card {
+  .space-actions-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    .btn {
+      @extend .btn-sm;
+    }
+  }
+}

@@ -1,7 +1,7 @@
 package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.{ContainerSpace, Space}
+import life.plenty.model.octopi.{ContainerSpace, Question, Space}
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
 import org.scalajs.dom.{Event, Node}
@@ -18,7 +18,8 @@ class SpaceActionsBar(override val withinOctopus: Space) extends DisplayModule[S
   @dom
   override protected def generateHtml(): Binding[Node] = {
     <div class="d-inline-flex space-actions-bar">
-      <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div>
+      {if(!withinOctopus.isInstanceOf[Question])
+      <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div> else DisplayModel.nospan.bind}
       {ask.dom.bind}
       {answer.dom.bind}
       {if (UiContext.startingSpace.bind.exists{_.id != withinOctopus.id} && withinOctopus.isInstanceOf[ContainerSpace])
