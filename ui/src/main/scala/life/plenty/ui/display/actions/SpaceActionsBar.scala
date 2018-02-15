@@ -18,8 +18,7 @@ class SpaceActionsBar(override val withinOctopus: Space) extends DisplayModule[S
   @dom
   override protected def generateHtml(): Binding[Node] = {
     <div class="d-inline-flex space-actions-bar">
-      {if(!withinOctopus.isInstanceOf[Question])
-      <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div> else DisplayModel.nospan.bind}
+      <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div>
       {ask.dom.bind}
       {answer.dom.bind}
       {if (UiContext.startingSpace.bind.exists{_.id != withinOctopus.id} && withinOctopus.isInstanceOf[ContainerSpace])
@@ -33,3 +32,6 @@ class SpaceActionsBar(override val withinOctopus: Space) extends DisplayModule[S
     CreateSpace.openInModal(withinOctopus)
   }
 }
+
+//{if(!withinOctopus.isInstanceOf[Question])
+//  <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div> else DisplayModel.nospan.bind}
