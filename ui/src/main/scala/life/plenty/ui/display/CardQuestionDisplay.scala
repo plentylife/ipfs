@@ -10,7 +10,7 @@ import life.plenty.ui.model.Helpers._
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Node
 
-class TopQuestionDisplay(override val withinOctopus: Question) extends LayoutModule[Question] {
+class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutModule[Question] {
   override def doDisplay() = true
 
   @dom

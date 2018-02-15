@@ -17,8 +17,9 @@ import rx.{Obs, Rx}
 import scala.collection.mutable
 import scalaz.std.option._
 import scalaz.std.list._
+import life.plenty.ui.model.Helpers._
 
-class TopSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[Space] {
+class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Space] {
 
   override def doDisplay(): Boolean = UiContext.startingSpace.value.exists(_.id == withinOctopus.id)
 
@@ -37,21 +38,29 @@ class TopSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[Sp
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
     implicit val os = cos.toList ::: siblingOverrides
 
-    <div class="top-space-display">
-
+    <div class="top-space-layout">
       {
       val menuBar = siblingModules.withFilter(_.isInstanceOf[MenuBar])
       for (m <- menuBar) yield m.display(this, os) map {_.bind} getOrElse DisplayModel.nospan.bind
       }
 
-      {displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}
 
-    <div class="top-space-child-display">
-      {displayHubs(getMembers(children), "administrative").bind}
-      {displayHubs(getQuestions(children), "questions").bind}
-      {displayHubs(getSubSpaces(children), "sub-spaces").bind}
-    </div>
+      <span class="d-flex flex-column">
+          <div class="row flex-column">
+          <h3 class="title ml-2">
+            {withinOctopus.getTitle.dom.bind}
+          </h3>
 
+          {displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}
+          </div>
+
+        <div class="top-space-child-display row">
+          {displayHubs(getMembers(children), "administrative section").bind}
+          {displayHubs(getQuestions(children), "questions section").bind}
+          {displayHubs(getSubSpaces(children), "sub-spaces section").bind}
+        </div>
+
+        </span>
     </div>
   }
 }

@@ -1,22 +1,26 @@
-.menu-bar {
-  background-color: theme-color("dark");
-  color: color-yiq(theme-color("dark"));
-  justify-content: space-around;
-  margin-left: -($spacer * 2);
-  margin-right: -($spacer * 2);
-}
-
 .navigation-back {
   border-left: none;
 }
 
 .current-user-wallet-outer-box {
+  flex-direction: column;
   .balance {
     color: #34ce57;
   }
 }
 
 .menu-bar {
+  @extend .col-md-2;
+  @extend .col-lg-1;
+  //background-color: theme-color("dark");
+  background-color: black;
+  color: color-yiq(theme-color("dark"));
+  justify-content: space-around;
+  //margin-left: -($spacer * 2);
+  //margin-right: -($spacer * 2);
+  min-height: 100%;
+  flex-wrap: wrap;
+
   .question-tooltip {
     color: theme-color("dark");
     background-color: color-yiq(theme-color("dark"));

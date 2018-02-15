@@ -61,8 +61,8 @@ package object ui {
     ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }
 
     ModuleRegistry add { case o: Space ⇒ new CardSpaceDisplay(o) } // can apply to question too
-    ModuleRegistry add { case o: Question ⇒ new TopQuestionDisplay(o) }
-    ModuleRegistry add { case o: Space ⇒ new TopSpaceDisplay(o) }
+    ModuleRegistry add { case o: Question ⇒ new CardQuestionDisplay(o) }
+    ModuleRegistry add { case o: Space ⇒ new TopSpaceLayout(o) }
 
   }
 

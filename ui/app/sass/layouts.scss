@@ -1,0 +1,38 @@
+.section {
+  padding-left: 1%;
+  padding-right: 1%;
+}
+
+.top-space-layout {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  min-height: 100%;
+  width: 100%;
+
+  .top-space-child-display {
+    margin-top: $spacer * 0.25;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    & > .section {
+      //@extend .col-md-5;
+      //@extend .col-lg-4;
+      //@extend .col-xl-3;
+      width: 90%;
+      border-left: 1px solid lightslategray;
+      @include media-breakpoint-up("md") {
+        max-width: 45%;
+      }
+    }
+    .section:first-child {
+      border-left: none;
+    }
+  }
+
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+
+}

@@ -46,8 +46,8 @@ object CurrentUserWallet {
 
   @dom
   private def displayWallet(w: Wallet): Binding[Node] = {
-    <div class="current-user-wallet-outer-box d-inline-flex flex-row mr-2">
-      <div class="d-inline-flex flex-column align-items-center mr-2">
+    <div class="current-user-wallet-outer-box d-inline-flex">
+      <div class="d-inline-flex flex-column align-items-center">
         <div class="balance" data:data-toggle="popover" data:data-content="Disabled popover">
           {w.getUsableThanksAmount.dom.bind}{ui.thanks}
           /
