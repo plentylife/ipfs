@@ -27,20 +27,32 @@
       //@extend .col-lg-4;
       //@extend .col-xl-3;
       width: 90%;
-      border-left: 1px solid rgba(119, 136, 153, 0.47);
+      border-left: 1px dotted rgba(119, 136, 153, 0.47);
       @include media-breakpoint-up("md") {
-        max-width: 45%;
+        $column-size: 0.45;
+        max-width: $column-size * 100%;
+        $min-break-width: breakpoint-min("md");
+        min-width: ($min-break-width - ($min-break-width / 6)) * $column-size ;
       }
     }
     .section:first-child {
       border-left: none;
     }
 
-    .questions.section::before {
-      content: "Questions";
+
+    .section::before {
       display: block;
       text-align: center;
       @extend h4
+    }
+    .questions.section::before {
+      content: "Questions";
+    }
+    .answers.section::before {
+      content: "Answers";
+    }
+    .sub-spaces.section::before {
+      content: "Spaces";
     }
   }
 

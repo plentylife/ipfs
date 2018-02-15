@@ -74,13 +74,12 @@
   }
 }
 
-.answer.card, .contribution.card, .event.card {
-  flex-grow: 0;
+.answer.card, .contribution.card, .event.card, .question.card {
+  margin-top: $spacer * 0.25;
+  padding: $spacer * 0.25;
   flex-wrap: wrap;
   background-color: white;
-  //border: none !important;
   .card-body {
-    max-width: 300px;
     padding: $spacer * 0.25;
     //order: 1;
   }
