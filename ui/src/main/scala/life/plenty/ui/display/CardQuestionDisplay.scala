@@ -30,7 +30,9 @@ class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutMo
             {getBody(withinOctopus).dom.bind}
           </h6>
         </span>
-        <div class="btn btn-primary btn-sm">open</div>
+        <span class="card-controls">
+          <div class="btn btn-primary btn-sm">open</div>
+        </span>
       </span>
 
       <div class="card-body">

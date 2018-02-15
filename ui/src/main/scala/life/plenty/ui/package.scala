@@ -44,6 +44,7 @@ package object ui {
     ModuleRegistry add { case q: Question ⇒ new AnswerGroup(q) }
 
     ModuleRegistry add { case a: Answer ⇒ new ConfirmActionDisplay(a) }
+    ModuleRegistry add { case a: Answer ⇒ new VoteButtons(a) }
     ModuleRegistry add { case a: Proposal ⇒ new ProposalDisplay(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
 
@@ -62,6 +63,7 @@ package object ui {
 
     ModuleRegistry add { case o: Space ⇒ new CardSpaceDisplay(o) } // can apply to question too
     ModuleRegistry add { case o: Question ⇒ new CardQuestionDisplay(o) }
+    ModuleRegistry add { case o: Answer ⇒ new CardAnswerDisplay(o) }
     ModuleRegistry add { case o: Space ⇒ new TopSpaceLayout(o) }
 
   }

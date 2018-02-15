@@ -96,12 +96,12 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
 
   private def upVote(e: Event) = {
     //    println(s"Proposal Display ui context user ${UiContext.getUser}")
-    findVoteModule.foreach(_.up(UiContext.getUser))
+    findVoteModule.foreach(_.up())
     //    votes.value_=(withinOctopus.votes)
   }
 
   private def downVote(e: Event) = {
-    findVoteModule.foreach(_.down(UiContext.getUser))
+    findVoteModule.foreach(_.down())
     //    votes.value_=(withinOctopus.votes)
   }
 

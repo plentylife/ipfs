@@ -132,19 +132,15 @@ $event-color: #9f8600;
     align-items: center;
     flex-wrap: nowrap;
     cursor: pointer;
-    .btn {
-      margin-left: auto;
-      margin-right: $spacer * 0.25;
-    }
-  }
-  .title-block {
-    display: flex;
-    flex-direction: column;
   }
 }
 
 .card {
   border-radius: 0;
+  .title-block {
+    display: flex;
+    flex-direction: column;
+  }
   .card-body {
     padding: $spacer * 0.5;
   }

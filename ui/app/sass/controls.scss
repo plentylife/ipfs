@@ -13,4 +13,16 @@
       @extend .btn-sm;
     }
   }
+
+  .card-controls {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin-left: auto;
+    margin-right: $spacer * 0.25;
+
+    .open-btn {
+      margin: auto;
+    }
+  }
 }
