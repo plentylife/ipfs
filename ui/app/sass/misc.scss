@@ -7,6 +7,8 @@
   display: flex;
   position: fixed;
   top: 0; left: 0;
+  z-index: 1000;
+  justify-content: flex-end;
 
   .loading-text {
     opacity: 0.8;

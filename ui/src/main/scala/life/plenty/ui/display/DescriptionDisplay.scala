@@ -64,6 +64,7 @@ class DescriptionDisplay(override val withinOctopus: Space) extends DisplayModul
     </div>
   }
 
+  // fixme change wording to change description
   @dom
   private def buttonTitle: Binding[String] = if (editorOpen.bind) "Post" else "Add description"
 

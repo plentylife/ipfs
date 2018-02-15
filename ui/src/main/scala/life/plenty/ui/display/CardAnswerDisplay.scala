@@ -23,9 +23,9 @@ class CardAnswerDisplay(override val withinOctopus: Answer) extends LayoutModule
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
     implicit val os = cos.toList ::: siblingOverrides
 
-    <div class="card d-inline-flex mt-1 mr-1 flex-column answer" id={withinOctopus.id}>
-      <span class="d-flex header-block" onclick={navigateTo _}>
-        <span class="d-flex title-block">
+    <div class="card d-inline-flex flex-column answer" id={withinOctopus.id}>
+      <span class="d-flex header-block">
+        <span class="d-flex title-block" onclick={navigateTo _}>
           <h5 class="card-title">
             {if (withinOctopus.isInstanceOf[Proposal]) "proposal" else ""}
           </h5>

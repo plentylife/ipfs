@@ -6,6 +6,7 @@ import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.utils.ConFinders
 import life.plenty.ui.console
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.{ChildDisplay, LayoutModule, ModularDisplay, ModularDisplayTrait}
@@ -51,6 +52,9 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
           <h3 class="title ml-2">
             {withinOctopus.getTitle.dom.bind}
           </h3>
+            <h5 class="sub-title mt-1 ml-2 text-muted">
+              {ConFinders.getBody(withinOctopus).dom.bind}
+            </h5>
 
           {displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}
           </div>

@@ -75,6 +75,7 @@
 }
 
 .answer.card, .contribution.card, .event.card {
+  padding: $spacer * 0.25;
   flex-grow: 0;
   flex-wrap: wrap;
   background-color: white;

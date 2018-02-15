@@ -31,7 +31,7 @@ class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] wi
 
   @dom
   private def backBtn: Binding[Node] = if (parentSpace.bind.nonEmpty) {
-    <div class="btn btn-sm btn-outline-light navigation-back" onclick={e: MouseEvent ⇒
+    <div class="btn btn-outline-light navigation-back" onclick={e: MouseEvent ⇒
       Router.navigateToOctopus(parentSpace.value.get)}>back</div>
   } else {<span class="d-none"></span>}
 

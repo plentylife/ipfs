@@ -1,5 +1,7 @@
 .navigation-back {
-  border-left: none;
+  margin-bottom: $spacer;
+  margin-left: auto;
+  border: none;
 }
 
 .current-user-wallet-outer-box {
@@ -11,13 +13,14 @@
 
 .menu-bar {
   @extend .col-md-2;
-  @extend .col-lg-1;
-  //background-color: theme-color("dark");
+  max-width: 170px;
+  padding-left: $spacer * 0.25;
+  padding-right: $spacer * 0.25;
+  padding-top: $spacer * 0.5;
   background-color: black;
   color: color-yiq(theme-color("dark"));
   justify-content: space-around;
-  //margin-left: -($spacer * 2);
-  //margin-right: -($spacer * 2);
+  align-content: flex-start;
   min-height: 100%;
   flex-wrap: wrap;
 
@@ -31,6 +34,11 @@
   .title {
     margin-left: $spacer *0.5;
     margin-right: $spacer *0.5;
+  }
+
+  .btn-outline-light {
+    color: #FFA000;
+    border-color: rgba(255, 160, 0, 0.31);
   }
 }
 

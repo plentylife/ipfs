@@ -22,7 +22,7 @@ class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutMo
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
     implicit val os = cos.toList ::: siblingOverrides
 
-    <div class="card d-inline-flex mt-1 mr-1 flex-column question" id={withinOctopus.id}>
+    <div class="card d-inline-flex flex-column question" id={withinOctopus.id}>
       <span class="d-flex header-block" onclick={navigateTo _}>
         <span class="d-flex title-block">
           <h3 class="card-title">{withinOctopus.getTitle.dom.bind}</h3>
