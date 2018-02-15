@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.{BindingSeq, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
-import life.plenty.model.octopi.{ContainerSpace, Members, Space}
+import life.plenty.model.octopi.{ContainerSpace, Members, Question, Space}
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.console
 import life.plenty.ui.display.actions.SpaceActionsBar
@@ -28,6 +28,7 @@ class TopSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[Sp
   })
 
   def getSubSpaces(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[ContainerSpace])
+  def getQuestions(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[Question])
 
 //      {displayModules(siblingModules.withFilter(_.isInstanceOf[SingleActionModuleDisplay[_]]), "top-space-menu").bind}
 
@@ -47,9 +48,7 @@ class TopSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[Sp
 
     <div class="top-space-child-display">
       {displayHubs(getMembers(children), "administrative").bind}
-      <div class="questions">
-
-      </div>
+      {displayHubs(getQuestions(children), "questions").bind}
       {displayHubs(getSubSpaces(children), "sub-spaces").bind}
     </div>
 

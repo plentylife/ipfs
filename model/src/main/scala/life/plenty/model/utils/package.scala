@@ -1,6 +1,6 @@
 package life.plenty.model
 
-import life.plenty.model.connection.{DataHub, Marker, MarkerEnum}
+import life.plenty.model.connection.{Body, DataHub, Marker, MarkerEnum}
 import life.plenty.model.octopi.definition.Hub
 import rx.{Ctx, Rx}
 
@@ -34,5 +34,7 @@ package object utils {
         println(s"rx confirmed changing ${m}")
         m.nonEmpty
       })
+
+    def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({case Body(b) ⇒ b})
   }
 }

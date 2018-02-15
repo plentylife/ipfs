@@ -12,12 +12,14 @@ class SpaceActionsBar(override val withinOctopus: Space) extends DisplayModule[S
   override def update(): Unit = Unit
 
   private lazy val ask = new BindableModule(withinOctopus.getTopModule({case m: CreateQuestionButton ⇒ m}), this)
+  private lazy val answer = new BindableModule(withinOctopus.getTopModule({case m: CreateAnswerButton ⇒ m}), this)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     <div class="d-inline-flex space-actions-bar">
       <div class="btn btn-primary btn-large" onclick={onCreateSpace _}>Create space</div>
       {ask.dom.bind}
+      {answer.dom.bind}
       {if (UiContext.startingSpace.bind.exists{_.id != withinOctopus.id})
         <div class="btn btn-primary btn-large">Answer</div>
     else DisplayModel.nospan.bind
