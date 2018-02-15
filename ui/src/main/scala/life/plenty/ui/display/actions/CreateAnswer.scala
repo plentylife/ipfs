@@ -70,7 +70,7 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   private def postAnswer(e: Event) = {
     println("post answer", body.value)
     findAction foreach { a ⇒
-      a.create(body.value, UiContext.getUser, isContribution.value)
+      a.create(body.value, isContribution.value)
       opened.value_=(false)
     }
   }

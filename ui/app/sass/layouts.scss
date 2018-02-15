@@ -14,6 +14,10 @@
   min-height: 100%;
   width: 100%;
 
+  .span-separator {
+    width: 100%;
+  }
+
   .top-space-child-display {
     margin-top: $spacer;
     flex-direction: row;

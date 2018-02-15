@@ -6,6 +6,7 @@ import life.plenty.model.actions.ActionCreateQuestion
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui
 import life.plenty.ui.display.Modal
+import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
 import life.plenty.ui.model.Helpers._
 import org.scalajs.dom.{Event, Node}
@@ -45,27 +46,3 @@ class CreateQuestionButton(override val withinOctopus: Hub) extends SingleAction
   }
 }
 
-trait ModalFormAction {
-  protected def onClick(e: Event): Unit = Modal.setContentAndOpen(_createDialog())
-
-  @dom
-  private def _createDialog(): Binding[Node] = {
-    <form class={"d-flex flex-column align-items-center " + formCssClass} onsubmit={_onSubmit _}>
-      {createDialog().bind}<input type="submit" class="btn btn-primary" value={formSubmitValue}/>
-    </form>
-  }
-
-  private def _onSubmit(e: Event): Unit = {
-    e.preventDefault()
-    onSubmit(e)
-  }
-
-  protected val formSubmitValue: String
-  protected val formCssClass: String
-
-  protected def onSubmitSuccess(): Unit = Modal.close()
-
-  protected def createDialog(): Binding[Node]
-
-  protected def onSubmit(e: Event): Unit
-}
