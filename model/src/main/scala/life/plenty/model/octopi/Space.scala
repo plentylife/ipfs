@@ -5,7 +5,7 @@ import life.plenty.model.octopi.definition.Hub
 
 //trait Space extends Octopus {
 trait Space extends Hub {
-  def getTitle = rx.get({ case Title(t) ⇒ t })
+  def getTitle = rx.get({ case Title(t) ⇒ t  })
 
   addToRequired(getTitle)
 

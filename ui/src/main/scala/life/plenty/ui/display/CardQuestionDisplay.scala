@@ -20,6 +20,7 @@ class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutMo
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
+    val inlineQuestins = ModuleOverride(this, )
     implicit val os = cos.toList ::: siblingOverrides
 
     <div class="card d-inline-flex flex-column question" id={withinOctopus.id}>

@@ -115,9 +115,6 @@ object DisplayModel {
       }
   }
 
-  case class ModuleOverride(creator: DisplayModule[Hub], by: DisplayModule[Hub], condition:
-  (DisplayModule[Hub]) ⇒ Boolean)
-
   trait ActionDisplay[T <: Hub] extends DisplayModule[T] {
     val active = Var(false)
     protected val isEmpty = Var(false)

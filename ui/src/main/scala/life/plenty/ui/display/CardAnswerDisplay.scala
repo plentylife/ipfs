@@ -43,6 +43,11 @@ class CardAnswerDisplay(override val withinOctopus: Answer) extends LayoutModule
       <div class="card-body">
         {getBody(withinOctopus).dom.bind}
       </div>
+
+      {// we can put info from a different module here, and then the question display will simply override them
+      ""
+       }
+
     </div>
   }
 }

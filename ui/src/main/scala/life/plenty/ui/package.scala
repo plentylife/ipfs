@@ -37,11 +37,13 @@ package object ui {
 //    ModuleRegistry add { case o: ContainerSpace ⇒ new BasicSpaceDisplayOrder(o) }
 //    ModuleRegistry add { case o: Space ⇒ new TopSpaceGroups(o) }
 
-    ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithQuestionInput(o) }
+//    ModuleRegistry add { case o: GreatQuestion ⇒ new TitleWithQuestionInput(o) }
 
-    ModuleRegistry add { case q: Question ⇒ new QuestionTitle(q) }
-    ModuleRegistry add { case q: Question ⇒ new CreateAnswer(q) }
-    ModuleRegistry add { case q: Question ⇒ new AnswerGroup(q) }
+//    ModuleRegistry add { case q: Question ⇒ new QuestionTitle(q) }
+//    ModuleRegistry add { case q: Question ⇒ new CreateAnswer(q) }
+//    ModuleRegistry add { case q: Question ⇒ new AnswerGroup(q) }
+
+    ModuleRegistry add { case q: Question ⇒ new InlineQuestionDisplay(q) }
 
     ModuleRegistry add { case a: Answer ⇒ new ConfirmActionDisplay(a) }
     ModuleRegistry add { case a: Answer ⇒ new VoteButtons(a) }

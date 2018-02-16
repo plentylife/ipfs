@@ -1,6 +1,10 @@
 package life.plenty.model.octopi
 
-trait Question extends Space with WithParent[Space] {}
+import rx.Rx
+
+trait Question extends Space with WithParent[Space] {
+  override def getTitle: Rx[Option[String]] = super.getTitle.map(_.map {t ⇒ if (t.last != '?') t+'?' else t})
+}
 
 class BasicQuestion() extends Question {}
 

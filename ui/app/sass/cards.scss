@@ -132,6 +132,23 @@ $event-color: #9f8600;
     flex-wrap: nowrap;
     cursor: pointer;
   }
+
+  .card.answer {
+    border: none;
+    .title-block {
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      align-items: center;
+      justify-content: space-around;
+      .card-title {
+        margin: 0;
+      }
+    }
+    .card-controls {
+      display: none;
+    }
+  }
 }
 
 .card {
