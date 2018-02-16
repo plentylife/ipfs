@@ -6,7 +6,6 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui
 import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
-import life.plenty.ui.model.Helpers.{InputVar, InputVarWithTextarea}
 import org.scalajs.dom.{Event, Node}
 
 trait AnswerControls extends SingleActionModuleDisplay[Hub]

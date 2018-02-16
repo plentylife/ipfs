@@ -8,7 +8,8 @@ import life.plenty.ui
 import life.plenty.ui.display.Modal
 import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
-import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.utils.Helpers._
+import life.plenty.ui.model.utils._
 import org.scalajs.dom.{Event, Node}
 
 class CreateQuestionButton(override val withinOctopus: Hub) extends SingleActionModuleDisplay[Hub]
@@ -23,8 +24,9 @@ class CreateQuestionButton(override val withinOctopus: Hub) extends SingleAction
     <div class="btn btn-primary" onclick={onClick _}>ask a question</div>
   }
 
-  private val title = new InputVar
-  private val description = new InputVar
+  private val isSignup = new BooleanInputVar
+  private val title = new StringInputVar
+  private val description = new StringInputVar
 
   override protected val formCssClass: String = "create-question-form"
   override protected val formSubmitValue: String = "ask"
@@ -32,6 +34,7 @@ class CreateQuestionButton(override val withinOctopus: Hub) extends SingleAction
   @dom
   override protected def createDialog(): Binding[Node] = {
     <span>
+      {new InputVarWithCheckbox(isSignup, "This is a sign-up list").dom.bind}
       {new InputVarWithDisplay(title, "Question title").dom.bind}
       {new InputVarWithTextarea(description, "Question " + "description").dom.bind}
     </span>
@@ -40,7 +43,7 @@ class CreateQuestionButton(override val withinOctopus: Hub) extends SingleAction
   override protected def onSubmit(e: Event): Unit = {
     ui.console.trace(s"submit question ${title.get} ${description.get}")
     for (t ← title.get; d <- description.get) {
-      module.get.create(t, d)
+      module.get.create(t, d, isSignup.get.contains("true")) // if never had input will be None
       onSubmitSuccess()
     }
   }

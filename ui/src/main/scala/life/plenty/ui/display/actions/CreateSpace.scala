@@ -9,15 +9,15 @@ import life.plenty.ui.display.Login._
 import life.plenty.ui.display.Modal
 import org.scalajs.dom.{Event, Node}
 import org.scalajs.dom.html.Input
-import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.utils.Helpers._
+import life.plenty.ui.model.utils.StringInputVar
 import life.plenty.ui.model.{DisplayModel, Router}
-import shapeless.Nat._0
 
 import scalaz.std.option._
 
 object CreateSpace {
-  private val title = new InputVar
-  private val description = new InputVar
+  private val title = new StringInputVar
+  private val description = new StringInputVar
   private var parentSpace: Var[Option[Space]] = Var(None)
 
   // fixme submits with empty fields

@@ -6,7 +6,7 @@ import life.plenty.model.octopi.definition.{Hub, Module}
 import life.plenty.ui
 import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.{DisplayModule, SingleActionModuleDisplay}
-import life.plenty.ui.model.Helpers.{InputVar, InputVarWithTextarea}
+import life.plenty.ui.model.utils.{InputVarWithTextarea, StringInputVar}
 import org.scalajs.dom.{Event, Node}
 
 class CreateAnswerButton(override val withinOctopus: Hub) extends SingleActionModuleDisplay[Hub] with
@@ -24,7 +24,7 @@ ModalFormAction{
   override protected val formSubmitValue: String = "answer"
   override protected val formCssClass: String = "create-answer-form"
 
-  private val body = new InputVar
+  private val body = new StringInputVar
 
   @dom
   override protected def createDialog(): Binding[Node] = <span>

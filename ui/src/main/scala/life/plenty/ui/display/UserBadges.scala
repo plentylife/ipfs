@@ -5,7 +5,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.User
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.Node
-import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.utils.Helpers._
 import life.plenty.ui.model.jdenticon
 import org.scalajs.dom.html.{Canvas, Div}
 class FullUserBadge(override val withinOctopus: User) extends DisplayModule[User] {

@@ -9,7 +9,7 @@ import life.plenty.ui.display.actions.AnswerControls
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.Helpers.{BasicBindable, OptBindableProperty}
+import life.plenty.ui.model.utils.Helpers.{BasicBindable, OptBindableProperty}
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node

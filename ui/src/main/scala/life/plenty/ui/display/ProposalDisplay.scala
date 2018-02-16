@@ -7,7 +7,7 @@ import life.plenty.model.octopi._
 import life.plenty.model.utils.ConFinders
 import life.plenty.ui.display.actions.{ChangeParent, ConfirmActionDisplay, EditSpace}
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.utils.Helpers._
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node

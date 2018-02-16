@@ -5,7 +5,7 @@ import life.plenty.model.octopi.{ContainerSpace, Question, Space}
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
 import org.scalajs.dom.{Event, Node}
-import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.utils.Helpers._
 
 import scalaz.std.option._
 

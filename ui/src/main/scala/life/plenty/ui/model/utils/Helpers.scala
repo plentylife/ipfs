@@ -1,16 +1,15 @@
-package life.plenty.ui.model
+package life.plenty.ui.model.utils
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.ui.display.actions.CreateSpace.title
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
+import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Node
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Event
 import rx.{Ctx, Rx}
 
-import scala.xml.Elem
 import scalaz.std.list._
 
 object Helpers {
@@ -87,50 +86,5 @@ object Helpers {
       val opt: Option[Binding[Node]] = module flatMap {_.display(Option(calledBy), Nil)}
       opt getOrElse DisplayModel.nospan
     }
-  }
-
-  class InputVar(innerVar: Var[String] = Var("")) {
-    val isEmpty = Var(false)
-
-    def input(e: Event): Unit = {
-      val v = e.target.asInstanceOf[Input].value.trim
-      isEmpty.value_=(v.isEmpty)
-      innerVar.value_=(v)
-    }
-
-    def check(): Unit = isEmpty.value_=(innerVar.value.isEmpty)
-
-    def get: Option[String] = {
-      val v = innerVar.value
-      check()
-      if (isEmpty.value) None else Option(v)
-    }
-
-    def reset(): Unit = innerVar.value_=("")
-  }
-
-  class InputVarWithDisplay(inputVar: InputVar, label: String, cssClasses: String = "") {
-
-    @dom
-    def dom: Binding[Node] = {
-      <div class={cssClasses + " input-var"}>
-        {if (inputVar.isEmpty.bind) {
-        <div class="bg-danger text-white">
-          {label} can't be empty
-        </div>
-      } else {
-        <span style="display:none"></span>
-      }}<label for={this.toString}>{label}</label> <br/>
-        {inputElem.bind}
-      </div>
-    }
-
-    @dom
-    protected def inputElem: Binding[Node] = <input name={this.toString} type="text" oninput={inputVar.input _}/>
-  }
-
-  class InputVarWithTextarea(inputVar: InputVar, label: String) extends InputVarWithDisplay(inputVar, label) {
-    @dom
-    override protected def inputElem = <textarea name={this.toString} oninput={inputVar.input _}></textarea>
   }
 }

@@ -5,7 +5,7 @@ import life.plenty.model.octopi.{Event, User}
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
 import life.plenty.ui.display.meta.{ChildDisplay, NoDisplay}
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.utils.Helpers._
 import life.plenty.ui.model._
 import org.scalajs.dom.raw.{MouseEvent, Node}
 import rx.Rx

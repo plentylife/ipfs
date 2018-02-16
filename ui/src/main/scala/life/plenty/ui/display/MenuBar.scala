@@ -7,7 +7,7 @@ import life.plenty.model.octopi.Space
 import life.plenty.ui
 import life.plenty.ui.display.meta.NoDisplay
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.utils.Helpers._
 import life.plenty.ui.model.{ModuleOverride, Router, SimpleModuleOverride}
 import org.scalajs.dom.raw.{MouseEvent, Node}
 import rx.Obs

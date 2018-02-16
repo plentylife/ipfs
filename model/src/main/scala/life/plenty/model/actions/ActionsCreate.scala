@@ -1,13 +1,15 @@
 package life.plenty.model.actions
 
-import life.plenty.model.connection.{Body, Parent, Title}
+import life.plenty.model.connection._
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Module
 
 class ActionCreateQuestion(override val withinOctopus: Space) extends Module[Space] {
-  def create(title: String, description: String) = {
+  def create(title: String, description: String, isSignup: Boolean = false) = {
     val q = new BasicQuestion
-    q.asNew(Parent(withinOctopus), Title(title), Body(description))
+    var params: List[DataHub[_]] = Parent(withinOctopus):: Title(title):: Body(description) :: Nil
+    if (isSignup) params = Marker(MarkerEnum.SIGNUP) :: params
+    q.asNew(params:_*)
   }
 }
 
