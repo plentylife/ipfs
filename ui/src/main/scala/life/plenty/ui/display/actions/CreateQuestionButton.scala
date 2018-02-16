@@ -43,7 +43,7 @@ class CreateQuestionButton(override val withinOctopus: Hub) extends SingleAction
   override protected def onSubmit(e: Event): Unit = {
     ui.console.trace(s"submit question ${title.get} ${description.get}")
     for (t ← title.get; d <- description.get) {
-      module.get.create(t, d, isSignup.get.contains("true")) // if never had input will be None
+      module.get.create(t, d, isSignup.get.getOrElse(false)) // if never had input will be None
       onSubmitSuccess()
     }
   }

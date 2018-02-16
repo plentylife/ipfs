@@ -18,7 +18,7 @@ ModalFormAction{
 
   @dom
   override protected def presentGenerateHtml(): Binding[Node] = {
-    <div class="btn btn-primary" onclick={onClick _}>answer</div>
+    <div class="btn btn-info" onclick={onClick _}>answer</div>
   }
 
   override protected val formSubmitValue: String = "answer"

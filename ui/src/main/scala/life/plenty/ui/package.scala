@@ -24,6 +24,7 @@ package object ui {
     ModuleRegistry add { case o: Space ⇒ new CreateAnswerButton(o) }
     ModuleRegistry add { case o: Space ⇒ new CreateQuestionButton(o) }
     ModuleRegistry add { case o: Space ⇒ new CreateSpaceButton(o) }
+    ModuleRegistry add { case o: SignupQuestion ⇒ new SignupButton(o) }
 
     ModuleRegistry add { case o: Event ⇒ new EventCardDisplay(o) }
     ModuleRegistry add { case o: Space ⇒ new EditSpace(o) }

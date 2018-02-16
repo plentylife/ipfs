@@ -14,6 +14,7 @@ class SpaceActionsBar(override val withinOctopus: Space) extends DisplayModule[S
 
   private lazy val ask = new BindableModule(withinOctopus.getTopModule({case m: CreateQuestionButton ⇒ m}), this)
   private lazy val answer = new BindableModule(withinOctopus.getTopModule({case m: CreateAnswerButton ⇒ m}), this)
+  private lazy val signup = new BindableModule(withinOctopus.getTopModule({case m: SignupButton ⇒ m}), this)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -21,10 +22,7 @@ class SpaceActionsBar(override val withinOctopus: Space) extends DisplayModule[S
       <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div>
       {ask.dom.bind}
       {answer.dom.bind}
-      {if (UiContext.startingSpace.bind.exists{_.id != withinOctopus.id} && withinOctopus.isInstanceOf[ContainerSpace])
-        <div class="btn btn-primary">answer</div>
-    else DisplayModel.nospan.bind
-      }
+      {signup.dom.bind}
     </div>
   }
 
@@ -35,3 +33,8 @@ class SpaceActionsBar(override val withinOctopus: Space) extends DisplayModule[S
 
 //{if(!withinOctopus.isInstanceOf[Question])
 //  <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div> else DisplayModel.nospan.bind}
+
+//{if (UiContext.startingSpace.bind.exists{_.id != withinOctopus.id} && withinOctopus.isInstanceOf[ContainerSpace])
+//  <div class="btn btn-primary">answer</div>
+//  else DisplayModel.nospan.bind
+//}

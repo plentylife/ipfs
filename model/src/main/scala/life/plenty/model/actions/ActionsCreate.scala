@@ -6,9 +6,9 @@ import life.plenty.model.octopi.definition.Module
 
 class ActionCreateQuestion(override val withinOctopus: Space) extends Module[Space] {
   def create(title: String, description: String, isSignup: Boolean = false) = {
-    val q = new BasicQuestion
-    var params: List[DataHub[_]] = Parent(withinOctopus):: Title(title):: Body(description) :: Nil
-    if (isSignup) params = Marker(MarkerEnum.SIGNUP) :: params
+    val params: List[DataHub[_]] = Parent(withinOctopus):: Title(title):: Body(description) :: Nil
+    val q = if (isSignup) new SignupQuestion else new BasicQuestion
+    println(s"create question $isSignup ${q.getClass}")
     q.asNew(params:_*)
   }
 }

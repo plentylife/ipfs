@@ -1,8 +1,40 @@
 package life.plenty.model.actions
 
-import life.plenty.model.connection.{Body, Marker, MarkerEnum}
+import life.plenty.model.connection.{Body, Child, Marker, MarkerEnum}
 import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.{Module, Hub}
+import life.plenty.model.octopi.definition.{Hub, Module}
+
+class ActionSignup(override val withinOctopus: SignupQuestion) extends Module[SignupQuestion] {
+  def signup(who: User) = {
+    withinOctopus.addConnection(Child(who))
+  }
+  def designup(who: User) = ???
+}
+
+class ActionAddConfirmedMarker(override val withinOctopus: Hub) extends Module[Hub] {
+  private implicit val ctx = withinOctopus.ctx
+
+  def confirm() = {
+    withinOctopus.addConnection(Marker(MarkerEnum.CONFIRMED))
+    println(s"added confirm marker ${withinOctopus.sc.all}")
+    println(s"${withinOctopus.rx.cons}")
+  }
+
+  def deconfirm() = {
+    // try just adding the same remove!
+    //fixme
+    //    withinOctopus.removeConnection(Marker(MarkerEnum.CONFIRMED))
+    println(s"removed marker ${withinOctopus.sc.all}")
+    println(s"${withinOctopus.rx.cons}")
+    //    val obs = withinOctopus.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
+    //    obs.foreach(_ foreach { m ⇒
+    //      println(s"Found confirm marker. Deconfirming ${m}")
+    //      obs.kill()
+    //      withinOctopus.removeConnection(m)
+    //      println(s"removed marker ${withinOctopus.connections}")
+    //    })
+  }
+}
 
 class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
   def add(userId: String) = {
@@ -36,30 +68,5 @@ class ActionAddDescription(override val withinOctopus: Space) extends Module[Spa
       }
     }
     withinOctopus.addConnection(Body(body))
-  }
-}
-
-class ActionAddConfirmedMarker(override val withinOctopus: Hub) extends Module[Hub] {
-  private implicit val ctx = withinOctopus.ctx
-
-  def confirm() = {
-    withinOctopus.addConnection(Marker(MarkerEnum.CONFIRMED))
-    println(s"added confirm marker ${withinOctopus.sc.all}")
-    println(s"${withinOctopus.rx.cons}")
-  }
-
-  def deconfirm() = {
-    // try just adding the same remove!
-    //fixme
-//    withinOctopus.removeConnection(Marker(MarkerEnum.CONFIRMED))
-    println(s"removed marker ${withinOctopus.sc.all}")
-    println(s"${withinOctopus.rx.cons}")
-    //    val obs = withinOctopus.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
-    //    obs.foreach(_ foreach { m ⇒
-    //      println(s"Found confirm marker. Deconfirming ${m}")
-    //      obs.kill()
-    //      withinOctopus.removeConnection(m)
-    //      println(s"removed marker ${withinOctopus.connections}")
-    //    })
   }
 }
