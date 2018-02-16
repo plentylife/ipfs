@@ -74,7 +74,7 @@
   }
 }
 
-.answer.card, .contribution.card, .event.card, .question.card {
+.answer.card, .contribution.card, .event.card, .question.card, .members.card {
   margin-top: $spacer * 0.25;
   padding: $spacer * 0.25;
   flex-wrap: wrap;
@@ -176,4 +176,26 @@ $event-color: #9f8600;
     font-weight: bold;
     font-size: smaller;
   }
+}
+
+.members.card {
+  .user-badge {
+    canvas {
+      height: 1.5em;
+    }
+  }
+  .card-controls {
+    width: 100%;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    .open-btn {
+      margin: 0;
+    }
+  }
+}
+
+.user-badge {
+  display: flex;
+  align-items: center;
 }

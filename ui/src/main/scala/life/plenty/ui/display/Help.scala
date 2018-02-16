@@ -2,6 +2,7 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.ui
 import org.scalajs.dom.Node
 
 object Help {
@@ -41,4 +42,10 @@ object Help {
 
   def voteBalanceHelp = displayNow("This represents the amount of power you have to steer a group and to prioritize " +
     "tasks. To gain votes, you must give Thanks to people who have made contributions.")
+
+  def membersCardHelp = displayNow(
+    s"""
+      |this dislpays how many ${ui.thanks}hanks members have earned in this space and
+      |        sub-spaces. Details on user contributions are inside.
+    """.stripMargin)
 }
