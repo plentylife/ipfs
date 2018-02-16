@@ -139,7 +139,7 @@ $event-color: #9f8600;
       flex-direction: row;
       flex-wrap: wrap;
       width: 100%;
-      align-items: center;
+      align-items: baseline;
       justify-content: space-around;
       .card-title {
         margin: 0;
@@ -148,6 +148,10 @@ $event-color: #9f8600;
     .card-controls {
       display: none;
     }
+  }
+
+  .inner-questions {
+    margin-top: $spacer;
   }
 }
 
@@ -164,4 +168,12 @@ $event-color: #9f8600;
 
 .contribution-label {
   color: $contribution-color
+}
+
+.inline-question {
+  &::before {
+    content: "Q:";
+    font-weight: bold;
+    font-size: smaller;
+  }
 }

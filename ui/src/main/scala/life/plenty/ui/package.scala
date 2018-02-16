@@ -11,7 +11,7 @@ import life.plenty.ui.filters.BasicSpaceDisplayOrder
 
 package object ui {
 
-  val console = new Console(true, true)
+  val console = new Console(false, true)
   val thanks = "\u20B8"
 
   def initialize(): Unit = {

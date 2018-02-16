@@ -40,7 +40,7 @@ class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutMo
       <div class="card-body">
 
         {displayHubs(children.withFilter(_.isInstanceOf[Answer]), "answers").bind}
-        {displayHubs(children.withFilter(_.isInstanceOf[Question]), "questions").bind}
+        {displayHubs(children.withFilter(_.isInstanceOf[Question]), "inner-questions").bind}
 
         </div>
     </div>
