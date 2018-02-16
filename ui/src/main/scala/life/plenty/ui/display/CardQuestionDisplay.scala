@@ -7,9 +7,9 @@ import life.plenty.model.utils.ConFinders._
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
-import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
+import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
-import life.plenty.ui.model.{Router, UiContext}
+import life.plenty.ui.model.{ComplexModuleOverride, ModuleOverride, Router, UiContext}
 import org.scalajs.dom.Node
 
 //{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "card-space-menu").bind}
@@ -20,8 +20,9 @@ class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutMo
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
-    val inlineQuestins = ModuleOverride(this, )
-    implicit val os = cos.toList ::: siblingOverrides
+    val inlineQuestins =
+      ComplexModuleOverride(this, {case m: InlineQuestionDisplay ⇒ m}, _.isInstanceOf[CardQuestionDisplay])
+    implicit val os = inlineQuestins :: cos.toList ::: siblingOverrides
 
     <div class="card d-inline-flex flex-column question" id={withinOctopus.id}>
       <span class="d-flex header-block" onclick={navigateTo _}>
@@ -39,6 +40,7 @@ class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutMo
       <div class="card-body">
 
         {displayHubs(children.withFilter(_.isInstanceOf[Answer]), "answers").bind}
+        {displayHubs(children.withFilter(_.isInstanceOf[Question]), "questions").bind}
 
         </div>
     </div>

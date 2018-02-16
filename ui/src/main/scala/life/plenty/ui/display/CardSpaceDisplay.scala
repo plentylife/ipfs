@@ -4,8 +4,8 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Space, User}
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.{LayoutModule, NoDisplay}
-import life.plenty.ui.model.{DisplayModel, Helpers, UiContext}
-import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
+import life.plenty.ui.model.{DisplayModel, Helpers, ModuleOverride, UiContext}
+import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.Node
 import rx.Rx
 

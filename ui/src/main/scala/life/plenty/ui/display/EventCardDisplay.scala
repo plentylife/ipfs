@@ -4,9 +4,9 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Event, User}
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
 import life.plenty.ui.display.meta.{ChildDisplay, NoDisplay}
-import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
+import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
-import life.plenty.ui.model.{DisplayModel, Router, UiContext}
+import life.plenty.ui.model._
 import org.scalajs.dom.raw.{MouseEvent, Node}
 import rx.Rx
 
@@ -52,7 +52,7 @@ class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[
     </div>
   }
 
-  override def overrides: List[DisplayModel.ModuleOverride] = {
-    ModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ dm.isInstanceOf[ChildDisplay]) :: super.overrides
+  override def overrides: List[ModuleOverride] = {
+    SimpleModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ dm.isInstanceOf[ChildDisplay]) :: super.overrides
   }
 }

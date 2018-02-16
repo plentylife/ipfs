@@ -6,15 +6,15 @@ import life.plenty.model.connection.Parent
 import life.plenty.model.octopi.Space
 import life.plenty.ui
 import life.plenty.ui.display.meta.NoDisplay
-import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
+import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.Helpers._
-import life.plenty.ui.model.Router
+import life.plenty.ui.model.{ModuleOverride, Router, SimpleModuleOverride}
 import org.scalajs.dom.raw.{MouseEvent, Node}
 import rx.Obs
 
 class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
   override def overrides: List[ModuleOverride] = super.overrides ::: List(
-    ModuleOverride(this, new NoDisplay(withinOctopus), (m) ⇒ m.isInstanceOf[MenuBar]))
+    SimpleModuleOverride(this, new NoDisplay(withinOctopus), (m) ⇒ m.isInstanceOf[MenuBar]))
 
   private var obs: Obs = null
   private val parentSpace: Var[Option[Space]] = Var(None)

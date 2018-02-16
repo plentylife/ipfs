@@ -6,8 +6,8 @@ import life.plenty.model.utils.ConFinders._
 import life.plenty.ui.display.actions.AnswerControls
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
-import life.plenty.ui.model.DisplayModel.ModuleOverride
 import life.plenty.ui.model.Helpers._
+import life.plenty.ui.model.ModuleOverride
 import org.scalajs.dom.Node
 
 import scalaz.std.list._

@@ -4,7 +4,8 @@ import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.console
-import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, ModuleOverride, getSiblingModules}
+import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, getSiblingModules}
+import life.plenty.ui.model.{ModuleOverride, SimpleModuleOverride}
 import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
@@ -64,7 +65,7 @@ abstract class GroupedModularDisplay(private val _withinOctopus: Hub) extends Mo
   }
 
   override def overrides: List[ModuleOverride] = {
-    ModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
+    SimpleModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
       dm.isInstanceOf[ModularDisplay] && dm.withinOctopus == withinOctopus
       //      dm.isInstanceOf[ModularDisplay]
     }) :: super.overrides

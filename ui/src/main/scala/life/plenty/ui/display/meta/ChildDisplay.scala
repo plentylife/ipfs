@@ -6,8 +6,8 @@ import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.console
-import life.plenty.ui.model.DisplayModel
-import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride, getSiblingModules}
+import life.plenty.ui.model.{DisplayModel, ModuleOverride, SimpleModuleOverride}
+import life.plenty.ui.model.DisplayModel.{DisplayModule, getSiblingModules}
 import org.scalajs.dom.raw.Node
 import rx.{Obs, Rx}
 
@@ -76,7 +76,7 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Hub) extends Chil
   protected val titles: Map[String, String] = Map()
 
   override def overrides: List[ModuleOverride] = {
-    ModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
+    SimpleModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
       dm.isInstanceOf[ChildDisplay] && !dm.isInstanceOf[GroupedChildDisplay] && dm.withinOctopus == withinOctopus
     }) :: super.overrides
   }

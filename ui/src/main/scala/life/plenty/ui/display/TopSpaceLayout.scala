@@ -10,8 +10,8 @@ import life.plenty.model.utils.ConFinders
 import life.plenty.ui.console
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.{ChildDisplay, LayoutModule, ModularDisplay, ModularDisplayTrait}
-import life.plenty.ui.model.{DisplayModel, UiContext}
-import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, ModuleOverride, SingleActionModuleDisplay, getSiblingModules}
+import life.plenty.ui.model.{DisplayModel, ModuleOverride, UiContext}
+import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule, SingleActionModuleDisplay, getSiblingModules}
 import org.scalajs.dom.raw.Node
 import rx.{Obs, Rx}
 

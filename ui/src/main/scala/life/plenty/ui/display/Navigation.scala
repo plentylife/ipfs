@@ -3,8 +3,8 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.Space
 import life.plenty.ui.display.meta.NoDisplay
-import life.plenty.ui.model.DisplayModel.{DisplayModule, ModuleOverride}
-import life.plenty.ui.model.{DisplayModel, Router, ViewState}
+import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model._
 import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
@@ -17,8 +17,8 @@ class ViewStateLinks(override val withinOctopus: Space) extends DisplayModule[Sp
 
   override def update(): Unit = Unit
 
-  override def overrides: List[DisplayModel.ModuleOverride] =
-    ModuleOverride(this, new NoDisplay(withinOctopus), _.isInstanceOf[ViewStateLinks]) :: super.overrides
+  override def overrides: List[ModuleOverride] =
+    SimpleModuleOverride(this, new NoDisplay(withinOctopus), _.isInstanceOf[ViewStateLinks]) :: super.overrides
 
   @dom
   override protected def generateHtml(): Binding[Node] = {

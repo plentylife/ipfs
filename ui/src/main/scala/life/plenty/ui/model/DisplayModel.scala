@@ -112,7 +112,8 @@ object DisplayModel {
         case mo: ModuleOverride if mo.creator != this && mo.condition(this) ⇒ mo
       } flatMap {
         case SimpleModuleOverride(_, by, _) ⇒ Option(by)
-        case ComplexModuleOverride(_, finder, _) ⇒ withinOctopus.getTopModule(finder)
+        case ComplexModuleOverride(_, finder, _) ⇒ withinOctopus.getTopModule[DisplayModule[Hub]](finder)
+          : Option[DisplayModule[Hub]]
       }
   }
 
