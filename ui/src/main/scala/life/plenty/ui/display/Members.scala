@@ -5,28 +5,21 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.OctopusGunReaderModule
 import life.plenty.model.octopi.{Members, User}
 import life.plenty.ui
+import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.Helpers.OptBindableProperty
-import life.plenty.ui.model.UiContext
+import life.plenty.ui.model.Helpers.{BasicBindable, OptBindableProperty}
+import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.raw.Node
 import rx.Obs
-class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[Members] {
+import scalaz.std.list._
 
-  private val _members = Vars[User]()
-  private var membersRx: Obs = null
-
+class MembersCardDisplay(override val withinOctopus: Members) extends LayoutModule[Members] {
   private var addedCurrentUser = false
 
-  override def update(): Unit = {
-    if (membersRx == null) {
-      membersRx = withinOctopus.getMembers.foreach(list ⇒ {
-        _members.value.clear()
-        _members.value.insertAll(0, list)
-        ui.console.trace(s"MembersDisplay update ${list}")
-      }
-      )
-    }
+  private lazy val members: BasicBindable[List[User]] = withinOctopus.getMembers
 
+  override def update(): Unit = {
+    // fixme this will need to go
     if (!addedCurrentUser) {
       OctopusGunReaderModule.onFinishLoad(withinOctopus, () ⇒ {
         ui.console.trace(s"Trying to add member to space with modules ${withinOctopus.modules}")
@@ -38,12 +31,12 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
-    <div class="card d-inline-flex mt-2" id={withinOctopus.id}>
-      <div class="card-body">
+    <div class="card d-inline-flex members" id={withinOctopus.id}>
+      <h3 class="card-title">Members</h3>
 
-        <div class="card-title">members of this space:</div>
+      <div class="card-body">
         <ul>
-          {for (m <- _members) yield displayMember(m).bind}
+          {for (m <- members().bind) yield displayMember(m).bind}
         </ul>
       </div>
     </div>
@@ -51,6 +44,7 @@ class MembersDisplay(override val withinOctopus: Members) extends DisplayModule[
 
   @dom
   private def displayMember(u: User): Binding[Node] = <li id={u.id}>
-    {u.getName.dom.bind}
+    {DisplayModel.display(u, Nil, Option(this)).bind}
   </li>
 }
+

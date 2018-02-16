@@ -7,7 +7,7 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
 import life.plenty.ui.display.actions.CreateSpace
 import life.plenty.ui.display.{Help, LoadIndicator, Login, Modal}
-import life.plenty.ui.model.{DisplayModel, Router, RoutingParams, UiContext}
+import life.plenty.ui.model._
 import life.plenty.{data, ui}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.{Event, document}
@@ -122,6 +122,9 @@ object Main {
       }).mkString("\n")
     }")
   }
+
+  @JSExport
+  def jd = jdenticon
 
   @JSExport
   def toHash(id: String) = Router.toHash(RoutingParams(0, Option(id)))

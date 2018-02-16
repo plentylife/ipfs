@@ -29,7 +29,7 @@ class RateEffortModuleFilter(private val _withinOctopus: Hub) extends RouterModu
   private val _acceptable = {
     Set(
       !_.isInstanceOf[DisplayModule[_]],
-      _.isInstanceOf[MembersDisplay],
+      _.isInstanceOf[MembersCardDisplay],
       _.isInstanceOf[MenuBar],
       _.isInstanceOf[ViewStateLinks],
     _.isInstanceOf[RateEffortDisplay]

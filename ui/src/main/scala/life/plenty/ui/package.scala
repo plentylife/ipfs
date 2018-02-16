@@ -26,7 +26,6 @@ package object ui {
     ModuleRegistry add { case o: Space ⇒ new CreateSpaceButton(o) }
 
     ModuleRegistry add { case o: Event ⇒ new EventCardDisplay(o) }
-    ModuleRegistry add { case o: Members ⇒ new MembersDisplay(o) }
     ModuleRegistry add { case o: Space ⇒ new EditSpace(o) }
 
     ModuleRegistry add { case o: ContainerSpace ⇒ new DescriptionDisplay(o) }
@@ -61,7 +60,10 @@ package object ui {
       o.isInstanceOf[Space]) ⇒      new ChildDisplay(o) }
 
     ModuleRegistry add { case o: Hub ⇒ new ModularDisplay(o) }
-    ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }
+//    ModuleRegistry add { case o: Question ⇒ new QuestionModuleGroup(o) }
+
+    ModuleRegistry add { case o: User ⇒ new FullUserBadge(o) }
+    ModuleRegistry add { case o: Members ⇒ new MembersCardDisplay(o) }
 
     ModuleRegistry add { case o: Space ⇒ new CardSpaceDisplay(o) } // can apply to question too
     ModuleRegistry add { case o: Question ⇒ new CardQuestionDisplay(o) }
