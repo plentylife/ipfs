@@ -109,9 +109,10 @@ object DisplayModel {
 
     private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =
       overrides.collectFirst {
-        case ModuleOverride(creator, by, condition) if creator != this && condition(this) ⇒
-          println(s"$creator $this $by ${creator == this}")
-          by
+        case mo: ModuleOverride if mo.creator != this && mo.condition(this) ⇒ mo
+      } flatMap {
+        case SimpleModuleOverride(_, by, _) ⇒ Option(by)
+        case ComplexModuleOverride(_, finder, _) ⇒ withinOctopus.getTopModule(finder)
       }
   }
 
