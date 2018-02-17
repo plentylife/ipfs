@@ -27,8 +27,8 @@ trait ConnectionManager[CT] {self: Hub ⇒
   private lazy val actionsOnGraphTransform = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*)
   private lazy val actionsAfterGraphTransform = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*)
 
-  def addConnection(connection: DataHub[_]): Either[Exception, Unit] = {
-    // duplicates are silently dropped
+  def addConnection(connection: DataHub[_]): Either[Exception, Unit] = synchronized {
+    // duplicates are silently dropped // fixme. this might not be working
     if (sc.all.contains {c: DataHub[_] ⇒ c.id == connection.id}) {
       return Right()
     }
