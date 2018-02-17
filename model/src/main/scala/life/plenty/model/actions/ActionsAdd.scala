@@ -1,13 +1,16 @@
 package life.plenty.model.actions
 
-import life.plenty.model.connection.{Body, Child, Marker, MarkerEnum}
+import life.plenty.model.connection._
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.{Hub, Module}
 
 class ActionSignup(override val withinOctopus: SignupQuestion) extends Module[SignupQuestion] {
   def signup(who: User) = {
-    withinOctopus.addConnection(Child(who))
+    val c = new Contribution()
+    c.asNew(Body(""), Parent(withinOctopus))
+    withinOctopus.addConnection(Child(c))
   }
+
   def designup(who: User) = ???
 }
 

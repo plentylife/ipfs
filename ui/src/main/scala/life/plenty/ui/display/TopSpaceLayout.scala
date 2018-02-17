@@ -31,14 +31,15 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
 
   def getSubSpaces(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[ContainerSpace])
   def getQuestions(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[Question])
-  def getAnswers(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[Answer])
+  def getProposals(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[Proposal])
+  def getContributions(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[Contribution])
 
 //      {displayModules(siblingModules.withFilter(_.isInstanceOf[SingleActionModuleDisplay[_]]), "top-space-menu").bind}
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
-    implicit val os = cos.toList ::: siblingOverrides
+    implicit val os = cos.toList ::: siblingOverrides ::: overrides
 
     <div class="top-space-layout">
       {
@@ -62,12 +63,15 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
         <div class="top-space-child-display row">
           {displayHubs(getMembers(children), "administrative section").bind}
           {displayHubs(getQuestions(children), "questions section").bind}
-          {displayHubs(getAnswers(children), "answers section").bind}
+          {displayHubs(getProposals(children), "answers section").bind}
           {displayHubs(getSubSpaces(children), "sub-spaces section").bind}
+          {for (s <- sectionsExtension) yield s.bind}
         </div>
 
         </span>
     </div>
   }
+
+  protected def sectionsExtension(implicit overrides: List[ModuleOverride]): List[Binding[Node]]  = Nil
 }
 

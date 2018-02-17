@@ -25,6 +25,7 @@ object OctopusReader {
     ci("BasicUser", new BasicUser()),
     ci("ContainerSpace", new ContainerSpace()),
     ci("BasicQuestion", new BasicQuestion()),
+    ci("SignupQuestion", new SignupQuestion()),
     ci("Who", new Who()),
     ci("How", new How()),
     ci("What", new What()),

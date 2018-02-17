@@ -50,13 +50,14 @@ trait LayoutModule[T <: Hub] extends DisplayModule[T] {
   }
 
   @dom
-  protected def displayHubs(seq: BindingSeq[Hub]#WithFilter, cssClass: String)(implicit os: List[ModuleOverride])
-  :Binding[Node] = {
+  protected def displayHubs(seq: BindingSeq[Hub]#WithFilter, cssClass: String, ifEmpty: Option[Binding[Node]] = None)
+                           (implicit os: List[ModuleOverride]):Binding[Node] = {
     console.trace(s"Layout display list (hubs) $seq")
     val displays = for (c <- seq) yield DisplayModel.display(c, os, Option(this))
-    val hideClass = if (displays.bind.isEmpty) "d-none" else ""
+    val hideClass = if (displays.bind.isEmpty && ifEmpty.isEmpty) "d-none" else ""
     <div class={cssClass + " " + hideClass}>
       {for (d ← displays) yield d.bind}
+      {if (displays.bind.isEmpty && ifEmpty.nonEmpty) {ifEmpty.get.bind} else DisplayModel.nospan.bind}
     </div>
   }
 
