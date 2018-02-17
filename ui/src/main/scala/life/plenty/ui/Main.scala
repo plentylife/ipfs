@@ -83,6 +83,9 @@ object Main {
   }
 
   @JSExport
+  def console() = ui.console.active = true
+
+  @JSExport
   def log() = println(UiContext.startingSpace.value.get.sc.all)
 
   @JSExport

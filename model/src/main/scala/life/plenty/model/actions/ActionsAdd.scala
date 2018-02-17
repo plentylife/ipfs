@@ -8,7 +8,6 @@ class ActionSignup(override val withinOctopus: SignupQuestion) extends Module[Si
   def signup(who: User) = {
     val c = new Contribution()
     c.asNew(Body(""), Parent(withinOctopus))
-    withinOctopus.addConnection(Child(c))
   }
 
   def designup(who: User) = ???

@@ -129,7 +129,7 @@ object DisplayModel {
 
 
     @dom
-    override protected def generateHtml(): Binding[Node] = <span>
+    override protected def generateHtml(): Binding[Node] = <span class={this.getClass.getSimpleName}>
       {if (!isEmpty.bind) {
         if (active.bind) {
           activeDisplay.bind
