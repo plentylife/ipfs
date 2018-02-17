@@ -61,11 +61,11 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
           </div>
 
         <div class="top-space-child-display row">
+          {for (s <- sectionsExtension) yield s.bind}
           {displayHubs(getMembers(children), "administrative section").bind}
           {displayHubs(getQuestions(children), "questions section").bind}
           {displayHubs(getProposals(children), "answers section").bind}
           {displayHubs(getSubSpaces(children), "sub-spaces section").bind}
-          {for (s <- sectionsExtension) yield s.bind}
         </div>
 
         </span>

@@ -4,13 +4,14 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.{DisplayModel, ModuleOverride, UiContext}
 import org.scalajs.dom.Node
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Event
 import rx.{Ctx, Rx}
 
 import scalaz.std.list._
+import scalaz.std.option._
 
 object Helpers {
 
@@ -64,6 +65,14 @@ object Helpers {
     }
 
     override implicit val parser: Option[T] ⇒ String = opt ⇒ opt.map(_parser).getOrElse("")
+  }
+
+  class OptBindableHub(override val rxv: Rx[Option[Hub]], caller: DisplayModule[Hub],
+                       overrides: List[ModuleOverride] = Nil)    extends    Bindable[Option[Hub]] {
+    @dom
+    def dom: Binding[Node] = this().bind.map {h ⇒ DisplayModel.display(h, overrides, Option(caller)).bind} getOrElse {
+      DisplayModel.nospan.bind
+    }
   }
 
   implicit class BindableProperty[T](override val rxv: Rx[T])(implicit val parser: T ⇒ String) extends BindableDom[T] {

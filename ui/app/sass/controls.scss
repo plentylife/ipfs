@@ -22,7 +22,12 @@
     margin-right: $spacer * 0.25;
 
     .open-btn {
-      margin: auto;
+      margin-left: auto;
+    }
+
+    .btn-sm {
+      padding-top: 0;
+      padding-bottom: 0;
     }
   }
 }

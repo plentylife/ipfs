@@ -57,22 +57,22 @@
   max-width: 50px;
 }
 
-.answer, .contribution, .event, .card {
-  .controls {
-    margin-top: $spacer * 0.25;
-    margin-left: $spacer * 0.25;
-    align-items: center;
-  }
-  .card-controls-bottom {
-    border-top: 1px solid rgba(62, 77, 82, 0.24);
-  }
-  .vote-breakdown {
-    flex-wrap: wrap;
-    span {
-      margin-right: $spacer * 0.25;
-    }
-  }
-}
+//.answer, .contribution, .event, .card {
+//  .controls {
+//    margin-top: $spacer * 0.25;
+//    margin-left: $spacer * 0.25;
+//    align-items: center;
+//  }
+//  .card-controls-bottom {
+//    border-top: 1px solid rgba(62, 77, 82, 0.24);
+//  }
+//  .vote-breakdown {
+//    flex-wrap: wrap;
+//    span {
+//      margin-right: $spacer * 0.25;
+//    }
+//  }
+//}
 
 .answer.card, .contribution.card, .event.card, .question.card, .members.card {
   margin-top: $spacer * 0.25;
@@ -97,7 +97,7 @@
 
 
 .card.answer {
-  border-color: rgba(139, 69, 19, 0.3);
+  //border-color: rgba(139, 69, 19, 0.3);
   .card-title {
     color: saddlebrown;
   }
@@ -105,9 +105,13 @@
 
 $contribution-color: forestgreen;
 
+.contribution-label {
+  color: $contribution-color
+}
+
 .card.contribution {
   //border-color: $contribution-color;
-  border-color: rgba(34, 139, 34, 0.30);
+  //border-color: rgba(34, 139, 34, 0.30);
   .card-title {
     color: $contribution-color;
   }
@@ -164,10 +168,11 @@ $event-color: #9f8600;
   .card-body {
     padding: $spacer * 0.5;
   }
-}
-
-.contribution-label {
-  color: $contribution-color
+  .user-badge {
+    canvas {
+      height: 1.5em;
+    }
+  }
 }
 
 .inline-question {
@@ -179,16 +184,12 @@ $event-color: #9f8600;
 }
 
 .members.card {
-  .user-badge {
-    canvas {
-      height: 1.5em;
-    }
-  }
   .card-controls {
     width: 100%;
     align-items: center;
     flex-direction: row;
     justify-content: space-between;
+
     .open-btn {
       margin: 0;
     }
