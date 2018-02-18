@@ -4,15 +4,18 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Parent
 import life.plenty.model.octopi.Space
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui
-import life.plenty.ui.display.meta.NoDisplay
+import life.plenty.ui.display.actions.MenuAction
+import life.plenty.ui.display.info.AnswerInfo
+import life.plenty.ui.display.meta.{LayoutModule, NoDisplay}
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.utils.Helpers._
 import life.plenty.ui.model.{ModuleOverride, Router, SimpleModuleOverride}
 import org.scalajs.dom.raw.{MouseEvent, Node}
 import rx.Obs
 
-class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
+class MenuBar(override val withinOctopus: Hub) extends LayoutModule[Hub] {
   override def overrides: List[ModuleOverride] = super.overrides ::: List(
     SimpleModuleOverride(this, new NoDisplay(withinOctopus), (m) ⇒ m.isInstanceOf[MenuBar]))
 
@@ -37,18 +40,19 @@ class MenuBar(override val withinOctopus: Space) extends DisplayModule[Space] wi
 
   @dom
   protected override def generateHtml(): Binding[Node] = {
-    //    println("menu bar display")
     ui.console.println("MenuBar genHtml")
+    val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
+    implicit val os = cos.toList ::: siblingOverrides
+
     <div class="menu-bar d-flex">
       {backBtn.bind}
       <div class="wallet">
         {CurrentUserWallet.generateHtml(withinOctopus).bind}
       </div>
+
+      <div class="actions">
+        {displayModules(siblingModules.withFilter(_.isInstanceOf[MenuAction]), "modules").bind}
+      </div>
     </div>
   }
 }
-
-
-//      <h3 class="title ml-2">
-//        {withinOctopus.getTitle.dom.bind}
-//      </h3>
