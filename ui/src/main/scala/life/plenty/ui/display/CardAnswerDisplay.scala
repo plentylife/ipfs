@@ -41,7 +41,7 @@ class CardAnswerDisplay(override val withinOctopus: Answer) extends LayoutModule
 
         <span class="card-controls">
           <div class="btn btn-primary btn-sm open-btn" onclick={navigateTo _}>open</div>{ // keep break
-          displayModules(siblingModules.withFilter(_.isInstanceOf[AnswerControls]), "").bind}
+          displayModules(siblingModules.withFilter(_.isInstanceOf[AnswerControls]), "modules").bind}
         </span>
       </span>
 

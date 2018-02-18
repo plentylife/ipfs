@@ -34,7 +34,7 @@ package object model {
     ModuleRegistry.add { case a: Answer ⇒ new ActionCreateQuestion(a) }
     ModuleRegistry.add { case a: Answer ⇒ new ActionUpDownVote(a) }
 
-    ModuleRegistry.add { case o: Contribution ⇒ new ActionTip(o) }
+    ModuleRegistry.add { case o: Contribution ⇒ new ActionGiveThanks(o) }
 
     // one contributor per contribution (the creator)
     //    ModuleRegistry.add { case c: Contribution ⇒ new ActionAddContributor(c) }

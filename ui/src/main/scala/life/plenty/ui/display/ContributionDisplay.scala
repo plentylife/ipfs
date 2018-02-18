@@ -2,7 +2,7 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.actions.ActionTip
+import life.plenty.model.actions.ActionGiveThanks
 import life.plenty.model.octopi.{Contribution, User}
 import life.plenty.ui
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
@@ -75,7 +75,7 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
     </div>
   }
 
-  private lazy val findTipModule = withinOctopus.getTopModule({ case m: ActionTip ⇒ m })
+  private lazy val findTipModule = withinOctopus.getTopModule({ case m: ActionGiveThanks ⇒ m })
 
   private def onTip(e: Event) = {
     if (open.value) {

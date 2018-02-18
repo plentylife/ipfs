@@ -17,7 +17,7 @@ class ActionUpDownVote(override val withinOctopus: Answer) extends Module[Answer
   }
 }
 
-class ActionTip(override val withinOctopus: Contribution) extends Module[Contribution] {
+class ActionGiveThanks(override val withinOctopus: Contribution) extends Module[Contribution] {
   def add(howMuch: Int, by: User) = {
     if (howMuch < 1) throw new Exception("Amount has to be more than 0")
     val t = new Transaction()

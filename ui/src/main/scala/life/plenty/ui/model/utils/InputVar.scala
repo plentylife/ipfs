@@ -6,6 +6,8 @@ import org.scalajs.dom.Node
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Event
 
+import scala.util.Try
+
 trait InputVar[T] {
   val innerVar: Var[Option[T]]
   val extractor: Event ⇒ Option[T]
@@ -35,6 +37,15 @@ class StringInputVar(override val innerVar: Var[Option[String]] = Var(None)) ext
   }
 }
 
+class TransactionalAmountVar(override val innerVar: Var[Option[Int]] = Var(None)) extends InputVar[Int] {
+  override val extractor: Event ⇒ Option[Int] = e ⇒ {
+    val v = e.target.asInstanceOf[Input].value.trim
+    if (v.isEmpty) None else {
+      Try {v.toInt}.toOption flatMap {i ⇒ if (i > 0) Option(i) else None}
+    }
+  }
+}
+
 class BooleanInputVar(override val innerVar: Var[Option[Boolean]] = Var(None)) extends InputVar[Boolean] {
   override val extractor: Event ⇒ Option[Boolean] = e ⇒ {
     val v = e.target.asInstanceOf[Input].checked
@@ -43,14 +54,14 @@ class BooleanInputVar(override val innerVar: Var[Option[Boolean]] = Var(None)) e
   }
 }
 
-class InputVarWithDisplay(inputVar: InputVar[_], label: String, cssClasses: String = "") {
+class InputVarWithDisplay(inputVar: InputVar[_], label: String, cssClasses: String = "", errorMsg: String = "") {
 
   @dom
   def dom: Binding[Node] = {
     <div class={cssClasses + " input-var"}>
       {if (inputVar.isEmpty.bind) {
       <div class="bg-danger text-white">
-        {label} can't be empty
+        {if (errorMsg.isEmpty) s"$label can't be empty" else errorMsg}
       </div>
     } else {
       <span style="display:none"></span>

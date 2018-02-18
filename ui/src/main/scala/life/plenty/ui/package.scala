@@ -25,6 +25,8 @@ package object ui {
     ModuleRegistry add { case o: Space ⇒ new CreateQuestionButton(o) }
     ModuleRegistry add { case o: Space ⇒ new CreateSpaceButton(o) }
     ModuleRegistry add { case o: SignupQuestion ⇒ new SignupButton(o) }
+    ModuleRegistry add { case a: Contribution ⇒ new GiveButton(a) }
+    ModuleRegistry add { case a: Answer ⇒ new VoteButtons(a) }
 
     ModuleRegistry add { case o: Event ⇒ new EventCardDisplay(o) }
     ModuleRegistry add { case o: Space ⇒ new EditSpace(o) }
@@ -46,7 +48,6 @@ package object ui {
     ModuleRegistry add { case q: Question ⇒ new InlineQuestionDisplay(q) }
 
     ModuleRegistry add { case a: Answer ⇒ new ConfirmActionDisplay(a) }
-    ModuleRegistry add { case a: Answer ⇒ new VoteButtons(a) }
     ModuleRegistry add { case a: Proposal ⇒ new ProposalDisplay(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
 

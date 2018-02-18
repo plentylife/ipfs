@@ -2,15 +2,16 @@ package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.{ActionCreateAnswer, ActionUpDownVote}
+import life.plenty.model.octopi.Answer
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui
 import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
 import org.scalajs.dom.{Event, Node}
 
-trait AnswerControls extends SingleActionModuleDisplay[Hub]
+trait AnswerControls extends SingleActionModuleDisplay[Answer]
 
-class VoteButtons(override val withinOctopus: Hub) extends AnswerControls {
+class VoteButtons(override val withinOctopus: Answer) extends AnswerControls {
 
   override protected lazy val module: Option[ActionUpDownVote] = withinOctopus.getTopModule(
     {case m: ActionUpDownVote => m})

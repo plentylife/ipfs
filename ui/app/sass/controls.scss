@@ -21,13 +21,32 @@
     margin-left: auto;
     margin-right: $spacer * 0.25;
 
-    .open-btn {
+
+    .btn {
       margin-left: auto;
+      margin-bottom: $spacer * 0.1;
+      @extend .btn-sm;
+    }
+
+    .btn:last-child {
+      margin-bottom: 0;
     }
 
     .btn-sm {
       padding-top: 0;
       padding-bottom: 0;
+    }
+
+    .voting-controls {
+      margin-left: auto;
+    }
+    .give-btn {
+      padding-top: $spacer * 0.25;
+      padding-bottom: $spacer * 0.25;
+    }
+    .modules {
+      display: inline-flex;
+      flex-wrap: wrap;
     }
   }
 }
