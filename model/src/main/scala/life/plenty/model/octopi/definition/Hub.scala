@@ -2,8 +2,9 @@ package life.plenty.model.octopi.definition
 
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
-import life.plenty.model.connection.{DataHub, Marker}
+import life.plenty.model.connection.{DataHub, Marker, MarkerEnum}
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
+import life.plenty.model.utils.ConFinders
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
 
@@ -41,6 +42,10 @@ trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnecti
       case _ ⇒
     }
   }
+
+  lazy val isActive = ConFinders.markedConfirmed(this)
+  def inactivate = if (isActive.now) addConnection(Marker(MarkerEnum.INACTIVE))
+  def activate = if (!isActive.now) addConnection(Marker(MarkerEnum.ACTIVE))
 
   /** easy hook for external code */
   var tmpMarker: TmpMarker = NoMarker

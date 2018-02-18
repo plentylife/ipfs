@@ -36,5 +36,16 @@ package object utils {
       })
 
     def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({case Body(b) ⇒ b})
+
+    def active(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {
+      val count: Rx[List[Int]] = o.rx.getAll({
+        case Marker(m) if m == MarkerEnum.INACTIVE ⇒ -1
+        case Marker(m) if m == MarkerEnum.ACTIVE ⇒ 1
+      })
+      count map {list: List[Int] ⇒
+        val s = (0 :: list).sum
+        s >= 0
+      }
+    }
   }
 }
