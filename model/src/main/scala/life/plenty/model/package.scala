@@ -2,7 +2,7 @@ package life.plenty
 
 
 import life.plenty.model.actions._
-import life.plenty.model.modifiers.{AnswerVoteOrder, RemovedFilter}
+import life.plenty.model.modifiers.{AnswerVoteOrder, InactiveFilter}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.utils.{Console, Hash}
@@ -48,7 +48,7 @@ package object model {
     ModuleRegistry.add { case o: Space ⇒ new ActionMove(o) }
 
     ModuleRegistry.add { case o: Hub ⇒ new ActionRemove(o) }
-//    ModuleRegistry.add { case o: Octopus ⇒ new RemovedFilter(o) }
+    ModuleRegistry.add { case o: Hub ⇒ new InactiveFilter(o) }
 
   }
 }

@@ -6,7 +6,7 @@ import life.plenty.model.connection._
 import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
 import rx.{Ctx, Rx}
 
-class RemovedFilter(override val withinOctopus: Hub) extends RxConnectionFilters[Hub] {
+class InactiveFilter(override val withinOctopus: Hub) extends RxConnectionFilters[Hub] {
 
   private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
@@ -16,21 +16,16 @@ class RemovedFilter(override val withinOctopus: Hub) extends RxConnectionFilters
         // checking if removed based on connection
         // the AtInstantiation is added for 2 reasons: not to trip an error of idGen and because those are required
         // (usually)
-        if (con.isInstanceOf[Id] || con.tmpMarker == AtInstantiation) {
+        if (!(con.isInstanceOf[Id] || con.tmpMarker == AtInstantiation)) {
           val resCon: Option[DataHub[_]] = con.value match {
-            // checking if removed based on octopus
-            case o: Hub ⇒
-              val rc = o.rx.Lazy.lazyGet({ case m@Marker(REMOVED) ⇒ m })
-              val rcOpt = rc map { marker ⇒ if (marker.isEmpty) optCon else None }
-              rcOpt()
-            //            rc() map {_ ⇒ con}
+            case o: Hub ⇒ if (o.isActive()) optCon else None
             case _ ⇒ optCon
           }
           println(s"connection passed ${con} ${con.id} ")
           resCon
         } else {
-          println(s"connection filtered ${con} ${con.id} ")
-          None
+          println(s"connection force passed ${con} ${con.id} ")
+          optCon
         }
       }
     }

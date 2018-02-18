@@ -6,6 +6,6 @@ import life.plenty.model.octopi.definition.{Module, Hub}
 
 class ActionRemove(override val withinOctopus: Hub) extends Module[Hub] {
   def remove() = {
-    withinOctopus.addConnection(Marker(REMOVED))
+    withinOctopus.inactivate
   }
 }
