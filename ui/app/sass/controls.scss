@@ -24,12 +24,14 @@
 
     .btn {
       margin-left: auto;
-      margin-bottom: $spacer * 0.1;
       @extend .btn-sm;
     }
 
-    .btn:last-child {
-      margin-bottom: 0;
+    .open-btn {
+      margin-bottom: $spacer * 0.1;
+      &:last-child {
+        margin-bottom: 0;
+      }
     }
 
     .btn-sm {
@@ -47,6 +49,9 @@
     .modules {
       display: inline-flex;
       flex-wrap: wrap;
+      & > span, & > div {
+        margin-bottom: $spacer * 0.1;
+      }
     }
   }
 }

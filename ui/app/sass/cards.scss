@@ -173,6 +173,11 @@ $event-color: #9f8600;
       height: 1.5em;
     }
   }
+  .card-subtitle {
+    span {
+      white-space: nowrap;
+    }
+  }
 }
 
 .inline-question {

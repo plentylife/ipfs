@@ -4,6 +4,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Answer, Contribution, Proposal}
 import life.plenty.model.utils.ConFinders._
 import life.plenty.ui.display.actions.AnswerControls
+import life.plenty.ui.display.info.AnswerInfo
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.model.utils.Helpers._
@@ -35,7 +36,8 @@ class CardAnswerDisplay(override val withinOctopus: Answer) extends LayoutModule
           </h5>
           <div class="card-subtitle">
             {creator.dom.bind}
-            {withinOctopus.votes.dom.bind} votes
+            <span>{withinOctopus.votes.dom.bind} votes</span>
+            {displayModules(siblingModules.withFilter(_.isInstanceOf[AnswerInfo]), "modules").bind}
           </div>
         </span>
 
