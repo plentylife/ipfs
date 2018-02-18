@@ -3,6 +3,7 @@ package life.plenty.model.actions
 import life.plenty.model.connection._
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.{Hub, Module}
+import life.plenty.model.utils.ConFinders
 
 class ActionSignup(override val withinOctopus: SignupQuestion) extends Module[SignupQuestion] {
   def signup(who: User) = {
@@ -23,18 +24,12 @@ class ActionAddConfirmedMarker(override val withinOctopus: Hub) extends Module[H
   }
 
   def deconfirm() = {
-    // try just adding the same remove!
-    //fixme
-    //    withinOctopus.removeConnection(Marker(MarkerEnum.CONFIRMED))
+    ConFinders.confirmedMarker(withinOctopus).now.foreach {
+      _.inactivate()
+    }
+
     println(s"removed marker ${withinOctopus.sc.all}")
     println(s"${withinOctopus.rx.cons}")
-    //    val obs = withinOctopus.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
-    //    obs.foreach(_ foreach { m ⇒
-    //      println(s"Found confirm marker. Deconfirming ${m}")
-    //      obs.kill()
-    //      withinOctopus.removeConnection(m)
-    //      println(s"removed marker ${withinOctopus.connections}")
-    //    })
   }
 }
 

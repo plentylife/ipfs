@@ -29,7 +29,10 @@ trait ConnectionManager[CT] {self: Hub ⇒
 
   def addConnection(connection: DataHub[_]): Either[Exception, Unit] = synchronized {
     // duplicates are silently dropped // fixme. this might not be working
-    if (sc.all.contains {c: DataHub[_] ⇒ c.id == connection.id}) {
+    val existing = sc.all.find {c: DataHub[_] ⇒ c.id == connection.id}
+    if (existing.nonEmpty) {
+      println(s"found existing connection ${existing.get} ${existing.get.id}")
+      existing.get.activate()
       return Right()
     }
 

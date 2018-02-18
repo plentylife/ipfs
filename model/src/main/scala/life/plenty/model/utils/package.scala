@@ -29,11 +29,12 @@ package object utils {
   }
 
   object ConFinders {
+
+    def confirmedMarker(o: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Marker]] =
+      o.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
+
     def markedConfirmed(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] =
-      o.rx.get({ case Marker(m) if m == MarkerEnum.CONFIRMED ⇒ m }).map(m ⇒ {
-        println(s"rx confirmed changing ${m}")
-        m.nonEmpty
-      })
+      confirmedMarker(o).map(m ⇒ {m.nonEmpty})
 
     def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({case Body(b) ⇒ b})
 
