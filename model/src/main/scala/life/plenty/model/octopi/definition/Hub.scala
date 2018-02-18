@@ -43,7 +43,7 @@ trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnecti
     }
   }
 
-  lazy val isActive = ConFinders.markedConfirmed(this)
+  lazy val isActive = ConFinders.active(this)
   def inactivate() = if (isActive.now) addConnection(Marker(MarkerEnum.INACTIVE))
   def activate() = if (!isActive.now) addConnection(Marker(MarkerEnum.ACTIVE))
 
