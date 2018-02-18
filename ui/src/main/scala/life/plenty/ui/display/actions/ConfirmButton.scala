@@ -20,8 +20,6 @@ class ConfirmButton(override val withinOctopus: Space) extends ActionDisplay[Spa
   private lazy val module: Option[ActionAddConfirmedMarker] = withinOctopus
     .getTopModule({case m: ActionAddConfirmedMarker => m})
   private lazy val isConfirmed = ConFinders.markedConfirmed(withinOctopus)
-
-
   private var obs: Obs = null
 
   override def update(): Unit = {
@@ -31,10 +29,15 @@ class ConfirmButton(override val withinOctopus: Space) extends ActionDisplay[Spa
     isEmpty.value_=(module.isEmpty)
   }
 
-  override def activeDisplay: Binding[Node] = ???
+  @dom
+  override def activeDisplay: Binding[Node] = <div class="btn btn-outline-primary"
+                                                   onclick={e: Event ⇒ module.get.deconfirm()}>
+    de-confirm
+  </div>
 
   @dom
-  override def inactiveDisplay: Binding[Node] = <div class="btn btn-primary">
+  override def inactiveDisplay: Binding[Node] = <div class="btn btn-primary"
+                                                     onclick={e: Event ⇒ module.get.confirm()}>
     confirm
   </div>
 }

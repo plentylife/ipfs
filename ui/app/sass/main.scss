@@ -2,6 +2,8 @@ $theme-colors: (
         "primary": #FFA000,
 );
 
+$confirmed-color: #2ebb2e;
+
 @import "../node_modules/bootstrap/scss/bootstrap";
 @import "menu";
 @import "cards";

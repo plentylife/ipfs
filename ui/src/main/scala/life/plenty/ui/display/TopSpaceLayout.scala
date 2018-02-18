@@ -24,6 +24,8 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
 
   override def doDisplay(): Boolean = UiContext.startingSpace.value.exists(_.id == withinOctopus.id)
 
+  private lazy val isConfirmed: BasicBindable[Boolean] = ConFinders.markedConfirmed(withinOctopus)
+
   def getMembers(cs: BindingSeq[Hub]): BindingSeq[Hub]#WithFilter = cs.withFilter({
     case m: Members ⇒ true
     case _ ⇒ false
@@ -40,6 +42,7 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
     implicit val os = cos.toList ::: siblingOverrides ::: overrides
+    val titleClasses = "title ml-2 " + {if (isConfirmed().bind) "confirmed" else ""}
 
     <div class="top-space-layout">
       {
@@ -50,7 +53,7 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
 
       <span class="d-flex flex-column span-separator">
           <div class="row flex-column">
-          <h3 class="title ml-2">
+          <h3 class={titleClasses}>
             {withinOctopus.getTitle.dom.bind}
           </h3>
             <h5 class="sub-title mt-1 ml-2 text-muted">

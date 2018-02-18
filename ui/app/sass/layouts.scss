@@ -24,6 +24,10 @@
     width: 100%;
   }
 
+  .title.confirmed {
+    background-color: $confirmed-color;
+  }
+
   .top-space-child-display {
     margin-top: $spacer;
     flex-direction: row;
