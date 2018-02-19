@@ -5,12 +5,6 @@ import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
 
 
 @js.native
-@JSGlobal
-object GunConstructor extends js.Object {
-  def apply(opts: js.Object): Gun = js.native
-}
-
-@js.native
 trait Ack extends js.Object {
   val err: String = js.native
 }
@@ -75,7 +69,9 @@ trait Gun_ extends js.Object {
 
 @js.native
 @JSGlobal
-object SupGun extends js.Object {
+object GunCalls extends js.Object {
   val gunGetClass: js.Function3[Gun, String, js.Function1[js.Object, Unit], Unit] = js.native
   val gunGet: js.Function3[Gun, String, js.Function1[js.Object, Unit], Unit] = js.native
+  val instantiate: js.Function1[js.Object, js.Promise[_]] = js.native
+  val getInstance: js.Function0[Gun] = js.native
 }

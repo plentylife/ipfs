@@ -134,4 +134,7 @@ object Main {
 
   @JSExport
   def gun = data.Main.gun
+
+  @JSExport
+  def gunGet(id: String) = data.Main.gun.get(id)
 }

@@ -24,7 +24,7 @@ object OctopusWriter {
     }
 
     Future {
-      val go = gun.get(o.id)
+      val go = Main.gun.get(o.id)
 
       val info = js.Dynamic.literal("class" → o.getClass.getSimpleName, "connections" → null)
       o match {

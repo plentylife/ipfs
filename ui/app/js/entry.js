@@ -17,19 +17,40 @@ window.LevelDB = levelup(
   )
 );
 
-window.SupGun = {
-  gunGetClass : function(g, id, cb) {
+var gun = null
+
+window.GunCalls = {
+  gunGetClass : function(id, cb) {
     console.log("SupGun getClass")
-    g.get(id).get('class').val(function(d) {
+    gun.get(id).get('class').val(function(d) {
       console.log("SupGun got class " + JSON.stringify(d))
       cb(d)
     }, {wait: 0})
   },
-  gunGet : function(g, id, cb) {
+  gunGet : function(id, cb) {
     console.log("SupGun get")
-    g.get(id).val(function(d) {
+    gun.get(id).val(function(d) {
       console.log("SupGun got " + JSON.stringify(d))
       cb(d)
     }, {wait: 0})
+  },
+  getConnections: function(id, cb) {
+    gun.get(id).get("connections").val(function(d) {
+      console.log("SupGun got connections " + JSON.stringify(d))
+      cb(d)
+    }, {wait: 0})
+  },
+  instantiate: function(peers) {
+    return window.LevelDB.open().then(function(db) {
+      gun = Gun({
+        level: db,
+        localStroage: false,
+        file: false,
+        peers: peers
+      })
+    })
+  },
+  getInstance: function () {
+    return gun;
   }
 }

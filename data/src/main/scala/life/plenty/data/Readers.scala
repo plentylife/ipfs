@@ -1,7 +1,6 @@
 package life.plenty.data
 
 import life.plenty.data
-import life.plenty.data.OctopusReader.noWait
 import life.plenty.model.actions.ActionOnConnectionsRequest
 import life.plenty.model.connection._
 import life.plenty.model.octopi.GreatQuestions._
@@ -18,8 +17,6 @@ import scala.scalajs.js.JSON
 object GunMarker extends TmpMarker
 
 object OctopusReader {
-  val noWait: js.Object = js.Dynamic.literal("wait" → 0)
-
   def ci(className: String, inst: ⇒ Hub) = {
     (cn: String) ⇒ if (className == cn) Option(inst) else None
   }
@@ -57,17 +54,14 @@ object OctopusReader {
     val gun = Main.gun.get(id)
 
     val className = Promise[String]()
-//    gun.get("class").`val`((d, k) ⇒ {
-    SupGun.gunGetClass(Main.gun, id, d ⇒ {
+    gun.get("class").`val`((d, k) ⇒ {
       if (!js.isUndefined(d) && d != null) {
         className.success(d.toLocaleString())
       } else {
         console.error(s"Failed loading on ID `$id`")
         className.failure(new Exception(s"Could not find id $id in the database"))
       }
-    })
-
-//    }, noWait)
+    }, noWait)
 
     className.future.map(cs ⇒ {
       console.println(s"Gun is constructing $cs")
@@ -117,11 +111,10 @@ object ConnectionReader {
     if (key.isEmpty) return Future(false)
 
     val p = Promise[Boolean]()
-//    Main.gun.get(key).`val`((d, k) ⇒ {
-    SupGun.gunGet(Main.gun, key, (d) ⇒ {
+    Main.gun.get(key).`val`((d, k) ⇒ {
+      console.trace(s"Has class gun call got response for $key ${JSON.stringify(d)} $k")
       if (!js.isUndefined(d)) p.success(true) else p.success(false)
-    })
-//    }, noWait)
+    }, noWait)
     p.future
   }
 
@@ -132,6 +125,7 @@ object ConnectionReader {
     if (con.`class` == "Id") return Future {Option {Id(con.value)}}
 
     hasClass(con.value) flatMap { hc ⇒
+      console.trace(s"Has class $hc ${con.`class`} ${con.value} $key")
       if (hc) {
         OctopusReader.read(con.value) map { optO ⇒
           if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
@@ -180,54 +174,42 @@ class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnCo
 //    val gc = gun.get("connections")
 
     Future {
-//      gc.`val`((d, k) ⇒ {
-//      gun.get("connections").`val`((d, k) ⇒ {
-      // fixme. not getting connections.
-      SupGun.gunGet(Main.gun, withinOctopus.id, (d) ⇒ {
+      gun.get("connections").`val`((d, k) ⇒ {
         console.trace(s"Gun raw connections to read in ${withinOctopus} ${withinOctopus.id} ${connectionsLeftToLoad}")
         console.trace(s"${JSON.stringify(d)}")
-        val keys = js.Object.keys(d)
-        val l = keys.length
+        val l = js.Object.keys(d).length
         connectionsLeftToLoad() = l + connectionsLeftToLoad.now
-        console.trace(s"Gun raw connections length $l ${connectionsLeftToLoad.now} ${keys.toList}")
-
-        keys.filterNot(_ == "_").foreach(sk ⇒ {
-          readSingleConnection(sk)
-        })
-      })
-//      }, noWait)
+        console.trace(s"Gun raw connections length $l ${connectionsLeftToLoad.now}")
+      }, noWait)
     }
-  }
 
-  def readSingleConnection(key: String) = Future {
-          // fixme this will bug out if we are re-using connections. i don't think that is the case anymore.
-          val cachedCon = Cache.getConnection(key)
-          if (cachedCon.nonEmpty) {
+    gun.get("connections").map().`val`((d, k) ⇒ Future {
+      // fixme this will bug out if we are re-using connections
+      val cachedCon = Cache.getConnection(k)
+      if (cachedCon.nonEmpty) {
+        connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+        if (!allCons.now.contains(k)) withinOctopus.addConnection(cachedCon.get)
+        console.trace(s"Skipping loading connection $k")
+      } else {
+        ConnectionReader.read(d, k) map { optCon ⇒ {
+          console.println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
+          if (optCon.isEmpty) {
+            console.error(s"Reader could not parse connection ${JSON.stringify(d)}")
+            throw new Exception("Gun reader could not parse a connection.")
+          }
+
+          optCon foreach { c ⇒
+            Cache.put(c)
+            val vc = Cache.getConnection(c.id).get // should never fail
             connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-            if (!allCons.now.contains(key)) withinOctopus.addConnection(cachedCon.get)
-            console.trace(s"Skipping loading connection $key")
-          } else {
-            Main.gun.get(key).`val`((d, k) ⇒ {
-              console.println(s"Gun reading connection of ${withinOctopus} $k")
-              ConnectionReader.read(d, k) map { optCon ⇒ {
-                if (optCon.isEmpty) {
-                  console.error(s"Reader could not parse connection ${JSON.stringify(d)}")
-                  throw new Exception("Gun reader could not parse a connection.")
-                }
-
-                optCon foreach { c ⇒
-                  Cache.put(c)
-                  val vc = Cache.getConnection(c.id).get // should never fail
-                  connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-                  vc.tmpMarker = GunMarker
-                  withinOctopus.addConnection(vc)
-                }
-              }
-              }
-            }, noWait)
-
+            vc.tmpMarker = GunMarker
+            withinOctopus.addConnection(vc)
           }
         }
+        }
+      }
+    }, noWait)
+  }
 }
 
 object OctopusGunReaderModule {

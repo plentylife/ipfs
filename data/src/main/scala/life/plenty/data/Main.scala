@@ -9,30 +9,18 @@ import scala.concurrent.Future
 import scala.scalajs.js
 
 object Main {
+  def gun: Gun = GunCalls.getInstance()
 
-  private var _gun: Gun = _
-
-  def gun: Gun = _gun
-
-  def main(bootstrapPeers: js.Array[String]): Future[Unit] = {
+  def main(bootstrapPeers: js.Array[String]): Future[Any] = {
     println(s"Data entry point with peers ${bootstrapPeers.toList}")
     model.setHasher(DataHash)
     modules()
 
-    LevelDB.open().toFuture.map(db ⇒ {
-      val peersOpt = js.Dynamic.literal()
-      bootstrapPeers.foreach(p ⇒ {
-        peersOpt.updateDynamic(p)("")
-      })
-      val config = new GunConfig
-      config.level = db
-      config.localStorage = false
-      config.peers = peersOpt
-      config.file = false
-
-      _gun = GunConstructor(config)
+    val peersOpt = js.Dynamic.literal()
+    bootstrapPeers.foreach(p ⇒ {
+      peersOpt.updateDynamic(p)("")
     })
-
+    GunCalls.instantiate(peersOpt).toFuture
   }
 
   def modules(): Unit = {
