@@ -1,7 +1,7 @@
 package life.plenty.model.octopi.definition
 
 import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnGraphTransform}
-import life.plenty.model.connection.DataHub
+import life.plenty.model.connection.{DataHub, Id}
 import rx.{Rx, Var}
 
 trait ConnectionManager[CT] {self: Hub ⇒
@@ -29,6 +29,10 @@ trait ConnectionManager[CT] {self: Hub ⇒
 
   def addConnection(connection: DataHub[_]): Either[Exception, Unit] = synchronized {
     // duplicates are silently dropped // fixme. this might not be working
+    println(s"Adding connection to ${this.getClass.getSimpleName} " +
+      s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}" +
+      s"<-- ${connection.getClass.getSimpleName} " +
+      s"${connection.id}")
     val existing = sc.all.find {c: DataHub[_] ⇒ c.id == connection.id}
     if (existing.nonEmpty) {
       println(s"found existing connection ${existing.get} ${existing.get.id}")

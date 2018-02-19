@@ -21,15 +21,13 @@ class InactiveFilter(override val withinOctopus: Hub) extends RxConnectionFilter
             case o: Hub ⇒ if (o.isActive()) optCon else None
             case _ ⇒ optCon
           }
-          println(s"connection passed ${con} ${con.id} ")
+//          println(s"connection passed ${con} ${con.id} ")
           resCon
         } else {
-          println(s"connection force passed ${con} ${con.id} ")
           optCon
         }
       }
     }
-    println(s"RemoveFilter $what -> ${filtered}")
     //    model.console.trace(s"RemoveFilter $what -> ${filtered}")
     filtered
   }
