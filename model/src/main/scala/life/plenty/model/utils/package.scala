@@ -41,10 +41,10 @@ package object utils {
 
     // fixme use h.connections
     def active(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {
-      val count: Rx[List[Int]] = o.rx.getAll({
+      val count: Rx[List[Int]] = o.connections.map {_ collect {
         case Marker(m) if m == MarkerEnum.INACTIVE ⇒ -1
         case Marker(m) if m == MarkerEnum.ACTIVE ⇒ 1
-      })
+      }}
       count map {list: List[Int] ⇒
         val s = (0 :: list).sum
         s >= 0
