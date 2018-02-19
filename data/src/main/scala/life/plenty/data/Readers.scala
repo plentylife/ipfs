@@ -51,17 +51,17 @@ object OctopusReader {
       return Future(fromCache)
     }
 
-    val gun = Main.gun.get(id)
+//    val gun = Main.gun.get(id)
 
     val className = Promise[String]()
-    gun.get("class").`val`((d, k) ⇒ {
+    GunCalls.getHubClass(id, (d) ⇒ {
       if (!js.isUndefined(d) && d != null) {
         className.success(d.toLocaleString())
       } else {
         console.error(s"Failed loading on ID `$id`")
         className.failure(new Exception(s"Could not find id $id in the database"))
       }
-    }, noWait)
+    })
 
     className.future.map(cs ⇒ {
       console.println(s"Gun is constructing $cs")
@@ -111,10 +111,12 @@ object ConnectionReader {
     if (key.isEmpty) return Future(false)
 
     val p = Promise[Boolean]()
-    Main.gun.get(key).`val`((d, k) ⇒ {
-      console.trace(s"Has class gun call got response for $key ${JSON.stringify(d)} $k")
+    GunCalls.get(key, (d: js.Object, k: String) ⇒ {
+      if (!js.isUndefined(d)) {
+        console.trace(s"Has class gun call got response for $key ${JSON.stringify(d)} $k")
+      } else console.trace("Has class did not find the requested id")
       if (!js.isUndefined(d)) p.success(true) else p.success(false)
-    }, noWait)
+    })
     p.future
   }
 
@@ -159,31 +161,30 @@ class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnCo
     if (!instantiated) {
       instantiated = true
       console.println(s"Gun Reader ${this} onConsReq called in ${withinOctopus.getClass} with ${withinOctopus.sc.all}")
-      val gun = Main.gun.get(withinOctopus.id)
-      gun.`val`((d, k) ⇒ {
+      GunCalls.get(withinOctopus.id, (d, k) ⇒ {
         if (!js.isUndefined(d) && d != null) {
           console.trace(s"Gun Reader onConsReq before load() ${withinOctopus.id} ${JSON.stringify(d)}")
-          load(gun)
+          load()
         }
-      }, noWait)
+      })
     }
   }
 
-  private def load(gun: Gun) = Future {
+  private def load() = Future {
     console.println(s"Gun reader ${this} setting up in load() of ${withinOctopus} ${withinOctopus.id}")
 //    val gc = gun.get("connections")
 
     Future {
-      gun.get("connections").`val`((d, k) ⇒ {
+      GunCalls.getConnections(withinOctopus.id, (d) ⇒ {
         console.trace(s"Gun raw connections to read in ${withinOctopus} ${withinOctopus.id} ${connectionsLeftToLoad}")
         console.trace(s"${JSON.stringify(d)}")
         val l = js.Object.keys(d).length
         connectionsLeftToLoad() = l + connectionsLeftToLoad.now
         console.trace(s"Gun raw connections length $l ${connectionsLeftToLoad.now}")
-      }, noWait)
+      })
     }
 
-    gun.get("connections").map().`val`((d, k) ⇒ Future {
+    GunCalls.mapConnections(withinOctopus.id, (d, k) ⇒ Future {
       // fixme this will bug out if we are re-using connections
       val cachedCon = Cache.getConnection(k)
       if (cachedCon.nonEmpty) {
@@ -208,7 +209,7 @@ class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnCo
         }
         }
       }
-    }, noWait)
+    })
   }
 }
 

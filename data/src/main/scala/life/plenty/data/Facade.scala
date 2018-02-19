@@ -70,8 +70,11 @@ trait Gun_ extends js.Object {
 @js.native
 @JSGlobal
 object GunCalls extends js.Object {
-  val gunGetClass: js.Function3[Gun, String, js.Function1[js.Object, Unit], Unit] = js.native
-  val gunGet: js.Function3[Gun, String, js.Function1[js.Object, Unit], Unit] = js.native
+  val getHubClass: js.Function2[String, js.Function1[js.Object, Unit], Unit] = js.native
+  val get: js.Function2[String, js.Function2[js.Object, String, Unit], Unit] = js.native
+  val getConnections: js.Function2[String, js.Function1[js.Object, Unit], Unit] = js.native
+  val mapConnections: js.Function2[String, js.Function2[js.Object, String, Unit], Unit] = js.native
+
   val instantiate: js.Function1[js.Object, js.Promise[_]] = js.native
   val getInstance: js.Function0[Gun] = js.native
 }

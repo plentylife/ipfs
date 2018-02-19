@@ -20,24 +20,30 @@ window.LevelDB = levelup(
 var gun = null
 
 window.GunCalls = {
-  gunGetClass : function(id, cb) {
+  getHubClass : function(id, cb) {
     console.log("SupGun getClass")
-    gun.get(id).get('class').val(function(d) {
-      console.log("SupGun got class " + JSON.stringify(d))
+    gun.get(id).get('class').val(function(d, k) {
+      console.log("SupGun got class " + JSON.stringify(d), k)
       cb(d)
     }, {wait: 0})
   },
-  gunGet : function(id, cb) {
+  get : function(id, cb) {
     console.log("SupGun get")
-    gun.get(id).val(function(d) {
-      console.log("SupGun got " + JSON.stringify(d))
-      cb(d)
+    gun.get(id).val(function(d, k) {
+      console.log("SupGun got ", d, k)
+      cb(d, k)
     }, {wait: 0})
   },
   getConnections: function(id, cb) {
     gun.get(id).get("connections").val(function(d) {
       console.log("SupGun got connections " + JSON.stringify(d))
       cb(d)
+    }, {wait: 0})
+  },
+  mapConnections: function(id, cb) {
+    gun.get(id).get("connections").map().val(function(d, k) {
+      console.log("SupGun mapping connection", d, k)
+      cb(d,k)
     }, {wait: 0})
   },
   instantiate: function(peers) {
