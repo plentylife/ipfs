@@ -6,7 +6,7 @@ import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
 
 @js.native
 @JSGlobal
-object Gun extends js.Object {
+object GunConstructor extends js.Object {
   def apply(opts: js.Object): Gun = js.native
 }
 
@@ -42,7 +42,9 @@ class GunConfig (
 trait Gun extends js.Object {
   def get(key: String): Gun = js.native
 
-  def `val`(callback: js.Function2[js.Object, String, Unit]): Gun = js.native
+  def `val`(callback: js.Function2[js.Object, String, Unit], options: js.UndefOr[js.Object]): Gun = js.native
+
+//  def `val`(callback: js.Function2[js.Object, String, Unit]): Gun = js.native
 
   def map(callback: js.Function1[js.Object, js.Object] = null): Gun = js.native
 
@@ -70,3 +72,10 @@ trait Gun_ extends js.Object {
 //  def alive(callback: js.Function0[js.Object]): Future[js.Object] = js.native
 //  def recall(validMinutes: Int, callback: js.Function0[js.Object]) = js.native
 //}
+
+@js.native
+@JSGlobal
+object SupGun extends js.Object {
+  val gunGetClass: js.Function3[Gun, String, js.Function1[js.Object, Unit], Unit] = js.native
+  val gunGet: js.Function3[Gun, String, js.Function1[js.Object, Unit], Unit] = js.native
+}

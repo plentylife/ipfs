@@ -30,7 +30,7 @@ object Main {
       config.peers = peersOpt
       config.file = false
 
-      _gun = Gun(config)
+      _gun = GunConstructor(config)
     })
 
   }

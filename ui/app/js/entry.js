@@ -4,7 +4,7 @@
 // window.Gun = require("../../../../gun-level/dist/browser");
 // window.Gun = require('../../../../gun/gun'); // in NodeJS
 window.Hashes = require('jshashes');
-window.Gun = require("gun-level");
+window.GunConstructor = require("gun-level");
 
 const levelup = require('levelup');
 const encode = require('encoding-down');
@@ -16,3 +16,20 @@ window.LevelDB = levelup(
     { valueEncoding: 'json' }
   )
 );
+
+window.SupGun = {
+  gunGetClass : function(g, id, cb) {
+    console.log("SupGun getClass")
+    g.get(id).get('class').val(function(d) {
+      console.log("SupGun got class " + JSON.stringify(d))
+      cb(d)
+    }, {wait: 0})
+  },
+  gunGet : function(g, id, cb) {
+    console.log("SupGun get")
+    g.get(id).val(function(d) {
+      console.log("SupGun got " + JSON.stringify(d))
+      cb(d)
+    }, {wait: 0})
+  }
+}

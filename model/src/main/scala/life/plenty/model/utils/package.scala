@@ -1,6 +1,6 @@
 package life.plenty.model
 
-import life.plenty.model.connection.{Body, DataHub, Marker, MarkerEnum}
+import life.plenty.model.connection._
 import life.plenty.model.octopi.definition.Hub
 import rx.{Ctx, Rx}
 
@@ -29,6 +29,7 @@ package object utils {
   }
 
   object ConFinders {
+    def getParent(o: Hub)(implicit ctx: Ctx.Owner) = o.rx.get({ case Parent(p: Hub) ⇒ p })
 
     def confirmedMarker(o: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Marker]] =
       o.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
@@ -38,6 +39,7 @@ package object utils {
 
     def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({case Body(b) ⇒ b})
 
+    // fixme use h.connections
     def active(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {
       val count: Rx[List[Int]] = o.rx.getAll({
         case Marker(m) if m == MarkerEnum.INACTIVE ⇒ -1
