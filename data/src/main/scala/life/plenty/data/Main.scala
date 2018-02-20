@@ -16,11 +16,11 @@ object Main {
     model.setHasher(DataHash)
     modules()
 
-    val peersOpt = js.Dynamic.literal()
-    bootstrapPeers.foreach(p ⇒ {
-      peersOpt.updateDynamic(p)("")
-    })
-    GunCalls.instantiate(peersOpt).toFuture
+//    val peersOpt = js.Dynamic.literal()
+//    bootstrapPeers.foreach(p ⇒ {
+//      peersOpt.updateDynamic(p)("")
+//    })
+    GunCalls.instantiate(bootstrapPeers).toFuture
   }
 
   def modules(): Unit = {

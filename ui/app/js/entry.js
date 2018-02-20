@@ -3,7 +3,7 @@
 // window.Gun = require('gun'); // in NodeJS
 // window.Gun = require("../../../../gun-level/dist/browser");
 const Gun = require('../../../../gun/gun'); // in NodeJS
-// require("gun-level");
+require("gun-level");
 window.Hashes = require('jshashes');
 
 const levelup = require('levelup');
@@ -46,17 +46,14 @@ window.GunCalls = {
   },
   instantiate: function(peers) {
     return window.LevelDB.open().then(function(db) {
-      console.log("Creating gun instance with peers", peers)
-      gun = Gun({
+      console.log("Creating gun instance with peers", peers, db)
+      gun = new Gun({
         level: db,
-        localStorage: true,
-        file: true,
-        peers: peers
+        localStorage: false,
+        file: false
+        // ,
+        // peers: peersToOpt(peers)
       })
-      // gun = new Gun(["http://localhost:8080/gun"])
-      gun = new Gun({peers: {"http://localhost:8080/gun":
-            {url: "http://localhost:8080/gun"}
-      }})
     })
   },
   getInstance: function () {
@@ -64,4 +61,10 @@ window.GunCalls = {
   }
 }
 
-function
+function peersToOpt(peers) {
+  var peersObj = {}
+  peers.forEach(function (e) {
+    peersObj.e = {url: e}
+  })
+  return peersObj
+}
