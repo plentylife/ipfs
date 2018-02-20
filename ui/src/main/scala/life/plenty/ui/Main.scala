@@ -119,10 +119,10 @@ object Main {
     println(data.Cache.getOctopus(of).get.rx.cons.now.mkString("\n"))
     println("raw")
     println(s"${
-      data.Cache.getOctopus(of).get.sc.all.map(c ⇒ c → {
-        if (c.value.isInstanceOf[Hub]) c.value
-          .asInstanceOf[Hub].id else ""
-      }).mkString("\n")
+      data.Cache.getOctopus(of).get.sc.all.map(c ⇒
+        s"$c ${c.id} ${
+          if (c.value.isInstanceOf[Hub]) c.value.asInstanceOf[Hub].id else ""
+        }").mkString("\n")
     }")
   }
 

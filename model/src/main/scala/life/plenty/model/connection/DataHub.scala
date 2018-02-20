@@ -6,25 +6,23 @@ import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
 trait DataHub[T] extends Hub {
   def value: T
 
-  private var active: Boolean = true
-
-  override def id: String = idGivenValue(value) + this.getClass.getSimpleName
-
-  protected def idGivenValue(v: T): String = {
-    try {
-      val bigId = v match {
-        case o: Hub ⇒ model.getHasher.b64(o.id + "connection")
-        case other ⇒ model.getHasher.b64(other.toString)
-      }
-
-      bigId
-    } catch {
-      case e: Throwable ⇒
-        model.console.error(s"Error in connection id generator with value ${value}");
-        e.printStackTrace();
-        throw e
-    }
-  }
+//  override def id: String = idGivenValue(value) + this.getClass.getSimpleName
+//
+//  protected def idGivenValue(v: T): String = {
+//    try {
+//      val bigId = v match {
+//        case o: Hub ⇒ model.getHasher.b64(o.id + "connection")
+//        case other ⇒ model.getHasher.b64(other.toString)
+//      }
+//
+//      bigId
+//    } catch {
+//      case e: Throwable ⇒
+//        model.console.error(s"Error in connection id generator with value ${value}");
+//        e.printStackTrace();
+//        throw e
+//    }
+//  }
 
   def inst: DataHub[T] = {
     this.tmpMarker = AtInstantiation
