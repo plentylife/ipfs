@@ -25,7 +25,9 @@ object OctopusWriter {
     Future {
       val info = js.Dynamic.literal("class" → o.getClass.getSimpleName)
       o match {
-        case c: DataHub[_] ⇒ info.updateDynamic("value")(stringifyData(c))
+        case c: DataHub[_] ⇒
+          info.updateDynamic("value")(stringifyData(c))
+          info.updateDynamic("order")(c.getOrder)
         case _ ⇒
       }
 

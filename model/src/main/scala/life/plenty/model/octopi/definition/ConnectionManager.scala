@@ -28,6 +28,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
 
   private lazy val actionsOnGraphTransform = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*)
   private lazy val actionsAfterGraphTransform = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*)
+  private var connectionCounter = -1
 
   def addConnection(connection: DataHub[_]): Either[Exception, Unit] = synchronized {
     console.println(s"~ ${this.getClass.getSimpleName} " +
@@ -51,6 +52,9 @@ trait ConnectionManager[CT] {self: Hub ⇒
       case Some(e) ⇒ e
 
       case None ⇒
+        connectionCounter += 1
+        connection.setOrder(connectionCounter)
+
         _connections() = connection :: _connections.now
         onConnectionAddedOperations.foreach(f ⇒ f(connection))
 

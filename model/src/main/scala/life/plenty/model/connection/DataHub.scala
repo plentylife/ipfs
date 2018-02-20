@@ -7,20 +7,17 @@ import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
 import life.plenty.model.utils.GraphUtils
 
 trait DataHub[T] extends Hub {
-//  clearRequired() // fixme. eh, not that great
-
   def value: T
 
-//  private lazy val
+  // should not be touched outside hubs
+  private var order: Int = -1
+  def setOrder(o: Int) = if (order == -1) order = o
+  def getOrder = order
 
-  override def id: String = idGivenValue(value) + this.getClass.getSimpleName
-//    {
-//    GraphUtils.getParent(this).now.flatMap(_.getRxId.now).getOrElse("noparent") : String
-//  }
+  override def id: String = idGivenValue(value) + this.getClass.getSimpleName + order
 
   protected def idGivenValue(v: T): String = {
     try {
-      println(s"idGivenValue of `$v`")
       val bigId = v match {
         case o: Hub ⇒ model.getHasher.b64(o.id + "connection")
         case other ⇒ model.getHasher.b64(other.toString)
