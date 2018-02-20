@@ -6,7 +6,7 @@ import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.utils.ConFinders
+import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.console
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.{ChildDisplay, LayoutModule, ModularDisplay, ModularDisplayTrait}
@@ -24,7 +24,7 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
 
   override def doDisplay(): Boolean = UiContext.startingSpace.value.exists(_.id == withinOctopus.id)
 
-  private lazy val isConfirmed: BasicBindable[Boolean] = ConFinders.markedConfirmed(withinOctopus)
+  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(withinOctopus)
 
   def getMembers(cs: BindingSeq[Hub]): BindingSeq[Hub]#WithFilter = cs.withFilter({
     case m: Members ⇒ true
@@ -57,7 +57,7 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
             {withinOctopus.getTitle.dom.bind}
           </h3>
             <h5 class="sub-title mt-1 ml-2 text-muted">
-              {ConFinders.getBody(withinOctopus).dom.bind}
+              {GraphUtils.getBody(withinOctopus).dom.bind}
             </h5>
 
           {displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}

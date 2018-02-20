@@ -2,7 +2,7 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Answer, Contribution, Proposal}
-import life.plenty.model.utils.ConFinders._
+import life.plenty.model.utils.GraphUtils._
 import life.plenty.ui.display.actions.AnswerControls
 import life.plenty.ui.display.info.AnswerInfo
 import life.plenty.ui.display.meta.LayoutModule

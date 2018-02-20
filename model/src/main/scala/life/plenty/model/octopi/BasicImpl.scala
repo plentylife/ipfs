@@ -2,7 +2,7 @@ package life.plenty.model.octopi
 
 import life.plenty.model.connection.Parent
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.utils.ConFinders
+import life.plenty.model.utils.GraphUtils
 import rx.Rx
 
 trait Question extends Space with WithParent[Space] {
@@ -16,5 +16,5 @@ class SignupQuestion() extends Question {}
 class ContainerSpace() extends Space with WithMembers with CommonGetters
 
 trait CommonGetters {self: Hub ⇒
-  def getParent: Rx[Option[Hub]] = ConFinders.getParent(self)
+  def getParent: Rx[Option[Hub]] = GraphUtils.getParent(self)
 }

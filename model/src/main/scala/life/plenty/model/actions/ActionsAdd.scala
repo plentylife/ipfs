@@ -3,7 +3,7 @@ package life.plenty.model.actions
 import life.plenty.model.connection._
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.{Hub, Module}
-import life.plenty.model.utils.ConFinders
+import life.plenty.model.utils.GraphUtils
 
 class ActionSignup(override val withinOctopus: SignupQuestion) extends Module[SignupQuestion] {
   def signup(who: User) = {
@@ -24,7 +24,7 @@ class ActionAddConfirmedMarker(override val withinOctopus: Hub) extends Module[H
   }
 
   def deconfirm() = {
-    ConFinders.confirmedMarker(withinOctopus).now.foreach {m ⇒
+    GraphUtils.confirmedMarker(withinOctopus).now.foreach { m ⇒
       println(s"marker is active ${m.isActive.now}")
       m.inactivate()
 

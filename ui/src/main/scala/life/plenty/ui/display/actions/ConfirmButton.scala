@@ -4,7 +4,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.{ActionAddConfirmedMarker, ActionGiveThanks}
 import life.plenty.model.connection.{Marker, MarkerEnum}
 import life.plenty.model.octopi.{Contribution, Space}
-import life.plenty.model.utils.ConFinders
+import life.plenty.model.utils.GraphUtils
 import life.plenty.ui
 import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.ActionDisplay
@@ -19,7 +19,7 @@ class ConfirmButton(override val withinOctopus: Space) extends ActionDisplay[Spa
 
   private lazy val module: Option[ActionAddConfirmedMarker] = withinOctopus
     .getTopModule({case m: ActionAddConfirmedMarker => m})
-  private lazy val isConfirmed = ConFinders.markedConfirmed(withinOctopus)
+  private lazy val isConfirmed = GraphUtils.markedConfirmed(withinOctopus)
   private var obs: Obs = null
 
   override def update(): Unit = {

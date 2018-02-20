@@ -27,28 +27,4 @@ package object utils {
 
     def prefix = if (_prefix.nonEmpty) _prefix + " : " else ""
   }
-
-  object ConFinders {
-    def getParent(o: Hub)(implicit ctx: Ctx.Owner) = o.rx.get({ case Parent(p: Hub) ⇒ p })
-
-    def confirmedMarker(o: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Marker]] =
-      o.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
-
-    def markedConfirmed(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] =
-      confirmedMarker(o).map(m ⇒ {m.nonEmpty})
-
-    def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({case Body(b) ⇒ b})
-
-    // fixme use h.connections
-    def active(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {
-      val count: Rx[List[Int]] = o.connections.map {_ collect {
-        case Marker(m) if m == MarkerEnum.INACTIVE ⇒ -1
-        case Marker(m) if m == MarkerEnum.ACTIVE ⇒ 1
-      }}
-      count map {list: List[Int] ⇒
-        val s = (0 :: list).sum
-        s >= 0
-      }
-    }
-  }
 }

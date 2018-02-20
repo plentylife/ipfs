@@ -1,10 +1,12 @@
 package life.plenty.model.octopi.definition
 
+import java.util.Date
+
 import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
-import life.plenty.model.connection.{DataHub, Marker, MarkerEnum}
+import life.plenty.model.connection._
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
-import life.plenty.model.utils.ConFinders
+import life.plenty.model.utils.GraphUtils
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
 
@@ -43,9 +45,17 @@ trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnecti
     }
   }
 
-  lazy val isActive = ConFinders.active(this)
-  def inactivate() = if (isActive.now) addConnection(Marker(MarkerEnum.INACTIVE))
-  def activate() = if (!isActive.now) addConnection(Marker(MarkerEnum.ACTIVE))
+  lazy val isActive = GraphUtils.isActive(this)
+  def inactivate() = if (isActive.now) {
+    val c = Inactive(new Date().getTime)
+    c.asNew()
+    addConnection(c)
+  }
+  def activate() = if (!isActive.now) {
+    val c = Active(new Date().getTime)
+    c.asNew()
+    addConnection(c)
+  }
 
   /** easy hook for external code */
   var tmpMarker: TmpMarker = NoMarker

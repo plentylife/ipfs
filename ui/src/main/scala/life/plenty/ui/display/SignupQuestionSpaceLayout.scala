@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.{BindingSeq, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.utils.ConFinders
+import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.actions.{SignupButton, SpaceActionsBar}
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.model.utils.Helpers._

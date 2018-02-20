@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionUpDownVote
 import life.plenty.model.octopi._
-import life.plenty.model.utils.ConFinders
+import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.actions.{ChangeParent, ConfirmActionDisplay, EditSpace}
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.model.utils.Helpers._
@@ -31,7 +31,7 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
     .getTopModule({ case
     m: ConfirmActionDisplay ⇒ m
   }), this)
-  private lazy val isConfirmed = ConFinders.markedConfirmed(withinOctopus): BasicBindable[Boolean]
+  private lazy val isConfirmed = GraphUtils.markedConfirmed(withinOctopus): BasicBindable[Boolean]
 
   private lazy val creatorNameRx = withinOctopus.getCreator.map(_.map(_.getNameOrEmpty()))
 

@@ -47,6 +47,5 @@ case class CreationTime(time: Long) extends DataHub[Long] {
 }
 
 object CreationTime extends InstantiateFromStringByApply[CreationTime] {
-  override def instantiate(from: String): Option[CreationTime] = Try(from.toLong).toOption map { a ⇒ CreationTime(a) }
+  override def instantiate(from: String): Option[CreationTime] = ConnectionsUtils.strToLong(from, CreationTime(_))
 }
-

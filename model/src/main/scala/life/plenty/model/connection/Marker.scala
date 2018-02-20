@@ -12,3 +12,19 @@ object Marker extends InstantiateFromStringByApply[Marker] {
   override def instantiate(from: String): Option[Marker] = Try(Marker(MarkerEnum.withName(from))).toOption
 }
 
+case class Inactive(time: Long) extends DataHub[Long] {
+  override def value: Long = time
+}
+
+object Inactive extends InstantiateFromStringByApply[Inactive] {
+  override def instantiate(from: String): Option[Inactive] = ConnectionsUtils.strToLong(from, Inactive(_))
+}
+
+case class Active(time: Long) extends DataHub[Long] {
+  override def value: Long = time
+}
+
+object Active extends InstantiateFromStringByApply[Active] {
+  override def instantiate(from: String): Option[Active] = ConnectionsUtils.strToLong(from, Active(_))
+}
+
