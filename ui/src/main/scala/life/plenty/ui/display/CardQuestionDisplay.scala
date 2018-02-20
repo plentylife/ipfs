@@ -27,10 +27,10 @@ class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutMo
     <div class="card d-inline-flex flex-column question" id={withinOctopus.id}>
       <span class="d-flex header-block" onclick={navigateTo _}>
         <span class="d-flex title-block">
-          <h3 class="card-title">{withinOctopus.getTitle.dom.bind}</h3>
-          <h6 class="card-subtitle mb-2 text-muted">
+          <h5 class="card-title">{withinOctopus.getTitle.dom.bind}</h5>
+          <div class="card-subtitle mb-2 text-muted">
             {getBody(withinOctopus).dom.bind}
-          </h6>
+          </div>
         </span>
         <span class="card-controls">
           <div class="btn btn-primary btn-sm">open</div>

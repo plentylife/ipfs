@@ -1,39 +1,39 @@
-.title-with-input {
-  input {
-    min-width: 150px;
-    flex-grow: 1;
-    display: flex;
-    //width: 50%;
-    //max-width: 400px;
-  }
-  justify-content: space-around;
-  span {
-    max-width: 400px;
-    flex-grow: 1;
-  }
-}
-
-.group-question-nav {
-  @extend .d-flex;
-  @extend .flex-row;
-  @extend .my-2;
-  //@extend .pb-1;
-  background-color: #ffffffa3;
-  padding-left: 2em;
-  margin-left: -2em;
-  padding-top: 0.7em;
-  padding-bottom: 0.7em;
-  border-bottom-left-radius: 1em;
-  border-top-right-radius: 1em;
-  //border-bottom: 1px dashed lightblue;
-}
-
-.modular-display-box > .question-title {
-  @extend .group-question-nav;
-  .answer-button {
-    @extend .btn-lg
-  }
-}
+//.title-with-input {
+//  input {
+//    min-width: 150px;
+//    flex-grow: 1;
+//    display: flex;
+//    //width: 50%;
+//    //max-width: 400px;
+//  }
+//  justify-content: space-around;
+//  span {
+//    max-width: 400px;
+//    flex-grow: 1;
+//  }
+//}
+//
+//.group-question-nav {
+//  @extend .d-flex;
+//  @extend .flex-row;
+//  @extend .my-2;
+//  //@extend .pb-1;
+//  background-color: #ffffffa3;
+//  padding-left: 2em;
+//  margin-left: -2em;
+//  padding-top: 0.7em;
+//  padding-bottom: 0.7em;
+//  border-bottom-left-radius: 1em;
+//  border-top-right-radius: 1em;
+//  //border-bottom: 1px dashed lightblue;
+//}
+//
+//.modular-display-box > .question-title {
+//  @extend .group-question-nav;
+//  .answer-button {
+//    @extend .btn-lg
+//  }
+//}
 
 .question-title {
   .title-text {
@@ -74,7 +74,7 @@
 //  }
 //}
 
-.answer.card, .contribution.card, .event.card, .question.card, .members.card {
+.answer.card, .contribution.card, .event.card, .question.card, .members.card, .space.card {
   margin-top: $spacer * 0.25;
   padding: $spacer * 0.25;
   flex-wrap: wrap;
@@ -139,6 +139,7 @@ $event-color: #9f8600;
 
   .card.answer {
     border: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.31);
     .title-block {
       flex-direction: row;
       flex-wrap: wrap;
@@ -164,6 +165,7 @@ $event-color: #9f8600;
   .title-block {
     display: flex;
     flex-direction: column;
+    cursor: pointer;
   }
   .card-body {
     padding: $spacer * 0.5;
@@ -204,4 +206,10 @@ $event-color: #9f8600;
 .user-badge {
   display: flex;
   align-items: center;
+}
+
+.card.space {
+  .card-subtitle {
+    @extend .text-muted
+  }
 }
