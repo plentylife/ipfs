@@ -20,6 +20,16 @@ object Parent extends InstantiateFromOctopusByApply[Parent[_]] {
   }
 }
 
+case class RootParent[T <: Hub](parent: T) extends DataHub[T] {
+  override def value: T = parent
+}
+
+object RootParent extends InstantiateFromOctopusByApply[Parent[_]] {
+  override def instantiate(from: Hub): Parent[_] = {
+    Parent(from)
+  }
+}
+
 case class Created[T <: Hub](created: T) extends DataHub[T] {
   override def value: T = created
 }

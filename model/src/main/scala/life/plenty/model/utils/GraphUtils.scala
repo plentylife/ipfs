@@ -7,6 +7,10 @@ import rx.{Ctx, Rx}
 object GraphUtils {
   def getParent(o: Hub)(implicit ctx: Ctx.Owner) = o.rx.get({ case Parent(p: Hub) ⇒ p })
 
+  def getRootParentConnection(o: Hub)(implicit ctx: Ctx.Owner) = o.rx.get({ case c @ RootParent(_) ⇒ c })
+
+  def getRootParent(o: Hub)(implicit ctx: Ctx.Owner) = getRootParentConnection(o).map(_.map(_.value))
+
   def confirmedMarker(o: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Marker]] =
     o.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
 

@@ -104,7 +104,8 @@ object ConnectionReader {
   )
 
   private val octopusReaders = Stream[(String, Hub) ⇒ Option[DataHub[_]]](
-    Child(_, _), Parent(_, _), Created(_, _), Creator(_, _), Contributor(_, _), Member(_, _), To(_, _), From(_, _)
+    Child(_, _), Parent(_, _), RootParent(_, _), Created(_, _), Creator(_, _), Contributor(_, _),
+    Member(_, _), To(_, _), From(_, _)
   )
 
   private def hasClass(key: String): Future[Boolean] = {
