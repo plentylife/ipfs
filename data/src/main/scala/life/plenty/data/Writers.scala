@@ -86,7 +86,7 @@ class GunWriterModule(override val withinOctopus: Hub) extends ActionAfterGraphT
   private lazy val _gun: Future[Gun] = Future{gunCalls.get(withinOctopus.id, (d, k) ⇒ Unit)}
   private lazy val instModule = withinOctopus.getTopModule({case m: InstantiationGunWriterModule ⇒ m})
 
-  def gun = instModule.map(_.gun).getOrElse(_gun)
+  def gun = instModule.flatMap(m ⇒ m.gun).getOrElse(_gun)
 
   override def onConnectionAdd(connection: DataHub[_]): Either[Exception, Unit] = {
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
@@ -102,10 +102,10 @@ class GunWriterModule(override val withinOctopus: Hub) extends ActionAfterGraphT
 class InstantiationGunWriterModule(override val withinOctopus: Hub) extends Module[Hub] {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
-  var gun: Future[Gun] = null
+  var gun: Option[Future[Gun]] = None
 
   withinOctopus.onNew {
         console.println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
-        gun = OctopusWriter.write(withinOctopus)
+        gun = Option(OctopusWriter.write(withinOctopus))
   }
 }
