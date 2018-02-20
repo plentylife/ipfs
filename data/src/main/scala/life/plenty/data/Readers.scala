@@ -54,7 +54,7 @@ object OctopusReader {
 //    val gun = Main.gun.get(id)
 
     val className = Promise[String]()
-    GunCalls.getHubClass(id, (d) ⇒ {
+    gunCalls.getHubClass(id, (d) ⇒ {
       if (!js.isUndefined(d) && d != null) {
         className.success(d.toLocaleString())
       } else {
@@ -111,7 +111,7 @@ object ConnectionReader {
     if (key.isEmpty) return Future(false)
 
     val p = Promise[Boolean]()
-    GunCalls.get(key, (d: js.Object, k: String) ⇒ {
+    gunCalls.get(key, (d: js.Object, k: String) ⇒ {
       if (!js.isUndefined(d)) {
         console.trace(s"Has class gun call got response for $key ${JSON.stringify(d)} $k")
       } else console.trace("Has class did not find the requested id")
@@ -161,7 +161,7 @@ class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnCo
     if (!instantiated) {
       instantiated = true
       console.println(s"Gun Reader ${this} onConsReq called in ${withinOctopus.getClass} with ${withinOctopus.sc.all}")
-      GunCalls.get(withinOctopus.id, (d, k) ⇒ {
+      gunCalls.get(withinOctopus.id, (d, k) ⇒ {
         if (!js.isUndefined(d) && d != null) {
           console.trace(s"Gun Reader onConsReq before load() ${withinOctopus.id} ${JSON.stringify(d)}")
           load()
@@ -175,7 +175,7 @@ class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnCo
 //    val gc = gun.get("connections")
 
     Future {
-      GunCalls.getConnections(withinOctopus.id, (d) ⇒ {
+      gunCalls.getConnections(withinOctopus.id, (d) ⇒ {
         console.trace(s"Gun raw connections to read in ${withinOctopus} ${withinOctopus.id} ${connectionsLeftToLoad}")
         console.trace(s"${JSON.stringify(d)}")
         val l = js.Object.keys(d).length
@@ -184,7 +184,7 @@ class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnCo
       })
     }
 
-    GunCalls.mapConnections(withinOctopus.id, (d, k) ⇒ Future {
+    gunCalls.mapConnections(withinOctopus.id, (d, k) ⇒ Future {
       // fixme this will bug out if we are re-using connections
       val cachedCon = Cache.getConnection(k)
       if (cachedCon.nonEmpty) {

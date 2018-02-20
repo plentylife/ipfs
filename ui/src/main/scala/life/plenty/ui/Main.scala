@@ -1,7 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.data.{OctopusGunReaderModule, OctopusReader, Main ⇒ dataMain}
+import life.plenty.data.{GunCalls, OctopusGunReaderModule, OctopusReader, Main ⇒ dataMain}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
@@ -22,7 +22,7 @@ import scalaz.std.list._
 object Main {
 
   @JSExport
-  def main(bootstrapPeers: js.Array[String], consolesActive: String): Unit = {
+  def main(gunCalls: GunCalls, consolesActive: String): Unit = {
     println("Entry point")
     if (consolesActive.nonEmpty) {
       data.console.active = consolesActive == "true"
@@ -31,7 +31,7 @@ object Main {
     }
 
     // has to be first because it sets the hasher function
-    dataMain.main(bootstrapPeers) foreach {_ ⇒
+    dataMain.main(gunCalls) foreach {_ ⇒
       UiContext.initialize()
       Router.initialize
       mInit()
@@ -131,10 +131,4 @@ object Main {
 
   @JSExport
   def toHash(id: String) = Router.toHash(RoutingParams(0, Option(id)))
-
-  @JSExport
-  def gun = data.Main.gun
-
-  @JSExport
-  def gunGet(id: String) = data.Main.gun.get(id)
 }
