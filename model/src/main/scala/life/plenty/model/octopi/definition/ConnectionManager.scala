@@ -30,11 +30,12 @@ trait ConnectionManager[CT] {self: Hub ⇒
   private lazy val actionsAfterGraphTransform = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*)
 
   def addConnection(connection: DataHub[_]): Either[Exception, Unit] = synchronized {
-    // duplicates are silently dropped // fixme. this might not be working
     console.println(s"~ ${this.getClass.getSimpleName} " +
       s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}\n" +
       s"\t<-- ${connection.getClass.getSimpleName} " +
-      s"${connection.id}")
+      s"${connection.sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}")
+
+    // duplicates are silently dropped
     val existing = sc.all.find {c: DataHub[_] ⇒ c.id == connection.id}
     if (existing.nonEmpty) {
       console.trace(s"found existing connection ${existing.get} ${existing.get.id}")

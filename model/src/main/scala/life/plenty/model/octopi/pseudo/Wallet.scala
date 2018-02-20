@@ -1,10 +1,16 @@
 package life.plenty.model.octopi.pseudo
 
 import life.plenty.model
-import life.plenty.model.octopi.User
+import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.octopi.{Space, User}
+import life.plenty.model.utils.GraphUtils
 import rx.{Ctx, Rx, Var}
 
-class Wallet(u: User)(implicit ctx: Ctx.Owner) {
+class Wallet(u: User, space: Space)(implicit ctx: Ctx.Owner) {
+  lazy val rootSpace: Rx.Dynamic[Hub] = GraphUtils.getRootParent(space).map(_ match {
+    case Some(s) ⇒ s
+    case _ ⇒ space
+  })
 
   lazy val getUsableThanksAmount: Rx[Int] = Rx {
     //    Rx {
@@ -16,6 +22,7 @@ class Wallet(u: User)(implicit ctx: Ctx.Owner) {
     //    }
     //    0
   }
+
 
   lazy val getUsableThanksLimit: Rx[Int] = Var(50)
 

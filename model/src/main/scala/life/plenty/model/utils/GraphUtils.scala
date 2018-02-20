@@ -31,6 +31,17 @@ object GraphUtils {
     }
   }
 
+//  def filterOnRootParent[T <: Hub](rp: Hub, list: Rx[List[T]]): Rx[List[T]] = {
+//    list map { _ filter {h ⇒
+//      val hrp = getRootParent(h)
+//      val isSame = hrp() match {
+//        case None ⇒ false
+//        case Some(hrp) ⇒ hrp.id == rp.id
+//      }
+//
+//    }}
+//  }
+
   def findModuleUpParentTree[T](in: Hub, matchBy: PartialFunction[DataHub[_], T]): Option[T] = {
     {
       //      println(s"graph utils", in)
