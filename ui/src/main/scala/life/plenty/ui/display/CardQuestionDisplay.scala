@@ -3,6 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.octopi.{Answer, Question, Space}
+import life.plenty.model.utils.GraphUtils
 import life.plenty.model.utils.GraphUtils._
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.LayoutModule
@@ -17,14 +18,19 @@ import org.scalajs.dom.Node
 class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutModule[Question] with CardNavigation {
   override def doDisplay() = true
 
+  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(withinOctopus)
+
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
     val inlineQuestins =
       ComplexModuleOverride(this, {case m: InlineQuestionDisplay ⇒ m}, _.isInstanceOf[CardQuestionDisplay])
     implicit val os = inlineQuestins :: cos.toList ::: siblingOverrides
+    var confirmedCss = if (isConfirmed().bind) " confirmed " else ""
 
-    <div class="card d-inline-flex flex-column question" id={withinOctopus.id}>
+
+    <div class={"card d-inline-flex flex-column question " + confirmedCss}
+         id={withinOctopus.id}>
       <span class="d-flex header-block" onclick={navigateTo _}>
         <span class="d-flex title-block">
           <h5 class="card-title">{withinOctopus.getTitle.dom.bind}</h5>

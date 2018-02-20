@@ -91,7 +91,7 @@
   }
 
   &.confirmed {
-    background-color: rgba(36, 82, 30, 0.31);
+    background-color: rgba($confirmed-color, 0.30);
   }
 }
 

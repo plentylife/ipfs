@@ -2,6 +2,7 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Answer, Contribution, Proposal}
+import life.plenty.model.utils.GraphUtils
 import life.plenty.model.utils.GraphUtils._
 import life.plenty.ui.display.actions.{AnswerControls, CardControls}
 import life.plenty.ui.display.info.AnswerInfo
@@ -19,15 +20,17 @@ import scalaz.std.option._
 class CardAnswerDisplay(override val withinOctopus: Answer) extends LayoutModule[Answer] with CardNavigation {
   override def doDisplay() = true
   private val creator = new OptBindableHub(withinOctopus.getCreator, this)
+  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(withinOctopus)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
     implicit val os = cos.toList ::: siblingOverrides
-    val cssClass = if (withinOctopus.isInstanceOf[Proposal]) "answer" else
-    if (withinOctopus.isInstanceOf[Contribution]) "contribution" else ""
+    val cssClass = if (withinOctopus.isInstanceOf[Proposal]) "answer" else {
+    if (withinOctopus.isInstanceOf[Contribution]) "contribution" else ""}
+    var confirmedCss = if (isConfirmed().bind) " confirmed " else ""
 
-    <div class={"card d-inline-flex flex-column " + cssClass } id={withinOctopus.id}>
+    <div class={"card d-inline-flex flex-column " + cssClass + confirmedCss} id={withinOctopus.id}>
       <span class="d-flex header-block">
         <span class="d-flex title-block" onclick={navigateTo _}>
           <h5 class="card-title">

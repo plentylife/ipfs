@@ -2,7 +2,7 @@ $theme-colors: (
         "primary": #FFA000,
 );
 
-$confirmed-color: #2ebb2e;
+$confirmed-color: rgba(36, 82, 30, 0.8);
 
 @import "../node_modules/bootstrap/scss/bootstrap";
 @import "menu";
