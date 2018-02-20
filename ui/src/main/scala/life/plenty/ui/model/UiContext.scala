@@ -45,7 +45,7 @@ object UiContext {
         case Some(u) ⇒
           ui.console.trace(s"loadUser in UiContext loaded user ${u} ${u.id} from the database")
           setUser(u.asInstanceOf[BasicUser])
-        case None ⇒ ui.console.println("UiContext was unable to load user from database given the stored credentials")
+        case None ⇒ ui.console.error("UiContext was unable to load user from database given the stored credentials")
       }
     }
   }
@@ -56,7 +56,10 @@ object UiContext {
     if (name != null && email != null && name.nonEmpty && email.nonEmpty) {
       println(s"createAndSetUser $name $email")
       val u = new BasicUser
-      u.asNew(Id(generateUserId(name, email)), Name(name))
+      val idh = Id(generateUserId(name, email))
+      val nameh = Name(name)
+//      idh.asNew(); nameh.asNew()
+      u.asNew(idh, nameh)
       setUser(u)
     } else {
       ui.console.error(s"UI could not create user from name `${Option(name)}` and email `${Option(email)}`")

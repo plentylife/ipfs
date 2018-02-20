@@ -1,28 +1,39 @@
 package life.plenty.model.connection
 
+import java.util.Date
+
 import life.plenty.model
 import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
+import life.plenty.model.utils.GraphUtils
 
 trait DataHub[T] extends Hub {
+//  clearRequired() // fixme. eh, not that great
+
   def value: T
 
-//  override def id: String = idGivenValue(value) + this.getClass.getSimpleName
-//
-//  protected def idGivenValue(v: T): String = {
-//    try {
-//      val bigId = v match {
-//        case o: Hub ⇒ model.getHasher.b64(o.id + "connection")
-//        case other ⇒ model.getHasher.b64(other.toString)
-//      }
-//
-//      bigId
-//    } catch {
-//      case e: Throwable ⇒
-//        model.console.error(s"Error in connection id generator with value ${value}");
-//        e.printStackTrace();
-//        throw e
-//    }
+//  private lazy val
+
+  override def id: String = idGivenValue(value) + this.getClass.getSimpleName
+//    {
+//    GraphUtils.getParent(this).now.flatMap(_.getRxId.now).getOrElse("noparent") : String
 //  }
+
+  protected def idGivenValue(v: T): String = {
+    try {
+      println(s"idGivenValue of `$v`")
+      val bigId = v match {
+        case o: Hub ⇒ model.getHasher.b64(o.id + "connection")
+        case other ⇒ model.getHasher.b64(other.toString)
+      }
+
+      bigId
+    } catch {
+      case e: Throwable ⇒
+        model.console.error(s"Error in connection id generator with value ${value}");
+        e.printStackTrace();
+        throw e
+    }
+  }
 
   def inst: DataHub[T] = {
     this.tmpMarker = AtInstantiation

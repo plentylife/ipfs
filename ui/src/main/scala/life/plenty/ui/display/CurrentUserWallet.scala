@@ -38,7 +38,7 @@ object CurrentUserWallet {
     if (walletObs == null) {
       walletObs = withinOctopus.getMembers.foreach(_.foreach(_.getMembers.foreach {
         list ⇒
-          val w = list.collectFirst({ case u: User if u.id == UiContext.getUser.id ⇒ new Wallet(u) })
+          val w = list.collectFirst({ case u: User if u.id == UiContext.getUser.id ⇒ new Wallet(u, withinOctopus) })
           if (w.nonEmpty) wallet.value_=(w)
       }))
     }

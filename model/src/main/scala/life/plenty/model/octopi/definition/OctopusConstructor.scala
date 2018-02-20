@@ -16,7 +16,7 @@ trait OctopusConstructor {
 
   //  implicit private[this] val ctxConstructor: Ctx.Owner = self.ctx
 
-  private val rand = Random
+  protected val rand = Random
 
   def getRxId: Rx[Option[String]] = rx.get({ case Id(id) ⇒ id })
 
