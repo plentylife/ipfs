@@ -3,7 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Answer, Contribution, Proposal}
 import life.plenty.model.utils.GraphUtils._
-import life.plenty.ui.display.actions.AnswerControls
+import life.plenty.ui.display.actions.{AnswerControls, CardControls}
 import life.plenty.ui.display.info.AnswerInfo
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
@@ -42,8 +42,8 @@ class CardAnswerDisplay(override val withinOctopus: Answer) extends LayoutModule
         </span>
 
         <span class="card-controls">
-          <div class="btn btn-primary btn-sm open-btn" onclick={navigateTo _}>open</div>{ // keep break
-          displayModules(siblingModules.withFilter(_.isInstanceOf[AnswerControls]), "modules").bind}
+          {displayModules(siblingModules.withFilter(m =>
+          m.isInstanceOf[AnswerControls] || m.isInstanceOf[CardControls]), "modules").bind}
         </span>
       </span>
 
@@ -59,4 +59,5 @@ class CardAnswerDisplay(override val withinOctopus: Answer) extends LayoutModule
   }
 }
 
+//<div class="btn btn-primary btn-sm open-btn" onclick={navigateTo _}>open</div>
 //{displayHubs(children.withFilter(_.isInstanceOf[Answer]), "answers").bind}

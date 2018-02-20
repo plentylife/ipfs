@@ -31,6 +31,7 @@ package object ui {
     ModuleRegistry add { case a: Contribution ⇒ new GiveButton(a) }
     ModuleRegistry add { case a: Answer ⇒ new VoteButtons(a) }
     ModuleRegistry add { case a: Space ⇒ new ConfirmButton(a) }
+    ModuleRegistry add { case a: Space ⇒ new OpenButton(a) }
 
     ModuleRegistry add { case q: Question ⇒ new InlineQuestionDisplay(q) }
 
