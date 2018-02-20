@@ -29,9 +29,9 @@ trait ConnectionManager[CT] {self: Hub ⇒
 
   def addConnection(connection: DataHub[_]): Either[Exception, Unit] = synchronized {
     // duplicates are silently dropped // fixme. this might not be working
-    println(s"Adding connection to ${this.getClass.getSimpleName} " +
-      s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}" +
-      s"<-- ${connection.getClass.getSimpleName} " +
+    println(s"~ ${this.getClass.getSimpleName} " +
+      s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}\n" +
+      s"\t<-- ${connection.getClass.getSimpleName} " +
       s"${connection.id}")
     val existing = sc.all.find {c: DataHub[_] ⇒ c.id == connection.id}
     if (existing.nonEmpty) {

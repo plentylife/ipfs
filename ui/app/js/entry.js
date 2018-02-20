@@ -32,20 +32,19 @@ class GunCalls {
 
   getHubClass(id, cb) {
     gun.get(id).get('class').val(function(d, k) {
-      console.log("SupGun got class of", id, d, k)
+      // console.log("SupGun got class of", id, d, k)
       cb(d)
-    })
-    // }, {wait: 0})
+    }, {wait: 0})
   }
   get(id, cb) {
-    gun.get(id).val(function(d, k) {
+    return gun.get(id).val(function(d, k) {
       // console.log("SupGun got ", d, k)
       cb(d, k)
     }, {wait: 0})
   }
   getConnections(id, cb) {
     gun.get(id).get("connections").val(function(d) {
-      // console.log("SupGun got connections " + JSON.stringify(d))
+      console.log("GunCalls got connections ", d)
       cb(d)
     }, {wait: 0})
   }
@@ -54,6 +53,18 @@ class GunCalls {
       // console.log("SupGun mapping connection", d, k)
       cb(d,k)
     }, {wait: 0})
+  }
+  put(id, data, cb) {
+    console.log("GunCalls put", id, data)
+    return gun.get(id).put(data, cb)
+  }
+  set(holderGun, connections, onAck) {
+    const g = holderGun.get('connections')
+    holderGun.val(d => {
+      console.log("GunCalls set (pre)", d, connections, holderGun)
+      connections.forEach(c => g.set(c, onAck))
+    })
+
   }
   getInstance() {
     return gun;

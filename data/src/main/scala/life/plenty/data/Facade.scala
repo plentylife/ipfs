@@ -70,9 +70,10 @@ trait Gun_ extends js.Object {
 @js.native
 trait GunCalls extends js.Object {
   def getHubClass(id: String, cb: js.Function1[js.Object, Unit]):Unit= js.native
-  def get(id: String, cb: js.Function2[js.Object, String, Unit]):Unit= js.native
+  def get(id: String, cb: js.Function2[js.Object, String, Unit]):Gun= js.native
   def getConnections(id: String, cb: js.Function1[js.Object, Unit]):Unit= js.native
   def mapConnections(id: String, cb: js.Function2[js.Object, String, Unit]):Unit= js.native
-
+  def put(id: String, data: js.Object, cb: js.Function1[js.Object, Unit]): Gun = js.native
+  def set(holderGun: Gun, connecitons: js.Array[Gun], onAck: js.Function1[js.Object, Unit]): Gun = js.native
   def getInstance: Gun = js.native
 }

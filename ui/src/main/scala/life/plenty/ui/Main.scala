@@ -131,4 +131,7 @@ object Main {
 
   @JSExport
   def toHash(id: String) = Router.toHash(RoutingParams(0, Option(id)))
+
+  @JSExport
+  def gunCalls = data.gunCalls
 }
