@@ -13,8 +13,10 @@ class BasicQuestion() extends Question {}
 
 class SignupQuestion() extends Question {}
 
-class ContainerSpace() extends Space with WithMembers with CommonGetters
+class ContainerSpace() extends Space with WithMembers with WithOptParent[Space]
 
-trait CommonGetters {self: Hub ⇒
-  def getParent: Rx[Option[Hub]] = GraphUtils.getParent(self)
-}
+//  with CommonGetters
+//
+//trait CommonGetters {self: Hub ⇒
+//  def getParent: Rx[Option[Hub]] = GraphUtils.getParent(self)
+//}

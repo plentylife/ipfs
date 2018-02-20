@@ -5,12 +5,12 @@ import life.plenty.model.connection.{Amount, Child, Parent}
 import life.plenty.model.octopi.definition.Hub
 import rx.Rx
 
-trait WithParent[T <: Hub] extends Hub {
+trait WithParent[T <: Hub] extends WithOptParent[T] {
   addToRequired(getParent)
+}
 
+trait WithOptParent[T <: Hub] extends Hub {
   def getParent: Rx[Option[Hub]] = rx.get({ case Parent(p: Hub) ⇒ p })
-
-  //  override def idGenerator: String = super.idGenerator + getParent.now.get.id
 
   onNew {
     getParent.foreach(_.foreach { p: Hub ⇒

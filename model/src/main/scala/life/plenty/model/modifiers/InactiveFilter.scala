@@ -8,8 +8,6 @@ import rx.{Ctx, Rx}
 
 class InactiveFilter(override val withinOctopus: Hub) extends RxConnectionFilters[Hub] {
 
-  println(s"InactiveFilter instantiated in ${withinOctopus.getClass.getSimpleName}")
-
 //  private implicit val ctx: Ctx.Data = Ctx.Owner.safe()
 
   override def apply(what: Rx[Option[DataHub[_]]])(implicit ctx: Ctx.Owner): Rx[Option[DataHub[_]]] = {
