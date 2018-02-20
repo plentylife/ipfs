@@ -44,7 +44,7 @@ class GunCalls {
   }
   getConnections(id, cb) {
     gun.get(id).get("connections").val(function(d) {
-      console.log("GunCalls got connections ", d)
+      // console.log("GunCalls got connections ", d)
       cb(d)
     }, {wait: 0})
   }
@@ -55,16 +55,12 @@ class GunCalls {
     }, {wait: 0})
   }
   put(id, data, cb) {
-    console.log("GunCalls put", id, data)
+    // console.log("GunCalls put", id, data)
     return gun.get(id).put(data, cb)
   }
   set(holderGun, connections, onAck) {
     const g = holderGun.get('connections')
-    holderGun.val(d => {
-      console.log("GunCalls set (pre)", d, connections, holderGun)
-      connections.forEach(c => g.set(c, onAck))
-    })
-
+    connections.forEach(c => g.set(c, onAck))
   }
   getInstance() {
     return gun;

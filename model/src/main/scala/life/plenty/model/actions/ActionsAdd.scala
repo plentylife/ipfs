@@ -24,12 +24,15 @@ class ActionAddConfirmedMarker(override val withinOctopus: Hub) extends Module[H
   }
 
   def deconfirm() = {
-    ConFinders.confirmedMarker(withinOctopus).now.foreach {
-      _.inactivate()
+    ConFinders.confirmedMarker(withinOctopus).now.foreach {m ⇒
+      println(s"marker is active ${m.isActive.now}")
+      m.inactivate()
+
+      println(s"removed marker ${m.sc.all}")
+      println(s"marker is active ${m.isActive.now}")
+      println(s"${withinOctopus.rx.cons}")
     }
 
-    println(s"removed marker ${withinOctopus.sc.all}")
-    println(s"${withinOctopus.rx.cons}")
   }
 }
 
