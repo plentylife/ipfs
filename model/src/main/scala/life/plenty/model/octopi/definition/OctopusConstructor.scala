@@ -48,7 +48,7 @@ trait OctopusConstructor {
   final def required: Set[() ⇒ Rx[Option[_]]] = _required
 
   /** alias for [[addConnection()]] with the connection marked */
-  def setInit(c: DataHub[_]): Unit = addConnection(c.inst)
+  private def setInit(c: DataHub[_]): Unit = addConnection(c.inst)
 
   private lazy val isNewVar = Var(false)
 

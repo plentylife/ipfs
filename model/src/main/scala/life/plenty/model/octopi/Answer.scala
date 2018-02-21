@@ -28,8 +28,8 @@ trait Answer extends Space with WithParent[Space] {
 
   /** at least for now, answers do not have titles */
   override def asNew(properties: DataHub[_]*): Unit = {
-    setInit(Title("").inst)
-    super.asNew(properties: _*)
+    val ps = Title("") :: properties.toList
+    super.asNew(ps: _*)
   }
 }
 
