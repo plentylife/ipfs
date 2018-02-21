@@ -22,7 +22,7 @@ trait OctopusConstructor {
 
   /** Either retrieves the id, or generates a new one, and sets it */
   def id: String = sc.ex({ case Id(id) ⇒ id }) getOrElse {
-    val gid = model.getHasher.b64(generateId)
+    val gid = generateId
     setInit(Id(gid))
     gid
   }
@@ -32,7 +32,7 @@ trait OctopusConstructor {
   }
 
   protected def generateId(time: Long, creatorId: String): String = {
-    rand.nextLong().toString + time.toString + creatorId
+    model.getHasher.b64(rand.nextLong().toString + time.toString + creatorId)
   }
 
   lazy val getCreationTime: Rx[Option[Long]] = rx.get({ case CreationTime(t) ⇒ t })

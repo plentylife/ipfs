@@ -22,12 +22,13 @@ window.gun = null;
 class GunCalls {
 
   constructor(peers) {
+    console.log("GunCalls contstructor with peers", peers);
     window.gun = new Gun({
       level: LevelDB,
       localStorage: false,
       file: false
-      // ,
-      // peers: this.peersToOpt(peers)
+      ,
+      peers: this.peersToOpt(peers)
     })
   }
 

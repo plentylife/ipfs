@@ -117,7 +117,7 @@ object ConnectionReader {
     gunCalls.get(key, (d: js.Object, k: String) ⇒ {
       if (!js.isUndefined(d)) {
         console.trace(s"Has class gun call got response for $key ${JSON.stringify(d)} $k")
-      } else console.trace("Has class did not find the requested id")
+      } else console.trace(s"Has class did not find the requested id $key")
       if (!js.isUndefined(d)) p.success(true) else p.success(false)
     })
     p.future
