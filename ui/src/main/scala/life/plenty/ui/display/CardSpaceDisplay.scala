@@ -7,7 +7,7 @@ import life.plenty.ui.display.actions.{AnswerControls, CardControls}
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.model.{ComplexModuleOverride, ModuleOverride}
-import life.plenty.ui.model.utils.Helpers._
+import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.Node
 
 class CardSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[Space] with CardNavigation {

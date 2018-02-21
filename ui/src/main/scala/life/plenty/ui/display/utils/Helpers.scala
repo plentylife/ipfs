@@ -1,4 +1,4 @@
-package life.plenty.ui.model.utils
+package life.plenty.ui.display.utils
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
@@ -6,8 +6,6 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
 import life.plenty.ui.model.{DisplayModel, ModuleOverride, UiContext}
 import org.scalajs.dom.Node
-import org.scalajs.dom.html.Input
-import org.scalajs.dom.raw.Event
 import rx.{Ctx, Rx}
 
 import scalaz.std.list._

@@ -8,7 +8,7 @@ import life.plenty.ui
 import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, SingleActionModuleDisplay}
 import life.plenty.ui.model.UiContext
-import life.plenty.ui.model.utils.{InputVarWithTextarea, StringInputVar}
+import life.plenty.ui.display.utils.InputVarWithTextarea
 import org.scalajs.dom.{Event, Node}
 
 class SignupButton(override val withinOctopus: Hub) extends ActionDisplay[Hub] {

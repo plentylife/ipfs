@@ -1,4 +1,4 @@
-package life.plenty.ui.model.utils
+package life.plenty.ui.display.utils
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
@@ -83,7 +83,7 @@ class InputVarWithCheckbox(inputVar: BooleanInputVar, label: String) extends Inp
   @dom
   override def dom: Binding[Node] = {
     <div class="form-check">
-      <input class="form-check-input" type="checkbox" value="" name={this.toString} onchange={inputVar.input _}/>
+      <input class="form-check-input" type="checkbox" value="" id={this.toString} onchange={inputVar.input _}/>
       <label class="form-check-label" for={this.toString}>
         {label}
       </label>

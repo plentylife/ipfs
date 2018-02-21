@@ -9,7 +9,7 @@ import life.plenty.ui
 import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.ActionDisplay
 import life.plenty.ui.model.UiContext
-import life.plenty.ui.model.utils.{InputVarWithDisplay, TransactionalAmountVar}
+import life.plenty.ui.display.utils.InputVarWithDisplay
 import org.scalajs.dom.{Event, Node}
 import rx.Obs
 

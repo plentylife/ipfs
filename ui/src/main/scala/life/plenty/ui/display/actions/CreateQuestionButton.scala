@@ -6,9 +6,9 @@ import life.plenty.model.actions.ActionCreateQuestion
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui
 import life.plenty.ui.display.Modal
-import life.plenty.ui.display.utils.ModalFormAction
+import life.plenty.ui.display.utils._
 import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
-import life.plenty.ui.model.utils.Helpers._
+import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.utils._
 import org.scalajs.dom.{Event, Node}
 

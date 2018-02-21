@@ -18,7 +18,7 @@ import rx.{Obs, Rx}
 import scala.collection.mutable
 import scalaz.std.option._
 import scalaz.std.list._
-import life.plenty.ui.model.utils.Helpers._
+import life.plenty.ui.display.utils.Helpers._
 
 class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Space] {
 

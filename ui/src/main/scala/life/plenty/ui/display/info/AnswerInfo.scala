@@ -5,7 +5,7 @@ import life.plenty.model.octopi.{Answer, Contribution}
 import life.plenty.ui
 import life.plenty.ui.display.actions.AnswerControls
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.utils.Helpers._
+import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.Node
 
 trait AnswerInfo extends DisplayModule[Answer]

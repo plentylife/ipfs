@@ -10,7 +10,7 @@ import life.plenty.ui.display.actions.MenuAction
 import life.plenty.ui.display.info.AnswerInfo
 import life.plenty.ui.display.meta.{LayoutModule, NoDisplay}
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.model.utils.Helpers._
+import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{ModuleOverride, Router, SimpleModuleOverride}
 import org.scalajs.dom.raw.{MouseEvent, Node}
 import rx.Obs

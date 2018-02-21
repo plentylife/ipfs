@@ -5,10 +5,10 @@ import life.plenty.model.actions.{ActionCreateAnswer, ActionGiveThanks}
 import life.plenty.model.octopi.Contribution
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui
-import life.plenty.ui.display.utils.ModalFormAction
+import life.plenty.ui.display.utils.{InputVarWithDisplay, ModalFormAction, TransactionalAmountVar}
 import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
 import life.plenty.ui.model.UiContext
-import life.plenty.ui.model.utils.{InputVarWithDisplay, InputVarWithTextarea, StringInputVar, TransactionalAmountVar}
+import life.plenty.ui.display.utils.{InputVarWithDisplay, InputVarWithTextarea}
 import org.scalajs.dom.{Event, Node}
 
 class GiveButton(override val withinOctopus: Contribution) extends ModalFormAction with AnswerControls {
