@@ -1,5 +1,7 @@
 package life.plenty.model.connection
 
+import life.plenty.model.octopi.definition.Hub
+
 import scala.util.Try
 
 case class Title(title: String) extends DataHub[String] {
@@ -27,6 +29,8 @@ object Amount extends InstantiateFromStringByApply[Amount] {
 }
 
 case class Id(idValue: String) extends DataHub[String] {
+  // special case, because if id requered id of parent, it would cause infinite recursion
+  override def setHolder(hub: Hub): Unit = Unit
   override def value: String = idValue
 }
 

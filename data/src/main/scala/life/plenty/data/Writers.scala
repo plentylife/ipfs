@@ -27,7 +27,7 @@ object OctopusWriter {
       o match {
         case c: DataHub[_] ⇒
           info.updateDynamic("value")(stringifyData(c))
-          info.updateDynamic("order")(c.getOrder)
+//          info.updateDynamic("order")(c.getOrder)
         case _ ⇒
       }
 

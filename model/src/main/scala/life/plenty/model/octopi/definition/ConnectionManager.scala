@@ -53,7 +53,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
 
       case None ⇒
         connectionCounter += 1
-        connection.setOrder(connectionCounter)
+        connection.setHolder(this)
 
         _connections() = connection :: _connections.now
         onConnectionAddedOperations.foreach(f ⇒ f(connection))

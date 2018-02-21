@@ -10,17 +10,17 @@ trait DataHub[T] extends Hub {
   def value: T
 
   // should not be touched outside hubs
-  private var order: Int = -1
-  def setOrder(o: Int) = if (order == -1) order = o
-  def getOrder = order
+  private var holderId: String = ""
+  def setHolder(hub: Hub): Unit = if (holderId.isEmpty) holderId = hub.id
+  def getHolder: String = holderId
 
-  override def id: String = idGivenValue(value) + this.getClass.getSimpleName + order
+  override def id: String = idGivenValue(value) + this.getClass.getSimpleName
 
   protected def idGivenValue(v: T): String = {
     try {
       val bigId = v match {
-        case o: Hub ⇒ model.getHasher.b64(o.id + "connection")
-        case other ⇒ model.getHasher.b64(other.toString)
+        case o: Hub ⇒ model.getHasher.b64(o.id + "connection" + holderId)
+        case other ⇒ model.getHasher.b64(other.toString + holderId)
       }
 
       bigId

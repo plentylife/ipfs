@@ -28,9 +28,11 @@ trait OctopusConstructor {
   }
 
   protected def generateId: String = {
-    val res = rand.nextLong().toString +
-      sc.exf({ case CreationTime(t) ⇒ t }).toString + sc.exf({ case Creator(c) ⇒ c }).id
-    res
+    generateId(sc.exf({ case CreationTime(t) ⇒ t }), sc.exf({ case Creator(c) ⇒ c }).id)
+  }
+
+  protected def generateId(time: Long, creatorId: String): String = {
+    rand.nextLong().toString + time.toString + creatorId
   }
 
   lazy val getCreationTime: Rx[Option[Long]] = rx.get({ case CreationTime(t) ⇒ t })
@@ -73,18 +75,30 @@ trait OctopusConstructor {
 
   def asNew(properties: DataHub[_]*): Unit = {
     model.console.trace(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
+
+    // has to be first for purposes of creating ids
+    val ct = CreationTime(new Date().getTime)
+    val cc: Option[Creator] = properties.find(_.isInstanceOf[Creator]).map(_.asInstanceOf[Creator]).orElse({
+      model.defaultCreator.map(c ⇒ Creator(c))
+    })
+    val idProp = properties.find(_.isInstanceOf[Id])
+
+    if (idProp.isEmpty) {
+      // in this case there must be a creator
+      setInit(Id(generateId(ct.value, cc.map(_.user.id).get)))
+    } else setInit(idProp.get)
+
+    model.console.error(s"Warning: no creator was set for ${this.getClass}")
+
+    self.setInit(ct)
+    cc foreach self.setInit
+
     properties.foreach(p ⇒ {
       p.tmpMarker = AtInstantiation
       self.setInit(p)
     })
     model.console.trace("New octopus has connections")
-    val ct = CreationTime(new Date().getTime)
-    ct.tmpMarker = AtInstantiation
-    addConnection(ct)
 
-    if (!properties.exists(_.isInstanceOf[Creator])) {
-      model.defaultCreator.foreach(c ⇒ setInit(Creator(c).inst))
-    }
     for (p ← required) {
       if (p().now.isEmpty) throw new Exception(s"Class ${this.getClass} was not properly instantiated. " +
         s"Connections ${this._connections.now}")
