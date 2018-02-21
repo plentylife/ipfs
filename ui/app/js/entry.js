@@ -25,8 +25,9 @@ class GunCalls {
     window.gun = new Gun({
       level: LevelDB,
       localStorage: false,
-      file: false,
-      peers: this.peersToOpt(peers)
+      file: false
+      // ,
+      // peers: this.peersToOpt(peers)
     })
   }
 
@@ -59,8 +60,14 @@ class GunCalls {
     return gun.get(id).put(data, cb)
   }
   set(holderGun, connections, onAck) {
-    const g = holderGun.get('connections')
-    connections.forEach(c => g.set(c, onAck))
+    if (connections.length > 0) {
+      const g = holderGun.get('connections')
+      console.log("GunCalls set", connections, holderGun)
+      g.set(connections[0], d => {
+        onAck(d)
+        this.set(holderGun, connections.slice(1), onAck)
+      })
+    }
   }
   getInstance() {
     return gun;
