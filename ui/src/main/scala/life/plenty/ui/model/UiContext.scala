@@ -5,12 +5,19 @@ import life.plenty.model.connection.{Creator, Id, Name}
 import life.plenty.model.octopi._
 import life.plenty.ui
 import org.scalajs.dom.window
+import rx.{Var ⇒ rxVar}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object UiContext {
   val userVar: Var[User] = Var(null)
   val startingSpace: Var[Option[Space]] = Var(None)
+  val startingSpaceRx: rxVar[Option[Space]] = rxVar(None)
+
+  def setStatingSpace(s: Option[Space]) = {
+    startingSpace.value_=(s)
+    startingSpaceRx.update(s)
+  }
 
   def storeUser(name: String, email: String) = {
     window.localStorage.setItem("username", name)

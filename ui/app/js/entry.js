@@ -62,7 +62,7 @@ class GunCalls {
   set(holderGun, connections, onAck) {
     if (connections.length > 0) {
       const g = holderGun.get('connections');
-      console.log("GunCalls set", connections, holderGun);
+      // console.log("GunCalls set", connections, holderGun);
       let firstAck = true;
       g.set(connections[0], d =>{ if (firstAck) {
         firstAck = false;

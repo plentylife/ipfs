@@ -11,6 +11,9 @@ object GraphUtils {
 
   def getRootParent(o: Hub)(implicit ctx: Ctx.Owner) = getRootParentConnection(o).map(_.map(_.value))
 
+  def getRootParentOrSelf(o: Hub)(implicit ctx: Ctx.Owner): Rx.Dynamic[Hub] =
+    getRootParentConnection(o).map(_.map(_.value).getOrElse(o))
+
   def confirmedMarker(o: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Marker]] =
     o.rx.get({ case c@Marker(m) if m == MarkerEnum.CONFIRMED ⇒ c })
 
@@ -30,17 +33,6 @@ object GraphUtils {
       s >= 0
     }
   }
-
-//  def filterOnRootParent[T <: Hub](rp: Hub, list: Rx[List[T]]): Rx[List[T]] = {
-//    list map { _ filter {h ⇒
-//      val hrp = getRootParent(h)
-//      val isSame = hrp() match {
-//        case None ⇒ false
-//        case Some(hrp) ⇒ hrp.id == rp.id
-//      }
-//
-//    }}
-//  }
 
   def findModuleUpParentTree[T](in: Hub, matchBy: PartialFunction[DataHub[_], T]): Option[T] = {
     {

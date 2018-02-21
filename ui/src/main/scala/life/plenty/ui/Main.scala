@@ -51,7 +51,7 @@ object Main {
         case Some(id) ⇒
           println(s"UI loading ${id}")
           OctopusReader.read(id) foreach { spaceOpt ⇒
-            UiContext.startingSpace.value_=(spaceOpt map { s ⇒ s.asInstanceOf[Space] })
+            UiContext.setStatingSpace(spaceOpt map { s ⇒ s.asInstanceOf[Space] })
           }
         case None ⇒ CreateSpace.openInModal()
       }
