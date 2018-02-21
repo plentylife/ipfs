@@ -1,10 +1,14 @@
 package life.plenty.model.octopi.definition
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import life.plenty.model
 import life.plenty.model.actions.{ActionAfterGraphTransform, ActionCatchGraphTransformError, ActionOnGraphTransform}
 import life.plenty.model.connection.{DataHub, Id}
 import rx.{Rx, Var}
 import model._
+
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 trait ConnectionManager[CT] {self: Hub ⇒
   private var onConnectionAddedOperations: List[(DataHub[_]) ⇒ Unit] = List()
@@ -32,7 +36,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
     Stream(getModules({ case m: ActionCatchGraphTransformError ⇒ m }): _*)
   private var connectionCounter = -1
 
-  def addConnection(connection: DataHub[_]): Either[Exception, Unit] = synchronized {
+  def addConnection(connection: DataHub[_]): Unit = synchronized {
     console.println(s"~ ${this.getClass.getSimpleName} " +
       s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}\n" +
       s"\t<-- ${connection.getClass.getSimpleName} " +
@@ -43,33 +47,33 @@ trait ConnectionManager[CT] {self: Hub ⇒
     if (existing.nonEmpty) {
       console.trace(s"found existing connection ${existing.get} ${existing.get.id}")
       existing.get.activate()
-      return Right()
+      return
     }
 
-    var onErrorList = actionsOnGraphTransform map { m ⇒
+    var onErrorList = Future.sequence(actionsOnGraphTransform map { m ⇒
       m.onConnectionAdd(connection)
-    }
+    })
 
-    onErrorList.collectFirst({ case e: Left[Exception, Unit] ⇒ e }) match {
-      case Some(e) ⇒
-        actionCatchGraphTransformError.foreach(_.catchError(e.value))
+    onErrorList.onComplete {
+      case Failure(e: Throwable) ⇒
+        actionCatchGraphTransformError.foreach(_.catchError(e))
         e
 
-      case None ⇒
+      case Success(_) ⇒
         connectionCounter += 1
         connection.setHolder(this)
 
         _connections() = connection :: _connections.now
         onConnectionAddedOperations.foreach(f ⇒ f(connection))
 
-        onErrorList = actionsAfterGraphTransform map { m ⇒
+        onErrorList = Future.sequence(actionsAfterGraphTransform map { m ⇒
           m.onConnectionAdd(connection)
-        }
-        onErrorList.collectFirst({ case e: Left[Exception, Unit] ⇒ e }) match {
-          case Some(e) ⇒
-            actionCatchGraphTransformError.foreach(_.catchError(e.value))
+        })
+        onErrorList onComplete {
+          case Failure(e) ⇒
+            actionCatchGraphTransformError.foreach(_.catchError(e))
             e
-          case None ⇒ Right()
+          case Success(_) ⇒
         }
     }
   }

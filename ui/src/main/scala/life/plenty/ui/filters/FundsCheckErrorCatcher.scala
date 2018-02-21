@@ -5,7 +5,7 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui
 
 class FundsCheckErrorCatcher(override val withinOctopus: Hub) extends ActionCatchGraphTransformError {
-  override def catchError(e: Exception): Unit = {
+  override def catchError(e: Throwable): Unit = {
     ui.console.error(e)
   }
 }

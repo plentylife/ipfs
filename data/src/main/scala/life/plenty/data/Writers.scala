@@ -90,15 +90,13 @@ class GunWriterModule(override val withinOctopus: Hub) extends ActionAfterGraphT
 
   def gun = instModule.flatMap(m ⇒ m.gun).getOrElse(_gun)
 
-  override def onConnectionAdd(connection: DataHub[_]): Either[Exception, Unit] = {
+  override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
           console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")
           gun foreach {g ⇒ OctopusWriter.writeSingleConnection(g, connection)}
     }
-    Right()
+    Future{Right()}
   }
-
-  override def onConnectionRemove(connection: DataHub[_]): Either[Exception, Unit] = ???
 }
 
 class InstantiationGunWriterModule(override val withinOctopus: Hub) extends Module[Hub] {

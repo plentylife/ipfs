@@ -1,7 +1,7 @@
 package life.plenty.data
 
 import life.plenty.data
-import life.plenty.model.actions.ActionOnConnectionsRequest
+import life.plenty.model.actions.{ActionOnConnectionsRequest, ActionOnFinishDataLoad}
 import life.plenty.model.connection._
 import life.plenty.model.octopi.GreatQuestions._
 import life.plenty.model.octopi._
@@ -153,7 +153,8 @@ object ConnectionReader {
 
 // todo create a module for user that filters out everything but transactions
 
-class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnConnectionsRequest {
+class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnConnectionsRequest with
+ActionOnFinishDataLoad {
   private implicit val ctx = withinOctopus.ctx
 
   var instantiated = false
@@ -216,6 +217,11 @@ class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnCo
       }
     })
   }
+
+  override def onFinishLoad(f: () ⇒ Unit): Unit = connectionsLeftToLoad.foreach(count ⇒ if (count == 0) {
+    f()
+    connectionsLeftToLoad.kill()
+  })
 }
 
 object OctopusGunReaderModule {
@@ -223,11 +229,7 @@ object OctopusGunReaderModule {
     implicit val _ctx = o.ctx
     o.onModulesLoad {
       o.getTopModule({ case m: OctopusGunReaderModule ⇒ m }).foreach {
-        m ⇒
-          m.connectionsLeftToLoad.foreach(count ⇒ if (count == 0) {
-            f()
-            m.connectionsLeftToLoad.kill()
-          })
+        m ⇒ m.onFinishLoad(f)
       }
     }
   }
