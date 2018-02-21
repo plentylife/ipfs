@@ -17,7 +17,7 @@ window.LevelDB = levelup(
   )
 );
 
-window.gun = null
+window.gun = null;
 
 class GunCalls {
 
@@ -61,12 +61,14 @@ class GunCalls {
   }
   set(holderGun, connections, onAck) {
     if (connections.length > 0) {
-      const g = holderGun.get('connections')
-      console.log("GunCalls set", connections, holderGun)
-      g.set(connections[0], d => {
-        onAck(d)
+      const g = holderGun.get('connections');
+      console.log("GunCalls set", connections, holderGun);
+      let firstAck = true;
+      g.set(connections[0], d =>{ if (firstAck) {
+        firstAck = false;
+        onAck(d);
         this.set(holderGun, connections.slice(1), onAck)
-      })
+      }})
     }
   }
   getInstance() {
@@ -74,14 +76,14 @@ class GunCalls {
   }
 
   peersToOpt(peers) {
-    var peersObj = {}
+    var peersObj = {};
     peers.forEach(function (e) {
       peersObj.e = {url: e}
-    })
+    });
     return peersObj
   }
 
 }
 
-window.GC = GunCalls
+window.GC = GunCalls;
 
