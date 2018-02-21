@@ -12,7 +12,7 @@ import life.plenty.ui.filters.{BasicSpaceDisplayOrder, RootSpaceUserTransactionF
 
 package object ui {
 
-  val console = new Console(true, true)
+  val console = new Console(true, true, _prefix = "UI")
   val thanks = "\u20B8"
 
   def initialize(): Unit = {

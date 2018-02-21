@@ -59,7 +59,7 @@ object UiContext {
 
   private def generateUserId(n: String, e: String) = e
 
-  private def createAndSetUser(name: String, email: String) = {
+  private def createAndSetUser(name: String, email: String): Unit = {
     if (name != null && email != null && name.nonEmpty && email.nonEmpty) {
       println(s"createAndSetUser $name $email")
       val u = new BasicUser

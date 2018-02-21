@@ -18,7 +18,8 @@ class RootSpaceUserTransactionFilter(override val withinOctopus: User) extends R
       val rootId = root().id
 
       what() flatMap { con: DataHub[_] ⇒ filter(rootId, con, ctx)}
-    }
+      // if starting space is not set, just pass
+    } orElse what()
   }
 
   private def filter(rootId: String, con: DataHub[_], ctxOwner: Ctx.Owner)(implicit ctx: Ctx.Data): Option[DataHub[_]] = {

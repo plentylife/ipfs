@@ -97,11 +97,16 @@ trait OctopusConstructor {
       p.tmpMarker = AtInstantiation
       self.setInit(p)
     })
-    model.console.trace("New octopus has connections")
+
+    model.console.trace(s"New octopus has connections ${connections.now}")
 
     for (p ← required) {
-      if (p().now.isEmpty) throw new Exception(s"Class ${this.getClass} was not properly instantiated. " +
-        s"Connections ${this._connections.now}")
+      if (p().now.isEmpty) {
+        val msg = s"Class ${this.getClass} was not properly instantiated. " +
+          s"Connections ${this._connections.now}"
+        model.console.error(msg)
+        throw new Exception(msg)
+      }
     }
 
     getCreator.addConnection(Created(this).inst)
