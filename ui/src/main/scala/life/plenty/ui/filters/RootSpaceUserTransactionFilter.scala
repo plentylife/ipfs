@@ -1,6 +1,7 @@
 package life.plenty.ui.filters
 
 import life.plenty.model
+import life.plenty.ui.console
 import life.plenty.model.connection._
 import life.plenty.model.modifiers.RxConnectionFilters
 import life.plenty.model.octopi.{Transaction, User}
@@ -8,25 +9,29 @@ import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.model.UiContext
 import rx.{Ctx, Rx}
-
 class RootSpaceUserTransactionFilter(override val withinOctopus: User) extends RxConnectionFilters[User] {
 //  private implicit val ctx = Ctx.Owner.safe()
 
   override def apply(what: Rx[Option[DataHub[_]]])(implicit ctx: Ctx.Owner): Rx[Option[DataHub[_]]] = Rx {
-    UiContext.startingSpaceRx() flatMap {sp ⇒
+    val spOpt = UiContext.startingSpaceRx()
+    // if starting space is not set, just pass
+    spOpt.fold(what())(
+      {sp ⇒
       val root = GraphUtils.getRootParentOrSelf(sp)
       val rootId = root().id
 
       what() flatMap { con: DataHub[_] ⇒ filter(rootId, con, ctx)}
-      // if starting space is not set, just pass
-    } orElse what()
+    })
   }
 
   private def filter(rootId: String, con: DataHub[_], ctxOwner: Ctx.Owner)(implicit ctx: Ctx.Data): Option[DataHub[_]] = {
+    console.trace(s"filtering on root $rootId connection $con")
     con match {
+        // don't forget vote allowance
       case Child(t: Transaction) ⇒
         t.getOnContribution() flatMap {onContribution ⇒
           val crp = GraphUtils.getRootParentOrSelf(onContribution)(ctxOwner)
+          console.trace(s"transaction parent root [$rootId] $crp ${crp.now.id} ${crp.now.id == rootId}")
           if (crp().id == rootId) Option(con) else None
         }
       case _ ⇒ Option(con)
