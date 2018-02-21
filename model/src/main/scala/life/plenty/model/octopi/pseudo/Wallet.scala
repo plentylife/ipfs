@@ -6,13 +6,15 @@ import life.plenty.model.octopi.{Space, User}
 import life.plenty.model.utils.GraphUtils
 import rx.{Ctx, Rx, Var}
 
-class Wallet(u: User, space: Space)(implicit ctx: Ctx.Owner) {
+class Wallet(u: User, space: Hub)(implicit ctx: Ctx.Owner) {
 //  lazy val rootSpace: Rx.Dynamic[Hub] = GraphUtils.getRootParent(space).map(_ match {
 //    case Some(s) ⇒ s
 //    case _ ⇒ space
 //  })
 
-  lazy val getUsableThanksAmount: Rx[Int] = Rx {
+  // fixme. right now this relies on the ui filter, which is not right security wise
+
+  lazy val getThanksBalance: Rx[Int] = Rx {
       val fromAmounts = u.getTransactionsFrom().map(t ⇒ t.getAmountOrZero())
       val toAmounts = u.getTransactionsTo().map(t ⇒ t.getAmountOrZero())
 
@@ -34,6 +36,4 @@ class Wallet(u: User, space: Space)(implicit ctx: Ctx.Owner) {
 
   /** per day */
   lazy val getThanksSpoilRate: Rx[Double] = Var(0.01)
-
-  lazy val getThanksGivenInSpace: Rx[Int] = Var(0)
 }

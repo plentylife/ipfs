@@ -8,7 +8,7 @@ import life.plenty.ui.display._
 import life.plenty.ui.display.actions._
 import life.plenty.ui.display.info.ThanksGiven
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
-import life.plenty.ui.filters.{BasicSpaceDisplayOrder, RootSpaceUserTransactionFilter}
+import life.plenty.ui.filters.{BasicSpaceDisplayOrder, FundsCheckErrorCatcher, RootSpaceUserTransactionFilter}
 
 package object ui {
 
@@ -21,6 +21,8 @@ package object ui {
     /* the modules should be added in a list fashion: the last overrides the first */
 
     ModuleRegistry add { case a: User ⇒ new RootSpaceUserTransactionFilter(a) }
+    // maybe this should be global for every hub type
+    ModuleRegistry add { case a: User ⇒ new FundsCheckErrorCatcher(a) }
 
     ModuleRegistry add { case a: Contribution ⇒ new ThanksGiven(a) }
 

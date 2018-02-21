@@ -11,6 +11,10 @@ trait ActionOnAddToModuleStack[T <: Hub] extends Module[T] {
   def onAddToStack()
 }
 
+trait ActionCatchGraphTransformError extends Module[Hub] {
+  def catchError(e: Exception)
+}
+
 trait ActionOnGraphTransform extends ActionGraphTransform
 
 trait ActionGraphTransform extends Module[Hub] {

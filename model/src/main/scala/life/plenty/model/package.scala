@@ -5,6 +5,7 @@ import life.plenty.model.actions._
 import life.plenty.model.modifiers.{AnswerVoteOrder, InactiveFilter}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.permissions.FundsCheck
 import life.plenty.model.utils.{Console, Hash}
 
 package object model {
@@ -22,6 +23,8 @@ package object model {
 
   def initialize(): Unit = {
     println("Model is adding modules to registry")
+
+    ModuleRegistry.add { case u: User ⇒ new FundsCheck(u) }
 
     ModuleRegistry.add { case q: Question ⇒ new ActionAddConfirmedMarker(q) }
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateQuestion(q) }

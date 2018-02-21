@@ -54,7 +54,7 @@ object CurrentUserWallet {
     <div class="current-user-wallet-outer-box d-inline-flex">
       <div class="d-inline-flex flex-column align-items-center">
         <div class="balance thanks-balance">
-          {displayThanks((w.getUsableThanksAmount: BasicBindable[Int])().bind ).bind}
+          {displayThanks((w.getThanksBalance: BasicBindable[Int])().bind ).bind}
         </div>
         <div class="credit-limit">
           {w.getUsableThanksLimit.dom.bind}{ui.thanks}

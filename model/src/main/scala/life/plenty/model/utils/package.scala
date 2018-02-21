@@ -19,9 +19,9 @@ package object utils {
   class Console(var active: Boolean, traceActive: Boolean = false, _prefix: String = "") {
     def println(s: ⇒ String) = if (active) Predef.println(prefix + s)
 
-    def error(s: ⇒ String) = Predef.println(prefix + s)
+    def error(s: ⇒ String) = Predef.println(prefix + " ERROR " + s)
 
-    def error(e: Throwable) = Predef.println(prefix + e)
+    def error(e: Throwable) = Predef.println(prefix + " ERROR " + e)
 
     def trace(s: ⇒ String) = if (traceActive) println(s)
 

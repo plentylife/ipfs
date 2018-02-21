@@ -1,7 +1,7 @@
 package life.plenty.model.octopi.definition
 
 import life.plenty.model
-import life.plenty.model.actions.{ActionAfterGraphTransform, ActionOnGraphTransform}
+import life.plenty.model.actions.{ActionAfterGraphTransform, ActionCatchGraphTransformError, ActionOnGraphTransform}
 import life.plenty.model.connection.{DataHub, Id}
 import rx.{Rx, Var}
 import model._
@@ -28,6 +28,8 @@ trait ConnectionManager[CT] {self: Hub ⇒
 
   private lazy val actionsOnGraphTransform = Stream(getModules({ case m: ActionOnGraphTransform ⇒ m }): _*)
   private lazy val actionsAfterGraphTransform = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*)
+  private lazy val actionCatchGraphTransformError =
+    Stream(getModules({ case m: ActionCatchGraphTransformError ⇒ m }): _*)
   private var connectionCounter = -1
 
   def addConnection(connection: DataHub[_]): Either[Exception, Unit] = synchronized {
@@ -49,7 +51,9 @@ trait ConnectionManager[CT] {self: Hub ⇒
     }
 
     onErrorList.collectFirst({ case e: Left[Exception, Unit] ⇒ e }) match {
-      case Some(e) ⇒ e
+      case Some(e) ⇒
+        actionCatchGraphTransformError.foreach(_.catchError(e.value))
+        e
 
       case None ⇒
         connectionCounter += 1
@@ -62,7 +66,9 @@ trait ConnectionManager[CT] {self: Hub ⇒
           m.onConnectionAdd(connection)
         }
         onErrorList.collectFirst({ case e: Left[Exception, Unit] ⇒ e }) match {
-          case Some(e) ⇒ e
+          case Some(e) ⇒
+            actionCatchGraphTransformError.foreach(_.catchError(e.value))
+            e
           case None ⇒ Right()
         }
     }
