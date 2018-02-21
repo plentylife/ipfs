@@ -7,20 +7,17 @@ import life.plenty.model.utils.GraphUtils
 import rx.{Ctx, Rx, Var}
 
 class Wallet(u: User, space: Space)(implicit ctx: Ctx.Owner) {
-  lazy val rootSpace: Rx.Dynamic[Hub] = GraphUtils.getRootParent(space).map(_ match {
-    case Some(s) ⇒ s
-    case _ ⇒ space
-  })
+//  lazy val rootSpace: Rx.Dynamic[Hub] = GraphUtils.getRootParent(space).map(_ match {
+//    case Some(s) ⇒ s
+//    case _ ⇒ space
+//  })
 
   lazy val getUsableThanksAmount: Rx[Int] = Rx {
-    //    Rx {
       val fromAmounts = u.getTransactionsFrom().map(t ⇒ t.getAmountOrZero())
       val toAmounts = u.getTransactionsTo().map(t ⇒ t.getAmountOrZero())
 
     model.console.trace(s"Wallet thanks count | to ${toAmounts} | from ${fromAmounts}")
       (0 :: fromAmounts.map(_ * -1) ::: toAmounts).sum
-    //    }
-    //    0
   }
 
 

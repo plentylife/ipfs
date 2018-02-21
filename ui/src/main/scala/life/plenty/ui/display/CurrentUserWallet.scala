@@ -2,12 +2,12 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.model.octopi.Space
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.octopi.pseudo.Wallet
-import life.plenty.model.octopi.{User, WithMembers}
 import life.plenty.ui
-import life.plenty.ui.model.DisplayModel.intToStr
 import life.plenty.ui.display.utils.Helpers._
+import life.plenty.ui.model.DisplayModel.intToStr
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
@@ -24,51 +24,67 @@ object CurrentUserWallet {
   private val voteBalance = Var[Int](0)
 
   @dom
-  def generateHtml(withinOctopus: Hub): Binding[Node] = withinOctopus match {
-    case o: WithMembers ⇒
-      update(o)
-      wallet.bind match {
-        case None => <div class="current-user-wallet-outer-box">you are not part of this group</div>
-        case Some(w) => displayWallet(w).bind
-      }
-    case _ ⇒ <div>Wallet cannot be displayed</div>
+  def generateHtml(withinOctopus: Hub): Binding[Node] = {
+    update(withinOctopus)
+    wallet.bind match {
+      case None => <div class="current-user-wallet-outer-box">Wallet cannot be displayed</div>
+      case Some(w) => displayWallet(w).bind
+    }
   }
 
-  def update(withinOctopus: WithMembers): Unit = {
-    if (walletObs == null) {
-      walletObs = withinOctopus.getMembers.foreach(_.foreach(_.getMembers.foreach {
-        list ⇒
-          val w = list.collectFirst({ case u: User if u.id == UiContext.getUser.id ⇒ new Wallet(u, withinOctopus) })
-          if (w.nonEmpty) wallet.value_=(w)
-      }))
+  def update(withinOctopus: Hub): Unit = {
+    withinOctopus match {
+      case h: Space ⇒ wallet.value_=(Option(new Wallet(UiContext.getUser, h)))
+      case _ ⇒ wallet.value_=(None)
     }
+  }
+
+  @dom
+  private def displayThanks(t: Int) = {
+    val pos = t >= 0
+    <span>
+      <span class={if (pos) "positive" else "negative"}>
+        {if (pos) "+" else "—"}
+      </span><span>{Math.abs(t)}{ui.thanks}</span>
+    </span>
   }
 
   @dom
   private def displayWallet(w: Wallet): Binding[Node] = {
     <div class="current-user-wallet-outer-box d-inline-flex">
       <div class="d-inline-flex flex-column align-items-center">
-        <div class="balance" data:data-toggle="popover" data:data-content="Disabled popover">
-          {w.getUsableThanksAmount.dom.bind}{ui.thanks}
-          /
+        <div class="balance thanks-balance">
+          {displayThanks((w.getUsableThanksAmount: BasicBindable[Int])().bind ).bind}
+        </div>
+        <div class="credit-limit">
           {w.getUsableThanksLimit.dom.bind}{ui.thanks}
         </div>
-        <div class="text-muted" onclick={e: Event ⇒ Help.walletBalanceHelp}>
-          Balance / Credit Limit
+        <div class="text-muted info-text d-inline-flex flex-column align-items-center" onclick={e: Event ⇒ Help
+          .walletBalanceHelp}>
+          <span class="balance-text">Balance (
+            <span class="negative">
+              {BindableProperty(w.getThanksSpoilRate)(sp => "—" + Math.round(sp * 100).toString + "%").dom.bind}
+            </span>
+            <span>/day)</span>
+          </span>
+          <span>Credit Limit</span>
           <img class="question-tooltip" src="iconic/svg/question-mark.svg" alt="help"/>
         </div>
-        <div class="text-muted">Spoiling at
-          {BindableProperty(w.getThanksSpoilRate)(sp => Math.round(sp * 100).toString).dom.bind}
-          % per day</div>
       </div>
-      <div class="d-inline-flex flex-column align-items-center">
+      <div class="d-inline-flex flex-column align-items-center mt-3">
         <div class="balance">
           {BindableProperty(w.getUsableVotes).dom.bind}
         </div>
-        <div class="text-muted" onclick={e: Event ⇒ Help.voteBalanceHelp}>Voting Power
+        <div class="text-muted info-text d-inline-flex flex-column align-items-center"
+             onclick={e: Event ⇒ Help.voteBalanceHelp}>
+          Voting Power
           <img class="question-tooltip" src="iconic/svg/question-mark.svg" alt="help"/>
         </div>
       </div>
     </div>
   }
 }
+
+//<div class="text-muted info-text">Spoiling at
+//{BindableProperty(w.getThanksSpoilRate)(sp => Math.round(sp * 100).toString).dom.bind}
+//% per day</div>
