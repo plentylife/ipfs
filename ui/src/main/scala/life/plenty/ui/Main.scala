@@ -70,7 +70,7 @@ object Main {
       {Help.display().bind}{Login.display().bind}{if (UiContext.startingSpace.bind.nonEmpty)
       DisplayModel.display(UiContext.startingSpace.bind.get).bind else
       <span>If you see this message it means that you are likely using Firefox<br/>
-      Please refresh this page and be patient (1+ minutes)<br/>
+      Please be patient, wait 1+ minutes, and then refresh the page. Or use Chrome<br/>
       We are actively working to mitigate this serious issue</span>}
     </div>
   }
