@@ -39,3 +39,17 @@ object Modal {
     }
   }
 }
+
+object ErrorModal {
+  def setContentAndOpen(c: Binding[Node]): Unit = {
+    Modal.setContentAndOpen(withHeader(c), "error", "close")
+  }
+
+  @dom
+  private def withHeader(c: Binding[Node]): Binding[Node] = {
+    <span>
+      <h5 class="error-header">Nope, you can't do that...</h5>
+      {c.bind}
+    </span>
+  }
+}
