@@ -51,6 +51,7 @@ object Main {
         case Some(id) ⇒
           println(s"UI loading ${id}")
           OctopusReader.read(id) foreach { spaceOpt ⇒
+            println(s"UI loaded $id as $spaceOpt")
             UiContext.setStatingSpace(spaceOpt map { s ⇒ s.asInstanceOf[Space] })
           }
         case None ⇒ CreateSpace.openInModal()
@@ -68,7 +69,9 @@ object Main {
       {showUi().bind}
       {Help.display().bind}{Login.display().bind}{if (UiContext.startingSpace.bind.nonEmpty)
       DisplayModel.display(UiContext.startingSpace.bind.get).bind else
-      <span>nothing to show</span>}
+      <span>If you see this message it means that you are likely using Firefox<br/>
+      Please refresh this page and be patient (1+ minutes)<br/>
+      We are actively working to mitigate this serious issue</span>}
     </div>
   }
 

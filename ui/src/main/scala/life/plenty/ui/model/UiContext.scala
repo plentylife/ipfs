@@ -1,4 +1,5 @@
 package life.plenty.ui.model
+import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.Var
 import life.plenty.data.OctopusReader
 import life.plenty.model.connection.{Creator, Id, Name}
@@ -11,11 +12,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object UiContext {
   val userVar: Var[User] = Var(null)
-  val startingSpace: Var[Option[Space]] = Var(None)
+  private val _startingSpace: Var[Option[Space]] = Var(None)
   val startingSpaceRx: rxVar[Option[Space]] = rxVar(None)
 
+  def startingSpace: Var[Option[Space]] = _startingSpace
   def setStatingSpace(s: Option[Space]) = {
-    startingSpace.value_=(s)
+    _startingSpace.value_=(s)
     startingSpaceRx.update(s)
   }
 
@@ -63,9 +65,7 @@ object UiContext {
     if (name != null && email != null && name.nonEmpty && email.nonEmpty) {
       println(s"createAndSetUser $name $email")
       val u = new BasicUser
-      println(s"createAndSetUser 1")
       u.asNew(Id(generateUserId(name, email)), Name(name)) foreach {_ ⇒
-        println(s"createAndSetUser $u")
         setUser(u)
       }
     } else {

@@ -27,15 +27,20 @@ class GunCalls {
       level: LevelDB,
       localStorage: false,
       file: false,
-      // peers: this.peersToOpt(peers)
+      peers: this.peersToOpt(peers)
     })
+    this.firstCall = true
   }
 
   getHubClass(id, cb) {
+    let wait = 0
+    if (this.firstCall) {
+      wait = 100; this.firstCall = false;
+    }
     gun.get(id).get('class').val(function(d, k) {
-      // console.log("SupGun got class of", id, d, k)
+      console.log("GunCalls got class of with wait", wait, id, d, k)
       cb(d)
-    }, {wait: 0})
+    }, {wait: wait})
   }
   get(id, cb) {
     return gun.get(id).val(function(d, k) {
