@@ -9,7 +9,7 @@ import org.scalajs.dom.{Event, Node}
 
 object Login {
   private val name = Var("")
-  private val email = Var("")
+  private val email = Var(UiContext.getStoredEmail)
   private val password = new StringInputVar()
 
   private val emailEmpty = Var(false)

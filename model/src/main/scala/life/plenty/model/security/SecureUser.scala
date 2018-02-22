@@ -12,7 +12,8 @@ object SecureUser {
   import LibSodium._
 
   def apply(email: String, password: String): SecureUser = {
-    val passHash = LibSodiumWrapper.crypto_pwhash(crypto_pwhash_BYTES_MIN, password, email)
+    val salt = crypto_generichash(crypto_pwhash_SALTBYTES, email, null)
+    val passHash = LibSodiumWrapper.crypto_pwhash(crypto_box_SEEDBYTES, password, salt)
     val keyPair = crypto_box_seed_keypair(passHash)
     val id = crypto_generichash(40, to_base64(keyPair.publicKey), null)
 

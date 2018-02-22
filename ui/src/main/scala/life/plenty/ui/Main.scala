@@ -69,7 +69,8 @@ object Main {
       {showUi().bind}
       {Help.display().bind}{Login.display().bind}{if (UiContext.startingSpace.bind.nonEmpty)
       DisplayModel.display(UiContext.startingSpace.bind.get).bind else
-      <span>If you see this message it means that you are likely using Firefox<br/>
+      <span style="position: fixed; top: 0; left: 0">
+        If you see this message it means that you are likely using Firefox<br/>
       Please be patient, wait 1+ minutes, and then refresh the page. Or use Chrome<br/>
       We are actively working to mitigate this serious issue</span>}
     </div>
@@ -91,10 +92,6 @@ object Main {
       }
     })
   }
-
-  @JSExport
-  def sodiumPw = LibSodiumWrapper.crypto_pwhash(32, "pass", "salt567890123456")
-  def sodium = LibSodium
 
   private implicit val ctx = Ctx.Owner.safe()
 
