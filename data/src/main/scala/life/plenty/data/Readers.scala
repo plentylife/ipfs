@@ -63,27 +63,32 @@ object OctopusReader {
       }
     })
 
-    className.future.map(cs ⇒ {
+    // fixme. optimization. not try every loader. stop at first success.
+    className.future.flatMap(cs ⇒ {
       console.println(s"Gun is constructing $cs")
-      val r = availableClasses.flatMap(f ⇒ {
+      val potentials: Stream[Future[Option[Hub]]] = availableClasses.map(f ⇒ {
         try {
           val o = f(cs)
-          o foreach { o ⇒
+          val res: Future[Option[Hub]] = o map { o ⇒
             val idCon = Id(id)
             idCon.tmpMarker = GunMarker
-            o.addConnection(idCon)
-            Cache.put(o)
-            //            o.addModule(new OctopusGunReaderModule(o, gun))
-          }
-          // fixme this is just a quick fix. for not double loading
-          Cache.getOctopus(id)
-          //          o
+            // have to wait on id!!
+            o.addConnection(idCon) map {_ ⇒
+              Cache.put(o)
+              // fixme this is just a quick fix. for not double loading
+            } map {_ ⇒ Cache.getOctopus(id)}
+          } getOrElse Future {Cache.getOctopus(id)}
+          res
         } catch {
-          case e: Throwable ⇒ console.error(e); e.printStackTrace(); None
+          case e: Throwable ⇒ console.error(e); e.printStackTrace(); Future {None}
         }
-      }).headOption
-      if(r.isEmpty) console.error(s"Could not find loader with class ${cs}")
-      r
+      })
+
+      Future.sequence(potentials) map { materialized ⇒
+        val actualized = materialized.flatten
+        if (actualized.isEmpty) console.error(s"Could not find loader with class ${cs}")
+        actualized.headOption
+      }
     })
   }
 }

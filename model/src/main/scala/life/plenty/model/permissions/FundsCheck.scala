@@ -23,9 +23,9 @@ class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransfor
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     val promise = Promise[Unit]()
-
     connection.value match {
       case t: Transaction ⇒
+        model.console.trace(s"Funds check on transaction $connection")
         Try {
           dataLoader.get.onFinishLoad(() ⇒ {
             t.getOnContribution.now match {
@@ -44,6 +44,7 @@ class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransfor
         }.get
 
       case v: Vote ⇒
+        model.console.trace(s"Funds check on vote $connection")
         Try {
           dataLoader.get.onFinishLoad(() ⇒ {
             v.parentAnswer.now match {
@@ -62,7 +63,9 @@ class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransfor
             promise.failure(new Exception("Operational exception while trying to check funds (votes)"))
         }.get
 
-      case _ ⇒ promise.success()
+      case _ ⇒
+        model.console.trace(s"Funds check on $connection. Auto pass.")
+        promise.success()
     }
     promise.future
   }

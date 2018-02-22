@@ -36,7 +36,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
     Stream(getModules({ case m: ActionCatchGraphTransformError ⇒ m }): _*)
   private var connectionCounter = -1
 
-  def addConnection(connection: DataHub[_]): Unit = synchronized {
+  def addConnection(connection: DataHub[_]): Future[Unit] = synchronized {
     console.println(s"~ ${this.getClass.getSimpleName} " +
       s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}\n" +
       s"\t<-- ${connection.getClass.getSimpleName} " +
@@ -47,17 +47,17 @@ trait ConnectionManager[CT] {self: Hub ⇒
     if (existing.nonEmpty) {
       console.trace(s"found existing connection ${existing.get} ${existing.get.id}")
       existing.get.activate()
-      return
+      return Future{}
     }
 
     var onErrorList = Future.sequence(actionsOnGraphTransform map { m ⇒
       m.onConnectionAdd(connection)
     })
 
-    onErrorList.onComplete {
+    onErrorList.transformWith {
       case Failure(e: Throwable) ⇒
         actionCatchGraphTransformError.foreach(_.catchError(e))
-        e
+        Future()
 
       case Success(_) ⇒
         connectionCounter += 1
@@ -75,6 +75,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
             e
           case Success(_) ⇒
         }
+        Future()
     }
   }
 
