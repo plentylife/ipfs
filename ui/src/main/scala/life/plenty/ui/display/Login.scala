@@ -29,7 +29,8 @@ object Login {
     emailEmpty.value_=(email.value.isEmpty)
     if (nameCondition && email.value.nonEmpty) {
       for (pass ← password.get) {
-        UiContext.login(name.value, email.value, pass)
+        val nameValue = if (isSignup.value) name.value else null
+        UiContext.login(nameValue, email.value, pass)
       }
     }
   }
@@ -67,7 +68,8 @@ object Login {
           } else {
             <span style="display:none"></span>
           }}<label for="email">Email</label> <br/>
-            <input name="email" type="text" autocomplete='email' oninput={e: Event ⇒
+            <input name="email" type="text" autocomplete='email' value={UiContext.getStoredEmail}
+                   oninput={e: Event ⇒
             email.value_=(parseValidEmail(e.target.asInstanceOf[Input].value.trim).getOrElse(""))
             emailEmpty.value_=(email.value.isEmpty)}/>
             <br/>

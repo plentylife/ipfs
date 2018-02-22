@@ -33,7 +33,6 @@ object Main {
 
     // has to be first because it sets the hasher function
     dataMain.main(gunCalls) foreach {_ ⇒
-      UiContext.initialize()
       Router.initialize
       mInit()
       initialize()

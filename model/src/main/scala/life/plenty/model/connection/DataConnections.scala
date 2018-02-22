@@ -46,6 +46,14 @@ object Name extends InstantiateFromStringByApply[Name] {
   override def instantiate(from: String): Option[Name] = Option(Name(from))
 }
 
+case class Email(name: String) extends DataHub[String] {
+  override def value: String = name
+}
+
+object Email extends InstantiateFromStringByApply[Email] {
+  override def instantiate(from: String): Option[Email] = Option(Email(from))
+}
+
 case class CreationTime(time: Long) extends DataHub[Long] {
   override def value: Long = time
 }

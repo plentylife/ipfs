@@ -1,15 +1,15 @@
 package life.plenty.model.octopi
 
 import life.plenty.model
-import life.plenty.model.connection.{Child, Name}
+import life.plenty.model.connection.{Child, Email, Name}
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.security.SecuredUser
 import rx.Rx
 
 trait User extends Hub {
   clearRequired()
   addToRequired(getRxId)
   addToRequired(getName)
+  addToRequired(getEmail)
 
   lazy val getTransactions = rx.getAll({ case Child(t: Transaction) ⇒ t })
   lazy val getTransactionsTo = filterTransactions(getTransactions, t ⇒ t.getTo)
@@ -32,6 +32,7 @@ trait User extends Hub {
   }
 
   def getName: Rx[Option[String]] = rx.get({ case Name(n: String) ⇒ n })
+  def getEmail: Rx[Option[String]] = rx.get({ case Email(n: String) ⇒ n })
 
   def getNameOrEmpty: Rx[String] = getName.map(_.getOrElse(""))
 
@@ -44,7 +45,3 @@ trait User extends Hub {
 }
 
 class BasicUser() extends User
-
-class SecureUser extends User with SecuredUser {
-  override def id: String = super.id
-}

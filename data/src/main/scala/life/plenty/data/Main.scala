@@ -1,8 +1,8 @@
 package life.plenty.data
 
 import life.plenty.model.ModuleRegistry
-import life.plenty.model.octopi.SecureUser
 import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.security.SecureUser
 import life.plenty.{data, model}
 
 import scala.concurrent.ExecutionContext.Implicits.global
