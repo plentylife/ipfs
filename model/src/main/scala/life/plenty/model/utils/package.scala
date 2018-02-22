@@ -1,8 +1,11 @@
 package life.plenty.model
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import life.plenty.model.connection._
 import life.plenty.model.octopi.definition.Hub
 import rx.{Ctx, Rx}
+
+import scala.concurrent.Future
 
 package object utils {
 
@@ -11,9 +14,15 @@ package object utils {
 
   implicit class OptRxOctopus[T <: Hub](rx: Rx[Option[T]])(implicit ctx: Ctx.Owner) {
     console.trace(s"Util OptRxOcto ${rx.now}")
-    def addConnection(c: DataHub[_]) = rx.foreach(_.foreach {
-      o: Hub ⇒ o.addConnection(c)
+    def addConnection[T](c: DataHub[_]): Rx[Option[Future[Unit]]] =
+      addConnection(c, () ⇒ Unit)
+
+    def addConnection[T](c: DataHub[_], execOnSuccess: () ⇒ T)
+    : Rx[Option[Future[T]]] = rx.map(_.map {
+      o: Hub ⇒ o.addConnection(c) map (_ ⇒ execOnSuccess())
     })
+
+    def forEach(f: T ⇒ Unit) = rx.foreach(o ⇒ o.foreach(f))
   }
 
   class Console(var active: Boolean, traceActive: Boolean = false, _prefix: String = "") {

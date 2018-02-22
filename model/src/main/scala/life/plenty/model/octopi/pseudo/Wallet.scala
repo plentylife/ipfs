@@ -31,7 +31,7 @@ class Wallet(u: User, space: Hub)(implicit ctx: Ctx.Owner) {
     val used = u.getVotes().map(v ⇒ -Math.abs(v.getAmountOrZero()))
     model.console.trace(s"Wallet usable votes | allowed ${allowances} | used ${used}")
 
-    (10 :: allowances ::: used).sum
+    (5 :: allowances ::: used).sum
   }
 
   /** per day */

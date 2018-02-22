@@ -29,15 +29,11 @@ class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransfor
         model.console.trace(s"Funds check on transaction $t ${t.id}")
         Try {
           // the dataloaders must be present
-          println(s"f1 ${t.id}")
-            println(s"f2 ${t.id}")
             t.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
-              println(s"f3 ${t.id}")
               t.getOnContribution.now match {
                 case Some(c) ⇒ val w = new Wallet(withinOctopus, c)
-                  println(s"f4a ${t.id}")
                   if (w.getThanksBalance.now + w.getUsableThanksLimit.now - t.getAmount.now.get >= 0) {
-                    model.console.trace(s"Funds check passed transaction $connection")
+                    model.console.trace(s"Funds check passed transaction $t ${t.id}")
                     promise.success()
                   } else {
                     model.console.error("Funds check fail. Not enough funds!")

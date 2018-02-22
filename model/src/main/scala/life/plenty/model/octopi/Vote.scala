@@ -25,8 +25,25 @@ class VoteAllowance() extends WithAmount {
 
   addToRequired(onTransaction)
 
+
   onNew {
-    onTransaction.foreach(_.foreach(_.getFrom.addConnection(Child(this))))
+    onTransaction.foreach(_.foreach { thisTransaction ⇒
+      model.console.trace(s"VoteAllowance on ${thisTransaction} ${thisTransaction.id}")
+      // have to check that From user has this transaction added
+      thisTransaction.getFrom.foreach(_.foreach { from ⇒
+        model.console.trace(s"VoteAllowance from $from ${from.id}")
+
+        val existing = from.rx.get({ case Child(t: Transaction) if t.id == thisTransaction.id ⇒ t })
+
+        existing.forEach(t ⇒ {
+          model.console.trace(s"VoteAllowance given to user ${from.id} ${t.id}")
+          from.addConnection(Child(this))
+          existing.kill()
+        })
+      })
+    })
+
     onTransaction.addConnection(Child(this))
+
   }
 }
