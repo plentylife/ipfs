@@ -99,7 +99,10 @@ object Main {
     data.Cache.octopusCache.foreach(entry ⇒ {
       val (_, o) = entry
       o.getTopModule({ case m: OctopusGunReaderModule ⇒ m }).foreach {
-        m ⇒ println(s"${m.connectionsLeftToLoad} ${m.withinOctopus} ${m.withinOctopus.id}")
+        m ⇒
+          if (m.connectionsLeftToLoad.now > 0) {
+            println(s"${m.connectionsLeftToLoad} ${m.withinOctopus} ${m.withinOctopus.id}")
+          }
       }
     })
   }

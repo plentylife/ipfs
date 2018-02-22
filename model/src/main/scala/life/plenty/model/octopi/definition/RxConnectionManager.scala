@@ -37,9 +37,26 @@ trait RxConnectionManager {
       toRxConsList(_connectionsRx)
     }
 
+    /** @return first found non empty rx */
     def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      cons(ctx) map {_.collectFirst(f)}
+      onConnectionsRequest.foreach(f ⇒ f())
+
+      Rx {
+        var res:Rx[Option[T]] = Var[Option[T]](None)
+        val obs = _connectionsRx.foreach(listOfRx ⇒ {
+          val rightRx = listOfRx.find(rx ⇒ rx().collect(f).nonEmpty)
+          rightRx foreach {rx ⇒
+            res = rx map {_.collect(f)}
+          }
+        })
+        if (res().nonEmpty) obs.kill()
+        res()
+      }
     }
+    
+//    def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
+//      val res = cons(ctx) map {_.collectFirst(f)}
+//    }
 
     def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       onConnectionsRequest.foreach(f ⇒ f())
