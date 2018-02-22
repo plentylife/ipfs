@@ -12,10 +12,12 @@ object Modal {
   private val content = Var[Binding[Node]](null)
   private val outerClasses = Var("")
   private val defualtClasses = "modal-outer-box d-flex justify-content-center align-items-center "
+  private val closeButtonText = Var("close")
 
-  def setContentAndOpen(c: Binding[Node], addClass: String = "") = {
+  def setContentAndOpen(c: Binding[Node], addClass: String = "", closeBtnText: String = "close") = {
     outerClasses.value_=(addClass)
     content.value_=(c)
+    this.closeButtonText.value_=(closeBtnText)
     isOpen.value_=(true)
   }
 
@@ -30,7 +32,7 @@ object Modal {
     if (isOpen.bind) {
       <div class={defualtClasses + outerClasses.bind}>
         {content.bind.bind}
-        <div class="btn-sm btn btn-danger mt-3" onclick={_:Event => close()}>cancel</div>
+        <div class="btn-sm btn btn-danger mt-3" onclick={_:Event => close()}>{closeButtonText.bind}</div>
       </div>
     } else {
       <span style="display:none"></span>
