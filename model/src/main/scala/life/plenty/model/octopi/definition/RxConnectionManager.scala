@@ -2,6 +2,7 @@ package life.plenty.model.octopi.definition
 
 import life.plenty.model.connection.DataHub
 import life.plenty.model.modifiers.RxConnectionFilters
+import rx.opmacros.Utils.Id
 import rx.{Ctx, Rx, Var}
 
 trait RxConnectionManager {
@@ -38,25 +39,29 @@ trait RxConnectionManager {
     }
 
     /** @return first found non empty rx */
-//    def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-//      onConnectionsRequest.foreach(f ⇒ f())
-//
-//      Rx {
-//        var res:Rx[Option[T]] = Var[Option[T]](None)
-//        val obs = _connectionsRx.foreach(listOfRx ⇒ {
-//          val rightRx = listOfRx.find(rx ⇒ rx().collect(f).nonEmpty)
-//          rightRx foreach {rx ⇒
-//            res = rx map {_.collect(f)}
-//          }
-//        })
-//        if (res().nonEmpty) obs.kill()
-//        res()
-//      }
-//    }
-
     def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      cons(ctx) map {_.collectFirst(f)}
+      onConnectionsRequest.foreach(f ⇒ f())
+
+      Rx {
+        val rightRxIndex = _connections.map{list ⇒
+          val processed = list.map(f.isDefinedAt)
+          processed.indexOf(true) // if None, won't be found
+        }
+        val res: Rx[Option[T]] = rightRxIndex.flatMap { i ⇒
+          if (i < 0 ) Var(None) else {
+            val rxList = _connectionsRx()
+            rxList(i) map {rx: Option[DataHub[_]] ⇒ rx collect f}
+          }
+        }
+
+        res.foreach(r ⇒ if (r.nonEmpty) rightRxIndex.kill())
+        res()
+      }
     }
+
+//    def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
+//      cons(ctx) map {_.collectFirst(f)}
+//    }
 
     def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       onConnectionsRequest.foreach(f ⇒ f())

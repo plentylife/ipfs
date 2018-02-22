@@ -13,6 +13,10 @@ class FullUserBadge(override val withinOctopus: User) extends DisplayModule[User
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
+    withinOctopus.getName.foreach(n ⇒ {
+      println(s"&&NAME $n in ${withinOctopus.id} ${withinOctopus.connections.now}")
+    })
+
     <div class="user-badge">
       {Identicon.generate(withinOctopus).bind}
       {withinOctopus.getName.dom.bind}
