@@ -14,13 +14,12 @@ import life.plenty.ui.display.utils.StringInputVar
 import life.plenty.ui.model.{DisplayModel, Router}
 
 import scalaz.std.option._
-
+import scala.concurrent.ExecutionContext.Implicits.global
 object CreateSpace {
   private val title = new StringInputVar
   private val description = new StringInputVar
   private var parentSpace: Var[Option[Space]] = Var(None)
 
-  // fixme submits with empty fields
   private def onSubmit(event: Event): Unit = {
     event.preventDefault()
     title.check; description.check
@@ -30,16 +29,16 @@ object CreateSpace {
       var params: List[DataHub[_]] = Title(t) :: Body(d) :: Nil
       parentSpace.value map {Parent(_)} foreach {params +:= _}
       ui.console.trace(s"Creating space with params $params `$t` `$d`")
-      space.asNew(params:_*)
+      // fixme. there should be an error message on fail
+      space.asNew(params:_*) foreach {_ ⇒
+        println(space.sc.all)
 
-
-      println(space.sc.all)
-
-      Router.navigateToOctopus(space)
-      Modal.close()
-      title.reset
-      description.reset
-      parentSpace.value_=(None)
+        Router.navigateToOctopus(space)
+        Modal.close()
+        title.reset
+        description.reset
+        parentSpace.value_=(None)
+      }
     }
   }
 
