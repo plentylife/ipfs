@@ -91,6 +91,14 @@ object OctopusReader {
       }
     })
   }
+
+  def exists(id: String): Future[Boolean] = {
+    val p = Promise[Boolean]()
+    gunCalls.get(id, (d,k) ⇒ {
+      p.success(!(js.isUndefined(d) || d == null))
+    })
+    p.future
+  }
 }
 
 

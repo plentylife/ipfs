@@ -55,7 +55,7 @@ object Login {
           } else {
             <span style="display:none"></span>
           }}<label for="name">Your name</label> <br/>
-            <input name="name" type="text" oninput={e: Event ⇒
+            <input name="name" type="text" autocomplete='name' oninput={e: Event ⇒
             name.value_=(e.target.asInstanceOf[Input].value.trim)
             nameEmpty.value_=(name.value.isEmpty)}/>
           </div>
@@ -67,7 +67,7 @@ object Login {
           } else {
             <span style="display:none"></span>
           }}<label for="email">Email</label> <br/>
-            <input name="email" type="text" oninput={e: Event ⇒
+            <input name="email" type="text" autocomplete='email' oninput={e: Event ⇒
             email.value_=(parseValidEmail(e.target.asInstanceOf[Input].value.trim).getOrElse(""))
             emailEmpty.value_=(email.value.isEmpty)}/>
             <br/>
@@ -75,6 +75,12 @@ object Login {
 
           {new InputVarWithPassword(password, "Password").dom.bind}
 
+          <div class="password-info">
+            this is a high security system<br/>
+            your password is not stored anywhere<br/>
+            it is never sent over the internet<br/>
+            if you forget it, it cannot be retrieved
+          </div>
           <input type="submit" class="btn btn-primary mt-2" value="Login"/>
           <div class="btn btn-secondary" onclick={onSignup _}>Sign-up</div>
         </form>

@@ -34,7 +34,6 @@ object UiContext {
 
   def login(name: String, email: String, password: String) = {
     storeUser(name, email)
-    //    Main.showUi()
   }
 
   def loadUser() = {
