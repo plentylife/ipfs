@@ -6,7 +6,7 @@ import life.plenty.model.connection._
 import life.plenty.model.octopi.GreatQuestions._
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.{Hub, TmpMarker}
-import rx.Var
+import rx.{Rx, Var}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
@@ -227,10 +227,14 @@ ActionOnFinishDataLoad {
     })
   }
 
-  override def onFinishLoad(f: () ⇒ Unit): Unit = connectionsLeftToLoad.foreach(count ⇒ if (count == 0) {
-    f()
-    connectionsLeftToLoad.kill()
-  })
+  override def onFinishLoad(f: () ⇒ Unit): Unit = {
+    val finishRx: Rx[Boolean] = Rx {
+      if (connectionsLeftToLoad() == 0) {
+        f(); true
+      } else false
+    }
+    finishRx.foreach(b ⇒ if (b) {finishRx.kill()})
+  }
 }
 
 object OctopusGunReaderModule {

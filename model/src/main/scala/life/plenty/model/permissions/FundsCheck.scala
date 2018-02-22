@@ -13,31 +13,35 @@ import rx.Ctx
 import scala.concurrent.{Future, Promise}
 import scala.util.Try
 
-class NotEnoughThanks extends Exception
-class NotEnoughVotingPower extends Exception
+trait FundsError extends Exception {
+  val user: User
+}
+class NotEnoughThanks(override val user: User) extends FundsError
+class NotEnoughVotingPower(override val user: User) extends FundsError
 
 class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransform {
   private implicit val ctx = withinOctopus.ctx
-
-  private lazy val dataLoader = withinOctopus.getTopModule({case m: ActionOnFinishDataLoad ⇒ m})
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     val promise = Promise[Unit]()
     connection.value match {
       case t: Transaction ⇒
-        model.console.trace(s"Funds check on transaction $connection")
+        model.console.trace(s"Funds check on transaction $t ${t.id}")
         Try {
           // the dataloaders must be present
-          dataLoader.get.onFinishLoad(() ⇒ {
+          println(s"f1 ${t.id}")
+            println(s"f2 ${t.id}")
             t.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
+              println(s"f3 ${t.id}")
               t.getOnContribution.now match {
                 case Some(c) ⇒ val w = new Wallet(withinOctopus, c)
+                  println(s"f4a ${t.id}")
                   if (w.getThanksBalance.now + w.getUsableThanksLimit.now - t.getAmount.now.get >= 0) {
                     model.console.trace(s"Funds check passed transaction $connection")
                     promise.success()
                   } else {
                     model.console.error("Funds check fail. Not enough funds!")
-                    promise.failure(new NotEnoughThanks)
+                    promise.failure(new NotEnoughThanks(withinOctopus))
                   }
                 case None ⇒
                   model.console.error(s"Funds check fail. Transaction ${t} did not have a parent." +
@@ -45,16 +49,16 @@ class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransfor
                   promise.failure(new Exception("Transaction did not have a parent"))
               }
             })
-          })
         }.recover {
-          case e: Throwable ⇒ promise.failure(new Exception("Operational exception while trying to check funds"))
+          case e: Throwable ⇒
+            model.console.error("Operational exception while trying to check funds")
+            promise.failure(new Exception("Operational exception while trying to check funds"))
         }.get
 
       case v: Vote ⇒
         model.console.trace(s"Funds check on vote $connection")
         Try {
           // the dataloaders must be present
-          dataLoader.get.onFinishLoad(() ⇒ {
             v.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
               v.parentAnswer.now match {
                 case Some(c) ⇒ val w = new Wallet(withinOctopus, c)
@@ -62,14 +66,14 @@ class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransfor
                     promise.success()
                   } else {
                     model.console.error("Not enough voting power!")
-                    promise.failure(new NotEnoughVotingPower)
+                    promise.failure(new NotEnoughVotingPower(withinOctopus))
                   }
                 case None ⇒ promise.failure(new Exception("Vote did not have a parent"))
               }
             })
-          })
         }.recover {
           case e: Throwable ⇒
+            model.console.error("Operational exception while trying to check votes")
             promise.failure(new Exception("Operational exception while trying to check funds (votes)"))
         }.get
 
