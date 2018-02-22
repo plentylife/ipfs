@@ -57,7 +57,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
     onErrorList.transformWith {
       case Failure(e: Throwable) ⇒
         actionCatchGraphTransformError.foreach(_.catchError(e))
-        Future()
+        onErrorList map {_ ⇒ Unit}
 
       case Success(_) ⇒
         console.trace(s"Adding connection check is Success ${this.getClass.getSimpleName} <-- ${connection}")
@@ -76,7 +76,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
             e
           case Success(_) ⇒
         }
-        Future()
+        onErrorList map {_ ⇒ Unit}
     }
   }
 
