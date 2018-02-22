@@ -60,6 +60,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
         Future()
 
       case Success(_) ⇒
+        console.trace(s"Adding connection check is Success ${this.getClass.getSimpleName} <-- ${connection}")
         connectionCounter += 1
         connection.setHolder(this)
 

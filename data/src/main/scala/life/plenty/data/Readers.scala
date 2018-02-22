@@ -199,8 +199,11 @@ ActionOnFinishDataLoad {
       // fixme this will bug out if we are re-using connections
       val cachedCon = Cache.getConnection(k)
       if (cachedCon.nonEmpty) {
-        connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-        if (!allCons.now.contains(k)) withinOctopus.addConnection(cachedCon.get)
+        if (!allCons.now.contains(k)) {
+          withinOctopus.addConnection(cachedCon.get) foreach {_ ⇒
+            connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+          }
+        } else connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
         console.trace(s"Skipping loading connection $k")
       } else {
         ConnectionReader.read(d, k) map { optCon ⇒ {
@@ -213,9 +216,10 @@ ActionOnFinishDataLoad {
           optCon foreach { c ⇒
             Cache.put(c)
             val vc = Cache.getConnection(c.id).get // should never fail
-            connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
             vc.tmpMarker = GunMarker
-            withinOctopus.addConnection(vc)
+            withinOctopus.addConnection(vc) foreach {_ ⇒
+              connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+            }
           }
         }
         }
