@@ -32,7 +32,7 @@ object UiContext {
     ui.console.trace(s"UiContext setUser has userVar set to ${userVar.value}")
   }
 
-  def login(name: String, email: String) = {
+  def login(name: String, email: String, password: String) = {
     storeUser(name, email)
     //    Main.showUi()
   }

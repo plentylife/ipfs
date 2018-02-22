@@ -2,36 +2,38 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.ui.display.utils.{InputVarWithPassword, StringInputVar}
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.{Event, Node}
 
 object Login {
-  //  private val open = Var(isOpen)
-
   private val name = Var("")
   private val email = Var("")
+  private val password = new StringInputVar()
 
   private val emailEmpty = Var(false)
   private val nameEmpty = Var(false)
 
+  private val isSignup = Var(false)
+
   @dom
   private def isOpen: Binding[Boolean] = {
-    //    UiContext.getUser == null
     UiContext.userVar.bind == null
   }
 
   private def onSubmit(e: Event) = {
-    if (name.value.nonEmpty && email.value.nonEmpty) {
-      UiContext.login(name.value, email.value)
-      //              open.value_=(isOpen)
+    e.preventDefault()
+    val nameCondition = !isSignup.value || name.value.nonEmpty
+    if (nameCondition && email.value.nonEmpty) {
+      for (pass ← password.get) {
+        UiContext.login(name.value, email.value, pass)
+      }
     }
   }
 
-  private val emailRegex =
-    """(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])""".r
-  private def parseValidEmail(str: String): Option[String] = {
-    emailRegex.findFirstIn(str)
+  private def onSignup(e: Event) = {
+    if (isSignup.value) onSubmit(e) else isSignup.value_=(true)
   }
 
   @dom
@@ -42,9 +44,8 @@ object Login {
           <img src="images/plenty_logo-400.png"/>
         </div>
         <form class="login-box d-inline-flex flex-column" onsubmit={e: Event ⇒
-          e.preventDefault()
           onSubmit(e)}>
-          <div>
+          <div class={if (isSignup.bind) "" else "d-none"}>
             {if (nameEmpty.bind) {
             <div class="bg-danger text-white">
               Name can't be empty
@@ -69,11 +70,21 @@ object Login {
             emailEmpty.value_=(email.value.isEmpty)}/>
             <br/>
           </div>
+
+          {new InputVarWithPassword(password, "Password").dom.bind}
+
           <input type="submit" class="btn btn-primary mt-2" value="Login"/>
+          <div class="btn btn-secondary" onclick={onSignup _}>Sign-up</div>
         </form>
       </div>
     } else {
       <span style="display:none"></span>
     }
+  }
+
+  private val emailRegex =
+    """(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])""".r
+  private def parseValidEmail(str: String): Option[String] = {
+    emailRegex.findFirstIn(str)
   }
 }

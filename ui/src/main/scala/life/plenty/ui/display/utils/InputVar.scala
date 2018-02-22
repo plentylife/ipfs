@@ -79,6 +79,11 @@ class InputVarWithTextarea(inputVar: StringInputVar, label: String) extends Inpu
   override protected def inputElem = <textarea name={this.toString} oninput={inputVar.input _}></textarea>
 }
 
+class InputVarWithPassword(inputVar: StringInputVar, label: String) extends InputVarWithDisplay(inputVar, label) {
+  @dom
+  override protected def inputElem = <input name={this.toString} type="password" oninput={inputVar.input _}/>
+}
+
 class InputVarWithCheckbox(inputVar: BooleanInputVar, label: String) extends InputVarWithDisplay(inputVar, label) {
   @dom
   override def dom: Binding[Node] = {
