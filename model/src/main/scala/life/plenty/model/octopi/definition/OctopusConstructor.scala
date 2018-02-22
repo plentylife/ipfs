@@ -1,7 +1,7 @@
 package life.plenty.model.octopi.definition
 
 import java.util.Date
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import life.plenty.model
 import life.plenty.model.actions.ActionOnNew
 import life.plenty.model.connection._
@@ -9,7 +9,8 @@ import life.plenty.model.octopi.User
 import life.plenty.model.utils._
 import rx.{Rx, Var}
 
-import scala.util.Random
+import scala.concurrent.Future
+import scala.util.{Failure, Random, Success}
 
 trait OctopusConstructor {
   self: Hub ⇒
@@ -47,8 +48,13 @@ trait OctopusConstructor {
 
   final def required: Set[() ⇒ Rx[Option[_]]] = _required
 
-  /** alias for [[addConnection()]] with the connection marked */
-  private def setInit(c: DataHub[_]): Unit = addConnection(c.inst)
+
+  private var initialConnectionCompletion = Future[Unit]{}
+  /** alias for [[addConnection()]] with the connection marked and that tracks the completion of connections */
+  private def setInit(c: DataHub[_]): Unit = {
+    val f = addConnection(c.inst)
+    initialConnectionCompletion = initialConnectionCompletion.flatMap(_ ⇒ f)
+  }
 
   private lazy val isNewVar = Var(false)
 
@@ -88,7 +94,9 @@ trait OctopusConstructor {
       setInit(Id(generateId(ct.value, cc.map(_.user.id).get)))
     } else setInit(idProp.get)
 
-    model.console.error(s"Warning: no creator was set for ${this.getClass}")
+    if (cc.isEmpty) {
+      model.console.error(s"Warning: no creator was set for ${this.getClass}")
+    }
 
     self.setInit(ct)
     cc foreach self.setInit
@@ -98,21 +106,29 @@ trait OctopusConstructor {
       self.setInit(p)
     })
 
-    model.console.trace(s"New octopus has connections ${connections.now}")
+    initialConnectionCompletion onComplete {
+      case Success(_) ⇒
+        model.console.trace(s"New octopus has connections ${connections.now}")
 
-    for (p ← required) {
-      if (p().now.isEmpty) {
-        val msg = s"Class ${this.getClass} was not properly instantiated. " +
-          s"Connections ${this._connections.now}"
-        model.console.error(msg)
-        throw new Exception(msg)
-      }
+        for (p ← required) {
+          if (p().now.isEmpty) {
+            val msg = s"Class ${this.getClass} was not properly instantiated. " +
+              s"Connections ${this._connections.now}"
+            model.console.error(msg)
+            throw new Exception(msg)
+          }
+        }
+
+        getCreator.addConnection(Created(this).inst)
+        isNewVar() = true
+
+        getModules({ case m: ActionOnNew[_] ⇒ m }).foreach({_.onNew()})
+        model.console.println(s"successfully instantiated ${this} ${this.id}")
+
+      case Failure(e) ⇒
+        model.console.error(s"Some of the connections failed to load on instantiation of ${this.getClass}")
+        model.console.error(e)
     }
 
-    getCreator.addConnection(Created(this).inst)
-    isNewVar() = true
-
-    getModules({ case m: ActionOnNew[_] ⇒ m }).foreach({_.onNew()})
-    model.console.println(s"successfully instantiated ${this} ${this.id}")
   }
 }
