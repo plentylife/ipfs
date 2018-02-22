@@ -3,6 +3,7 @@ package life.plenty.model.octopi
 import life.plenty.model
 import life.plenty.model.connection.{Child, Name}
 import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.security.SecuredUser
 import rx.Rx
 
 trait User extends Hub {
@@ -42,6 +43,8 @@ trait User extends Hub {
   override def hashCode: Int = id.hashCode
 }
 
-class BasicUser() extends User {
+class BasicUser() extends User
 
+class SecureUser extends User with SecuredUser {
+  override def id: String = super.id
 }

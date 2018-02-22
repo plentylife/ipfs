@@ -3,6 +3,7 @@
 // window.Gun = require('gun'); // in NodeJS
 // window.Gun = require("../../../../gun-level/dist/browser");
 // const Gun = require('../../../../gun/gun');
+window.sodium = require('libsodium-wrappers-sumo')
 const Gun = require("gun-level");
 window.Hashes = require('jshashes');
 
@@ -92,3 +93,5 @@ class GunCalls {
 
 window.GC = GunCalls;
 
+//var ph = sodium.crypto_pwhash(32, "word", "salt567890123456", 2, sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE, 2)
+//sodium.crypto_box_seed_keypair(ph)

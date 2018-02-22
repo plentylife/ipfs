@@ -4,6 +4,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{GunCalls, OctopusGunReaderModule, OctopusReader, Main ⇒ dataMain}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.security.{LibSodium, LibSodiumWrapper}
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
 import life.plenty.ui.display.actions.CreateSpace
 import life.plenty.ui.display.{Help, LoadIndicator, Login, Modal}
@@ -77,25 +78,7 @@ object Main {
 
 
   @JSExport
-  def newSpace() = {
-    val ts = TestInstances.load()
-    val rp = Router.defaultRoutingParams.copy(spaceId = Option(ts.id))
-    println("Routing hash")
-    println(Router.toHash(rp))
-//    Router.navigateToOctopus(ts)
-  }
-
-  @JSExport
   def console() = ui.console.active = true
-
-  @JSExport
-  def log() = println(UiContext.startingSpace.value.get.sc.all)
-
-  @JSExport
-  def logDataCache() = println(data.Cache.octopusCache)
-
-  @JSExport
-  def clearDataCache() = data.Cache.octopusCache.clear()
 
   @JSExport
   def unloaded() = {
@@ -111,12 +94,8 @@ object Main {
   }
 
   @JSExport
-  def loadIndicator() = {
-    println(LoadIndicator.left)
-    LoadIndicator.listOfModules.now.foreach(m ⇒ {
-      println(s"${m.connectionsLeftToLoad} ${m.withinOctopus} ${m.withinOctopus.id}")
-    })
-  }
+  def sodiumPw = LibSodiumWrapper.crypto_pwhash(32, "pass", "salt567890123456")
+  def sodium = LibSodium
 
   private implicit val ctx = Ctx.Owner.safe()
 

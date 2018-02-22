@@ -1,4 +1,4 @@
-package life.plenty.model.permissions
+package life.plenty.model.security
 
 import life.plenty.model
 import life.plenty.model.actions.{ActionOnFinishDataLoad, ActionOnGraphTransform}

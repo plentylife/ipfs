@@ -3,7 +3,7 @@ package life.plenty.ui.filters
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCatchGraphTransformError
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.permissions.{FundsError, NotEnoughThanks, NotEnoughVotingPower}
+import life.plenty.model.security.{FundsError, NotEnoughThanks, NotEnoughVotingPower}
 import life.plenty.ui
 import life.plenty.ui.display.{ErrorModal, Modal}
 import life.plenty.ui.model.UiContext

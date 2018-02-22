@@ -158,6 +158,10 @@ object ConnectionReader {
 
 // todo create a module for user that filters out everything but transactions
 
+class SecureUserGunReaderModule(u: SecureUser) extends OctopusGunReaderModule(u) {
+  Cache.put(u)
+}
+
 class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnConnectionsRequest with
 ActionOnFinishDataLoad {
   private implicit val ctx = withinOctopus.ctx
