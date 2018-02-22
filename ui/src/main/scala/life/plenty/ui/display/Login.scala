@@ -25,6 +25,8 @@ object Login {
   private def onSubmit(e: Event) = {
     e.preventDefault()
     val nameCondition = !isSignup.value || name.value.nonEmpty
+    nameEmpty.value_=(name.value.isEmpty)
+    emailEmpty.value_=(email.value.isEmpty)
     if (nameCondition && email.value.nonEmpty) {
       for (pass ← password.get) {
         UiContext.login(name.value, email.value, pass)
