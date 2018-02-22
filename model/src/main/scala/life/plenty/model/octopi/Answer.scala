@@ -5,6 +5,7 @@ import life.plenty.model.connection.{Body, Child, DataHub, Title}
 import rx.Rx
 
 import scala.collection.immutable
+import scala.concurrent.Future
 
 trait Answer extends Space with WithParent[Space] {
   addToRequired(getBody)
@@ -27,7 +28,7 @@ trait Answer extends Space with WithParent[Space] {
   }
 
   /** at least for now, answers do not have titles */
-  override def asNew(properties: DataHub[_]*): Unit = {
+  override def asNew(properties: DataHub[_]*): Future[Unit] = {
     val ps = Title("") :: properties.toList
     super.asNew(ps: _*)
   }

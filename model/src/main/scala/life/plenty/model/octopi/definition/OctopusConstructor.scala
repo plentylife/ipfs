@@ -1,6 +1,7 @@
 package life.plenty.model.octopi.definition
 
 import java.util.Date
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import life.plenty.model
 import life.plenty.model.actions.ActionOnNew
@@ -9,7 +10,7 @@ import life.plenty.model.octopi.User
 import life.plenty.model.utils._
 import rx.{Rx, Var}
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Random, Success}
 
 trait OctopusConstructor {
@@ -79,7 +80,7 @@ trait OctopusConstructor {
     })
   }
 
-  def asNew(properties: DataHub[_]*): Unit = {
+  def asNew(properties: DataHub[_]*): Future[Unit] = {
     model.console.trace(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
 
     // has to be first for purposes of creating ids
@@ -106,6 +107,7 @@ trait OctopusConstructor {
       self.setInit(p)
     })
 
+    val finished = Promise[Unit]()
     initialConnectionCompletion onComplete {
       case Success(_) ⇒
         model.console.trace(s"New octopus has connections ${connections.now}")
@@ -125,10 +127,12 @@ trait OctopusConstructor {
         getModules({ case m: ActionOnNew[_] ⇒ m }).foreach({_.onNew()})
         model.console.println(s"successfully instantiated ${this} ${this.id}")
 
+        finished.success()
       case Failure(e) ⇒
         model.console.error(s"Some of the connections failed to load on instantiation of ${this.getClass}")
         model.console.error(e)
+        finished.failure(e)
     }
-
+    finished.future
   }
 }

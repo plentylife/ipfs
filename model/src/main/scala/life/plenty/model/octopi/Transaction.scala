@@ -4,6 +4,8 @@ import life.plenty.model
 import life.plenty.model.connection._
 import life.plenty.model.utils._
 
+import scala.concurrent.Future
+
 class Transaction() extends WithAmount {
   addToRequired(getOnContribution)
 
@@ -13,7 +15,7 @@ class Transaction() extends WithAmount {
 
   def getFrom = getCreator
 
-  override def asNew(properties: DataHub[_]*): Unit = {
+  override def asNew(properties: DataHub[_]*): Future[Unit] = {
     var ps = properties.toList
     // adding the To connection
     properties.collectFirst {

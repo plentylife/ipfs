@@ -2,6 +2,8 @@ package life.plenty.model.octopi
 
 import life.plenty.model.connection.{DataHub, Title}
 
+import scala.concurrent.Future
+
 trait GreatQuestion extends Space with WithParent[Space] {
   protected val t: Title
 
@@ -9,7 +11,7 @@ trait GreatQuestion extends Space with WithParent[Space] {
   //    super.idGenerator + this.getClass.getSimpleName
   //  }
 
-  override def asNew(properties: DataHub[_]*): Unit = {
+  override def asNew(properties: DataHub[_]*): Future[Unit] = {
     val ps = properties.:+(t)
     super.asNew(ps: _*)
   }

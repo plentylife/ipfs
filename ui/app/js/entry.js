@@ -26,9 +26,8 @@ class GunCalls {
     window.gun = new Gun({
       level: LevelDB,
       localStorage: false,
-      file: false
-      ,
-      peers: this.peersToOpt(peers)
+      file: false,
+      // peers: this.peersToOpt(peers)
     })
   }
 
