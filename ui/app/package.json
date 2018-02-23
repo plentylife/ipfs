@@ -23,6 +23,7 @@
     "orbit-db": "0.19.2",
     "pouchdb": "^6.4.3",
     "pouchdb-authentication": "^1.1.2",
+    "sharedb": "^1.0.0-beta.8",
     "wrtc": "0.0.65"
   },
   "devDependencies": {
