@@ -21,8 +21,8 @@ object Main {
   def modules(): Unit = {
     ModuleRegistry add { case o: Hub ⇒ new GunWriterModule(o) }
     ModuleRegistry add { case o: Hub if !o.isInstanceOf[SecureUser] ⇒ new InstantiationGunWriterModule(o) }
-
     ModuleRegistry add { case o: Hub if !o.isInstanceOf[SecureUser] ⇒ new OctopusGunReaderModule(o) }
+
     ModuleRegistry add { case o: SecureUser ⇒ new SecureUserGunReaderModule(o) }
     ModuleRegistry add { case o: SecureUser ⇒ new InstantiationSecureUserWriterModule(o) }
     //    ModuleRegistry add { case o: Hub ⇒ new OctopusGunReaderModule(o) }

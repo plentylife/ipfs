@@ -1,12 +1,13 @@
 package life.plenty.data
 
 import scala.scalajs.js
+import scala.scalajs.js.UndefOr
 import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
 
 
 @js.native
 trait Ack extends js.Object {
-  val err: String = js.native
+  val err: UndefOr[String] = js.native
 }
 
 @js.native
@@ -74,6 +75,6 @@ trait GunCalls extends js.Object {
   def getConnections(id: String, cb: js.Function1[js.Object, Unit]):Unit= js.native
   def mapConnections(id: String, cb: js.Function2[js.Object, String, Unit]):Unit= js.native
   def put(id: String, data: js.Object, cb: js.Function1[js.Object, Unit]): Gun = js.native
-  def set(holderGun: Gun, connecitons: js.Array[Gun], onAck: js.Function1[js.Object, Unit]): Gun = js.native
+  def set(holderId: String, connecitons: js.Array[Gun], onAck: js.Function1[js.Object, Unit]): Gun = js.native
   def getInstance: Gun = js.native
 }

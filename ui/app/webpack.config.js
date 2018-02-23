@@ -7,6 +7,12 @@ module.exports = {
     filename: 'entry.js',
     path: path.resolve(__dirname)
   },
+  resolve: {
+    alias: {
+      // fs: "browserify-fs",
+    },
+    modules: ["node_modules"]
+  },
   module: {
     rules: [
       {

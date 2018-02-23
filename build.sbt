@@ -11,7 +11,10 @@ lazy val data = project.enablePlugins(ScalaJSPlugin, SbtJsEngine).in(file("data"
   .settings(
     relativeSourceMaps := true,
     emitSourceMaps := true,
-    scalacOptions += "-P:scalajs:sjsDefinedByDefault"
+    scalacOptions += "-P:scalajs:sjsDefinedByDefault",
+    libraryDependencies ++= Seq(
+          "com.lihaoyi" %% "upickle" % "0.5.1"
+    )
   )
 
 lazy val model = project.enablePlugins(ScalaJSPlugin).in(file("model"))

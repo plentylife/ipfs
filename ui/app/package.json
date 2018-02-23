@@ -7,6 +7,7 @@
     "babel-loader": "^8.0.0-beta.0",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.0.0-beta.3",
+    "browserify-fs": "^1.0.0",
     "gun": "^0.9.91",
     "gun-level": "^6.0.4",
     "ipfs": "0.27.6",

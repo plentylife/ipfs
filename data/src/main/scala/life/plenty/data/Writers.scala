@@ -31,7 +31,6 @@ object OctopusWriter {
     o match {
       case c: DataHub[_] ⇒
         info.updateDynamic("value")(stringifyData(c))
-      //          info.updateDynamic("order")(c.getOrder)
       case _ ⇒
     }
 
@@ -46,7 +45,7 @@ object OctopusWriter {
         firstAck = false
       }
     })
-    writeConnections(holderGun, o.sc.all)
+    writeConnections(o.id, o.sc.all)
     holderGun
   }
 
@@ -57,26 +56,29 @@ object OctopusWriter {
     }
   }
 
-  def writeConnections(holderGun: Gun, connections: Iterable[DataHub[_]]): Unit = {
+  def writeConnections(holderId: String, connections: Iterable[DataHub[_]]): Unit = {
     if (connections.isEmpty) return
 
     val gHubs = for (c ← connections) yield OctopusWriter.write(c)
     Future.sequence(gHubs).foreach { ghs ⇒
-      setWithError(holderGun, ghs.toList)
+      console.trace(s"writing into $holderId cons ${connections}")
+      setWithError(holderId, ghs.toList)
     }
 
   }
 
-  def writeSingleConnection(holderGun: Gun, connection: DataHub[_]): Unit = {
-    console.println(s"OctopusWriter single connection ${connection} ${connection.id}")
+  // todo. seems like the members not saving is a gun issue all over again
+  @deprecated("can't use this because of gun issues; save all")
+  def writeSingleConnection(holderId: String, connection: DataHub[_]): Unit = {
     OctopusWriter.write(connection) foreach { cgun ⇒
-      setWithError(holderGun, List(cgun))
+      console.println(s"OctopusWriter single connection ${connection} ${connection.id}")
+      setWithError(holderId, List(cgun))
     }
   }
 
-  private def setWithError(holderGun: Gun, conGun: List[Gun]) = {
+  private def setWithError(holderId: String, conGun: List[Gun]) = {
     val cons: js.Array[Gun] = js.Array.apply(conGun: _*)
-    gunCalls.set(holderGun, cons, (d) ⇒ {
+    gunCalls.set(holderId, cons, (d) ⇒ {
       console.trace(s"OctopusWriter in `set` of ${JSON.stringify(d)}")
       val ack = d.asInstanceOf[Ack]
       if (!js.isUndefined(ack.err) && ack.err != null) {
@@ -96,7 +98,9 @@ class GunWriterModule(override val withinOctopus: Hub) extends ActionAfterGraphT
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")
-      gun foreach { g ⇒ OctopusWriter.writeSingleConnection(g, connection) }
+//      gun foreach { g ⇒ OctopusWriter.writeSingleConnection(withinOctopus.id, connection) }
+      // todo. have to save all because of gun
+      gun foreach { g ⇒ OctopusWriter.writeConnections(withinOctopus.id, withinOctopus.sc.all) }
     }
     Future {Right()}
   }

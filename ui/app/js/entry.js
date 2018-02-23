@@ -2,9 +2,14 @@
 
 // window.Gun = require('gun'); // in NodeJS
 // window.Gun = require("../../../../gun-level/dist/browser");
-// const Gun = require('../../../../gun/gun');
+// const Gun = require("gun-level");
+
+const Gun = require('../../../../gun/gun');
+const GL = require('../../../../gun-level/src/browser')
+GL.plugin(Gun);
+// const Gun = require('../../../../gun-level/src/browser');
+
 window.sodium = require('libsodium-wrappers-sumo')
-const Gun = require("gun-level");
 window.Hashes = require('jshashes');
 
 const levelup = require('levelup');
@@ -24,7 +29,7 @@ class GunCalls {
 
   constructor(peers) {
     console.log("GunCalls contstructor with peers", peers);
-    window.gun = new Gun({
+    window.gun = Gun({
       level: LevelDB,
       localStorage: false,
       file: false,
@@ -39,13 +44,13 @@ class GunCalls {
       wait = 100; this.firstCall = false;
     }
     gun.get(id).get('class').val(function(d, k) {
-      // console.log("GunCalls got class of with wait", wait, id, d, k)
+      console.log("GunCalls got class of with wait", wait, id, d, k)
       cb(d)
     }, {wait: wait})
   }
   get(id, cb) {
     return gun.get(id).val(function(d, k) {
-      // console.log("SupGun got ", d, k)
+      console.log("GunCalls got ", d, k)
       cb(d, k)
     }, {wait: 0})
   }
@@ -65,18 +70,24 @@ class GunCalls {
     // console.log("GunCalls put", id, data)
     return gun.get(id).put(data, cb)
   }
-  set(holderGun, connections, onAck) {
+
+  set(holderId, connections, onAck) {
+    console.log("GunCalls set for ", holderId);
+    this.setInner(gun.get(holderId), connections, onAck)
+  }
+  setInner(holderGun, connections, onAck) {
     if (connections.length > 0) {
       const g = holderGun.get('connections');
-      // console.log("GunCalls set", connections, holderGun);
+      console.log("GunCalls set in " + holderGun._.soul, connections, holderGun);
       let firstAck = true;
       g.set(connections[0], d =>{ if (firstAck) {
         firstAck = false;
         onAck(d);
-        this.set(holderGun, connections.slice(1), onAck)
+        this.setInner(holderGun, connections.slice(1), onAck)
       }})
     }
   }
+
   getInstance() {
     return gun;
   }
