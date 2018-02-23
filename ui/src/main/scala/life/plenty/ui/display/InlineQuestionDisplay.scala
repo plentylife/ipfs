@@ -6,13 +6,13 @@ import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.Node
 
-class InlineQuestionDisplay(override val withinOctopus: Question) extends DisplayModule[Question] {
+class InlineQuestionDisplay(override val hub: Question) extends DisplayModule[Question] {
   override def doDisplay() = true
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
-    <div class="inline-question" id={withinOctopus.id}>
-      {withinOctopus.getTitle.dom.bind}
+    <div class="inline-question" id={hub.id}>
+      {hub.getTitle.dom.bind}
     </div>
   }
 

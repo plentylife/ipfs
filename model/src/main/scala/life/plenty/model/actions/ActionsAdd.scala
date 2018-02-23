@@ -5,38 +5,38 @@ import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.{Hub, Module}
 import life.plenty.model.utils.GraphUtils
 
-class ActionSignup(override val withinOctopus: SignupQuestion) extends Module[SignupQuestion] {
+class ActionSignup(override val hub: SignupQuestion) extends Module[SignupQuestion] {
   def signup(who: User) = {
     val c = new Contribution()
-    c.asNew(Body(""), Parent(withinOctopus))
+    c.asNew(Body(""), Parent(hub))
   }
 
   def designup(who: User) = ???
 }
 
-class ActionAddConfirmedMarker(override val withinOctopus: Hub) extends Module[Hub] {
-  private implicit val ctx = withinOctopus.ctx
+class ActionAddConfirmedMarker(override val hub: Hub) extends Module[Hub] {
+  private implicit val ctx = hub.ctx
 
   def confirm() = {
-    withinOctopus.addConnection(Marker(MarkerEnum.CONFIRMED))
-    println(s"added confirm marker ${withinOctopus.sc.all}")
-    println(s"${withinOctopus.rx.cons}")
+    hub.addConnection(Marker(MarkerEnum.CONFIRMED))
+    println(s"added confirm marker ${hub.sc.all}")
+    println(s"${hub.rx.cons}")
   }
 
   def deconfirm() = {
-    GraphUtils.confirmedMarker(withinOctopus).now.foreach { m ⇒
+    GraphUtils.confirmedMarker(hub).now.foreach { m ⇒
       println(s"marker is active ${m.isActive.now}")
       m.inactivate()
 
       println(s"removed marker ${m.sc.all}")
       println(s"marker is active ${m.isActive.now}")
-      println(s"${withinOctopus.rx.cons}")
+      println(s"${hub.rx.cons}")
     }
 
   }
 }
 
-class ActionAddContributor(override val withinOctopus: Contribution) extends Module[Contribution] {
+class ActionAddContributor(override val hub: Contribution) extends Module[Contribution] {
   def add(userId: String) = {
     ???
     //    val u = new BasicUser(userId)
@@ -48,7 +48,7 @@ class ActionAddContributor(override val withinOctopus: Contribution) extends Mod
   }
 }
 
-class ActionAddMember(override val withinOctopus: WithMembers) extends Module[WithMembers] {
+class ActionAddMember(override val hub: WithMembers) extends Module[WithMembers] {
 
   def addMember(u: User) = {
     ???
@@ -56,10 +56,10 @@ class ActionAddMember(override val withinOctopus: WithMembers) extends Module[Wi
 
 }
 
-class ActionAddDescription(override val withinOctopus: Space) extends Module[Space] {
-  private implicit val ctx = withinOctopus.ctx
+class ActionAddDescription(override val hub: Space) extends Module[Space] {
+  private implicit val ctx = hub.ctx
   def add(body: String) = {
-    val existing = withinOctopus.rx.get({ case c: Body ⇒ c })
+    val existing = hub.rx.get({ case c: Body ⇒ c })
     existing.foreach { cOpt ⇒
       existing.kill()
       cOpt foreach { c ⇒
@@ -67,6 +67,6 @@ class ActionAddDescription(override val withinOctopus: Space) extends Module[Spa
 //        withinOctopus.addConnection(Removed(c.id))
       }
     }
-    withinOctopus.addConnection(Body(body))
+    hub.addConnection(Body(body))
   }
 }

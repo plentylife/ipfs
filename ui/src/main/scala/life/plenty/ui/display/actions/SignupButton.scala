@@ -11,8 +11,8 @@ import life.plenty.ui.model.UiContext
 import life.plenty.ui.display.utils.InputVarWithTextarea
 import org.scalajs.dom.{Event, Node}
 
-class SignupButton(override val withinOctopus: Hub) extends ActionDisplay[Hub] {
-  private lazy val module: Option[ActionSignup] = withinOctopus.getTopModule(
+class SignupButton(override val hub: Hub) extends ActionDisplay[Hub] {
+  private lazy val module: Option[ActionSignup] = hub.getTopModule(
     {case m: ActionSignup => m})
 
   @dom

@@ -28,22 +28,22 @@ trait LayoutModule[T <: Hub] extends DisplayModule[T] {
       rxChildren = getChildren.foreach { cs ⇒
         children.value.clear()
         children.value.insertAll(0, cs)
-        console.trace(s"child updated ${withinOctopus} $cs")
+        console.trace(s"child updated ${hub} $cs")
       }
     }
-    console.trace(s"layout display updating $this $withinOctopus $sms overrides ${this.cachedOverrides.value}")
+    console.trace(s"layout display updating $this $hub $sms overrides ${this.cachedOverrides.value}")
   }
 
   private lazy val modifiers: List[OctopusModifier[Hub]] = {
-    console.trace(s"child meta getting modifiers from ${withinOctopus.modules}")
-    withinOctopus.getModules({ case m: OctopusModifier[Hub] ⇒ m })
+    console.trace(s"child meta getting modifiers from ${hub.modules}")
+    hub.getModules({ case m: OctopusModifier[Hub] ⇒ m })
   }
 
   private def getChildren: Rx[List[Hub]] = {
-    console.trace(s"getting children ${withinOctopus} ${withinOctopus.id}")
-    val childrenRx: Rx[List[Hub]] = withinOctopus.rx.getAll({ case Child(c: Hub) ⇒ c })
+    console.trace(s"getting children ${hub} ${hub.id}")
+    val childrenRx: Rx[List[Hub]] = hub.rx.getAll({ case Child(c: Hub) ⇒ c })
     val ordered = modifiers.foldLeft(childrenRx)((cs, mod) ⇒ {
-      console.trace(s"applying modifiers ${withinOctopus}")
+      console.trace(s"applying modifiers ${hub}")
       mod.applyRx(cs): Rx[List[Hub]]
     })
     ordered

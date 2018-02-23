@@ -16,7 +16,7 @@ import rx.{Obs, Rx}
 
 import scala.util.{Failure, Success, Try}
 
-class ContributionDisplay(override val withinOctopus: Contribution) extends DisplayModule[Contribution] {
+class ContributionDisplay(override val hub: Contribution) extends DisplayModule[Contribution] {
   //  protected val body = Var[String](withinOctopus.body())
   private val tipsCollected = Var(0)
   private var tipsCollectedRx: Obs = null
@@ -24,13 +24,13 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
   private var tipping: Int = 1
   private var error = Var("")
 
-  private lazy val editor: BindableAction[EditSpace] = new BindableAction(withinOctopus.getTopModule({ case
+  private lazy val editor: BindableAction[EditSpace] = new BindableAction(hub.getTopModule({ case
     m: EditSpace ⇒ m
   }), this)
 
   override def update(): Unit = {
     if (tipsCollectedRx == null) {
-      tipsCollectedRx = withinOctopus.tips.foreach(t ⇒ tipsCollected.value_=(t))
+      tipsCollectedRx = hub.tips.foreach(t ⇒ tipsCollected.value_=(t))
     }
   }
 
@@ -57,25 +57,25 @@ class ContributionDisplay(override val withinOctopus: Contribution) extends Disp
         <div class="card-body">
           <h6 class="card-title">contribution</h6>
           <h6 class="card-subtitle mb-2 text-muted">by
-            {val c: Rx[Option[String]] = withinOctopus.getCreator.map((optU: Option[User]) => optU.map {
+            {val c: Rx[Option[String]] = hub.getCreator.map((optU: Option[User]) => optU.map {
             u: User => u.getNameOrEmpty(): String
           });
           c.dom.bind}
           </h6>
           <p class="card-text">
-            {withinOctopus.getBody.dom.bind}
+            {hub.getBody.dom.bind}
           </p>
         </div>
       </div>
 
       <div class="card-controls-bottom d-flex">
-        {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}
+        {ChangeParent.displayActiveOnly(hub).bind}{editor.dom.bind}
       </div>
 
     </div>
   }
 
-  private lazy val findTipModule = withinOctopus.getTopModule({ case m: ActionGiveThanks ⇒ m })
+  private lazy val findTipModule = hub.getTopModule({ case m: ActionGiveThanks ⇒ m })
 
   private def onTip(e: Event) = {
     if (open.value) {

@@ -14,8 +14,8 @@ import org.scalajs.dom.raw.Node
 import scalaz.std.list._
 import scalaz.std.option._
 
-class SignupQuestionSpaceLayout(override val withinOctopus: Space) extends TopSpaceLayout(withinOctopus) {
-  private lazy val signup = new BindableModule(withinOctopus.getTopModule({case m: SignupButton ⇒ m}), this)
+class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(hub) {
+  private lazy val signup = new BindableModule(hub.getTopModule({case m: SignupButton ⇒ m}), this)
 
   @dom
   private def ifEmpty: Binding[Node] = <span class="mt-2">:( no one has signed up yet to help</span>

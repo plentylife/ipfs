@@ -89,7 +89,7 @@ object Main {
       o.getTopModule({ case m: OctopusGunReaderModule ⇒ m }).foreach {
         m ⇒
           if (m.connectionsLeftToLoad.now > 0) {
-            println(s"${m.connectionsLeftToLoad} ${m.withinOctopus} ${m.withinOctopus.id}")
+            println(s"${m.connectionsLeftToLoad} ${m.hub} ${m.hub.id}")
           }
       }
     })

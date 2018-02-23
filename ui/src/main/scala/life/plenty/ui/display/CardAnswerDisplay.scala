@@ -17,29 +17,29 @@ import scalaz.std.option._
 
 //{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "card-space-menu").bind}
 
-class CardAnswerDisplay(override val withinOctopus: Answer) extends LayoutModule[Answer] with CardNavigation {
+class CardAnswerDisplay(override val hub: Answer) extends LayoutModule[Answer] with CardNavigation {
   override def doDisplay() = true
-  private val creator = new OptBindableHub(withinOctopus.getCreator, this)
-  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(withinOctopus)
+  private val creator = new OptBindableHub(hub.getCreator, this)
+  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(hub)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
     implicit val os = cos.toList ::: siblingOverrides
-    val cssClass = if (withinOctopus.isInstanceOf[Proposal]) "answer" else {
-    if (withinOctopus.isInstanceOf[Contribution]) "contribution" else ""}
+    val cssClass = if (hub.isInstanceOf[Proposal]) "answer" else {
+    if (hub.isInstanceOf[Contribution]) "contribution" else ""}
     var confirmedCss = if (isConfirmed().bind) " confirmed " else ""
 
-    <div class={"card d-inline-flex flex-column " + cssClass + confirmedCss} id={withinOctopus.id}>
+    <div class={"card d-inline-flex flex-column " + cssClass + confirmedCss} id={hub.id}>
       <span class="d-flex header-block">
         <span class="d-flex title-block" onclick={navigateTo _}>
           <h5 class="card-title">
-            {if (withinOctopus.isInstanceOf[Proposal]) "proposal" else
-          if (withinOctopus.isInstanceOf[Contribution]) "helper" else ""}
+            {if (hub.isInstanceOf[Proposal]) "proposal" else
+          if (hub.isInstanceOf[Contribution]) "helper" else ""}
           </h5>
           <div class="card-subtitle">
             {creator.dom.bind}
-            <span>{withinOctopus.votes.dom.bind} votes</span>
+            <span>{hub.votes.dom.bind} votes</span>
             {displayModules(siblingModules.withFilter(_.isInstanceOf[AnswerInfo]), "modules").bind}
           </div>
         </span>
@@ -51,7 +51,7 @@ class CardAnswerDisplay(override val withinOctopus: Answer) extends LayoutModule
       </span>
 
       <div class="card-body">
-        {getBody(withinOctopus).dom.bind}
+        {getBody(hub).dom.bind}
       </div>
 
       {// we can put info from a different module here, and then the question display will simply override them

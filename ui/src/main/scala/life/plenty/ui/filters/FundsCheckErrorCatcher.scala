@@ -9,7 +9,7 @@ import life.plenty.ui.display.{ErrorModal, Modal}
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Node
 
-class FundsCheckErrorCatcher(override val withinOctopus: Hub) extends ActionCatchGraphTransformError {
+class FundsCheckErrorCatcher(override val hub: Hub) extends ActionCatchGraphTransformError {
   override def catchError(e: Throwable): Unit = {
     e match {
       case e: NotEnoughThanks ⇒

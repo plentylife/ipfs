@@ -12,7 +12,7 @@ import org.scalajs.dom.html.Input
 import org.scalajs.dom.{Event, Node}
 import rx.Obs
 
-class DescriptionDisplay(override val withinOctopus: Space) extends DisplayModule[Space] {
+class DescriptionDisplay(override val hub: Space) extends DisplayModule[Space] {
   private var obs: Obs = null
 
   override def update(): Unit = if (obs == null) {
@@ -21,12 +21,12 @@ class DescriptionDisplay(override val withinOctopus: Space) extends DisplayModul
     })
   }
 
-  override def doDisplay(): Boolean = UiContext.startingSpace.value.get.id == withinOctopus.id
+  override def doDisplay(): Boolean = UiContext.startingSpace.value.get.id == hub.id
 
 
   private lazy val description: Var[String] = Var("")
-  private lazy val descriptionRx = withinOctopus.rx.get({ case Body(d) ⇒ d })
-  private lazy val action = withinOctopus.getTopModule({ case m: ActionAddDescription ⇒ m })
+  private lazy val descriptionRx = hub.rx.get({ case Body(d) ⇒ d })
+  private lazy val action = hub.getTopModule({ case m: ActionAddDescription ⇒ m })
 
   private lazy val editorOpen = Var(false)
   private lazy val text = Var("")

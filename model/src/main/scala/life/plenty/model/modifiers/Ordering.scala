@@ -6,9 +6,9 @@ import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import rx.{Ctx, Rx}
 
-class AnswerVoteOrder(override val withinOctopus: Question) extends OctopusOrdering[Question] {
+class AnswerVoteOrder(override val hub: Question) extends OctopusOrdering[Question] {
 
-  model.console.trace(s"AnswerVoteOrder was instantiated in $withinOctopus")
+  model.console.trace(s"AnswerVoteOrder was instantiated in $hub")
 
   //  private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 

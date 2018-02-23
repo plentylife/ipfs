@@ -7,7 +7,7 @@ import life.plenty.ui.model.DisplayModel.ActionDisplay
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 
-class EditSpace(override val withinOctopus: Space) extends ActionDisplay[Space] {
+class EditSpace(override val hub: Space) extends ActionDisplay[Space] {
   override def update(): Unit = {
     isEmpty.value_=(actionRemove.isEmpty)
   }
@@ -20,7 +20,7 @@ class EditSpace(override val withinOctopus: Space) extends ActionDisplay[Space] 
 
   @dom
   def activeDisplay: Binding[Node] = <div class="d-inline-flex">
-    {ChangeParent.displayInactiveOnly(withinOctopus, Option(close _)).bind}
+    {ChangeParent.displayInactiveOnly(hub, Option(close _)).bind}
     <button type="button" class="btn btn-outline-danger btn-sm symbolic" onclick={(e: Event) =>
       active.value_=(false); actionRemove.get.remove()}>
       <span class="oi oi-trash" title="remove" data:aria-hidden="true"></span>
@@ -32,7 +32,7 @@ class EditSpace(override val withinOctopus: Space) extends ActionDisplay[Space] 
   }
 
   private lazy val actionRemove = {
-    val a = withinOctopus.getTopModule({ case a: ActionRemove ⇒ a })
+    val a = hub.getTopModule({ case a: ActionRemove ⇒ a })
     a
   }
 }

@@ -15,11 +15,11 @@ import rx.Obs
 
 trait MenuAction
 
-class ConfirmButton(override val withinOctopus: Space) extends ActionDisplay[Space] with MenuAction {
+class ConfirmButton(override val hub: Space) extends ActionDisplay[Space] with MenuAction {
 
-  private lazy val module: Option[ActionAddConfirmedMarker] = withinOctopus
+  private lazy val module: Option[ActionAddConfirmedMarker] = hub
     .getTopModule({case m: ActionAddConfirmedMarker => m})
-  private lazy val isConfirmed = GraphUtils.markedConfirmed(withinOctopus)
+  private lazy val isConfirmed = GraphUtils.markedConfirmed(hub)
   private var obs: Obs = null
 
   override def update(): Unit = {

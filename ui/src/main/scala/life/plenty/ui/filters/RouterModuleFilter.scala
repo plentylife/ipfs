@@ -9,7 +9,7 @@ import life.plenty.ui.model.ViewState
 import life.plenty.ui.model.ViewState.ViewState
 
 //
-abstract class RouterModuleFilter(override val withinOctopus: Hub) extends
+abstract class RouterModuleFilter(override val hub: Hub) extends
   RouterFilter[Hub, Module[Hub], List[Module[Hub]]] with ModuleFilters[Hub] {
 
   override protected def filterInner(what: List[Module[Hub]]): List[Module[Hub]] = {

@@ -11,7 +11,7 @@ import rx.{Ctx, Rx}
 //
 //trait ChildOrderPreference extends OrderPreference[Octopus, List[Octopus], BasicSpace]
 
-class BasicSpaceDisplayOrder(override val withinOctopus: ContainerSpace) extends OctopusOrdering[ContainerSpace] {
+class BasicSpaceDisplayOrder(override val hub: ContainerSpace) extends OctopusOrdering[ContainerSpace] {
   private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   override def order(what: List[Hub]): List[Hub] = {

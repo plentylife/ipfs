@@ -11,10 +11,10 @@ import life.plenty.ui.model.UiContext
 import life.plenty.ui.display.utils.{InputVarWithDisplay, InputVarWithTextarea}
 import org.scalajs.dom.{Event, Node}
 
-class GiveButton(override val withinOctopus: Contribution) extends ModalFormAction with AnswerControls {
+class GiveButton(override val hub: Contribution) extends ModalFormAction with AnswerControls {
 
   override protected lazy val module: Option[ActionGiveThanks] =
-    withinOctopus.getTopModule({case m: ActionGiveThanks => m})
+    hub.getTopModule({case m: ActionGiveThanks => m})
 
   override def update(): Unit = Unit
 

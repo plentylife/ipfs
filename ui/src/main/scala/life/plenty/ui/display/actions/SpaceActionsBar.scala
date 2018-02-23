@@ -9,12 +9,12 @@ import life.plenty.ui.display.utils.Helpers._
 
 import scalaz.std.option._
 
-class SpaceActionsBar(override val withinOctopus: Space) extends DisplayModule[Space] {
+class SpaceActionsBar(override val hub: Space) extends DisplayModule[Space] {
   override def update(): Unit = Unit
 
-  private lazy val ask = new BindableModule(withinOctopus.getTopModule({case m: CreateQuestionButton ⇒ m}), this)
-  private lazy val answer = new BindableModule(withinOctopus.getTopModule({case m: CreateAnswerButton ⇒ m}), this)
-  private lazy val signup = new BindableModule(withinOctopus.getTopModule({case m: SignupButton ⇒ m}), this)
+  private lazy val ask = new BindableModule(hub.getTopModule({case m: CreateQuestionButton ⇒ m}), this)
+  private lazy val answer = new BindableModule(hub.getTopModule({case m: CreateAnswerButton ⇒ m}), this)
+  private lazy val signup = new BindableModule(hub.getTopModule({case m: SignupButton ⇒ m}), this)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -27,7 +27,7 @@ class SpaceActionsBar(override val withinOctopus: Space) extends DisplayModule[S
   }
 
   private def onCreateSpace(e: Event) = {
-    CreateSpace.openInModal(withinOctopus)
+    CreateSpace.openInModal(hub)
   }
 }
 

@@ -10,14 +10,14 @@ import org.scalajs.dom.Node
 
 trait AnswerInfo extends DisplayModule[Answer]
 
-class ThanksGiven(override val withinOctopus: Contribution) extends AnswerInfo {
+class ThanksGiven(override val hub: Contribution) extends AnswerInfo {
 
   override def update(): Unit = Unit
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     <span class="d-inline-flex thanks-given">
-      {withinOctopus.tips.dom.bind}{ui.thanks + " earned"}
+      {hub.tips.dom.bind}{ui.thanks + " earned"}
     </span>
   }
 

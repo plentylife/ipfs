@@ -25,7 +25,7 @@ trait RouterFilter[+O <: Hub, Elem, L <: Iterable[Elem]] extends FilterModule[O,
   @dom
   override protected def generateHtml(): Binding[Node] = {
     <span class="module-hook">
-      {Router.reRender(withinOctopus, Router.router.state.bind); ""}
+      {Router.reRender(hub, Router.router.state.bind); ""}
     </span>
   }
 }

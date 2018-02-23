@@ -15,10 +15,10 @@ import org.scalajs.dom.Node
 
 //{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "card-space-menu").bind}
 
-class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutModule[Question] with CardNavigation {
+class CardQuestionDisplay(override val hub: Question) extends LayoutModule[Question] with CardNavigation {
   override def doDisplay() = true
 
-  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(withinOctopus)
+  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(hub)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -30,12 +30,12 @@ class CardQuestionDisplay(override val withinOctopus: Question) extends LayoutMo
 
 
     <div class={"card d-inline-flex flex-column question " + confirmedCss}
-         id={withinOctopus.id}>
+         id={hub.id}>
       <span class="d-flex header-block" onclick={navigateTo _}>
         <span class="d-flex title-block">
-          <h5 class="card-title">{withinOctopus.getTitle.dom.bind}</h5>
+          <h5 class="card-title">{hub.getTitle.dom.bind}</h5>
           <div class="card-subtitle mb-2 text-muted">
-            {getBody(withinOctopus).dom.bind}
+            {getBody(hub).dom.bind}
           </div>
         </span>
         <span class="card-controls">

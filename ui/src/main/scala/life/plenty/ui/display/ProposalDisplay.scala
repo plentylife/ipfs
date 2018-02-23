@@ -17,36 +17,36 @@ import scalaz.std.list._
 import scalaz.std.option._
 //import life.plenty.ui.model.DisplayModel.intToStr
 
-class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModule[Proposal] {
+class ProposalDisplay(override val hub: Proposal) extends DisplayModule[Proposal] {
   private var obs: Obs = null
 
   override def update(): Unit = if (obs == null) {
-    obs = withinOctopus.votesByUser.foreach(votesByUser.value_=)
+    obs = hub.votesByUser.foreach(votesByUser.value_=)
   }
 
-  private lazy val editor: BindableAction[EditSpace] = new BindableAction(withinOctopus.getTopModule({ case
+  private lazy val editor: BindableAction[EditSpace] = new BindableAction(hub.getTopModule({ case
     m: EditSpace ⇒ m
   }), this)
-  private lazy val confirmAction: BindableAction[ConfirmActionDisplay] = new BindableAction(withinOctopus
+  private lazy val confirmAction: BindableAction[ConfirmActionDisplay] = new BindableAction(hub
     .getTopModule({ case
     m: ConfirmActionDisplay ⇒ m
   }), this)
-  private lazy val isConfirmed = GraphUtils.markedConfirmed(withinOctopus): BasicBindable[Boolean]
+  private lazy val isConfirmed = GraphUtils.markedConfirmed(hub): BasicBindable[Boolean]
 
-  private lazy val creatorNameRx = withinOctopus.getCreator.map(_.map(_.getNameOrEmpty()))
+  private lazy val creatorNameRx = hub.getCreator.map(_.map(_.getNameOrEmpty()))
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val disabled = findVoteModule.isEmpty
     val _class = "card d-inline-flex mt-1 mr-1 flex-column answer"
-    <div class={if (isConfirmed().bind) _class + " confirmed " else _class} id={withinOctopus.id}>
+    <div class={if (isConfirmed().bind) _class + " confirmed " else _class} id={hub.id}>
       <div class="d-inline-flex flex-row flex-nowrap">
         <div class="d-inline-flex flex-column controls">
           <button type="button" class="btn btn-primary btn-sm" disabled={disabled} onclick={upVote _}>Up vote</button>
           <button type="button" class="btn btn-primary btn-sm" disabled={disabled} onclick={downVote _}>Down
             vote</button>
           <span>
-            {withinOctopus.votes.dom.bind}
+            {hub.votes.dom.bind}
             votes</span>
         </div>
         <div class="card-body">
@@ -55,14 +55,14 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
             {creatorNameRx.dom.bind}
           </h6>
           <p class="card-text">
-            {withinOctopus.getBody.dom.bind}
+            {hub.getBody.dom.bind}
           </p>
         </div>
       </div>
 
       <div class="card-controls-bottom d-inline-flex flex-column">
         {displayVotesByUser(votesByUser.bind).bind}<div class="d-inline-flex">
-        {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}{confirmAction.dom.bind}
+        {ChangeParent.displayActiveOnly(hub).bind}{editor.dom.bind}{confirmAction.dom.bind}
       </div>
       </div>
     </div>
@@ -92,7 +92,7 @@ class ProposalDisplay(override val withinOctopus: Proposal) extends DisplayModul
   private lazy val votesByUser = Var[Map[Option[User], Int]](Map())
 
 
-  private lazy val findVoteModule = withinOctopus.getTopModule({ case m: ActionUpDownVote ⇒ m })
+  private lazy val findVoteModule = hub.getTopModule({ case m: ActionUpDownVote ⇒ m })
 
   private def upVote(e: Event) = {
     //    println(s"Proposal Display ui context user ${UiContext.getUser}")

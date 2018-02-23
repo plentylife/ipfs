@@ -12,10 +12,10 @@ import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.utils._
 import org.scalajs.dom.{Event, Node}
 
-class CreateQuestionButton(override val withinOctopus: Hub) extends SingleActionModuleDisplay[Hub]
+class CreateQuestionButton(override val hub: Hub) extends SingleActionModuleDisplay[Hub]
   with ModalFormAction {
   override protected lazy val module: Option[ActionCreateQuestion] =
-    withinOctopus.getTopModule({ case m: ActionCreateQuestion => m })
+    hub.getTopModule({ case m: ActionCreateQuestion => m })
 
   override def update(): Unit = Unit
 

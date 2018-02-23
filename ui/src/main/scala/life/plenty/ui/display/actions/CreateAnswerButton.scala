@@ -9,9 +9,9 @@ import life.plenty.ui.model.DisplayModel.{DisplayModule, SingleActionModuleDispl
 import life.plenty.ui.display.utils.InputVarWithTextarea
 import org.scalajs.dom.{Event, Node}
 
-class CreateAnswerButton(override val withinOctopus: Hub) extends SingleActionModuleDisplay[Hub] with
+class CreateAnswerButton(override val hub: Hub) extends SingleActionModuleDisplay[Hub] with
 ModalFormAction{
-  override protected lazy val module: Option[ActionCreateAnswer] = withinOctopus.getTopModule(
+  override protected lazy val module: Option[ActionCreateAnswer] = hub.getTopModule(
     {case m: ActionCreateAnswer => m})
 
   override def update(): Unit = Unit

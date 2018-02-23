@@ -168,23 +168,23 @@ class SecureUserGunReaderModule(u: SecureUser) extends OctopusGunReaderModule(u)
   Cache.put(u)
 }
 
-class OctopusGunReaderModule(override val withinOctopus: Hub) extends ActionOnConnectionsRequest with
+class OctopusGunReaderModule(override val hub: Hub) extends ActionOnConnectionsRequest with
 ActionOnFinishDataLoad {
-  private implicit val ctx = withinOctopus.ctx
+  private implicit val ctx = hub.ctx
 
   var instantiated = false
   val connectionsLeftToLoad = Var(-1)
-  console.println(s"Gun Reader instantiated in ${withinOctopus.getClass}")
+  console.println(s"Gun Reader instantiated in ${hub.getClass}")
 
-  private lazy val allCons = withinOctopus.connections.map(_.map(_.id))
+  private lazy val allCons = hub.connections.map(_.map(_.id))
 
   override def onConnectionsRequest(): Unit = synchronized {
     if (!instantiated) {
       instantiated = true
-      console.println(s"Gun Reader ${this} onConsReq called in ${withinOctopus.getClass} with ${withinOctopus.sc.all}")
-      gunCalls.get(withinOctopus.id, (d, k) ⇒ {
+      console.println(s"Gun Reader ${this} onConsReq called in ${hub.getClass} with ${hub.sc.all}")
+      gunCalls.get(hub.id, (d, k) ⇒ {
         if (!js.isUndefined(d) && d != null) {
-          console.trace(s"Gun Reader onConsReq before load() ${withinOctopus.id} ${JSON.stringify(d)}")
+          console.trace(s"Gun Reader onConsReq before load() ${hub.id} ${JSON.stringify(d)}")
           load()
         }
       })
@@ -192,12 +192,12 @@ ActionOnFinishDataLoad {
   }
 
   private def load() = Future {
-    console.println(s"Gun reader ${this} setting up in load() of ${withinOctopus} ${withinOctopus.id}")
+    console.println(s"Gun reader ${this} setting up in load() of ${hub} ${hub.id}")
 //    val gc = gun.get("connections")
 
     Future {
-      gunCalls.getConnections(withinOctopus.id, (d) ⇒ {
-        console.trace(s"Gun raw connections to read in ${withinOctopus} ${withinOctopus.id} ${connectionsLeftToLoad}")
+      gunCalls.getConnections(hub.id, (d) ⇒ {
+        console.trace(s"Gun raw connections to read in ${hub} ${hub.id} ${connectionsLeftToLoad}")
         console.trace(s"${JSON.stringify(d)}")
         val l = js.Object.keys(d).length
         connectionsLeftToLoad() = l + connectionsLeftToLoad.now
@@ -205,19 +205,19 @@ ActionOnFinishDataLoad {
       })
     }
 
-    gunCalls.mapConnections(withinOctopus.id, (d, k) ⇒ Future {
+    gunCalls.mapConnections(hub.id, (d, k) ⇒ Future {
       // fixme this will bug out if we are re-using connections
       val cachedCon = Cache.getConnection(k)
       if (cachedCon.nonEmpty) {
         if (!allCons.now.contains(k)) {
-          withinOctopus.addConnection(cachedCon.get) foreach {_ ⇒
+          hub.addConnection(cachedCon.get) foreach { _ ⇒
             connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
           }
         } else connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
         console.trace(s"Skipping loading connection $k")
       } else {
         ConnectionReader.read(d, k) map { optCon ⇒ {
-          console.println(s"Gun read connection of ${withinOctopus} $k | ${optCon}")
+          console.println(s"Gun read connection of ${hub} $k | ${optCon}")
           if (optCon.isEmpty) {
             console.error(s"Reader could not parse connection ${JSON.stringify(d)}")
             throw new Exception("Gun reader could not parse a connection.")
@@ -227,7 +227,7 @@ ActionOnFinishDataLoad {
             Cache.put(c)
             val vc = Cache.getConnection(c.id).get // should never fail
             vc.tmpMarker = GunMarker
-            withinOctopus.addConnection(vc) foreach {_ ⇒
+            hub.addConnection(vc) foreach { _ ⇒
               connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
             }
           }

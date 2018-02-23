@@ -19,8 +19,8 @@ trait FundsError extends Exception {
 class NotEnoughThanks(override val user: User) extends FundsError
 class NotEnoughVotingPower(override val user: User) extends FundsError
 
-class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransform {
-  private implicit val ctx = withinOctopus.ctx
+class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
+  private implicit val ctx = hub.ctx
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     val promise = Promise[Unit]()
@@ -31,13 +31,13 @@ class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransfor
           // the dataloaders must be present
             t.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
               t.getOnContribution.now match {
-                case Some(c) ⇒ val w = new Wallet(withinOctopus, c)
+                case Some(c) ⇒ val w = new Wallet(hub, c)
                   if (w.getThanksBalance.now + w.getUsableThanksLimit.now - t.getAmount.now.get >= 0) {
                     model.console.trace(s"Funds check passed transaction $t ${t.id}")
                     promise.success()
                   } else {
                     model.console.error("Funds check fail. Not enough funds!")
-                    promise.failure(new NotEnoughThanks(withinOctopus))
+                    promise.failure(new NotEnoughThanks(hub))
                   }
                 case None ⇒
                   model.console.error(s"Funds check fail. Transaction ${t} did not have a parent." +
@@ -57,12 +57,12 @@ class FundsCheck(override val withinOctopus: User) extends ActionOnGraphTransfor
           // the dataloaders must be present
             v.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
               v.parentAnswer.now match {
-                case Some(c) ⇒ val w = new Wallet(withinOctopus, c)
+                case Some(c) ⇒ val w = new Wallet(hub, c)
                   if (w.getUsableVotes.now - v.getAmount.now.get >= 0) {
                     promise.success()
                   } else {
                     model.console.error("Not enough voting power!")
-                    promise.failure(new NotEnoughVotingPower(withinOctopus))
+                    promise.failure(new NotEnoughVotingPower(hub))
                   }
                 case None ⇒ promise.failure(new Exception("Vote did not have a parent"))
               }

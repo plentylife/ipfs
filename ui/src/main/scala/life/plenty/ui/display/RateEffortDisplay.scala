@@ -5,7 +5,7 @@ import life.plenty.model.octopi.Space
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.raw.Node
 
-class RateEffortDisplay(override val withinOctopus: Space) extends DisplayModule[Space] {
+class RateEffortDisplay(override val hub: Space) extends DisplayModule[Space] {
   override def update(): Unit = Unit
 
   @dom

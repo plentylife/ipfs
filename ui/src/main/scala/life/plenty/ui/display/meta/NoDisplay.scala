@@ -5,7 +5,7 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.raw.Node
 
-class NoDisplay(override val withinOctopus: Hub) extends DisplayModule[Hub] {
+class NoDisplay(override val hub: Hub) extends DisplayModule[Hub] {
   override def doDisplay(): Boolean = false
 
   override def update(): Unit = Unit

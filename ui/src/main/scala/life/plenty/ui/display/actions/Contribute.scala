@@ -7,7 +7,7 @@ import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 
-class Contribute(override val withinOctopus: Contribution) extends DisplayModule[Contribution] {
+class Contribute(override val hub: Contribution) extends DisplayModule[Contribution] {
   override def update(): Unit = Unit
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -20,5 +20,5 @@ class Contribute(override val withinOctopus: Contribution) extends DisplayModule
         })}></input>
     </div>
   }
-  private def findAction = withinOctopus.getTopModule({ case m: ActionAddContributor ⇒ m })
+  private def findAction = hub.getTopModule({ case m: ActionAddContributor ⇒ m })
 }

@@ -10,8 +10,8 @@ import life.plenty.ui.model.{ComplexModuleOverride, ModuleOverride}
 import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.Node
 
-class CardSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[Space] with CardNavigation {
-  override def doDisplay() = !sameAsUiStarting(withinOctopus)
+class CardSpaceDisplay(override val hub: Space) extends LayoutModule[Space] with CardNavigation {
+  override def doDisplay() = !sameAsUiStarting(hub)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -21,15 +21,15 @@ class CardSpaceDisplay(override val withinOctopus: Space) extends LayoutModule[S
     implicit val os = inlineQuestins :: cos.toList ::: siblingOverrides
     val cssClass = ""
 
-    <div class={"card d-inline-flex flex-column space " + cssClass} id={withinOctopus.id}>
+    <div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>
       <span class="d-flex header-block">
         <span class="d-flex title-block" onclick={navigateTo _}>
           <h5 class="card-title">
-            {withinOctopus.getTitle.dom.bind}
+            {hub.getTitle.dom.bind}
           </h5>
 
           <div class="card-subtitle">
-            {getBody(withinOctopus).dom.bind}
+            {getBody(hub).dom.bind}
           </div>
         </span>
 

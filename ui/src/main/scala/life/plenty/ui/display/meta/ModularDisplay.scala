@@ -11,7 +11,7 @@ import org.scalajs.dom.raw.Node
 import scalaz.std.list._
 
 trait ModularDisplayTrait extends DisplayModule[Hub] {
-  override val withinOctopus: Hub
+  override val hub: Hub
 
   protected val siblingModules: Vars[DisplayModule[Hub]] = Vars()
 
@@ -21,7 +21,7 @@ trait ModularDisplayTrait extends DisplayModule[Hub] {
     val sms = getSiblingModules(this).filterNot(_.isInstanceOf[ActionDisplay[_]]).reverse
     siblingModules.value.clear()
     siblingModules.value.insertAll(0, sms)
-    console.trace(s"modular display updating $this $withinOctopus $sms overrides ${this.cachedOverrides.value}")
+    console.trace(s"modular display updating $this $hub $sms overrides ${this.cachedOverrides.value}")
   }
 
   protected def siblingOverrides = getSiblingModules(this) flatMap (m ⇒ {
@@ -30,7 +30,7 @@ trait ModularDisplayTrait extends DisplayModule[Hub] {
 
 }
 
-class ModularDisplay(override val withinOctopus: Hub) extends ModularDisplayTrait {
+class ModularDisplay(override val hub: Hub) extends ModularDisplayTrait {
   @dom
   override protected def generateHtml(): Binding[Node] = {
     //    println("modular display gen HTML", this)
@@ -65,8 +65,8 @@ abstract class GroupedModularDisplay(private val _withinOctopus: Hub) extends Mo
   }
 
   override def overrides: List[ModuleOverride] = {
-    SimpleModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
-      dm.isInstanceOf[ModularDisplay] && dm.withinOctopus == withinOctopus
+    SimpleModuleOverride(this, new NoDisplay(hub), dm ⇒ {
+      dm.isInstanceOf[ModularDisplay] && dm.hub == hub
       //      dm.isInstanceOf[ModularDisplay]
     }) :: super.overrides
   }

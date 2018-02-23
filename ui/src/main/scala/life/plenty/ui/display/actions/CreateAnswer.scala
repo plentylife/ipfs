@@ -10,7 +10,7 @@ import org.scalajs.dom.Event
 import org.scalajs.dom.html.{Input, TextArea}
 import org.scalajs.dom.raw.Node
 
-class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Question] {
+class CreateAnswer(override val hub: Question) extends DisplayModule[Question] {
   //  println("Display create answer ", withinOctopus)
   private lazy val action = Var(false)
   private val opened = Var(false)
@@ -38,7 +38,7 @@ class CreateAnswer(override val withinOctopus: Question) extends DisplayModule[Q
   override def doDisplay() = findAction.nonEmpty
 
   //  override def doDisplay() = true
-  private def findAction: Option[ActionCreateAnswer] = withinOctopus.getTopModule({ case m: ActionCreateAnswer ⇒ m })
+  private def findAction: Option[ActionCreateAnswer] = hub.getTopModule({ case m: ActionCreateAnswer ⇒ m })
 
   override def update(): Unit = {
     action.value_=(findAction.nonEmpty)

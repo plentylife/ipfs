@@ -9,7 +9,7 @@ import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
 
-class ViewStateLinks(override val withinOctopus: Space) extends DisplayModule[Space] {
+class ViewStateLinks(override val hub: Space) extends DisplayModule[Space] {
 
   import ViewState._
 
@@ -18,7 +18,7 @@ class ViewStateLinks(override val withinOctopus: Space) extends DisplayModule[Sp
   override def update(): Unit = Unit
 
   override def overrides: List[ModuleOverride] =
-    SimpleModuleOverride(this, new NoDisplay(withinOctopus), _.isInstanceOf[ViewStateLinks]) :: super.overrides
+    SimpleModuleOverride(this, new NoDisplay(hub), _.isInstanceOf[ViewStateLinks]) :: super.overrides
 
   @dom
   override protected def generateHtml(): Binding[Node] = {

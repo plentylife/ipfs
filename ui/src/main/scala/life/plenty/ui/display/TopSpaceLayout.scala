@@ -20,11 +20,11 @@ import scalaz.std.option._
 import scalaz.std.list._
 import life.plenty.ui.display.utils.Helpers._
 
-class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Space] {
+class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
-  override def doDisplay(): Boolean = UiContext.startingSpace.value.exists(_.id == withinOctopus.id)
+  override def doDisplay(): Boolean = UiContext.startingSpace.value.exists(_.id == hub.id)
 
-  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(withinOctopus)
+  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(hub)
 
   def getMembers(cs: BindingSeq[Hub]): BindingSeq[Hub]#WithFilter = cs.withFilter({
     case m: Members ⇒ true
@@ -54,10 +54,10 @@ class TopSpaceLayout(override val withinOctopus: Space) extends LayoutModule[Spa
       <span class="d-flex flex-column span-separator">
           <div class="row flex-column">
           <h3 class={titleClasses}>
-            {withinOctopus.getTitle.dom.bind}
+            {hub.getTitle.dom.bind}
           </h3>
             <h5 class="sub-title mt-1 ml-2 text-muted">
-              {GraphUtils.getBody(withinOctopus).dom.bind}
+              {GraphUtils.getBody(hub).dom.bind}
             </h5>
 
           {displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}

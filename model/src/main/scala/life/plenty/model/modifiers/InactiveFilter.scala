@@ -6,7 +6,7 @@ import life.plenty.model.connection._
 import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
 import rx.{Ctx, Rx}
 
-class InactiveFilter(override val withinOctopus: Hub) extends RxConnectionFilters[Hub] {
+class InactiveFilter(override val hub: Hub) extends RxConnectionFilters[Hub] {
 
 //  private implicit val ctx: Ctx.Data = Ctx.Owner.safe()
 
@@ -30,7 +30,7 @@ class InactiveFilter(override val withinOctopus: Hub) extends RxConnectionFilter
         }
       }
     }
-    model.console.trace(s"RemoveFilter $what -> ${filtered} in ${withinOctopus.getClass.getSimpleName}")
+    model.console.trace(s"RemoveFilter $what -> ${filtered} in ${hub.getClass.getSimpleName}")
     filtered
   }
 

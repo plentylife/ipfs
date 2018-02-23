@@ -89,41 +89,45 @@ object OctopusWriter {
   }
 }
 
-class GunWriterModule(override val withinOctopus: Hub) extends ActionAfterGraphTransform {
-  private lazy val _gun: Future[Gun] = Future {gunCalls.get(withinOctopus.id, (d, k) ⇒ Unit)}
-  private lazy val instModule = withinOctopus.getTopModule({ case m: InstantiationGunWriterModule ⇒ m })
+class GunWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
+  private lazy val _gun: Future[Gun] = Future {gunCalls.get(hub.id, (d, k) ⇒ Unit)}
+  private lazy val instModule = hub.getTopModule({ case m: InstantiationGunWriterModule ⇒ m })
 
   def gun = instModule.flatMap(m ⇒ m.gun).getOrElse(_gun)
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
-      console.println(s"Gun Writer onConAdd ${withinOctopus} [${withinOctopus.id}] ${connection} ")
+      console.println(s"Gun Writer onConAdd ${hub} [${hub.id}] ${connection} ")
 //      gun foreach { g ⇒ OctopusWriter.writeSingleConnection(withinOctopus.id, connection) }
       // todo. have to save all because of gun
-      gun foreach { g ⇒ OctopusWriter.writeConnections(withinOctopus.id, withinOctopus.sc.all) }
+      gun foreach { g ⇒ OctopusWriter.writeConnections(hub.id, hub.sc.all) }
     }
     Future {Right()}
   }
 }
 
-class InstantiationGunWriterModule(override val withinOctopus: Hub) extends Module[Hub] {
+//todo combine the instantiation module and the wirter module
+
+class InstantiationGunWriterModule(override val hub: Hub) extends Module[Hub] {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   var gun: Option[Future[Gun]] = None
 
-  withinOctopus.onNew {
-    console.println(s"Instantiation Gun Writer ${withinOctopus} ${withinOctopus.id}")
-    gun = Option(OctopusWriter.write(withinOctopus))
+  hub.onNew {
+    console.println(s"Instantiation Gun Writer ${hub} ${hub.id}")
+    gun = Option(OctopusWriter.write(hub))
   }
 }
 
-class InstantiationSecureUserWriterModule(override val withinOctopus: Hub) extends Module[Hub] {
+class InstantiationSecureUserWriterModule(override val hub: Hub) extends Module[Hub] {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   var gun: Option[Future[Gun]] = None
 
-  withinOctopus.onNew {
-    console.println(s"Instantiation Gun Writer forcing ${withinOctopus} ${withinOctopus.id}")
-    gun = Option(OctopusWriter.forceWrite(withinOctopus, Option("BasicUser")))
+  val dbDoc = new AsyncShareDoc(hub.id)
+
+  hub.onNew {
+    console.println(s"Instantiation Gun Writer forcing ${hub} ${hub.id}")
+    gun = Option(OctopusWriter.forceWrite(hub, Option("BasicUser")))
   }
 }

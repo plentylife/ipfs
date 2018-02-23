@@ -9,10 +9,10 @@ import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 import rx.Obs
 
-class ConfirmActionDisplay(override val withinOctopus: Space) extends ActionDisplay[Space] {
+class ConfirmActionDisplay(override val hub: Space) extends ActionDisplay[Space] {
 
-  private lazy val actionConfirm = withinOctopus.getTopModule({ case a: ActionAddConfirmedMarker ⇒ a })
-  private lazy val isConfirmed = GraphUtils.markedConfirmed(withinOctopus)
+  private lazy val actionConfirm = hub.getTopModule({ case a: ActionAddConfirmedMarker ⇒ a })
+  private lazy val isConfirmed = GraphUtils.markedConfirmed(hub)
   private var obs: Obs = null
 
   override def update(): Unit = {

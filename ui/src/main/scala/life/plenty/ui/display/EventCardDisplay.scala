@@ -10,14 +10,14 @@ import life.plenty.ui.model._
 import org.scalajs.dom.raw.{MouseEvent, Node}
 import rx.Rx
 
-class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[Event] {
+class EventCardDisplay(override val hub: Event) extends DisplayModule[Event] {
   override def update(): Unit = Unit
 
-  override def doDisplay(): Boolean = UiContext.startingSpace.value.get.id != withinOctopus.id
+  override def doDisplay(): Boolean = UiContext.startingSpace.value.get.id != hub.id
 
-  private def navigateTo(e: MouseEvent) = Router.navigateToOctopus(withinOctopus)
+  private def navigateTo(e: MouseEvent) = Router.navigateToOctopus(hub)
 
-  private lazy val editor: BindableAction[EditSpace] = new BindableAction(withinOctopus.getTopModule({ case
+  private lazy val editor: BindableAction[EditSpace] = new BindableAction(hub.getTopModule({ case
     m: EditSpace ⇒ m
   }), this)
 
@@ -32,10 +32,10 @@ class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[
 
         <div class="card-body" onclick={navigateTo _}>
           <h6 class="card-title">Event:
-            {withinOctopus.getTitle.dom.bind}
+            {hub.getTitle.dom.bind}
           </h6>
           <h6 class="card-subtitle mb-2 text-muted">by
-            {val c: Rx[Option[String]] = withinOctopus.getCreator.map((optU: Option[User]) => optU.map {
+            {val c: Rx[Option[String]] = hub.getCreator.map((optU: Option[User]) => optU.map {
             u: User => u.getNameOrEmpty(): String
           });
           c.dom.bind}
@@ -47,12 +47,12 @@ class EventCardDisplay(override val withinOctopus: Event) extends DisplayModule[
       </div>
 
       <div class="card-controls-bottom d-flex">
-        {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}
+        {ChangeParent.displayActiveOnly(hub).bind}{editor.dom.bind}
       </div>
     </div>
   }
 
   override def overrides: List[ModuleOverride] = {
-    SimpleModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ dm.isInstanceOf[ChildDisplay]) :: super.overrides
+    SimpleModuleOverride(this, new NoDisplay(hub), dm ⇒ dm.isInstanceOf[ChildDisplay]) :: super.overrides
   }
 }

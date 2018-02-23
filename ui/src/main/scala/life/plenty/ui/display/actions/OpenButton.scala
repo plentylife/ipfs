@@ -13,7 +13,7 @@ import org.scalajs.dom.{Event, Node}
 
 trait CardControls extends DisplayModule[Space]
 
-class OpenButton(override val withinOctopus: Space) extends CardControls with CardNavigation {
+class OpenButton(override val hub: Space) extends CardControls with CardNavigation {
 
   override def update(): Unit = Unit
 

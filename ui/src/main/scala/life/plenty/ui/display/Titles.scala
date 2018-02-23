@@ -23,18 +23,18 @@ trait TitleDisplay extends DisplayModule[Hub] {
   override def update(): Unit = Unit
 }
 
-class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
+class TitleWithQuestionInput(override val hub: Space) extends DisplayModule[Space] with TitleDisplay {
 
   private val inputValue = Var("")
-  private lazy val action = withinOctopus.getTopModule { case m: ActionCreateQuestion ⇒ m }
+  private lazy val action = hub.getTopModule { case m: ActionCreateQuestion ⇒ m }
 
   @dom
   protected override def generateHtml(): Binding[Node] = {
     //println("title with inputt", withinOctopus.modules)
 
-    <div class="title-with-input d-flex mt-3" id={withinOctopus.id}>
-      {ChangeParent.displayActiveOnly(withinOctopus).bind}<h5 class="title mr-3">
-        {withinOctopus.getTitle.dom.bind}
+    <div class="title-with-input d-flex mt-3" id={hub.id}>
+      {ChangeParent.displayActiveOnly(hub).bind}<h5 class="title mr-3">
+        {hub.getTitle.dom.bind}
     </h5>
       <span class="d-inline-flex">
         <input type="text" disabled={action.isEmpty} onkeyup={onEnter _} value={inputValue.bind}
@@ -58,10 +58,10 @@ class TitleWithQuestionInput(override val withinOctopus: Space) extends DisplayM
   }
 }
 
-class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Space] with TitleDisplay {
-  override def doDisplay(): Boolean = !withinOctopus.modules.exists(_.isInstanceOf[TitleWithQuestionInput])
+class QuestionTitle(override val hub: Space) extends DisplayModule[Space] with TitleDisplay {
+  override def doDisplay(): Boolean = !hub.modules.exists(_.isInstanceOf[TitleWithQuestionInput])
 
-  private lazy val editor: BindableAction[EditSpace] = new BindableAction(withinOctopus.getTopModule({ case
+  private lazy val editor: BindableAction[EditSpace] = new BindableAction(hub.getTopModule({ case
     m: EditSpace ⇒ m
   }), this)
 
@@ -70,10 +70,10 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   @dom
   override protected def generateHtml(): Binding[Node] = {
     ui.console.println(s"question title display ${editor.module}")
-    <div class="question-title" id={withinOctopus.id}>
-      {ChangeParent.displayActiveOnly(withinOctopus).bind}{editor.dom.bind}<span class="title-text" onclick={e: Event
-    => Router.navigateToOctopus(withinOctopus)}>
-      {gqTitle.dom.bind}{withinOctopus.getTitle.dom.bind}
+    <div class="question-title" id={hub.id}>
+      {ChangeParent.displayActiveOnly(hub).bind}{editor.dom.bind}<span class="title-text" onclick={e: Event
+    => Router.navigateToOctopus(hub)}>
+      {gqTitle.dom.bind}{hub.getTitle.dom.bind}
       ?
     </span>
     </div>
@@ -82,7 +82,7 @@ class QuestionTitle(override val withinOctopus: Space) extends DisplayModule[Spa
   val prefix: Var[String] = Var("")
 
   // must be lazy since class is not instantiated at time of load
-  private lazy val gqParent = {withinOctopus.rx.get({ case Parent(p: GreatQuestion) ⇒ p })}
+  private lazy val gqParent = {hub.rx.get({ case Parent(p: GreatQuestion) ⇒ p })}
   private lazy val gqTitle: Rx[Option[String]] = gqParent.flatMap {
     case Some(gq) ⇒ gq.getTitle: Rx[Option[String]]
     case None ⇒ rx.Var(Some("")): Rx[Option[String]]

@@ -11,9 +11,9 @@ import org.scalajs.dom.{Event, Node}
 
 trait AnswerControls extends SingleActionModuleDisplay[Answer]
 
-class VoteButtons(override val withinOctopus: Answer) extends AnswerControls {
+class VoteButtons(override val hub: Answer) extends AnswerControls {
 
-  override protected lazy val module: Option[ActionUpDownVote] = withinOctopus.getTopModule(
+  override protected lazy val module: Option[ActionUpDownVote] = hub.getTopModule(
     {case m: ActionUpDownVote => m})
 
   override def update(): Unit = Unit

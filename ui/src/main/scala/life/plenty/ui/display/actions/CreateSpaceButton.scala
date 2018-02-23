@@ -6,7 +6,7 @@ import life.plenty.model.octopi.definition.{Hub, Module}
 import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
 import org.scalajs.dom.Node
 
-class CreateSpaceButton(override val withinOctopus: Hub) extends SingleActionModuleDisplay[Hub] {
+class CreateSpaceButton(override val hub: Hub) extends SingleActionModuleDisplay[Hub] {
   // because the module is global, and isn't actually a module
   override protected lazy val module: Option[Module[Hub]] = Some(null)
 

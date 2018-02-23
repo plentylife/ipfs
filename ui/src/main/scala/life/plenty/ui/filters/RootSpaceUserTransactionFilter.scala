@@ -9,7 +9,7 @@ import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.model.UiContext
 import rx.{Ctx, Rx}
-class RootSpaceUserTransactionFilter(override val withinOctopus: User) extends RxConnectionFilters[User] {
+class RootSpaceUserTransactionFilter(override val hub: User) extends RxConnectionFilters[User] {
 //  private implicit val ctx = Ctx.Owner.safe()
 
   override def apply(what: Rx[Option[DataHub[_]]])(implicit ctx: Ctx.Owner): Rx[Option[DataHub[_]]] = Rx {

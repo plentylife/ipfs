@@ -17,17 +17,17 @@ import rx.Obs
 
 import scalaz.std.list._
 
-class MembersCardDisplay(override val withinOctopus: Members) extends DisplayModule[Members] with CardNavigation {
+class MembersCardDisplay(override val hub: Members) extends DisplayModule[Members] with CardNavigation {
   private var addedCurrentUser = false
 
-  private lazy val members: BasicBindable[List[User]] = withinOctopus.getMembers
+  private lazy val members: BasicBindable[List[User]] = hub.getMembers
 
   override def update(): Unit = {
     // fixme this will need to go
     if (!addedCurrentUser) {
-      OctopusGunReaderModule.onFinishLoad(withinOctopus, () ⇒ {
-        ui.console.trace(s"Trying to add member to space with modules ${withinOctopus.modules}")
-        withinOctopus.addMember(UiContext.userVar.value)
+      OctopusGunReaderModule.onFinishLoad(hub, () ⇒ {
+        ui.console.trace(s"Trying to add member to space with modules ${hub.modules}")
+        hub.addMember(UiContext.userVar.value)
         addedCurrentUser = true
       })
     }
@@ -35,7 +35,7 @@ class MembersCardDisplay(override val withinOctopus: Members) extends DisplayMod
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
-    <div class="card d-inline-flex members" id={withinOctopus.id}>
+    <div class="card d-inline-flex members" id={hub.id}>
       <span class="card-controls">
         <div class="btn-help d-inline-flex" onclick={_: Event ⇒ Help.membersCardHelp}>help</div>
         <div class="btn btn-primary btn-sm open-btn" onclick={navigateTo _}>open</div>

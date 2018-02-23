@@ -14,33 +14,33 @@ import rx.{Obs, Rx}
 import scala.language.postfixOps
 import scalaz.std.list._
 
-class ChildDisplay(override val withinOctopus: Hub) extends DisplayModule[Hub] {
+class ChildDisplay(override val hub: Hub) extends DisplayModule[Hub] {
 
   private lazy val modifiers: List[OctopusModifier[Hub]] = {
-    console.trace(s"child meta getting modifiers from ${withinOctopus.modules}")
-    withinOctopus.getModules({ case m: OctopusModifier[Hub] ⇒ m })
+    console.trace(s"child meta getting modifiers from ${hub.modules}")
+    hub.getModules({ case m: OctopusModifier[Hub] ⇒ m })
   }
 
   protected val children: Vars[Hub] = Vars[Hub]()
   protected var rxChildren: Obs = null
 
   override def update(): Unit = {
-    console.trace(s"child update ${withinOctopus} $this rxChildren ${rxChildren}")
+    console.trace(s"child update ${hub} $this rxChildren ${rxChildren}")
     if (rxChildren == null) {
       rxChildren = getChildren.foreach { cs ⇒
         children.value.clear()
         children.value.insertAll(0, cs)
-        console.trace(s"child updated ${withinOctopus} $cs")
+        console.trace(s"child updated ${hub} $cs")
       }
     }
   }
 
 
   private def getChildren: Rx[List[Hub]] = {
-    console.trace(s"getting children ${withinOctopus} ${withinOctopus.id}")
-    val childrenRx: Rx[List[Hub]] = withinOctopus.rx.getAll({ case Child(c: Hub) ⇒ c })
+    console.trace(s"getting children ${hub} ${hub.id}")
+    val childrenRx: Rx[List[Hub]] = hub.rx.getAll({ case Child(c: Hub) ⇒ c })
     val ordered = modifiers.foldLeft(childrenRx)((cs, mod) ⇒ {
-      console.trace(s"applying modifiers ${withinOctopus}")
+      console.trace(s"applying modifiers ${hub}")
       mod.applyRx(cs): Rx[List[Hub]]
     })
     ordered
@@ -76,8 +76,8 @@ abstract class GroupedChildDisplay(private val _withinOctopus: Hub) extends Chil
   protected val titles: Map[String, String] = Map()
 
   override def overrides: List[ModuleOverride] = {
-    SimpleModuleOverride(this, new NoDisplay(withinOctopus), dm ⇒ {
-      dm.isInstanceOf[ChildDisplay] && !dm.isInstanceOf[GroupedChildDisplay] && dm.withinOctopus == withinOctopus
+    SimpleModuleOverride(this, new NoDisplay(hub), dm ⇒ {
+      dm.isInstanceOf[ChildDisplay] && !dm.isInstanceOf[GroupedChildDisplay] && dm.hub == hub
     }) :: super.overrides
   }
 
