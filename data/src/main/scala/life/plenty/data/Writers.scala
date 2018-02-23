@@ -3,6 +3,7 @@ package life.plenty.data
 import life.plenty.model.actions.ActionAfterGraphTransform
 import life.plenty.model.connection.DataHub
 import life.plenty.model.octopi.definition.{AtInstantiation, Hub, Module}
+import life.plenty.model.security.SecureUser
 import rx.Ctx
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -22,10 +23,11 @@ object OctopusWriter {
       o.tmpMarker = GunMarker
     }
 
-    forceWrite(o)
+    // fixme
+    forceWrite(o, null)
   }
 
-  private[data] def forceWrite(o: Hub, hubClass: Option[String] = None) = Future {
+  private[data] def forceWrite(o: Hub, doc: AsyncShareDoc, hubClass: Option[String] = None) = Future {
     val hc: String = hubClass.getOrElse(o.getClass.getSimpleName)
     val info = js.Dynamic.literal("class" → hc)
     o match {
@@ -89,45 +91,30 @@ object OctopusWriter {
   }
 }
 
-class GunWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
-  private lazy val _gun: Future[Gun] = Future {gunCalls.get(hub.id, (d, k) ⇒ Unit)}
-  private lazy val instModule = hub.getTopModule({ case m: InstantiationGunWriterModule ⇒ m })
+class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
+  val dbDoc = new AsyncShareDoc(hub.id)
 
-  def gun = instModule.flatMap(m ⇒ m.gun).getOrElse(_gun)
+  hub.onNew(onNew)
+
+  protected def onNew = {
+    console.println(s"Instantiation Gun Writer ${hub} ${hub.id}")
+    OctopusWriter.write(hub)
+  }
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       console.println(s"Gun Writer onConAdd ${hub} [${hub.id}] ${connection} ")
 //      gun foreach { g ⇒ OctopusWriter.writeSingleConnection(withinOctopus.id, connection) }
       // todo. have to save all because of gun
-      gun foreach { g ⇒ OctopusWriter.writeConnections(hub.id, hub.sc.all) }
+//      gun foreach { g ⇒ OctopusWriter.writeConnections(hub.id, hub.sc.all) }
     }
     Future {Right()}
   }
 }
 
-//todo combine the instantiation module and the wirter module
-
-class InstantiationGunWriterModule(override val hub: Hub) extends Module[Hub] {
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-
-  var gun: Option[Future[Gun]] = None
-
-  hub.onNew {
-    console.println(s"Instantiation Gun Writer ${hub} ${hub.id}")
-    gun = Option(OctopusWriter.write(hub))
-  }
-}
-
-class InstantiationSecureUserWriterModule(override val hub: Hub) extends Module[Hub] {
-  implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-
-  var gun: Option[Future[Gun]] = None
-
-  val dbDoc = new AsyncShareDoc(hub.id)
-
-  hub.onNew {
+class SecureUserDbWriterModule(override val hub: SecureUser) extends DbWriterModule(hub) {
+  override protected def onNew = {
     console.println(s"Instantiation Gun Writer forcing ${hub} ${hub.id}")
-    gun = Option(OctopusWriter.forceWrite(hub, Option("BasicUser")))
+    OctopusWriter.forceWrite(hub, Option("BasicUser"))
   }
 }

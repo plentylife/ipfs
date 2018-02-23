@@ -17,18 +17,30 @@ trait ShareDB extends js.Object {
 trait ShareDBDoc extends js.Object {
   val `type`: String = js.native
   def fetch(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
+  def subscribe(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
 }
 
 @js.native
 @JSGlobal
 object ShareDB extends ShareDB
 
-class AsyncShareDoc(id: String) {
-  val db = ShareDB
-  val doc = db.get("plenty-docs", id)
+class AsyncShareDoc(id: String, doSubscribe: Boolean = false) {
+  private val db = ShareDB
+  private val doc = db.get("plenty-docs", id)
+  private var subscription: Future[Unit] = null
+
+  // load right away
+  if (doSubscribe) subscribe
 
   def exists: Future[Boolean] = fetch.map(_ ⇒ doc.`type` != null).recover {
     case e: Throwable ⇒ data.console.error(e); false
+  }
+
+  def subscribe: Future[Unit] = {
+    if (subscription == null) {
+      subscription = errCbToFuture(doc.subscribe)
+    }
+    subscription
   }
 
   def fetch = {
