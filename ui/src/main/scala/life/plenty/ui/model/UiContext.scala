@@ -1,7 +1,7 @@
 package life.plenty.ui.model
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.Var
-import life.plenty.data.OctopusReader
+import life.plenty.data.DbReader
 import life.plenty.model.connection.{Creator, Email, Id, Name}
 import life.plenty.model.octopi._
 import life.plenty.model.security.SecureUser
@@ -41,9 +41,12 @@ object UiContext {
   def login(name: String, email: String, password: String) = {
     storeUser(email)
     val user = SecureUser(email, password)
-    OctopusReader.exists(user.id) foreach {
-      case true ⇒ setUser(user)
+    DbReader.exists(user.id) foreach {
+      case true ⇒
+        println("exists true")
+        setUser(user)
       case false ⇒
+        println("exists false")
         if (name == null || name.isEmpty) {
           ErrorModal.setContentAndOpen(ErrorModals.noSuchUserFound)
         } else createAndSetUser(name, email, user)

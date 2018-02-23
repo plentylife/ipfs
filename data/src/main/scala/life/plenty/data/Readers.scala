@@ -17,7 +17,7 @@ import scala.scalajs.js.JSON
 
 object GunMarker extends TmpMarker
 
-object OctopusReader {
+object DbReader {
   def ci(className: String, inst: ⇒ Hub) = {
     (cn: String) ⇒ if (className == cn) Option(inst) else None
   }
@@ -94,11 +94,8 @@ object OctopusReader {
   }
 
   def exists(id: String): Future[Boolean] = {
-    val p = Promise[Boolean]()
-    gunCalls.get(id, (d,k) ⇒ {
-      p.success(!(js.isUndefined(d) || d == null))
-    })
-    p.future
+    println("exists triggered")
+    new AsyncShareDoc(id).exists
   }
 }
 
@@ -146,7 +143,7 @@ object ConnectionReader {
     hasClass(con.value) flatMap { hc ⇒
       console.trace(s"Has class $hc ${con.`class`} ${con.value} $key")
       if (hc) {
-        OctopusReader.read(con.value) map { optO ⇒
+        DbReader.read(con.value) map { optO ⇒
           if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
           optO flatMap { o ⇒
             val res = octopusReaders flatMap { f ⇒ f(con.`class`, o) } headOption;

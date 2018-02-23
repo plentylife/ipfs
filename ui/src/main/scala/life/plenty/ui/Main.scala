@@ -1,7 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.data.{GunCalls, OctopusGunReaderModule, OctopusReader, Main ⇒ dataMain}
+import life.plenty.data.{AsyncShareDoc, DbReader, GunCalls, OctopusGunReaderModule, Main ⇒ dataMain}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.security.{LibSodium, LibSodiumWrapper}
@@ -50,7 +50,7 @@ object Main {
       Router.router.state.bind.spaceId match {
         case Some(id) ⇒
           println(s"UI loading ${id}")
-          OctopusReader.read(id) foreach { spaceOpt ⇒
+          DbReader.read(id) foreach { spaceOpt ⇒
             println(s"UI loaded $id as $spaceOpt")
             UiContext.setStatingSpace(spaceOpt map { s ⇒ s.asInstanceOf[Space] })
           }
@@ -110,11 +110,5 @@ object Main {
   }
 
   @JSExport
-  def jd = jdenticon
-
-  @JSExport
-  def toHash(id: String) = Router.toHash(RoutingParams(0, Option(id)))
-
-  @JSExport
-  def gunCalls = data.gunCalls
+  def doc(id: String) = new AsyncShareDoc(id)
 }
