@@ -28,7 +28,7 @@ class GunCalls {
       level: LevelDB,
       localStorage: false,
       file: false,
-      peers: this.peersToOpt(peers)
+      // peers: this.peersToOpt(peers)
     })
     this.firstCall = true
   }
@@ -39,7 +39,7 @@ class GunCalls {
       wait = 100; this.firstCall = false;
     }
     gun.get(id).get('class').val(function(d, k) {
-      console.log("GunCalls got class of with wait", wait, id, d, k)
+      // console.log("GunCalls got class of with wait", wait, id, d, k)
       cb(d)
     }, {wait: wait})
   }
@@ -92,6 +92,3 @@ class GunCalls {
 }
 
 window.GC = GunCalls;
-
-//var ph = sodium.crypto_pwhash(32, "word", "salt567890123456", 2, sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE, 2)
-//sodium.crypto_box_seed_keypair(ph)

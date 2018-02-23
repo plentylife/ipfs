@@ -31,7 +31,7 @@ object UiContext {
 
   def setUser(u: User) = {
     userVar.value_=(u)
-    ui.console.trace(s"UiContext has set userVar set to ${userVar.value}")
+    ui.console.trace(s"UiContext has set userVar set to ${userVar.value} ${userVar.value.id}")
   }
 
   def storeUser(email: String) = {

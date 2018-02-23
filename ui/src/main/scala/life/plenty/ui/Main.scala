@@ -72,7 +72,9 @@ object Main {
       <span style="position: fixed; top: 0; left: 0">
         If you see this message it means that you are likely using Firefox<br/>
       Please be patient, wait 1+ minutes, and then refresh the page. Or use Chrome<br/>
-      We are actively working to mitigate this serious issue</span>}
+      We are actively working to mitigate this serious issue<br/>
+        Or maybe you have a wrong link...
+      </span>}
     </div>
   }
 

@@ -80,15 +80,15 @@ trait OctopusConstructor {
     })
   }
 
-  def asNew(properties: DataHub[_]*): Future[Unit] = {
+  def asNew(_properties: DataHub[_]*): Future[Unit] = {
     model.console.trace(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
 
     // has to be first for purposes of creating ids
     val ct = CreationTime(new Date().getTime)
-    val cc: Option[Creator] = properties.find(_.isInstanceOf[Creator]).map(_.asInstanceOf[Creator]).orElse({
+    val cc: Option[Creator] = _properties.find(_.isInstanceOf[Creator]).map(_.asInstanceOf[Creator]).orElse({
       model.defaultCreator.map(c ⇒ Creator(c))
     })
-    val idProp = properties.find(_.isInstanceOf[Id])
+    val idProp = _properties.find(_.isInstanceOf[Id])
 
     if (idProp.isEmpty) {
       // in this case there must be a creator
@@ -102,6 +102,7 @@ trait OctopusConstructor {
     self.setInit(ct)
     cc foreach self.setInit
 
+    val properties = _properties.filterNot(_.isInstanceOf[Id])
     properties.foreach(p ⇒ {
       p.tmpMarker = AtInstantiation
       self.setInit(p)
