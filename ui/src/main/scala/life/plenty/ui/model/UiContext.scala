@@ -18,9 +18,9 @@ object UiContext {
   val startingSpaceRx: rxVar[Option[Space]] = rxVar(None)
 
   def startingSpace: Var[Option[Space]] = _startingSpace
-  def setStatingSpace(s: Option[Space]) = {
-    _startingSpace.value_=(s)
-    startingSpaceRx.update(s)
+  def setStatingSpace(s: Space) = {
+    _startingSpace.value_=(Option(s))
+    startingSpaceRx.update(Option(s))
   }
 
   def getUser: User = userVar.value

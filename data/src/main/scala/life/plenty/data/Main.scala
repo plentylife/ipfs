@@ -9,13 +9,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object Main {
-  def main(gunCalls: GunCalls): Future[Any] = {
+  def main(db: ShareDB): Unit = {
     model.setHasher(DataHash)
     modules()
 
-    data.gunCalls = gunCalls
-
-    Future {}
+    data.db = db
   }
 
   def modules(): Unit = {

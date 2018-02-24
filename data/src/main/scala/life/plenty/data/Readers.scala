@@ -180,6 +180,8 @@ ActionOnFinishDataLoad {
 
     dbDoc.getData map { data ⇒
       println(s"LOADED ${JSON.stringify(data)}")
+
+
     }
 
 //    Future {

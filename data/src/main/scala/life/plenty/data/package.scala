@@ -8,6 +8,8 @@ import scala.scalajs.js
 package object data {
   val console = new Console(true, true, "DB")
 
+  var db: ShareDB = null
+
   /** this is not safe */
   def getWriterModule(hub: Hub) = hub.getTopModule({case m: DbWriterModule => m}).get
 }

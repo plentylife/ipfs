@@ -1,10 +1,9 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.data.{AsyncShareDoc, DbInsertOp, DbReader, GunCalls, DbReaderModule, Main ⇒ dataMain}
+import life.plenty.data.{DbReader, DbReaderModule, ShareDB, Main ⇒ dataMain}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.security.{LibSodium, LibSodiumWrapper}
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
 import life.plenty.ui.display.actions.CreateSpace
 import life.plenty.ui.display.{Help, LoadIndicator, Login, Modal}
@@ -15,7 +14,6 @@ import org.scalajs.dom.{Event, document}
 import rx.Ctx
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 import scalaz.std.list._
 
@@ -23,7 +21,7 @@ import scalaz.std.list._
 object Main {
 
   @JSExport
-  def main(gunCalls: GunCalls, consolesActive: String): Unit = {
+  def main(db: ShareDB, consolesActive: String): Unit = {
     println("Entry point")
     if (consolesActive.nonEmpty) {
       data.console.active = consolesActive == "true"
@@ -32,13 +30,12 @@ object Main {
     }
 
     // has to be first because it sets the hasher function
-    dataMain.main(gunCalls) foreach {_ ⇒
-      Router.initialize
-      mInit()
-      initialize()
+    dataMain.main(db)
+    Router.initialize
+    mInit()
+    initialize()
 
-      dom.render(document.body, mainSection())
-    }
+    dom.render(document.body, mainSection())
   }
 
   @dom
@@ -50,9 +47,9 @@ object Main {
       Router.router.state.bind.spaceId match {
         case Some(id) ⇒
           println(s"UI loading ${id}")
-          DbReader.read(id) foreach { spaceOpt ⇒
-            println(s"UI loaded $id as $spaceOpt")
-            UiContext.setStatingSpace(spaceOpt map { s ⇒ s.asInstanceOf[Space] })
+          DbReader.read(id) foreach { space ⇒
+            println(s"UI loaded $id as $space")
+            UiContext.setStatingSpace(space.asInstanceOf[Space])
           }
         case None ⇒ CreateSpace.openInModal()
       }
@@ -64,15 +61,16 @@ object Main {
   @dom
   def mainSection(): Binding[Node] = {
     <div id="viewport" onclick={e: Event ⇒ Help.triggerClose()}>
-      {Modal.display().bind}
-      {LoadIndicator.show().bind}
-      {showUi().bind}
-      {Help.display().bind}{Login.display().bind}{if (UiContext.startingSpace.bind.nonEmpty)
-      DisplayModel.display(UiContext.startingSpace.bind.get).bind else
-      <span style="position: fixed; top: 0; left: 0">
-        If you see this message it means that you are likely using Firefox<br/>
-      Please be patient, wait 1+ minutes, and then refresh the page. Or use Chrome<br/>
-      We are actively working to mitigate this serious issue<br/>
+      {Modal.display().bind}{LoadIndicator.show().bind}{showUi().bind}{Help.display().bind}{Login.display().bind}{
+      //
+      if(UiContext.startingSpace.bind.nonEmpty) DisplayModel.display(UiContext.startingSpace.bind.get).bind //
+      else <span style="position: fixed; top: 0; left: 0">
+        If you see this message it means that you are likely using Firefox
+        <br/>
+        Please be patient, wait 1+ minutes, and then refresh the page. Or use Chrome
+        <br/>
+        We are actively working to mitigate this serious issue
+        <br/>
         Or maybe you have a wrong link...
       </span>}
     </div>
