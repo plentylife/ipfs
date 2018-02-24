@@ -18,6 +18,7 @@ trait ShareDBDoc extends js.Object {
   val `type`: String = js.native
   def fetch(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
   def subscribe(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
+  def create(data: js.Object, errorCb: js.Function1[js.Object, Unit])
 }
 
 @js.native
@@ -41,6 +42,18 @@ class AsyncShareDoc(id: String, doSubscribe: Boolean = false) {
       subscription = errCbToFuture(doc.subscribe)
     }
     subscription
+  }
+
+  def setInitial(info: ⇒ js.Object): Future[Unit] = subscription flatMap {_⇒
+    if (doc.`type` == null) {
+      data.console.trace(s"Creating doc with data ${JSON.stringify(info)}")
+      create(info)
+    } else Future(Unit)
+  }
+
+  def create(data: js.Object) = {
+    def curry(cb: js.Function1[js.Object, Unit]) = doc.create(data, cb)
+    errCbToFuture(curry)
   }
 
   def fetch = {

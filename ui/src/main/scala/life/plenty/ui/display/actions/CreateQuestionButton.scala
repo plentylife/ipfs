@@ -9,7 +9,6 @@ import life.plenty.ui.display.Modal
 import life.plenty.ui.display.utils._
 import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model.utils._
 import org.scalajs.dom.{Event, Node}
 
 class CreateQuestionButton(override val hub: Hub) extends SingleActionModuleDisplay[Hub]
