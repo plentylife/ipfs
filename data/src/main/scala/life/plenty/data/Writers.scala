@@ -17,7 +17,7 @@ class DbInsertConnectionOp(h: Hub) extends DbInsertOp {
 }
 
 object DbWriter {
-  def writeInitial(o: Hub, doc: AsyncShareDoc): Unit = {
+  def writeInitial(o: Hub, doc: DocWrapper): Unit = {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
@@ -31,7 +31,7 @@ object DbWriter {
     forceWriteInitial(o, doc)
   }
 
-  private[data] def forceWriteInitial(o: Hub, doc: AsyncShareDoc, hubClass: Option[String] = None): Future[Unit] =
+  private[data] def forceWriteInitial(o: Hub, doc: DocWrapper, hubClass: Option[String] = None): Future[Unit] =
     doc.setInitial {
       val hc: String = hubClass.getOrElse(o.getClass.getSimpleName)
       val info = js.Dynamic.literal("class" → hc, "connections" → js.Array(
@@ -45,7 +45,7 @@ object DbWriter {
     }
 
   /** is not safe, but should never fail */
-  def getDoc(h: Hub): AsyncShareDoc = h.getTopModule({case m: DbWriterModule ⇒ m}).get.dbDoc
+  def getDoc(h: Hub): DocWrapper = h.getTopModule({case m: DbWriterModule ⇒ m}).get.dbDoc
 
   private def fillDataHubInfo(c: DataHub[_], info: js.Dynamic): Unit = {
     c.value match {
@@ -58,8 +58,8 @@ object DbWriter {
     }
   }
 
-  def writeSingleConnection(holderDoc: AsyncShareDoc, connection: DataHub[_]): Unit = {
-    DbWriter.writeInitial(connection, getDoc(connection))
+  def writeSingleConnection(holderDoc: DocWrapper, connection: DataHub[_]): Unit = {
+    DbWriter.writeInitial(connection, getDoc(connection)) // write the new connection
     // add to holder
     holderDoc.submitOp(new DbInsertConnectionOp(connection))
   }
@@ -67,12 +67,18 @@ object DbWriter {
 }
 
 class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
-  private var _dbDoc: AsyncShareDoc = null
+  private var _dbDoc: DocWrapper = null
   protected[data] def dbDoc = if (_dbDoc != null) _dbDoc else {
-    _dbDoc = new AsyncShareDoc(hub.id, true)
+    _dbDoc = new DocWrapper(hub.id)
     _dbDoc
   }
-  protected[data] def setDbDoc(doc: AsyncShareDoc) = _dbDoc = doc
+
+  // as a preventitive measure from having too many docs kick aroud
+  /** @return the doc that is actively used */
+  protected[data] def setDbDoc(doc: DocWrapper): DocWrapper = {
+    if (_dbDoc == null) _dbDoc = doc
+    _dbDoc
+  }
 
   hub.onNew(onNew)
 

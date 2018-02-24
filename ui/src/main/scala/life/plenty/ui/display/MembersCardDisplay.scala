@@ -26,7 +26,7 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
     // fixme this will need to go
     if (!addedCurrentUser) {
       DbReaderModule.onFinishLoad(hub, () ⇒ {
-        ui.console.trace(s"Trying to add member to space with modules ${hub.modules}")
+        ui.console.trace(s"Trying to add member ${UiContext.userVar.value} to $hub")
         hub.addMember(UiContext.userVar.value)
         addedCurrentUser = true
       })

@@ -1,11 +1,13 @@
 package life.plenty.data
 
 import life.plenty.data
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 import scala.scalajs.js.annotation.JSGlobal
+import scala.util.Try
 
 
 @js.native
@@ -21,9 +23,11 @@ trait ShareDBDoc extends js.Object {
   def fetch(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
   def subscribe(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
   // missing options
-  def create(data: js.Object, errorCb: js.Function1[js.Object, Unit])
+  def create(data: js.Object, errorCb: js.Function1[js.Object, Unit]): Unit = js.native
   // missing options
-  def submitOp(op: js.Object, errorCb: js.Function1[js.Object, Unit])
+  def submitOp(op: js.Object, errorCb: js.Function1[js.Object, Unit]): Unit = js.native
+  // this does not fit all of them. some are not js.F2
+  def on(channel: String, cb: js.Function2[DbOp, Boolean, Unit]): Unit = js.native
 }
 
 trait DbOp extends js.Object {
@@ -37,19 +41,22 @@ trait DbInsertOp extends DbOp {
 @JSGlobal
 object ShareDB extends ShareDB
 
-class AsyncShareDoc(id: String, doSubscribe: Boolean = false) {
+class DocWrapper(id: String) {
   private val db = ShareDB
   private val doc = db.get("plenty-docs", id)
   private var subscription: Future[Unit] = null
 
   // load right away
-  if (doSubscribe) subscribe
+//  if (doSubscribe) subscribe
 
   def getData: Future[JsHub] = exists map { doesExist ⇒
     if (doesExist) doc.data.asInstanceOf[JsHub] else throw new DocDoesNotExist(id)
   }
 
-  def exists: Future[Boolean] = Option(subscription).getOrElse(fetch).map(_ ⇒ doc.`type` != null).recover {
+  def exists: Future[Boolean] = Option(subscription).getOrElse {
+    // no point double fetching
+    if (doc.`type` != null) Future() else fetch
+  }.map(_ ⇒ doc.`type` != null).recover {
     case e: Throwable ⇒ data.console.error(e); false
   }
 
@@ -58,6 +65,20 @@ class AsyncShareDoc(id: String, doSubscribe: Boolean = false) {
       subscription = errCbToFuture(doc.subscribe)
     }
     subscription
+  }
+
+  private def opListener: js.Function2[DbOp, Boolean, Unit] = null
+  def onRemoteConnectionChange(idCb: String ⇒ Unit) = {
+    if (opListener == null) {
+      doc.on("op", (op: DbOp, source: Boolean) ⇒ {
+        console.trace(s"Doc listener fired $source ${JSON.stringify(op)}")
+        if (!source) {
+          Try {op.asInstanceOf[DbInsertOp]} foreach(insOp ⇒ {
+            if (insOp.p(0).toString  == "connections") idCb(insOp.li.toString)
+          })
+        }
+      })
+    }
   }
 
   def setInitial(info: ⇒ js.Object): Future[Unit] = subscription flatMap {_⇒

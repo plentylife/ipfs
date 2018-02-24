@@ -59,7 +59,7 @@ object DbReader {
 
   /**
     * @throws DocDoesNotExist */
-  def read(id: String, doc: Option[AsyncShareDoc] = None): Future[Hub] = {
+  def read(id: String, doc: Option[DocWrapper] = None): Future[Hub] = {
     data.console.trace(s"Reading hub with id `${id}`")
     // from cache
     val fromCache = Cache.getOctopus(id)
@@ -68,7 +68,7 @@ object DbReader {
       return Future(fromCache.get)
     }
 
-    val dbDoc = doc getOrElse new AsyncShareDoc(id, true)
+    val dbDoc = doc getOrElse new DocWrapper(id)
 
     val className: Future[String] = dbDoc.getData map { data ⇒
       data.`class`
@@ -108,7 +108,7 @@ object DbReader {
   }
 
   def exists(id: String): Future[Boolean] = {
-    new AsyncShareDoc(id).exists
+    new DocWrapper(id).exists
   }
 }
 
@@ -131,7 +131,7 @@ object DataHubReader {
 
 
   def read(id: String): Future[DataHub[_]] = {
-    val dbDoc = new AsyncShareDoc(id, true)
+    val dbDoc = new DocWrapper(id)
 
     dbDoc.getData flatMap {data ⇒
       val jsHub = data.asInstanceOf[JsDataHub]
@@ -164,7 +164,7 @@ ActionOnFinishDataLoad {
 
   var instantiated = false
   val connectionsLeftToLoad = Var(-1)
-  private lazy val allCons = hub.connections.map(_.map(_.id))
+//  private lazy val allCons = hub.connections.map(_.map(_.id))
   lazy val dbDoc = data.getWriterModule(hub).dbDoc // get should never trip
 
   override def onConnectionsRequest(): Unit = synchronized {
@@ -175,55 +175,35 @@ ActionOnFinishDataLoad {
     }
   }
 
-  private def load() = Future {
+  private def load() = {
+    dbDoc.subscribe
     console.println(s"Reader loading ${hub} ${hub.id}")
 
     dbDoc.getData map { data ⇒
-      println(s"LOADED ${JSON.stringify(data)}")
+      val existingIds = hub.connections.now.map(_.id)
+      val unloadedIds = data.connections.toList.filterNot(existingIds.contains)
+      connectionsLeftToLoad() = unloadedIds.size + connectionsLeftToLoad.now
 
+      console.trace(s"Reader has connections to load for $hub ${hub.id} $unloadedIds")
 
+      unloadedIds map loadConnection foreach {_ onComplete(lf ⇒ if (lf.isSuccess) {
+        connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+      })}
     }
 
-//    Future {
-//      gunCalls.getConnections(hub.id, (d) ⇒ {
-//        console.trace(s"Gun raw connections to read in ${hub} ${hub.id} ${connectionsLeftToLoad}")
-//        console.trace(s"${JSON.stringify(d)}")
-//        val l = js.Object.keys(d).length
-//        connectionsLeftToLoad() = l + connectionsLeftToLoad.now
-//        console.trace(s"Gun raw connections length $l ${connectionsLeftToLoad.now}")
-//      })
-//    }
+    dbDoc.onRemoteConnectionChange(loadConnection)
+  }
 
-//    gunCalls.mapConnections(hub.id, (d, k) ⇒ Future {
-//      // fixme this will bug out if we are re-using connections
-//      val cachedCon = Cache.getConnection(k)
-//      if (cachedCon.nonEmpty) {
-//        if (!allCons.now.contains(k)) {
-//          hub.addConnection(cachedCon.get) foreach { _ ⇒
-//            connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-//          }
-//        } else connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-//        console.trace(s"Skipping loading connection $k")
-//      } else {
-//        ConnectionReader.read(d, k) map { optCon ⇒ {
-//          console.println(s"Gun read connection of ${hub} $k | ${optCon}")
-//          if (optCon.isEmpty) {
-//            console.error(s"Reader could not parse connection ${JSON.stringify(d)}")
-//            throw new Exception("Gun reader could not parse a connection.")
-//          }
-//
-//          optCon foreach { c ⇒
-//            Cache.put(c)
-//            val vc = Cache.getConnection(c.id).get // should never fail
-//            vc.tmpMarker = GunMarker
-//            hub.addConnection(vc) foreach { _ ⇒
-//              connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-//            }
-//          }
-//        }
-//        }
-//      }
-//    })
+  private def loadConnection(id: String): Future[Unit] = {
+    DataHubReader.read(id) flatMap { c ⇒
+      console.trace(s"Reader loaded connection for ${hub} ${c.id}")
+      c.tmpMarker = DbMarker
+      hub.addConnection(c)
+    } recover {
+      case e: Throwable ⇒
+        console.trace(s"Reader failed to load connection for ${hub} with id ${id}")
+        console.error(e)
+    }
   }
 
   override def onFinishLoad(f: () ⇒ Unit): Unit = {
