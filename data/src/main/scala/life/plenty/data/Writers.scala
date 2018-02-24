@@ -9,28 +9,33 @@ import rx.Ctx
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.scalajs.js
-import scala.scalajs.js.JSON
+import scala.scalajs.js.{Any, JSON}
+
+class DbInsertConnectionOp(h: Hub) extends DbInsertOp {
+  override val p: js.Array[js.Any] = js.Array("connections", 0)
+  override val li: js.Any = h.id
+}
 
 object DbWriter {
-  def write(o: Hub, doc: AsyncShareDoc): Unit = {
+  def writeInitial(o: Hub, doc: AsyncShareDoc): Unit = {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
-      return Unit
+      return
     } else {
       // fixme this is danegerous because it does not check for success of the write
       Cache.put(o)
       o.tmpMarker = GunMarker
     }
 
-    forceWrite(o, doc)
+    forceWriteInitial(o, doc)
   }
 
-  private[data] def forceWrite(o: Hub, doc: AsyncShareDoc, hubClass: Option[String] = None): Future[Gun] = Future {
+  private[data] def forceWriteInitial(o: Hub, doc: AsyncShareDoc, hubClass: Option[String] = None): Future[Unit] =
     doc.setInitial {
       val hc: String = hubClass.getOrElse(o.getClass.getSimpleName)
       val info = js.Dynamic.literal("class" → hc, "connections" → js.Array(
-        o.sc.all.map(_.id)
+        o.sc.all.map(_.id):_*
       ))
       o match {
         case c: DataHub[_] ⇒
@@ -39,9 +44,6 @@ object DbWriter {
       }
       info
     }
-
-    null
-  }
 
   /** is not safe, but should never fail */
   def getDoc(h: Hub): AsyncShareDoc = h.getTopModule({case m: DbWriterModule ⇒ m}).get.dbDoc
@@ -54,27 +56,27 @@ object DbWriter {
   }
 
   def writeSingleConnection(holderDoc: AsyncShareDoc, connection: DataHub[_]): Unit = {
-    DbWriter.write(connection)
+    DbWriter.writeInitial(connection, getDoc(connection))
+    // add to holder
+    holderDoc.submitOp(new DbInsertConnectionOp(connection))
   }
 
 }
 
 class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
-  val dbDoc = new AsyncShareDoc(hub.id, true)
+  lazy val dbDoc = new AsyncShareDoc(hub.id, true)
 
   hub.onNew(onNew)
 
   protected def onNew = {
     console.println(s"Instantiation Gun Writer ${hub} ${hub.id}")
-    DbWriter.write(hub)
+    DbWriter.writeInitial(hub, dbDoc)
   }
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
       console.println(s"Gun Writer onConAdd ${hub} [${hub.id}] ${connection} ")
-//      gun foreach { g ⇒ OctopusWriter.writeSingleConnection(withinOctopus.id, connection) }
-      // todo. have to save all because of gun
-//      gun foreach { g ⇒ OctopusWriter.writeConnections(hub.id, hub.sc.all) }
+      DbWriter.writeSingleConnection(dbDoc, connection)
     }
     Future {Right()}
   }
@@ -83,6 +85,6 @@ class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
 class SecureUserDbWriterModule(override val hub: SecureUser) extends DbWriterModule(hub) {
   override protected def onNew = {
     console.println(s"Instantiation Gun Writer forcing ${hub} ${hub.id}")
-    DbWriter.forceWrite(hub, dbDoc, Option("BasicUser"))
+    DbWriter.forceWriteInitial(hub, dbDoc, Option("BasicUser"))
   }
 }

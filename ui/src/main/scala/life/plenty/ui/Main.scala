@@ -1,7 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.data.{AsyncShareDoc, DbReader, GunCalls, OctopusGunReaderModule, Main ⇒ dataMain}
+import life.plenty.data.{AsyncShareDoc, DbInsertOp, DbReader, GunCalls, OctopusGunReaderModule, Main ⇒ dataMain}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.security.{LibSodium, LibSodiumWrapper}
@@ -109,6 +109,4 @@ object Main {
     }")
   }
 
-  @JSExport
-  def doc(id: String) = new AsyncShareDoc(id)
 }

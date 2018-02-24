@@ -15,10 +15,20 @@ trait ShareDB extends js.Object {
 
 @js.native
 trait ShareDBDoc extends js.Object {
-  val `type`: String = js.native
+  val `type`: js.Any = js.native // is an object actually
   def fetch(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
   def subscribe(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
+  // missing options
   def create(data: js.Object, errorCb: js.Function1[js.Object, Unit])
+  // missing options
+  def submitOp(op: js.Object, errorCb: js.Function1[js.Object, Unit])
+}
+
+trait DbOp extends js.Object {
+  val p: js.Array[js.Any]
+}
+trait DbInsertOp extends DbOp {
+  val li: js.Any
 }
 
 @js.native
@@ -53,6 +63,11 @@ class AsyncShareDoc(id: String, doSubscribe: Boolean = false) {
 
   def create(data: js.Object) = {
     def curry(cb: js.Function1[js.Object, Unit]) = doc.create(data, cb)
+    errCbToFuture(curry)
+  }
+
+  def submitOp(op: DbOp) = {
+    def curry(cb: js.Function1[js.Object, Unit]) = doc.submitOp(op, cb)
     errCbToFuture(curry)
   }
 
