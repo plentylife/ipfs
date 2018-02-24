@@ -17,6 +17,17 @@ import scala.scalajs.js.JSON
 
 object GunMarker extends TmpMarker
 
+@js.native
+trait JsHub extends js.Object {
+  val `class`: String
+  val connections: js.Array[String]
+}
+
+@js.native
+trait JsDataHub extends JsHub {
+  val value: String
+}
+
 object DbReader {
   def ci(className: String, inst: ⇒ Hub) = {
     (cn: String) ⇒ if (className == cn) Option(inst) else None
@@ -54,22 +65,20 @@ object DbReader {
 
 //    val gun = Main.gun.get(id)
 
-    val className = Promise[String]()
-    gunCalls.getHubClass(id, (d) ⇒ {
-      if (!js.isUndefined(d) && d != null) {
-        className.success(d.toLocaleString())
-      } else {
-        console.error(s"Failed loading on ID `$id`")
-        className.failure(new Exception(s"Could not find id $id in the database"))
-      }
-    })
+    val dbDoc = new AsyncShareDoc(id, true)
+
+    val className: Future[String] = dbDoc.getData map { data ⇒
+      data.`class`
+    } recover {
+      case e: DocDoesNotExist ⇒ console.error(s"Failed loading on ID `$id`"); throw e
+    }
 
     // fixme. optimization. not try every loader. stop at first success.
-    className.future.flatMap(cs ⇒ {
-      console.println(s"Gun is constructing $cs")
+    className.flatMap(cName ⇒ {
+      console.println(s"Gun is constructing $cName")
       val potentials: Stream[Future[Option[Hub]]] = availableClasses.map(f ⇒ {
         try {
-          val o = f(cs)
+          val o = f(cName)
           val res: Future[Option[Hub]] = o map { o ⇒
             val idCon = Id(id)
             idCon.tmpMarker = GunMarker
@@ -87,29 +96,19 @@ object DbReader {
 
       Future.sequence(potentials) map { materialized ⇒
         val actualized = materialized.flatten
-        if (actualized.isEmpty) console.error(s"Could not find loader with class ${cs}")
+        if (actualized.isEmpty) console.error(s"Could not find loader with class ${cName}")
         actualized.headOption
       }
     })
   }
 
   def exists(id: String): Future[Boolean] = {
-    println("exists triggered")
     new AsyncShareDoc(id).exists
   }
 }
 
 
 object ConnectionReader {
-
-  @js.native
-  trait JsConnection extends js.Object {
-    val `class`: String
-    val active: Boolean
-    val order: Int
-    val value: String
-  }
-
   private val leafReaders = Stream[(String, String) ⇒ Option[DataHub[_]]](
     Title(_, _), Body(_, _), Amount(_, _), Id(_, _), Name(_, _), CreationTime(_, _), Marker(_, _),
     Active(_, _), Inactive(_, _), Email(_, _)
@@ -135,7 +134,7 @@ object ConnectionReader {
   }
 
   def read(d: js.Object, key: String): Future[Option[DataHub[_]]] = {
-    val con = d.asInstanceOf[JsConnection]
+    val con = d.asInstanceOf[JsDataHub]
     // Id is a special case, since it's value points to an octopus, but it's really a leaf connection
     console.trace(s"ConnectionReader ${con.`class`} ${con.value} $key")
     if (con.`class` == "Id") return Future {Option {Id(con.value)}}
@@ -164,77 +163,74 @@ object ConnectionReader {
 
 // todo create a module for user that filters out everything but transactions
 
-class SecureUserGunReaderModule(u: SecureUser) extends OctopusGunReaderModule(u) {
+class SecureUserDbReaderModule(u: SecureUser) extends DbReaderModule(u) {
   Cache.put(u)
 }
 
-class OctopusGunReaderModule(override val hub: Hub) extends ActionOnConnectionsRequest with
+class DbReaderModule(override val hub: Hub) extends ActionOnConnectionsRequest with
 ActionOnFinishDataLoad {
   private implicit val ctx = hub.ctx
 
   var instantiated = false
   val connectionsLeftToLoad = Var(-1)
-  console.println(s"Gun Reader instantiated in ${hub.getClass}")
-
   private lazy val allCons = hub.connections.map(_.map(_.id))
+  lazy val dbDoc = hub.getTopModule({case m: DbWriterModule => m}).get.dbDoc // get should never trip
 
   override def onConnectionsRequest(): Unit = synchronized {
     if (!instantiated) {
       instantiated = true
-      console.println(s"Gun Reader ${this} onConsReq called in ${hub.getClass} with ${hub.sc.all}")
-      gunCalls.get(hub.id, (d, k) ⇒ {
-        if (!js.isUndefined(d) && d != null) {
-          console.trace(s"Gun Reader onConsReq before load() ${hub.id} ${JSON.stringify(d)}")
-          load()
-        }
-      })
+      console.println(s"Reader got request to load ${hub.getClass} with ${hub.sc.all}")
+      dbDoc.exists foreach {ex ⇒ if (ex) load()}
     }
   }
 
   private def load() = Future {
-    console.println(s"Gun reader ${this} setting up in load() of ${hub} ${hub.id}")
-//    val gc = gun.get("connections")
+    console.println(s"Reader loading ${hub} ${hub.id}")
 
-    Future {
-      gunCalls.getConnections(hub.id, (d) ⇒ {
-        console.trace(s"Gun raw connections to read in ${hub} ${hub.id} ${connectionsLeftToLoad}")
-        console.trace(s"${JSON.stringify(d)}")
-        val l = js.Object.keys(d).length
-        connectionsLeftToLoad() = l + connectionsLeftToLoad.now
-        console.trace(s"Gun raw connections length $l ${connectionsLeftToLoad.now}")
-      })
+    dbDoc.getData map { data ⇒
+      println(s"LOADED ${JSON.stringify(data)}")
     }
 
-    gunCalls.mapConnections(hub.id, (d, k) ⇒ Future {
-      // fixme this will bug out if we are re-using connections
-      val cachedCon = Cache.getConnection(k)
-      if (cachedCon.nonEmpty) {
-        if (!allCons.now.contains(k)) {
-          hub.addConnection(cachedCon.get) foreach { _ ⇒
-            connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-          }
-        } else connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-        console.trace(s"Skipping loading connection $k")
-      } else {
-        ConnectionReader.read(d, k) map { optCon ⇒ {
-          console.println(s"Gun read connection of ${hub} $k | ${optCon}")
-          if (optCon.isEmpty) {
-            console.error(s"Reader could not parse connection ${JSON.stringify(d)}")
-            throw new Exception("Gun reader could not parse a connection.")
-          }
+//    Future {
+//      gunCalls.getConnections(hub.id, (d) ⇒ {
+//        console.trace(s"Gun raw connections to read in ${hub} ${hub.id} ${connectionsLeftToLoad}")
+//        console.trace(s"${JSON.stringify(d)}")
+//        val l = js.Object.keys(d).length
+//        connectionsLeftToLoad() = l + connectionsLeftToLoad.now
+//        console.trace(s"Gun raw connections length $l ${connectionsLeftToLoad.now}")
+//      })
+//    }
 
-          optCon foreach { c ⇒
-            Cache.put(c)
-            val vc = Cache.getConnection(c.id).get // should never fail
-            vc.tmpMarker = GunMarker
-            hub.addConnection(vc) foreach { _ ⇒
-              connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-            }
-          }
-        }
-        }
-      }
-    })
+//    gunCalls.mapConnections(hub.id, (d, k) ⇒ Future {
+//      // fixme this will bug out if we are re-using connections
+//      val cachedCon = Cache.getConnection(k)
+//      if (cachedCon.nonEmpty) {
+//        if (!allCons.now.contains(k)) {
+//          hub.addConnection(cachedCon.get) foreach { _ ⇒
+//            connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+//          }
+//        } else connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+//        console.trace(s"Skipping loading connection $k")
+//      } else {
+//        ConnectionReader.read(d, k) map { optCon ⇒ {
+//          console.println(s"Gun read connection of ${hub} $k | ${optCon}")
+//          if (optCon.isEmpty) {
+//            console.error(s"Reader could not parse connection ${JSON.stringify(d)}")
+//            throw new Exception("Gun reader could not parse a connection.")
+//          }
+//
+//          optCon foreach { c ⇒
+//            Cache.put(c)
+//            val vc = Cache.getConnection(c.id).get // should never fail
+//            vc.tmpMarker = GunMarker
+//            hub.addConnection(vc) foreach { _ ⇒
+//              connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+//            }
+//          }
+//        }
+//        }
+//      }
+//    })
   }
 
   override def onFinishLoad(f: () ⇒ Unit): Unit = {
@@ -247,11 +243,11 @@ ActionOnFinishDataLoad {
   }
 }
 
-object OctopusGunReaderModule {
+object DbReaderModule {
   def onFinishLoad(o: Hub, f: () ⇒ Unit) = {
     implicit val _ctx = o.ctx
     o.onModulesLoad {
-      o.getTopModule({ case m: OctopusGunReaderModule ⇒ m }).foreach {
+      o.getTopModule({ case m: DbReaderModule ⇒ m }).foreach {
         m ⇒ m.onFinishLoad(f)
       }
     }

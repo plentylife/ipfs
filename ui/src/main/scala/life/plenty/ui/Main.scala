@@ -1,7 +1,7 @@
 package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.data.{AsyncShareDoc, DbInsertOp, DbReader, GunCalls, OctopusGunReaderModule, Main ⇒ dataMain}
+import life.plenty.data.{AsyncShareDoc, DbInsertOp, DbReader, GunCalls, DbReaderModule, Main ⇒ dataMain}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.security.{LibSodium, LibSodiumWrapper}
@@ -86,7 +86,7 @@ object Main {
   def unloaded() = {
     data.Cache.octopusCache.foreach(entry ⇒ {
       val (_, o) = entry
-      o.getTopModule({ case m: OctopusGunReaderModule ⇒ m }).foreach {
+      o.getTopModule({ case m: DbReaderModule ⇒ m }).foreach {
         m ⇒
           if (m.connectionsLeftToLoad.now > 0) {
             println(s"${m.connectionsLeftToLoad} ${m.hub} ${m.hub.id}")

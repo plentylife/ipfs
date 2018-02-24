@@ -20,9 +20,9 @@ object Main {
 
   def modules(): Unit = {
     ModuleRegistry add { case o: Hub if !o.isInstanceOf[SecureUser] ⇒ new DbWriterModule(o) }
-    ModuleRegistry add { case o: Hub if !o.isInstanceOf[SecureUser] ⇒ new OctopusGunReaderModule(o) }
+    ModuleRegistry add { case o: Hub if !o.isInstanceOf[SecureUser] ⇒ new DbReaderModule(o) }
 
-    ModuleRegistry add { case o: SecureUser ⇒ new SecureUserGunReaderModule(o) }
+    ModuleRegistry add { case o: SecureUser ⇒ new SecureUserDbReaderModule(o) }
     ModuleRegistry add { case o: SecureUser ⇒ new SecureUserDbWriterModule(o) }
     //    ModuleRegistry add { case o: Hub ⇒ new OctopusGunReaderModule(o) }
   }

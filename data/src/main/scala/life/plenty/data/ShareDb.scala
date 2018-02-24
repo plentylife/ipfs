@@ -16,6 +16,8 @@ trait ShareDB extends js.Object {
 @js.native
 trait ShareDBDoc extends js.Object {
   val `type`: js.Any = js.native // is an object actually
+  val data: js.Object = js.native
+
   def fetch(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
   def subscribe(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
   // missing options
@@ -43,7 +45,11 @@ class AsyncShareDoc(id: String, doSubscribe: Boolean = false) {
   // load right away
   if (doSubscribe) subscribe
 
-  def exists: Future[Boolean] = fetch.map(_ ⇒ doc.`type` != null).recover {
+  def getData: Future[JsHub] = exists map { doesExist ⇒
+    if (doesExist) doc.data.asInstanceOf[JsHub] else throw new DocDoesNotExist
+  }
+
+  def exists: Future[Boolean] = Option(subscription).getOrElse(fetch).map(_ ⇒ doc.`type` != null).recover {
     case e: Throwable ⇒ data.console.error(e); false
   }
 
@@ -88,4 +94,5 @@ class AsyncShareDoc(id: String, doSubscribe: Boolean = false) {
   }
 }
 
+class DocDoesNotExist extends Exception
 class ShareDbError(json: String) extends Exception

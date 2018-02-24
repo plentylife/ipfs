@@ -3,7 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.{Var ⇒ bVar}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data
-import life.plenty.data.OctopusGunReaderModule
+import life.plenty.data.DbReaderModule
 import org.scalajs.dom.raw.Node
 import rx.{Ctx, Rx, Var}
 
@@ -12,14 +12,14 @@ object LoadIndicator {
 
   val connectionsLeft = bVar(0)
 
-  val listOfModules = Var(List[OctopusGunReaderModule]())
+  val listOfModules = Var(List[DbReaderModule]())
 
   //  lazy val cachedGunReader =
 
   data.Cache.lastAddedRx.foreach { o ⇒
     if (o != null) {
       o.onModulesLoad {
-        o.getTopModule({ case r: OctopusGunReaderModule ⇒ r }).foreach { reader =>
+        o.getTopModule({ case r: DbReaderModule ⇒ r }).foreach { reader =>
           //          ui.console.println(s"LoadIndicator ${reader.connectionsLeftToLoad()}")
           listOfModules() = reader :: listOfModules.now
         }

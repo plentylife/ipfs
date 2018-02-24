@@ -2,7 +2,7 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.data.OctopusGunReaderModule
+import life.plenty.data.DbReaderModule
 import life.plenty.model.octopi.{Members, User}
 import life.plenty.ui
 import life.plenty.ui.display.actions.AnswerControls
@@ -25,7 +25,7 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
   override def update(): Unit = {
     // fixme this will need to go
     if (!addedCurrentUser) {
-      OctopusGunReaderModule.onFinishLoad(hub, () ⇒ {
+      DbReaderModule.onFinishLoad(hub, () ⇒ {
         ui.console.trace(s"Trying to add member to space with modules ${hub.modules}")
         hub.addMember(UiContext.userVar.value)
         addedCurrentUser = true
