@@ -14,11 +14,15 @@ object Cache {
 
   val lastAddedRx: Var[Hub] = Var {null}
 
-  def put(octopus: Hub): Unit = synchronized {
-    val existing = getOctopus(octopus.id)
+  /** @return the existing hub, or the new hub*/
+  def put(hub: Hub): Hub = synchronized {
+    val existing = getOctopus(hub.id)
     if (existing.isEmpty) {
-      octopusCache.put(octopus.id, octopus)
-      if (lastAddedRx.now != octopus) lastAddedRx() = octopus
+      octopusCache.put(hub.id, hub)
+      if (lastAddedRx.now != hub) lastAddedRx() = hub
+      hub
+    } else {
+      existing.get
     }
   }
 

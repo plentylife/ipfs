@@ -25,7 +25,7 @@ object DbWriter {
     } else {
       // fixme this is danegerous because it does not check for success of the write
       Cache.put(o)
-      o.tmpMarker = GunMarker
+      o.tmpMarker = DbMarker
     }
 
     forceWriteInitial(o, doc)
@@ -64,7 +64,12 @@ object DbWriter {
 }
 
 class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
-  lazy val dbDoc = new AsyncShareDoc(hub.id, true)
+  private var _dbDoc: AsyncShareDoc = null
+  protected[data] def dbDoc = if (_dbDoc != null) _dbDoc else {
+    _dbDoc = new AsyncShareDoc(hub.id, true)
+    _dbDoc
+  }
+  protected[data] def setDbDoc(doc: AsyncShareDoc) = _dbDoc = doc
 
   hub.onNew(onNew)
 
@@ -74,7 +79,7 @@ class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
   }
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
-    if (connection.tmpMarker != GunMarker && connection.tmpMarker != AtInstantiation) {
+    if (connection.tmpMarker != DbMarker && connection.tmpMarker != AtInstantiation) {
       console.println(s"Gun Writer onConAdd ${hub} [${hub.id}] ${connection} ")
       DbWriter.writeSingleConnection(dbDoc, connection)
     }

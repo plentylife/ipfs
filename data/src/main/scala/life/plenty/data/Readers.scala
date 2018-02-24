@@ -15,7 +15,7 @@ import scala.language.postfixOps
 import scala.scalajs.js
 import scala.scalajs.js.JSON
 
-object GunMarker extends TmpMarker
+object DbMarker extends TmpMarker
 
 @js.native
 trait JsHub extends js.Object {
@@ -54,16 +54,14 @@ object DbReader {
     //    ci("Wallet", new Wallet)
   )
 
-  def read(id: String): Future[Option[Hub]] = {
+  def read(id: String): Future[Hub] = {
     data.console.trace(s"Reading hub with id `${id}`")
     // from cache
     val fromCache = Cache.getOctopus(id)
     if (fromCache.nonEmpty) {
       data.console.println(s"Read ${id} from cache")
-      return Future(fromCache)
+      return Future(fromCache.get)
     }
-
-//    val gun = Main.gun.get(id)
 
     val dbDoc = new AsyncShareDoc(id, true)
 
@@ -73,32 +71,34 @@ object DbReader {
       case e: DocDoesNotExist ⇒ console.error(s"Failed loading on ID `$id`"); throw e
     }
 
-    // fixme. optimization. not try every loader. stop at first success.
-    className.flatMap(cName ⇒ {
-      console.println(s"Gun is constructing $cName")
-      val potentials: Stream[Future[Option[Hub]]] = availableClasses.map(f ⇒ {
+    className flatMap (cName ⇒ {
+      console.println(s"DbReader is constructing $cName")
+      val potentials: Stream[Option[Future[Hub]]] = availableClasses.map(f ⇒ {
         try {
-          val o = f(cName)
-          val res: Future[Option[Hub]] = o map { o ⇒
+          val h = f(cName)
+          val res: Option[Future[Hub]] = h map { o ⇒
             val idCon = Id(id)
-            idCon.tmpMarker = GunMarker
+            idCon.tmpMarker = DbMarker
+
             // have to wait on id!!
             o.addConnection(idCon) map {_ ⇒
-              Cache.put(o)
-              // fixme this is just a quick fix. for not double loading
-            } map {_ ⇒ Cache.getOctopus(id)}
-          } getOrElse Future {Cache.getOctopus(id)}
+              val exH = Cache.put(o) // this gives back the existing
+              data.getWriterModule(exH).setDbDoc(dbDoc)
+              exH
+            }
+          }
           res
         } catch {
-          case e: Throwable ⇒ console.error(e); e.printStackTrace(); Future {None}
+          case e: Throwable ⇒ console.error(e); e.printStackTrace(); None
         }
       })
 
-      Future.sequence(potentials) map { materialized ⇒
-        val actualized = materialized.flatten
-        if (actualized.isEmpty) console.error(s"Could not find loader with class ${cName}")
-        actualized.headOption
+      potentials.flatten.headOption match {
+        case None ⇒ console.error(s"Could not find loader with class ${cName}")
+          throw new Exception(s"Classloader for $cName not found")
+        case Some(f) ⇒ f
       }
+
     })
   }
 
@@ -174,7 +174,7 @@ ActionOnFinishDataLoad {
   var instantiated = false
   val connectionsLeftToLoad = Var(-1)
   private lazy val allCons = hub.connections.map(_.map(_.id))
-  lazy val dbDoc = hub.getTopModule({case m: DbWriterModule => m}).get.dbDoc // get should never trip
+  lazy val dbDoc = data.getWriterModule(hub).dbDoc // get should never trip
 
   override def onConnectionsRequest(): Unit = synchronized {
     if (!instantiated) {
