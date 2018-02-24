@@ -26,7 +26,10 @@ trait JsHub extends js.Object {
 @js.native
 trait JsDataHub extends JsHub {
   val value: String
+  val valueType: String
 }
+
+class MissingDbClassLoader(loader: String) extends Exception
 
 object DbReader {
   def ci(className: String, inst: ⇒ Hub) = {
@@ -54,7 +57,9 @@ object DbReader {
     //    ci("Wallet", new Wallet)
   )
 
-  def read(id: String): Future[Hub] = {
+  /**
+    * @throws DocDoesNotExist */
+  def read(id: String, doc: Option[AsyncShareDoc] = None): Future[Hub] = {
     data.console.trace(s"Reading hub with id `${id}`")
     // from cache
     val fromCache = Cache.getOctopus(id)
@@ -63,7 +68,7 @@ object DbReader {
       return Future(fromCache.get)
     }
 
-    val dbDoc = new AsyncShareDoc(id, true)
+    val dbDoc = doc getOrElse new AsyncShareDoc(id, true)
 
     val className: Future[String] = dbDoc.getData map { data ⇒
       data.`class`
@@ -73,7 +78,7 @@ object DbReader {
 
     className flatMap (cName ⇒ {
       console.println(s"DbReader is constructing $cName")
-      val potentials: Stream[Option[Future[Hub]]] = availableClasses.map(f ⇒ {
+      val potentials: Stream[Future[Hub]] = availableClasses.flatMap(f ⇒ {
         try {
           val h = f(cName)
           val res: Option[Future[Hub]] = h map { o ⇒
@@ -93,9 +98,9 @@ object DbReader {
         }
       })
 
-      potentials.flatten.headOption match {
+      potentials.headOption match {
         case None ⇒ console.error(s"Could not find loader with class ${cName}")
-          throw new Exception(s"Classloader for $cName not found")
+          throw new MissingDbClassLoader(cName)
         case Some(f) ⇒ f
       }
 
@@ -107,55 +112,41 @@ object DbReader {
   }
 }
 
-
-object ConnectionReader {
+object DataHubReader {
   private val leafReaders = Stream[(String, String) ⇒ Option[DataHub[_]]](
     Title(_, _), Body(_, _), Amount(_, _), Id(_, _), Name(_, _), CreationTime(_, _), Marker(_, _),
     Active(_, _), Inactive(_, _), Email(_, _)
   )
 
-  private val octopusReaders = Stream[(String, Hub) ⇒ Option[DataHub[_]]](
+  private val hubReaders = Stream[(String, Hub) ⇒ Option[DataHub[_]]](
     Child(_, _), Parent(_, _), RootParent(_, _), Created(_, _), Creator(_, _), Contributor(_, _),
     Member(_, _), To(_, _), From(_, _)
   )
 
-  private def hasClass(key: String): Future[Boolean] = {
-    // for stuff like empty titles
-    if (key.isEmpty) return Future(false)
-
-    val p = Promise[Boolean]()
-    gunCalls.get(key, (d: js.Object, k: String) ⇒ {
-      if (!js.isUndefined(d)) {
-        console.trace(s"Has class gun call got response for $key ${JSON.stringify(d)} $k")
-      } else console.trace(s"Has class did not find the requested id $key")
-      if (!js.isUndefined(d)) p.success(true) else p.success(false)
-    })
-    p.future
+  private def readHubValue(jsHub: JsDataHub): Future[Option[DataHub[_]]] = {
+    DbReader.read(jsHub.value) map {h ⇒ hubReaders flatMap {f ⇒ f(jsHub.`class`, h)} headOption}
   }
+  private def readStringValue(jsHub: JsDataHub): Option[DataHub[_]] =
+    leafReaders flatMap {f ⇒ f(jsHub.`class`, jsHub.value)} headOption
 
-  def read(d: js.Object, key: String): Future[Option[DataHub[_]]] = {
-    val con = d.asInstanceOf[JsDataHub]
-    // Id is a special case, since it's value points to an octopus, but it's really a leaf connection
-    console.trace(s"ConnectionReader ${con.`class`} ${con.value} $key")
-    if (con.`class` == "Id") return Future {Option {Id(con.value)}}
 
-    hasClass(con.value) flatMap { hc ⇒
-      console.trace(s"Has class $hc ${con.`class`} ${con.value} $key")
-      if (hc) {
-        DbReader.read(con.value) map { optO ⇒
-          if (optO.isEmpty) throw new Exception(s"Could not read an octopus from database with id ${con.value}")
-          optO flatMap { o ⇒
-            val res = octopusReaders flatMap { f ⇒ f(con.`class`, o) } headOption;
-//            res foreach {_.setOrder(con.order)}
-            res
-          }
+  def read(id: String): Future[DataHub[_]] = {
+    val dbDoc = new AsyncShareDoc(id, true)
+
+    dbDoc.getData flatMap {data ⇒
+      val jsHub = data.asInstanceOf[JsDataHub]
+      console.trace(s"DataHub Reader ${jsHub.`class`} ${jsHub.value} ${jsHub.valueType} $id")
+
+      val constructed: Future[Option[DataHub[_]]] = jsHub.valueType match {
+        case "string" ⇒ Future(readStringValue(jsHub))
+        case "hub" ⇒ try {readHubValue(jsHub)} catch {
+          case e: DocDoesNotExist ⇒ console.error(e); throw e
         }
-      } else {
-        Future {
-          val res = leafReaders flatMap { f ⇒ f(con.`class`, con.value) } headOption;
-//          res foreach {_.setOrder(con.order)}
-          res
-        }
+      }
+
+      constructed map {
+        case Some(h) ⇒ h
+        case _ ⇒ throw new MissingDbClassLoader(jsHub.`class`)
       }
     }
   }

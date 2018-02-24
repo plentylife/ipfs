@@ -46,7 +46,7 @@ class AsyncShareDoc(id: String, doSubscribe: Boolean = false) {
   if (doSubscribe) subscribe
 
   def getData: Future[JsHub] = exists map { doesExist ⇒
-    if (doesExist) doc.data.asInstanceOf[JsHub] else throw new DocDoesNotExist
+    if (doesExist) doc.data.asInstanceOf[JsHub] else throw new DocDoesNotExist(id)
   }
 
   def exists: Future[Boolean] = Option(subscription).getOrElse(fetch).map(_ ⇒ doc.`type` != null).recover {
@@ -94,5 +94,5 @@ class AsyncShareDoc(id: String, doSubscribe: Boolean = false) {
   }
 }
 
-class DocDoesNotExist extends Exception
+class DocDoesNotExist(id: String) extends Exception
 class ShareDbError(json: String) extends Exception

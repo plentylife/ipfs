@@ -38,8 +38,7 @@ object DbWriter {
         o.sc.all.map(_.id):_*
       ))
       o match {
-        case c: DataHub[_] ⇒
-          info.updateDynamic("value")(stringifyData(c))
+        case c: DataHub[_] ⇒ fillDataHubInfo(c, info)
         case _ ⇒
       }
       info
@@ -48,10 +47,14 @@ object DbWriter {
   /** is not safe, but should never fail */
   def getDoc(h: Hub): AsyncShareDoc = h.getTopModule({case m: DbWriterModule ⇒ m}).get.dbDoc
 
-  private def stringifyData(c: DataHub[_]): String = {
+  private def fillDataHubInfo(c: DataHub[_], info: js.Dynamic): Unit = {
     c.value match {
-      case o: Hub ⇒ o.id
-      case other ⇒ other.toString()
+      case o: Hub ⇒
+        info.updateDynamic("value")(o.id)
+        info.updateDynamic("valueType")("hub")
+      case other ⇒
+        info.updateDynamic("value")(other.toString)
+        info.updateDynamic("valueType")("string")
     }
   }
 
