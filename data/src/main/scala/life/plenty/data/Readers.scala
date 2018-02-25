@@ -184,7 +184,7 @@ ActionOnFinishDataLoad {
     dbDoc.getData map { data ⇒
       val existingIds = hub.connections.now.map(_.id)
       val unloadedIds = data.connections.toList.filterNot(existingIds.contains)
-      connectionsLeftToLoad() = unloadedIds.size + connectionsLeftToLoad.now
+      connectionsLeftToLoad() = unloadedIds.size
 
       console.trace(s"Reader has connections to load for $hub ${hub.id} $unloadedIds")
 
