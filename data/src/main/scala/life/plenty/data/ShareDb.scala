@@ -27,7 +27,7 @@ trait ShareDBDoc extends js.Object {
   // missing options
   def submitOp(op: js.Object, errorCb: js.Function1[js.Object, Unit]): Unit = js.native
   // this does not fit all of them. some are not js.F2
-  def on(channel: String, cb: js.Function2[DbOp, Boolean, Unit]): Unit = js.native
+  def on(channel: String, cb: js.Function2[js.Array[NativeDbOp], Boolean, Unit]): Unit = js.native
 }
 
 trait DbOp extends js.Object {
@@ -36,6 +36,11 @@ trait DbOp extends js.Object {
 trait DbInsertOp extends DbOp {
   val li: js.Any
 }
+
+@js.native
+trait NativeDbOp extends DbOp
+@js.native
+trait NativeDbInsertOp extends DbInsertOp
 
 @js.native
 @JSGlobal
@@ -50,7 +55,7 @@ class DocWrapper(id: String) {
 //  if (doSubscribe) subscribe
 
   def getData: Future[JsHub] = exists map { doesExist ⇒
-    if (doesExist) doc.data.asInstanceOf[JsHub] else throw new DocDoesNotExist(id)
+    if (doesExist) doc.data.asInstanceOf[JsHub] else throw new DocDoesNotExist(id) // fixme. shouldn't throw
   }
 
   def exists: Future[Boolean] = Option(subscription).getOrElse {
@@ -70,12 +75,15 @@ class DocWrapper(id: String) {
   private def opListener: js.Function2[DbOp, Boolean, Unit] = null
   def onRemoteConnectionChange(idCb: String ⇒ Unit) = {
     if (opListener == null) {
-      doc.on("op", (op: DbOp, source: Boolean) ⇒ {
-        console.trace(s"Doc listener fired $source ${JSON.stringify(op)}")
-        if (!source) {
-          Try {op.asInstanceOf[DbInsertOp]} foreach(insOp ⇒ {
-            if (insOp.p(0).toString  == "connections") idCb(insOp.li.toString)
-          })
+      doc.on("op", (ops: js.Array[NativeDbOp], source: Boolean) ⇒ {
+        console.trace(s"Doc listener fired $source ${JSON.stringify(ops)}")
+        ops foreach { op ⇒
+          console.trace(s"Doc listener fired ${op.p}")
+          if (!source) {
+            Try {op.asInstanceOf[NativeDbInsertOp]} foreach (insOp ⇒ {
+              if (insOp.p.headOption.exists(_.toString == "connections")) idCb(insOp.li.toString)
+            })
+          }
         }
       })
     }

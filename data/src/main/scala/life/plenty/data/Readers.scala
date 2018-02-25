@@ -173,7 +173,8 @@ ActionOnFinishDataLoad {
     if (!instantiated) {
       instantiated = true
       console.println(s"Reader got request to load ${hub.getClass} with ${hub.sc.all}")
-      dbDoc.exists foreach {ex ⇒ if (ex) load()}
+      // so since this will have to happen before the writer gets to us, we just skip the exists check
+      load()
     }
   }
 
@@ -191,6 +192,8 @@ ActionOnFinishDataLoad {
       unloadedIds map loadConnection foreach {_ onComplete(lf ⇒ if (lf.isSuccess) {
         connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
       })}
+    } recover {
+      case e: DocDoesNotExist ⇒ connectionsLeftToLoad() = 0
     }
 
     dbDoc.onRemoteConnectionChange(loadConnection)
