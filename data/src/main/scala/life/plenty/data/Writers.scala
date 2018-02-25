@@ -17,7 +17,7 @@ class DbInsertConnectionOp(h: Hub) extends DbInsertOp {
 }
 
 object DbWriter {
-  def writeInitial(o: Hub, doc: DocWrapper): Unit = {
+  def writeInitial(o: Hub, doc: Option[DocWrapper] = None): Unit = {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
@@ -28,14 +28,22 @@ object DbWriter {
       o.tmpMarker = DbMarker
     }
 
-    forceWriteInitial(o, doc)
+    val dbDoc = doc.getOrElse(getDoc(o))
+
+    forceWriteInitial(o, dbDoc)
   }
 
   private[data] def forceWriteInitial(o: Hub, doc: DocWrapper, hubClass: Option[String] = None): Future[Unit] =
     doc.setInitial {
       val hc: String = hubClass.getOrElse(o.getClass.getSimpleName)
+      val connections = o.sc.all
+
+//       because datahubs aren't automatically saved by their module (no asNew call)
+      // and it needs to happen after the connection has been given to a holder (id depends on it)
+      connections foreach {c ⇒ writeInitial(c)}
+
       val info = js.Dynamic.literal("class" → hc, "connections" → js.Array(
-        o.sc.all.map(_.id):_*
+        connections.map(_.id):_*
       ))
       o match {
         case c: DataHub[_] ⇒ fillDataHubInfo(c, info)
@@ -59,7 +67,7 @@ object DbWriter {
   }
 
   def writeSingleConnection(holderDoc: DocWrapper, connection: DataHub[_]): Unit = {
-    DbWriter.writeInitial(connection, getDoc(connection)) // write the new connection
+    DbWriter.writeInitial(connection) // write the new connection
     // add to holder
     holderDoc.submitOp(new DbInsertConnectionOp(connection))
   }
@@ -80,16 +88,20 @@ class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
     _dbDoc
   }
 
-  hub.onNew(onNew)
+  console.trace(s"DbWriter Module instantiated in ${hub.getClass.getSimpleName} ${this.getClass}")
 
-  protected def onNew = {
+  hub.onNew(onNew())
+
+  protected def onNew() = {
     console.println(s"Instantiation Gun Writer ${hub} ${hub.id}")
-    DbWriter.writeInitial(hub, dbDoc)
+    DbWriter.writeInitial(hub, Option(dbDoc))
   }
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
+    // todo. should in theory not write any connections that already exist in the database, but it would be best to
+    // check
     if (connection.tmpMarker != DbMarker && connection.tmpMarker != AtInstantiation) {
-      console.println(s"Gun Writer onConAdd ${hub} [${hub.id}] ${connection} ")
+      console.println(s"DbWriter on new connection added ${hub} [${hub.id}] ${connection} ")
       DbWriter.writeSingleConnection(dbDoc, connection)
     }
     Future {Right()}
@@ -102,3 +114,9 @@ class SecureUserDbWriterModule(override val hub: SecureUser) extends DbWriterMod
     DbWriter.forceWriteInitial(hub, dbDoc, Option("BasicUser"))
   }
 }
+
+//// fixme. as soon as datahubs become more sophisticated
+//class DataHubDbWriterModule(override val hub: DataHub[_]) extends DbWriterModule(hub) {
+//  // datahubs aren't usually called with asNew, so this never gets called
+//  onNew()
+//}

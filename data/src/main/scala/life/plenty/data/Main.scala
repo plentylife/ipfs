@@ -1,6 +1,7 @@
 package life.plenty.data
 
 import life.plenty.model.ModuleRegistry
+import life.plenty.model.connection.DataHub
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.security.SecureUser
 import life.plenty.{data, model}
@@ -22,7 +23,9 @@ object Main {
 
     ModuleRegistry add { case o: SecureUser ⇒ new SecureUserDbReaderModule(o) }
     ModuleRegistry add { case o: SecureUser ⇒ new SecureUserDbWriterModule(o) }
-    //    ModuleRegistry add { case o: Hub ⇒ new OctopusGunReaderModule(o) }
+
+//     fixme. as soon as datahubs become more sophisticated
+//    ModuleRegistry add { case o: DataHub[_] ⇒ new DataHubDbWriterModule(o) }
   }
 }
 

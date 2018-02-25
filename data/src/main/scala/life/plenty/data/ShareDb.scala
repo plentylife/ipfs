@@ -81,7 +81,9 @@ class DocWrapper(id: String) {
     }
   }
 
-  def setInitial(info: ⇒ js.Object): Future[Unit] = subscription flatMap {_⇒
+  def setInitial(info: ⇒ js.Object): Future[Unit] = {
+    if (subscription != null) subscription else if (doc.`type` != null) Future() else fetch
+  } flatMap {_⇒
     if (doc.`type` == null) {
       data.console.trace(s"Creating doc with data ${JSON.stringify(info)}")
       create(info)
@@ -99,7 +101,8 @@ class DocWrapper(id: String) {
   }
 
   def fetch = {
-    data.console.trace(s"fetching $id")
+    // fixme this gets called twice // maybe just for secure user
+    data.console.trace(s"Doc fetching $id $this")
     errCbToFuture(doc.fetch)
   }
 

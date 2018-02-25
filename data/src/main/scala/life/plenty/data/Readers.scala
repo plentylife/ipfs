@@ -145,7 +145,9 @@ object DataHubReader {
       }
 
       constructed map {
-        case Some(h) ⇒ h
+        case Some(h) ⇒
+          h.tmpMarker = DbMarker
+          h
         case _ ⇒ throw new MissingDbClassLoader(jsHub.`class`)
       }
     }
@@ -197,7 +199,6 @@ ActionOnFinishDataLoad {
   private def loadConnection(id: String): Future[Unit] = {
     DataHubReader.read(id) flatMap { c ⇒
       console.trace(s"Reader loaded connection for ${hub} ${c.id}")
-      c.tmpMarker = DbMarker
       hub.addConnection(c)
     } recover {
       case e: Throwable ⇒

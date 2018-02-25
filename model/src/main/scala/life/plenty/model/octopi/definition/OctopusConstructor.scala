@@ -61,6 +61,7 @@ trait OctopusConstructor {
 
   def isNew = isNewVar.now
 
+  /** this is not called for DataHubs */
   def onNew(f: ⇒ Unit): Unit = {
     isNewVar.foreach(i ⇒ {
       if (i) {
