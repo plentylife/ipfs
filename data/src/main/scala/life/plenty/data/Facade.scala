@@ -4,6 +4,7 @@ import scala.scalajs.js
 import scala.scalajs.js.UndefOr
 import scala.scalajs.js.annotation.{JSGlobal, ScalaJSDefined}
 
+// fixme. this all needs to be deleted
 
 @js.native
 trait Ack extends js.Object {

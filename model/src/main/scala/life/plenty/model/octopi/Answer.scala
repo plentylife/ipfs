@@ -17,7 +17,6 @@ trait Answer extends Space with WithParent[Space] {
   lazy val votes: Rx[Int] = Rx {
     val mags = allVotes().flatMap(_.sizeAndDirection())
     model.console.trace(s"Answer votes magnitudes ${this} ${mags}")
-    println(s"Answer votes magnitudes ${this} ${mags}")
     mags.sum
   }
 

@@ -4,13 +4,14 @@ import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.DbReaderModule
 import life.plenty.model.octopi.{Members, User}
+import life.plenty.model.utils.GraphUtils
 import life.plenty.ui
 import life.plenty.ui.display.actions.AnswerControls
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.display.utils.Helpers.{BasicBindable, BindableModule, OptBindableProperty}
-import life.plenty.ui.model.{ComplexModuleOverride, DisplayModel, UiContext}
+import life.plenty.ui.model.{ComplexModuleOverride, DisplayModel, ModuleOverride, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 import rx.Obs
@@ -46,19 +47,29 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
     </div>
   }
 
-//  private val udo = new ComplexModuleOverride(this, {case m: BadgeMemberEarned ⇒ m}, _.isInstanceOf[FullUserBadge])
-  private def displayMember(u: User): Binding[Node] = DisplayModel.display(u, List(), Option(this))
+  private val udo = new ComplexModuleOverride(this, {case m: BadgeMemberEarned ⇒ m}, _.isInstanceOf[FullUserBadge])
+//  private val udo = new ModuleOverride(this, {case m: BadgeMemberEarned ⇒ m}, _.isInstanceOf[FullUserBadge])
+  private def displayMember(u: User): Binding[Node] = DisplayModel.display(u, List(udo), Option(this))
 }
 
+import life.plenty.ui.display.utils.Helpers._
 class BadgeMemberEarned(override val hub: User) extends DisplayModule[User] {
   override def update(): Unit = Unit
 
-  private lazy val badgeDispaly = new BindableModule(hub.getTopModule({case m: FullUserBadge ⇒ m}), this)
+  private lazy val badgeDisplay = new BindableModule(hub.getTopModule({case m: FullUserBadge ⇒ m}), this)
+
+  private lazy val contributions = GraphUtils.getAllContributionsInSpace(UiContext.startingSpace.value.get, hub)
+  private lazy val contributionsCount = contributions.map(_.size)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     <div class="d-flex user-earned-box">
-      {DisplayModel.display(hub, Nil, Option(this)).bind}
+      <div>
+      {badgeDisplay.dom.bind} earned
+      </div>
+      <div>
+        {contributionsCount.dom.bind} contributions
+      </div>
     </div>
   }
 }

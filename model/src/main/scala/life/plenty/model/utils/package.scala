@@ -23,6 +23,10 @@ package object utils {
     })
 
     def forEach(f: T ⇒ Unit) = rx.foreach(o ⇒ o.foreach(f))
+
+    def mapRx[M](f: T ⇒ M): Rx[Option[M]] = rx.map(_.map(f))
+
+    def flatMapRx[M](f: T ⇒ Option[M]): Rx[Option[M]] = rx.map(_.flatMap(f))
   }
 
   class Console(var active: Boolean, traceActive: Boolean = false, _prefix: String = "") {
