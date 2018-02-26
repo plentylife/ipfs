@@ -52,4 +52,8 @@ object GraphUtils {
       }
     }
   }
+
+  def collectDownTree(in: Hub, matchBy: Hub ⇒ Boolean, allowedPath: Hub ⇒ Boolean): List[Hub] = {
+    ???
+  }
 }

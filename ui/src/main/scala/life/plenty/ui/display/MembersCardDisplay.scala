@@ -10,7 +10,7 @@ import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.display.utils.Helpers.{BasicBindable, OptBindableProperty}
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.{ComplexModuleOverride, DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 import rx.Obs
@@ -46,6 +46,17 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
     </div>
   }
 
-  private def displayMember(u: User): Binding[Node] = DisplayModel.display(u, Nil, Option(this))
+  private val udo = new ComplexModuleOverride(this, {case m: BadgeMemberEarned ⇒ m}, _.isInstanceOf[FullUserBadge])
+  private def displayMember(u: User): Binding[Node] = DisplayModel.display(u, List(udo), Option(this))
 }
 
+class BadgeMemberEarned(override val hub: User) extends DisplayModule[User] {
+  override def update(): Unit = Unit
+
+  @dom
+  override protected def generateHtml(): Binding[Node] = {
+    <div class="d-flex user-earned-box">
+      {DisplayModel.display(hub, Nil, Option(this)).bind}
+    </div>
+  }
+}

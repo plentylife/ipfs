@@ -49,6 +49,7 @@ package object ui {
     ModuleRegistry add { case o: Hub ⇒ new ModularDisplay(o) }
 
     ModuleRegistry add { case o: User ⇒ new FullUserBadge(o) }
+    ModuleRegistry add { case o: User ⇒ new BadgeMemberEarned(o) }
     ModuleRegistry add { case o: Members ⇒ new MembersCardDisplay(o) }
 
     ModuleRegistry add { case o: Space ⇒ new CardSpaceDisplay(o) } // can apply to question too
