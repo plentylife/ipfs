@@ -17,11 +17,11 @@ class DbInsertConnectionOp(h: Hub) extends DbInsertOp {
 }
 
 object DbWriter {
-  def writeInitial(o: Hub, doc: Option[DocWrapper] = None): Unit = {
+  def writeInitial(o: Hub, doc: Option[DocWrapper] = None): Future[Unit] = {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
-      return
+      return Future{}
     } else {
       // fixme this is danegerous because it does not check for success of the write
       Cache.put(o)
@@ -67,9 +67,10 @@ object DbWriter {
   }
 
   def writeSingleConnection(holderDoc: DocWrapper, connection: DataHub[_]): Unit = {
-    DbWriter.writeInitial(connection) // write the new connection
-    // add to holder
-    holderDoc.submitOp(new DbInsertConnectionOp(connection))
+    DbWriter.writeInitial(connection) foreach { _ ⇒ // write the new connection
+      // add to holder
+      holderDoc.submitOp(new DbInsertConnectionOp(connection))
+    }
   }
 
 }

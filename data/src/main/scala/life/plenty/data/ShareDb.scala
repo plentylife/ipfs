@@ -78,7 +78,6 @@ class DocWrapper(id: String) {
       doc.on("op", (ops: js.Array[NativeDbOp], source: Boolean) ⇒ {
         console.trace(s"Doc listener fired $source ${JSON.stringify(ops)}")
         ops foreach { op ⇒
-          console.trace(s"Doc listener fired ${op.p}")
           if (!source) {
             Try {op.asInstanceOf[NativeDbInsertOp]} foreach (insOp ⇒ {
               if (insOp.p.headOption.exists(_.toString == "connections")) idCb(insOp.li.toString)
@@ -98,7 +97,7 @@ class DocWrapper(id: String) {
     } else Future(Unit)
   }
 
-  def create(data: js.Object) = {
+  def create(data: js.Object): Future[Unit] = {
     def curry(cb: js.Function1[js.Object, Unit]) = doc.create(data, cb)
     errCbToFuture(curry)
   }

@@ -200,6 +200,7 @@ ActionOnFinishDataLoad {
   }
 
   private def loadConnection(id: String): Future[Unit] = {
+    console.trace(s"Reader trying to load connection for ${hub} with id ${id}")
     DataHubReader.read(id) flatMap { c ⇒
       console.trace(s"Reader loaded connection for ${hub} ${c.id}")
       hub.addConnection(c)
