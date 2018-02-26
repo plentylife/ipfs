@@ -201,6 +201,11 @@ $event-color: #9f8600;
       margin: 0;
     }
   }
+
+  .user-earned-bar-box {
+    display: flex;
+    width: 100%;
+  }
 }
 
 .user-badge {

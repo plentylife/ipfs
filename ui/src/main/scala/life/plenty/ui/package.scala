@@ -48,7 +48,7 @@ package object ui {
 
     ModuleRegistry add { case o: Hub ⇒ new ModularDisplay(o) }
 
-    ModuleRegistry add { case o: User ⇒ new BadgeMemberEarned(o) }
+//    ModuleRegistry add { case o: User ⇒ new BadgeMemberEarned(o) }
     ModuleRegistry add { case o: User ⇒ new FullUserBadge(o) }
     ModuleRegistry add { case o: Members ⇒ new MembersCardDisplay(o) }
 

@@ -1,9 +1,10 @@
 package life.plenty.ui.display
 
-import com.thoughtworks.binding.Binding.Vars
+import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.DbReaderModule
-import life.plenty.model.octopi.{Members, User}
+import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.octopi.{Contribution, Members, Space, User}
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui
 import life.plenty.ui.display.actions.AnswerControls
@@ -14,7 +15,8 @@ import life.plenty.ui.display.utils.Helpers.{BasicBindable, BindableModule, OptB
 import life.plenty.ui.model.{ComplexModuleOverride, DisplayModel, ModuleOverride, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
-import rx.Obs
+import rx.{Ctx, Obs, Rx}
+import life.plenty.ui.display.utils.Helpers._
 
 import scalaz.std.list._
 
@@ -47,28 +49,39 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
     </div>
   }
 
-  private val udo = new ComplexModuleOverride(this, {case m: BadgeMemberEarned ⇒ m}, _.isInstanceOf[FullUserBadge])
-//  private val udo = new ModuleOverride(this, {case m: BadgeMemberEarned ⇒ m}, _.isInstanceOf[FullUserBadge])
-  private def displayMember(u: User): Binding[Node] = DisplayModel.display(u, List(udo), Option(this))
+  private val contributions: Rx[List[Contribution]] = Rx {hub.getParent() match {
+    case Some(p: Space) ⇒ val l = GraphUtils.getAllContributionsInSpace(p); l()
+    case _ ⇒ List()
+  }}
+  private lazy val maxEarned = Var(0)
+
+  private def displayMember(u: User): Binding[Node] = {
+    val userContributions = Rx {
+      println(s"contributions $contributions")
+      contributions().filter(_.getCreator().exists(_.id == u.id))
+    }
+    val b = new BadgeMemberEarned(u, userContributions, this)
+
+    b.html()
+  }
 }
 
-import life.plenty.ui.display.utils.Helpers._
-class BadgeMemberEarned(override val hub: User) extends DisplayModule[User] {
-  override def update(): Unit = Unit
 
-  private lazy val badgeDisplay = new BindableModule(hub.getTopModule({case m: FullUserBadge ⇒ m}), this)
+class BadgeMemberEarned(val user: User, contributions: Rx[List[Contribution]], caller: DisplayModule[Hub])
+                       (implicit ctx: Ctx.Owner) {
+  private implicit def parser(i: Int): String = s"$i contributions"
 
-  private lazy val contributions = GraphUtils.getAllContributionsInSpace(UiContext.startingSpace.value.get, hub)
+  private lazy val badgeDisplay = new BindableModule(user.getTopModule({case m: FullUserBadge ⇒ m}), caller)
   private lazy val contributionsCount = contributions.map(_.size)
 
   @dom
-  override protected def generateHtml(): Binding[Node] = {
+  def html(): Binding[Node] = {
     <div class="d-flex user-earned-box">
-      <div>
+      <div class="user-earned-bar-box">
       {badgeDisplay.dom.bind} earned
       </div>
       <div>
-        {contributionsCount.dom.bind} contributions
+        {contributionsCount.dom.bind}
       </div>
     </div>
   }

@@ -40,16 +40,9 @@ object GraphUtils {
     }
   }
 
-  def getAllContributionsInSpace(space: Space, user: User)(implicit ctx: Ctx.Owner): Rx[List[Contribution]] = {
-    def filterContributionByCreator(hub: DataHub[_]): Rx[Option[Contribution]] = hub match {
-      case Child(hub: Contribution) ⇒
-        println(s"processing contribution ${hub.getCreator}")
-        hub.getCreator.flatMapRx(h ⇒ {if (h.id == user.id) Option(hub) else None})
-      case _ ⇒ Rx {None}
-    }
-
-    collectDownTree[Contribution](space, matchBy = filterContributionByCreator,
-      allowedPath = {case Child(h: Hub) ⇒ h}, 5000)
+  def getAllContributionsInSpace(space: Space)(implicit ctx: Ctx.Owner): Rx[List[Contribution]] = {
+    collectDownTree[Contribution](space, matchBy = {case Child(c: Contribution) ⇒ c},
+      allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
   }
 
   def findModuleUpParentTree[T](in: Hub, matchBy: PartialFunction[DataHub[_], T]): Option[T] = {
@@ -76,17 +69,17 @@ object GraphUtils {
   import scala.concurrent.duration._
 
   /** @param matchBy should be able to handle [[DataHub]] */
-  def collectDownTree[T](in: Hub, matchBy: DataHub[_] ⇒ Rx[Option[T]],
+  def collectDownTree[T <: Hub](in: Hub, matchBy: PartialFunction[DataHub[_], T],
                       allowedPath: PartialFunction[DataHub[_],Hub], debounceDuration: Int = 0)
                      (implicit ctx: Ctx.Owner): Rx[List[T]] = Rx {
     val pathCons = in.rx.getAll(allowedPath).debounce(debounceDuration millis)
-    val hubs = in.rx.cons.debounce(debounceDuration millis) map {list ⇒
-      println(s"looking for hubs in $list")
-      list flatMap {h ⇒ val r = matchBy(h); r()}
+    val _hubs = in.rx.cons.debounce(debounceDuration millis)
+    val hubs = _hubs map {list ⇒
+      println(s"@")
+      list collect matchBy
     }
 
-//    model.console.trace(s"collectDownTree ${pathCons} | $hubs")
-    println(s"${in} -->\n\t collectDownTree $hubs || $pathCons ")
+    println(s"collectDownTree ${in}")
 
     val nextHubs = pathCons() flatMap { h ⇒
       val r = collectDownTree(h, matchBy, allowedPath)
@@ -95,4 +88,27 @@ object GraphUtils {
 
     hubs() ::: nextHubs
   }
+
+//  /** @param matchBy should be able to handle [[DataHub]] */
+//  def collectDownTree[T](in: Hub, matchBy: DataHub[_] ⇒ Rx[Option[T]],
+//                         allowedPath: PartialFunction[DataHub[_],Hub], debounceDuration: Int = 0)
+//                        (implicit ctx: Ctx.Owner): Rx[List[T]] = Rx {
+//    val pathCons = in.rx.getAll(allowedPath).debounce(20000 millis)
+//    val _hubs = in.rx.cons.debounce(20000 millis)
+//    val hubs = _hubs map {list ⇒
+//      println(s"@")
+//      list flatMap {h ⇒ val r = matchBy(h); print('`'); r()}
+//    } debounce(20000 millis)
+//
+//    //    model.console.trace(s"collectDownTree ${pathCons} | $hubs")
+//    println(s"collectDownTree ${in}")
+//    //    println(s"collectDownTree ${in} -->\n\t $hubs || $pathCons ")
+//
+//    val nextHubs = pathCons() flatMap { h ⇒
+//      val r = collectDownTree(h, matchBy, allowedPath)
+//      r()
+//    }
+//
+//    hubs() ::: nextHubs
+//  }
 }
