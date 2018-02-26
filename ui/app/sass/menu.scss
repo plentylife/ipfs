@@ -5,11 +5,10 @@
 }
 
 .current-user-wallet-outer-box {
-  $balance-color: #34ce57;
   $negative-balance-color: #ce4759;
   flex-direction: column;
   .balance {
-    color: $balance-color;
+    color: $money-color;
   }
   .negative {
     color: $negative-balance-color;

@@ -202,9 +202,45 @@ $event-color: #9f8600;
     }
   }
 
-  .user-earned-bar-box {
+  .user-space-contribution-box {
+    margin-top: $spacer * 0.25;
+    padding-top: $spacer * 0.25;
+    border-top: 1px solid #e7e7e7;
     display: flex;
     width: 100%;
+    flex-direction: column;
+
+    .user-badge {
+      display: inline-flex;
+      margin-right: $spacer * 0.5;
+    }
+
+    .user-box {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      flex-direction: row;
+    }
+    .user-earned-bar-box {
+      display: flex;
+      width: 100%;
+      flex-grow: 1;
+      align-items: center;
+    }
+    .user-earned-bar {
+      background-color: $money-color;
+      border-left: 2px solid $money-color;
+      height: 5px;
+      display: flex;
+      border-radius: 3px;
+      margin-left: $spacer * 0.25;
+    }
+  }
+
+  .user-space-contribution-box:first-child {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
   }
 }
 
