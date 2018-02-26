@@ -46,8 +46,8 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
     </div>
   }
 
-  private val udo = new ComplexModuleOverride(this, {case m: BadgeMemberEarned ⇒ m}, _.isInstanceOf[FullUserBadge])
-  private def displayMember(u: User): Binding[Node] = DisplayModel.display(u, List(udo), Option(this))
+//  private val udo = new ComplexModuleOverride(this, {case m: BadgeMemberEarned ⇒ m}, _.isInstanceOf[FullUserBadge])
+  private def displayMember(u: User): Binding[Node] = DisplayModel.display(u, List(), Option(this))
 }
 
 class BadgeMemberEarned(override val hub: User) extends DisplayModule[User] {

@@ -63,4 +63,10 @@ object UiContext {
       ui.console.error(s"UI could not create user from name `${Option(name)}` and email `${Option(email)}`")
     }
   }
+
+  def devLogin = {
+    Option(window.localStorage.getItem("p")) foreach { p ⇒
+      login(null, window.localStorage.getItem("useremail"), p)
+    }
+  }
 }

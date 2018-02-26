@@ -1,4 +1,4 @@
-// require("babel-polyfill");
+require("babel-polyfill");
 
 window.sodium = require('libsodium-wrappers-sumo')
 window.Hashes = require('jshashes');

@@ -13,14 +13,18 @@
 
   <!--<script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>-->
   <!--<script src="http://cdn.rawgit.com/h2non/jsHashes/master/hashes.js"></script>-->
+
   <script src="entry.js"></script>
   <script type="text/javascript" src="../target/scala-2.12/ui-fastopt.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jdenticon@1.8.0" async></script>
 
 </head>
 <body>
+Security getting hammered out
 <script type="text/javascript">
-  Main.main(startDB("ws://127.0.0.1:8080/"), "")
+  sodium.ready.then(() => {
+    Main.main(startDB("ws://127.0.0.1:8080/"), "")
+  })
 </script>
 
 </body>
