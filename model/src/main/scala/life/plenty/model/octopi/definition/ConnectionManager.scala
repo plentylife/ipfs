@@ -38,7 +38,10 @@ trait ConnectionManager[CT] {self: Hub ⇒
 
   def addConnection(connection: DataHub[_]): Future[Unit] = synchronized {
     console.println(s"~ ${this.getClass.getSimpleName} " +
-      s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}\n" +
+      s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse(connection match {
+        case h: DataHub[_] ⇒ h.id
+        case _ ⇒ "*"
+      })}\n" +
       s"\t<-- ${connection.getClass.getSimpleName} " +
       s"${connection.sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}")
 

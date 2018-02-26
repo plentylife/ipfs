@@ -207,6 +207,7 @@ ActionOnFinishDataLoad {
       case e: Throwable ⇒
         console.trace(s"Reader failed to load connection for ${hub} with id ${id}")
         console.error(e)
+        e.printStackTrace()
     }
   }
 

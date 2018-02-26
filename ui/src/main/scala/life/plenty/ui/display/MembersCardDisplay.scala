@@ -9,7 +9,7 @@ import life.plenty.ui.display.actions.AnswerControls
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.model.DisplayModel.DisplayModule
-import life.plenty.ui.display.utils.Helpers.{BasicBindable, OptBindableProperty}
+import life.plenty.ui.display.utils.Helpers.{BasicBindable, BindableModule, OptBindableProperty}
 import life.plenty.ui.model.{ComplexModuleOverride, DisplayModel, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
@@ -52,6 +52,8 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
 
 class BadgeMemberEarned(override val hub: User) extends DisplayModule[User] {
   override def update(): Unit = Unit
+
+  private lazy val badgeDispaly = new BindableModule(hub.getTopModule({case m: FullUserBadge ⇒ m}), this)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
