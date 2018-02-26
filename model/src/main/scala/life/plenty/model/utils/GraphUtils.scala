@@ -75,11 +75,8 @@ object GraphUtils {
     val pathCons = in.rx.getAll(allowedPath).debounce(debounceDuration millis)
     val _hubs = in.rx.cons.debounce(debounceDuration millis)
     val hubs = _hubs map {list ⇒
-      println(s"@")
       list collect matchBy
     }
-
-    println(s"collectDownTree ${in}")
 
     val nextHubs = pathCons() flatMap { h ⇒
       val r = collectDownTree(h, matchBy, allowedPath)

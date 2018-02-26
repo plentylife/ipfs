@@ -15,6 +15,7 @@
   }
   .info-text {
     flex-wrap: nowrap;
+    font-size: smaller;
   }
   .thanks-balance {
     border-bottom: 1px solid grey;
@@ -27,7 +28,7 @@
 }
 
 .menu-bar {
-  @extend .col-md-2;
+  //@extend .col-md-2;
   max-width: 170px;
   padding-left: $spacer * 0.25;
   padding-right: $spacer * 0.25;
