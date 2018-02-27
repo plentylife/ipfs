@@ -47,6 +47,9 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
     implicit val os = cos.toList ::: siblingOverrides ::: overrides
     val titleClasses = "title ml-2 " + {if (isConfirmed().bind) "confirmed" else ""}
 
+//    println(s"TOP LAYOUT ${children.bind}")
+//    println(s"TOP LAYOUT ${hub.connections.now}")
+
     val sections: List[Binding[Div]] = sectionsExtension ::: (
       displayHubs(getMembers(children), "administrative section") ::
         displayHubs(getQuestions(children), "questions section") ::

@@ -67,6 +67,7 @@ class DocWrapper(id: String) {
 
   def subscribe: Future[Unit] = {
     if (subscription == null) {
+      console.trace(s"Doc subscribing to $id")
       subscription = errCbToFuture(doc.subscribe)
     }
     subscription

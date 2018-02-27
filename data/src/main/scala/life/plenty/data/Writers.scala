@@ -33,24 +33,25 @@ object DbWriter {
     forceWriteInitial(o, dbDoc)
   }
 
-  private[data] def forceWriteInitial(o: Hub, doc: DocWrapper, hubClass: Option[String] = None): Future[Unit] =
-    doc.setInitial {
-      val hc: String = hubClass.getOrElse(o.getClass.getSimpleName)
-      val connections = o.sc.all
+  private[data] def forceWriteInitial(o: Hub, doc: DocWrapper, hubClass: Option[String] = None): Future[Unit] = {
+    val hc: String = hubClass.getOrElse(o.getClass.getSimpleName)
+    val connections = o.sc.all
 
-//       because datahubs aren't automatically saved by their module (no asNew call)
-      // and it needs to happen after the connection has been given to a holder (id depends on it)
-      connections foreach {c ⇒ writeInitial(c)}
+    //       because datahubs aren't automatically saved by their module (no asNew call)
+    // and it needs to happen after the connection has been given to a holder (id depends on it)
+    connections foreach { c ⇒ writeInitial(c) }
 
-      val info = js.Dynamic.literal("class" → hc, "connections" → js.Array(
-        connections.map(_.id):_*
-      ))
-      o match {
-        case c: DataHub[_] ⇒ fillDataHubInfo(c, info)
-        case _ ⇒
-      }
-      info
+    // this needs to get processed outside of set initial, otherwise we might end up with duplicates
+    val info = js.Dynamic.literal("class" → hc, "connections" → js.Array(
+      connections.map(_.id): _*
+    ))
+    o match {
+      case c: DataHub[_] ⇒ fillDataHubInfo(c, info)
+      case _ ⇒
     }
+
+    doc.setInitial(info)
+  }
 
   /** is not safe, but should never fail */
   def getDoc(h: Hub): DocWrapper = h.getTopModule({case m: DbWriterModule ⇒ m}).get.dbDoc
@@ -94,7 +95,7 @@ class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
   hub.onNew(onNew())
 
   protected def onNew() = {
-    console.println(s"Instantiation Gun Writer ${hub} ${hub.id}")
+    console.println(s"Instantiation Gun Writer ${hub} ${hub.id} ${hub.sc.all}")
     DbWriter.writeInitial(hub, Option(dbDoc))
   }
 
