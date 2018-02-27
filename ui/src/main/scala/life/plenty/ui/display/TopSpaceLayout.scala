@@ -38,8 +38,12 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
   def getContributions(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[Contribution])
 
-  //      {displayModules(siblingModules.withFilter(_.isInstanceOf[SingleActionModuleDisplay[_]]), "top-space-menu")
-  // .bind}
+  def nav(dir: Int)(e: Event) = {
+    val s = document.getElementsByClassName("section")(0).asInstanceOf[Div]
+    window.scrollBy(s.offsetWidth.toInt * dir, 0)
+  }
+
+  protected val additionalCss = Var("")
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -47,21 +51,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
     implicit val os = cos.toList ::: siblingOverrides ::: overrides
     val titleClasses = "title ml-2 " + {if (isConfirmed().bind) "confirmed" else ""}
 
-//    println(s"TOP LAYOUT ${children.bind}")
-//    println(s"TOP LAYOUT ${hub.connections.now}")
-
-    val sections: List[Binding[Div]] = sectionsExtension ::: (
-      displayHubs(getMembers(children), "administrative section") ::
-        displayHubs(getQuestions(children), "questions section") ::
-        displayHubs(getProposals(children), "answers section") ::
-        displayHubs(getSubSpaces(children), "sub-spaces section") :: Nil)
-
-    def nav(dir: Int)(e: Event) = {
-      val s = document.getElementsByClassName("section")(0).asInstanceOf[Div]
-      window.scrollBy(s.offsetWidth.toInt * dir, 0)
-    }
-
-    <div class="top-space-layout">
+    <div class={"top-space-layout " + additionalCss.bind}>
 
       {val menuBar = siblingModules.withFilter(_.isInstanceOf[MenuBar])
     for (m <- menuBar) yield m.display(this, os) map {_.bind} getOrElse DisplayModel.nospan.bind}
@@ -87,32 +77,26 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
         </div>
       </div>
 
-      <div class="top-space-child-display row">
-        {for (s <- sections) yield s.bind}
+        {sectionsDisplay(sections).bind}
 
-        <script>
-          positionSectionNav()
-        </script>
-
-      </div>
+      <script>
+        positionSectionNav()
+      </script>
 
     </span>
     </div>
   }
 
-  protected def sectionsExtension(implicit overrides: List[ModuleOverride]): List[Binding[Div]] = Nil
+  @dom
+  protected def sectionsDisplay(sections: List[Binding[Node]]): Binding[Node] = {
+    <div class="top-space-child-display row">
+      {for (s <- sections) yield s.bind}
+    </div>
+  }
+
+  protected def sections(implicit overrides: List[ModuleOverride]): List[Binding[Node]] =
+    displayHubs(getMembers(children), "administrative section") ::
+    displayHubs(getQuestions(children), "questions section") ::
+    displayHubs(getProposals(children), "answers section") ::
+    displayHubs(getSubSpaces(children), "sub-spaces section") :: Nil
 }
-
-
-
-//{singleMountPoint.bind; ""}
-
-
-//<script>
-//function resize() {
-//var bs = document.getElementsByClassName("section-nav-buttons")[0]
-//var w = window.innerWidth - bs.offsetWidth
-//bs.style = "width:" + w + "px;"
-//console.log(bs.scrollLeft, bs.offsetWidth, window.innerWidth)
-//
-//</script>

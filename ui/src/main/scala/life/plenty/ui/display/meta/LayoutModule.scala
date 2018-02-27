@@ -52,15 +52,21 @@ trait LayoutModule[T <: Hub] extends DisplayModule[T] {
 
   protected def displayHubs(seq: BindingSeq[Hub]#WithFilter, cssClass: String,
                             header: Binding[Node], ifEmpty: Binding[Node])
-                           (implicit os: List[ModuleOverride]):Binding[Div] =
+                           (implicit os: List[ModuleOverride]):Binding[Node] =
     displayHubs(seq, cssClass, Option(header), Option(ifEmpty))
 
-  @dom
   protected def displayHubs(seq: BindingSeq[Hub]#WithFilter, cssClass: String,
                             header: Option[Binding[Node]] = None, ifEmpty: Option[Binding[Node]] = None)
-                           (implicit os: List[ModuleOverride]):Binding[Div] = {
+                           (implicit os: List[ModuleOverride]):Binding[Node] = {
     console.trace(s"Layout display list (hubs) $seq")
-    val displays = for (c <- seq) yield DisplayModel.display(c, os, Option(this))
+    val displays: BindingSeq[Binding[Node]] = for (c <- seq) yield DisplayModel.display(c, os, Option(this))
+    displayHubNodes(displays, cssClass, header, ifEmpty)
+  }
+
+  @dom
+  protected def displayHubNodes(displays: BindingSeq[Binding[Node]], cssClass: String,
+                            header: Option[Binding[Node]] = None, ifEmpty: Option[Binding[Node]] = None)
+                           (implicit os: List[ModuleOverride]):Binding[Node] = {
     val hideClass = if (displays.bind.isEmpty && ifEmpty.isEmpty) "d-none" else ""
     <div class={cssClass + " " + hideClass}>
       {header.map(_.bind).getOrElse(DisplayModel.nospan.bind)}

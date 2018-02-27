@@ -1,13 +1,12 @@
 package life.plenty.ui.display.utils
 
-import com.thoughtworks.binding.Binding.Var
+import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
 import life.plenty.ui.model.{DisplayModel, ModuleOverride, UiContext}
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
-
 import scalaz.std.list._
 import scalaz.std.option._
 
@@ -48,6 +47,24 @@ object Helpers {
   }
 
   implicit class BasicBindable[T](override val rxv: Rx[T]) extends Bindable[T]
+
+  implicit class ListBindable[T](val rxv: Rx[List[T]]) {
+    val inner = Vars[T]()
+
+    implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
+
+    rxv.foreach(l ⇒ {
+      inner.value.clear()
+      inner.value.insertAll(0, l)
+    })
+
+    def apply(): Vars[T] = inner
+
+//    def mapRx[R](f: T ⇒ R) = {
+//      val newR = rxv.map(list ⇒ list.map(f))
+//      new ListBindable[]()
+//    }
+  }
 
   implicit class OptBindableProperty[T](override val rxv: Rx[Option[T]])(implicit _parser: T ⇒ String) extends
     BindableDom[Option[T]] {

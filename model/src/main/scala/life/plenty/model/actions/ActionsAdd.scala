@@ -12,7 +12,6 @@ class ActionSignup(override val hub: SignupQuestion) extends Module[SignupQuesti
 
   def signup(who: User) = {
     val a = if (contributing.now) new Contribution() else new Proposal()
-    println(s"SIGNUP ${contributing.now}")
     a.asNew(Body(""), Parent(hub))
   }
 
