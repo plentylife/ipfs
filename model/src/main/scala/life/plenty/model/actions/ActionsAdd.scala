@@ -4,9 +4,14 @@ import life.plenty.model.connection._
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.{Hub, Module}
 import life.plenty.model.utils.GraphUtils
+import rx.Ctx
 
 class ActionSignup(override val hub: SignupQuestion) extends Module[SignupQuestion] {
+  private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
+  private lazy val contributing = GraphUtils.markedContributing(hub)
+
   def signup(who: User) = {
+
     val c = new Contribution()
     c.asNew(Body(""), Parent(hub))
   }

@@ -24,6 +24,9 @@ object GraphUtils {
   def markedConfirmed(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] =
     confirmedMarker(o).map(m ⇒ {m.nonEmpty})
 
+  def markedContributing(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] =
+    o.rx.get({ case c@Marker(m) if m == MarkerEnum.CONTRIBUTING_QUESTION ⇒ c }).map(m ⇒ {m.nonEmpty})
+
   def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Body(b) ⇒ b })
 
   // fixme use h.connections

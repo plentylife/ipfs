@@ -24,6 +24,7 @@ class CreateQuestionButton(override val hub: Hub) extends SingleActionModuleDisp
   }
 
   private val isSignup = new BooleanInputVar
+  private val isContributing = new BooleanInputVar
   private val title = new StringInputVar
   private val description = new StringInputVar
 
@@ -32,8 +33,13 @@ class CreateQuestionButton(override val hub: Hub) extends SingleActionModuleDisp
 
   @dom
   override protected def createDialog(): Binding[Node] = {
+    if (isContributing.innerVar.bind.contains(true)) {
+      isSignup.innerVar.value_=(Some(true))
+    }
+
     <span>
       {new InputVarWithCheckbox(isSignup, "This is a sign-up list").dom.bind}
+      {new InputVarWithCheckbox(isContributing, "Signing up means contributing something (helping out)").dom.bind}
       {new InputVarWithDisplay(title, "Question title").dom.bind}
       {new InputVarWithTextarea(description, "Question " + "description").dom.bind}
     </span>
@@ -42,7 +48,8 @@ class CreateQuestionButton(override val hub: Hub) extends SingleActionModuleDisp
   override protected def onSubmit(e: Event): Unit = {
     ui.console.trace(s"submit question ${title.get} ${description.get}")
     for (t ← title.get; d <- description.get) {
-      module.get.create(t, d, isSignup.get.getOrElse(false)) // if never had input will be None
+      module.get.create(t, d, isSignup.get.getOrElse(false), isContributing.get.getOrElse(false)) // if never had input will
+      // be None
       onSubmitSuccess()
     }
   }

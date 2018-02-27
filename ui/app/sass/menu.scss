@@ -40,8 +40,11 @@
   padding-top: $spacer * 0.5;
   background-color: black;
   color: color-yiq(theme-color("dark"));
-  justify-content: space-around;
-  align-content: flex-start;
+
+  flex-direction: column;
+  justify-content: flex-start;
+  //justify-content: space-around;
+  align-items: center;
   min-height: 100%;
   flex-wrap: wrap;
 
