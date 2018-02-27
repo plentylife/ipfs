@@ -82,13 +82,15 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
         <div class="btn btn-large" onclick={nav(1) _}>
           <span class="oi oi-arrow-thick-right"></span>
         </div>
-        <script>
-          positionSectionNav()
-        </script>
       </div>
 
       <div class="top-space-child-display row">
         {for (s <- sections) yield s.bind}
+
+        <script>
+          positionSectionNav()
+        </script>
+
       </div>
 
     </span>

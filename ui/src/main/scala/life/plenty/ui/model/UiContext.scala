@@ -65,6 +65,7 @@ object UiContext {
   }
 
   def devLogin = {
+    println(s"dev login ${window.localStorage.getItem("p")}")
     Option(window.localStorage.getItem("p")) foreach { p ⇒
       login(null, window.localStorage.getItem("useremail"), p)
     }

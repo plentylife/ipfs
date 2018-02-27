@@ -61,7 +61,7 @@ object CurrentUserWallet {
         </div>
         <div class="text-muted info-text d-inline-flex flex-column align-items-center" onclick={e: Event ⇒ Help
           .walletBalanceHelp}>
-          <span class="balance-text">Balance (
+          <span class="balance-text">Balance <br/>(
             <span class="negative">
               {BindableProperty(w.getThanksSpoilRate)(sp => "—" + Math.round(sp * 100).toString + "%").dom.bind}
             </span>

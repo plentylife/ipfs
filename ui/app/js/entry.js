@@ -11,14 +11,14 @@ window.startDB = function(peer) {
 }
 
 window.positionSectionNav = function() {
-  var bss = document.getElementsByClassName("section-nav-buttons")
+  let bss = document.getElementsByClassName("section-nav-buttons")
   if (bss.length > 0) {
-    var bs = bss[0]
-    var rect = bs.getBoundingClientRect()
-    var w = window.innerWidth - rect.left
-    console.log("BS", window.innerWidth, window.scrollX, w, rect.left)
-    // console.log(rect)
+    let bs = bss[0]
+    let rect = bs.getBoundingClientRect()
+    let w = window.innerWidth - rect.left
     bs.style = "width:" + w + "px;"
+    // console.log("BS", window.innerWidth, window.scrollX, w, rect.left)
+    // console.log(document.getElementsByTagName("html")[0].scrollWidth)
   }
 }
 

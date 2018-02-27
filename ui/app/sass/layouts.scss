@@ -34,17 +34,18 @@
     flex-direction: row;
     flex-wrap: nowrap;
     & > .section {
-      //@extend .col-md-5;
-      //@extend .col-lg-4;
-      //@extend .col-xl-3;
-      width: 90%;
       border-left: 1px dotted rgba(119, 136, 153, 0.47);
+
+      $min-break-width: breakpoint-min("md");
+      $column-size: 0.90;
       @include media-breakpoint-up("md") {
         $column-size: 0.45;
-        max-width: $column-size * 100%;
         $min-break-width: breakpoint-min("md");
-        min-width: ($min-break-width - ($min-break-width / 6)) * $column-size ;
       }
+
+      max-width: $column-size * 100%;
+      min-width: ($min-break-width - ($min-break-width / 6)) * $column-size ;
+
     }
     .section:first-child {
       border-left: none;
