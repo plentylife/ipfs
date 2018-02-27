@@ -1,8 +1,9 @@
 package life.plenty.ui.display
 
+import com.thoughtworks.binding.Binding.BindingSeq
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.octopi.{Answer, Question, Space}
+import life.plenty.model.octopi._
 import life.plenty.model.utils.GraphUtils
 import life.plenty.model.utils.GraphUtils._
 import life.plenty.ui.display.actions.SpaceActionsBar
@@ -12,10 +13,12 @@ import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{ComplexModuleOverride, ModuleOverride, Router, UiContext}
 import org.scalajs.dom.Node
+import rx.Rx
+import scalaz.std.list._
 
 //{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "card-space-menu").bind}
 
-class CardQuestionDisplay(override val hub: Question) extends LayoutModule[Question] with CardNavigation {
+abstract class CardQuestionDisplayBase(override val hub: Question) extends LayoutModule[Question] with CardNavigation {
   override def doDisplay() = true
 
   private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(hub)
@@ -23,9 +26,9 @@ class CardQuestionDisplay(override val hub: Question) extends LayoutModule[Quest
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
-    val inlineQuestins =
-      ComplexModuleOverride(this, {case m: InlineQuestionDisplay ⇒ m}, _.isInstanceOf[CardQuestionDisplay])
-    implicit val os = inlineQuestins :: cos.toList ::: siblingOverrides
+    val inlineQuestions =
+      ComplexModuleOverride(this, {case m: InlineQuestionDisplay ⇒ m}, _.isInstanceOf[CardQuestionDisplayBase])
+    implicit val os = inlineQuestions :: cos.toList ::: siblingOverrides
     var confirmedCss = if (isConfirmed().bind) " confirmed " else ""
 
 
@@ -44,11 +47,35 @@ class CardQuestionDisplay(override val hub: Question) extends LayoutModule[Quest
       </span>
 
       <div class="card-body">
-
-        {displayHubs(children.withFilter(_.isInstanceOf[Answer]), "answers").bind}
-        {displayHubs(children.withFilter(_.isInstanceOf[Question]), "inner-questions").bind}
-
+          {for (s <- body) yield s.bind}
         </div>
     </div>
   }
+
+  def body(implicit os: List[ModuleOverride]): List[Binding[Node]]
+}
+
+class CardQuestionDisplay(hub: Question) extends CardQuestionDisplayBase(hub) {
+  override def body(implicit os: List[ModuleOverride]): List[Binding[Node]] = List(
+    displayHubs(children.withFilter(_.isInstanceOf[Answer]), "answers"),
+    displayHubs(children.withFilter(_.isInstanceOf[Question]), "inner-questions")
+  )
+}
+
+class CardSignupQuestionDisplay(hub: SignupQuestion) extends CardQuestionDisplayBase(hub) {
+  @dom
+  private def users: Binding[Node] = {
+    val users: List[Rx[Option[User]]] = children.bind.collect{case a: Answer ⇒
+      a.getCreator
+    } toList;
+
+    <span>
+      {for (u <- users) yield new OptBindableHub(u, this).dom.bind}
+    </span>
+  }
+
+  override def body(implicit os: List[ModuleOverride]): List[Binding[Node]] = List(
+    users,
+    displayHubs(children.withFilter(_.isInstanceOf[Question]), "inner-questions")
+  )
 }
