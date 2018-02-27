@@ -11,9 +11,9 @@ class ActionSignup(override val hub: SignupQuestion) extends Module[SignupQuesti
   private lazy val contributing = GraphUtils.markedContributing(hub)
 
   def signup(who: User) = {
-
-    val c = new Contribution()
-    c.asNew(Body(""), Parent(hub))
+    val a = if (contributing.now) new Contribution() else new Proposal()
+    println(s"SIGNUP ${contributing.now}")
+    a.asNew(Body(""), Parent(hub))
   }
 
   def designup(who: User) = ???
