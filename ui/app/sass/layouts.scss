@@ -11,6 +11,7 @@
     width: 100%;
     justify-content: center;
     display: flex;
+    margin-bottom: $spacer * 0.5;
   }
 }
 
@@ -79,13 +80,16 @@
 
 
 .top-space-layout.basic-signup {
-  .top-space-child-display {
-
+  .basic-signup.section::before {
+    content: "Signed-up"
+  }
+  .contributions.section {
+    display: none;
   }
 }
 
-.top-space-layout.contributing-signup {
-  .top-space-child-display {
-
-  }
-}
+//.top-space-layout.contributing-signup {
+//  .top-space-child-display {
+//
+//  }
+//}
