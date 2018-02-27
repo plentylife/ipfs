@@ -68,7 +68,7 @@ trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnecti
   addOnConnectionRequestFunctions(
     getModules({ case m: ActionOnConnectionsRequest ⇒ m }).map(m ⇒ m.onConnectionsRequest _)
   )
-//  console.trace(s"Loaded modules ${_modules}")
+  console.trace(s"Loaded modules in ${this.getClass.getSimpleName} ${_modules}")
   modulesFinishedLoading() = true
 }
 

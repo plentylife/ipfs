@@ -29,12 +29,13 @@ object Main {
       modelConsole.active = consolesActive == "true"
     }
 
-    UiContext.devLogin
     // has to be first because it sets the hasher function
     dataMain.main(db)
     Router.initialize
     mInit()
     initialize()
+
+    UiContext.devLogin
 
     dom.render(document.body, mainSection())
   }
