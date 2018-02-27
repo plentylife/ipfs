@@ -30,6 +30,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
         Try {
           // the dataloaders must be present
             t.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
+              model.console.trace("Funds check finish load")
               t.getOnContribution.now match {
                 case Some(c) ⇒ val w = new Wallet(hub, c)
                   if (w.getThanksBalance.now + w.getUsableThanksLimit.now - t.getAmount.now.get >= 0) {

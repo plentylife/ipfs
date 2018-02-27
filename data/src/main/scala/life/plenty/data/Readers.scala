@@ -77,7 +77,7 @@ object DbReader {
     }
 
     className flatMap (cName ⇒ {
-      console.println(s"DbReader is constructing $cName")
+      console.println(s"DbReader is constructing $cName $id")
       val potentials: Stream[Future[Hub]] = availableClasses.flatMap(f ⇒ {
         try {
           val h = f(cName)
@@ -139,9 +139,13 @@ object DataHubReader {
 
       val constructed: Future[Option[DataHub[_]]] = jsHub.valueType match {
         case "string" ⇒ Future(readStringValue(jsHub))
-        case "hub" ⇒ try {readHubValue(jsHub)} catch {
+        case "hub" ⇒ readHubValue(jsHub) recover {
           case e: DocDoesNotExist ⇒ console.error(e); throw e
         }
+      }
+
+      constructed foreach {r ⇒
+        console.trace(s"DataHub Reader Constructed $r ${jsHub.`class`} ${jsHub.value} ${jsHub.valueType} $id")
       }
 
       constructed map {
@@ -169,41 +173,45 @@ ActionOnFinishDataLoad {
 //  private lazy val allCons = hub.connections.map(_.map(_.id))
   lazy val dbDoc = data.getWriterModule(hub).dbDoc // get should never trip
 
-  override def onConnectionsRequest(): Unit = synchronized {
-    if (!instantiated) {
-      instantiated = true
+  override def onConnectionsRequest(): Unit = {
       console.println(s"Reader got request to load ${hub.getClass} with ${hub.sc.all}")
       // so since this will have to happen before the writer gets to us, we just skip the exists check
       load()
-    }
   }
 
-  private def load() = {
-    dbDoc.subscribe
-    console.println(s"Reader loading ${hub} ${hub.id}")
+  private def load() = synchronized {
+    if (!instantiated) {
+      instantiated = true
 
-    dbDoc.getData map { data ⇒
-      val existingIds = hub.connections.now.map(_.id)
-      val unloadedIds = data.connections.toList.filterNot(existingIds.contains)
-      connectionsLeftToLoad() = unloadedIds.size
+      dbDoc.subscribe
+      console.println(s"Reader loading ${hub} ${hub.id}")
 
-      console.trace(s"Reader has connections to load for $hub ${hub.id} $unloadedIds")
+      dbDoc.getData map { data ⇒
+        val existingIds = hub.connections.now.map(_.id)
+        val unloadedIds = data.connections.toList.filterNot(existingIds.contains)
+        connectionsLeftToLoad() = unloadedIds.size
 
-      unloadedIds map loadConnection foreach {_ onComplete(lf ⇒ if (lf.isSuccess) {
-        connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
-      })}
-    } recover {
-      case e: DocDoesNotExist ⇒ connectionsLeftToLoad() = 0
+        console.trace(s"Reader has connections to load for $hub ${hub.id} $unloadedIds")
+
+        unloadedIds map loadConnection foreach {_ onComplete(lf ⇒ if (lf.isSuccess) {
+          connectionsLeftToLoad() = connectionsLeftToLoad.now - 1
+        })}
+      } recover {
+        case e: DocDoesNotExist ⇒ connectionsLeftToLoad() = 0
+      }
+
+      dbDoc.onRemoteConnectionChange(loadConnection)
     }
 
-    dbDoc.onRemoteConnectionChange(loadConnection)
   }
 
   private def loadConnection(id: String): Future[Unit] = {
-    console.trace(s"Reader trying to load connection for ${hub} with id ${id}")
+    console.trace(s"Reader trying to load connection for ${hub} ${hub.id} with id ${id}")
     DataHubReader.read(id) flatMap { c ⇒
-      console.trace(s"Reader loaded connection for ${hub} ${c.id}")
-      hub.addConnection(c)
+      console.trace(s"Reader loaded connection for ${hub} ${c.id} -- $id")
+      val f = hub.addConnection(c)
+      f foreach {_ ⇒ console.trace(s"Reader added connection for ${hub} ${c.id} -- $id")}
+      f
     } recover {
       case e: Throwable ⇒
         console.trace(s"Reader failed to load connection for ${hub} with id ${id}")
@@ -214,7 +222,10 @@ ActionOnFinishDataLoad {
 
   override def onFinishLoad(f: () ⇒ Unit): Unit = {
     val finishRx: Rx[Boolean] = Rx {
+      console.trace(s"finish load waiting in $hub ${hub.id}")
+      load()
       if (connectionsLeftToLoad() == 0) {
+        console.trace(s"finish load executing in $hub ${hub.id}")
         f(); true
       } else false
     }

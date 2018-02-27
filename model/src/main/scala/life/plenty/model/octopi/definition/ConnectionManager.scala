@@ -38,12 +38,9 @@ trait ConnectionManager[CT] {self: Hub ⇒
 
   def addConnection(connection: DataHub[_]): Future[Unit] = synchronized {
     console.println(s"~ ${this.getClass.getSimpleName} " +
-      s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse(connection match {
-        case h: DataHub[_] ⇒ h.id
-        case _ ⇒ "*"
-      })}\n" +
+      s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}\n" +
       s"\t<-- ${connection.getClass.getSimpleName} " +
-      s"${connection.sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}")
+      s"${connection.id}")
 
     // duplicates are silently dropped
     val existing = sc.all.find {c: DataHub[_] ⇒ c.id == connection.id}
@@ -60,10 +57,13 @@ trait ConnectionManager[CT] {self: Hub ⇒
     onErrorList.transformWith {
       case Failure(e: Throwable) ⇒
         actionCatchGraphTransformError.foreach(_.catchError(e))
+        console.error(s"Failed to add connection ${connection.id}")
+        console.error(e)
         onErrorList map {_ ⇒ Unit}
 
       case Success(_) ⇒
-        console.trace(s"Adding connection; check is Success ${this.getClass.getSimpleName} <-- ${connection}")
+        console.trace(s"Adding connection; check is Success ${this.getClass.getSimpleName} <-- ${connection} " +
+          s"${connection.id}")
         connectionCounter += 1
         connection.setHolder(this)
 
