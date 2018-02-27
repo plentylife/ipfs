@@ -249,8 +249,19 @@ $event-color: #9f8600;
   align-items: center;
 }
 
+.card {
+  .card-subtitle {
+    .user-badge {
+      display: flex;
+    }
+  }
+}
+
 .card.space {
   .card-subtitle {
-    @extend .text-muted
+    @extend .text-muted;
+    .user-badge {
+      display: flex;
+    }
   }
 }

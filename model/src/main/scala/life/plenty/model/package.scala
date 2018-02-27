@@ -9,7 +9,7 @@ import life.plenty.model.security.FundsCheck
 import life.plenty.model.utils.{Console, Hash}
 
 package object model {
-  val console = new Console(true, false, "Model")
+  val console = new Console(false, false, "Model")
   private var _hasher: Hash = _
   private var _defaultCreator: Option[User] = None
 

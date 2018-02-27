@@ -35,9 +35,9 @@ object Main {
     mInit()
     initialize()
 
-    UiContext.devLogin
-
     dom.render(document.body, mainSection())
+
+    UiContext.devLogin
   }
 
   @dom
@@ -67,13 +67,7 @@ object Main {
       //
       if(UiContext.startingSpace.bind.nonEmpty) DisplayModel.display(UiContext.startingSpace.bind.get).bind //
       else <span style="position: fixed; top: 0; left: 0">
-        If you see this message it means that you are likely using Firefox
-        <br/>
-        Please be patient, wait 1+ minutes, and then refresh the page. Or use Chrome
-        <br/>
-        We are actively working to mitigate this serious issue
-        <br/>
-        Or maybe you have a wrong link...
+        Opening up...
       </span>}
     </div>
   }

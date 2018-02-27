@@ -36,8 +36,6 @@ object LoadIndicator {
   }
   left.foreach(connectionsLeft.value_=)
 
-  //      {for(i <- 0 until connectionsLeft.bind) yield "."}
-
   private def loadStr(end: Int): String = (0 to end).map(_ ⇒ ".").mkString
 
   private val classes = "load-indicator"
@@ -49,7 +47,7 @@ object LoadIndicator {
         <img src="images/plenty_logo-400.png"/>
       </div>
       <span class="loading-text d-inline-flex">
-        {"Loading" + loadStr(connectionsLeft.bind)}
+        Loading {loadStr(connectionsLeft.bind)}
       </span>
     </div>
   }
