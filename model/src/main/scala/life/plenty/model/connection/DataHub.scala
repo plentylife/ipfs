@@ -14,16 +14,18 @@ trait DataHub[T] extends Hub {
   def setHolder(hub: Hub): Unit = if (holderId.isEmpty) holderId = hub.id
   def getHolder: String = holderId
 
-  override def id: String = idGivenValue(value) + this.getClass.getSimpleName
+  override def id: String = holderPrefix + idGivenValue(value)
+
+  private def holderPrefix = if (holderId.length >= 5) holderId.substring(0, 5) else holderId
 
   protected def idGivenValue(v: T): String = {
     try {
       val bigId = v match {
-        case o: Hub ⇒ model.getHasher.b64(o.id + "connection" + holderId)
-        case other ⇒ model.getHasher.b64(other.toString + holderId)
+        case o: Hub ⇒ model.getHasher.b64(o.id + "connection")
+        case other ⇒ model.getHasher.b64(other.toString)
       }
 
-      bigId
+      bigId.substring(0, 5)
     } catch {
       case e: Throwable ⇒
         model.console.error(s"Error in connection id generator with value ${value}");

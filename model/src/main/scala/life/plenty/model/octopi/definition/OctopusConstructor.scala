@@ -34,7 +34,10 @@ trait OctopusConstructor {
   }
 
   protected def generateId(time: Long, creatorId: String): String = {
-    model.getHasher.b64(rand.nextLong().toString + time.toString + creatorId)
+    // the length is slightly different from the datahubs, thus the ids are in separate spaces
+    val cid = creatorId.substring(0, 5)
+    val hid = model.getHasher.b64(rand.nextLong().toString + time.toString).substring(0, 6)
+    cid + hid
   }
 
   lazy val getCreationTime: Rx[Option[Long]] = rx.get({ case CreationTime(t) ⇒ t })
