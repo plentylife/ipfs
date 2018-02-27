@@ -8,6 +8,10 @@
   align-items: center;
 }
 
+.space-actions-bar {
+  flex-wrap: wrap;
+}
+
 .card {
   .space-actions-bar {
     display: flex;
@@ -57,5 +61,18 @@
         margin-bottom: $spacer * 0.1;
       }
     }
+  }
+}
+
+
+.section-nav-buttons {
+  display: inline-flex;
+  justify-content: flex-end;
+
+  .btn {
+    background-color: color("indigo");
+    color: white;
+    border-radius: 0;
+    //margin-right: $spacer * 0.25;
   }
 }

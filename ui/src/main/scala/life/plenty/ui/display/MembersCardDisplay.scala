@@ -57,7 +57,6 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
 
   private def displayMember(u: User): Binding[Node] = {
     val userContributions = Rx {
-      println(s"contributions $contributions")
       contributions().filter(_.getCreator().exists(_.id == u.id))
     }
     val userEarned = userContributions.map(list ⇒ {
@@ -65,8 +64,6 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
     })
     userEarned.foreach {ue ⇒ if (ue > maxEarned.now) maxEarned() = ue}
     val b = new BadgeMemberEarned(u, userContributions, userEarned = userEarned, maxEarned, this)
-
-    userEarned.foreach(ue ⇒ println("max", maxEarned.now))
 
     b.html()
   }

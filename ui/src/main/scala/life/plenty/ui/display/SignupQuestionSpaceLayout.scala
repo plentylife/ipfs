@@ -9,6 +9,7 @@ import life.plenty.ui.display.actions.{SignupButton, SpaceActionsBar}
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{DisplayModel, ModuleOverride, UiContext}
+import org.scalajs.dom.html.Div
 import org.scalajs.dom.raw.Node
 
 import scalaz.std.list._
@@ -20,7 +21,7 @@ class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(
   @dom
   private def ifEmpty: Binding[Node] = <span class="mt-2">:( no one has signed up yet to help</span>
 
-  override protected def sectionsExtension(implicit overrides: List[ModuleOverride]): List[Binding[Node]] = List(
+  override protected def sectionsExtension(implicit overrides: List[ModuleOverride]): List[Binding[Div]] = List(
     {displayHubs(getContributions(children), "contributions section", signup.dom, ifEmpty)}
   )
 }
