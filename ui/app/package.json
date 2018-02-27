@@ -8,6 +8,7 @@
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.0.0-beta.3",
     "browserify-fs": "^1.0.0",
+    "css-element-queries": "^1.0.2",
     "gun": "^0.9.91",
     "gun-level": "^6.0.4",
     "ipfs": "0.27.6",
