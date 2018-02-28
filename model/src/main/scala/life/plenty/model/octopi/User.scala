@@ -20,8 +20,9 @@ trait User extends Hub {
   private def filterTransactions(rxList: Rx[List[Transaction]], field: (Transaction) ⇒ Rx[Option[User]])
   : Rx[List[Transaction]] = {
     rxList.map({ list: List[Transaction] ⇒
-      model.console.trace(s"User filterTransaction() ${list}")
+      model.console.trace(s"User filterTransaction() ${list} ${this}")
       list.flatMap({ t: Transaction ⇒
+        model.console.trace(s"User filterTransaction single ${list} ${this}")
         field(t)().collect({ case u: User if (u.id == this.id) ⇒ t }): Option[Transaction]
       })
     })

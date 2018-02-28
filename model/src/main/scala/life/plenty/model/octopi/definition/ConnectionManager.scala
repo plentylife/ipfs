@@ -34,7 +34,6 @@ trait ConnectionManager[CT] {self: Hub ⇒
   private lazy val actionsAfterGraphTransform = Stream(getModules({ case m: ActionAfterGraphTransform ⇒ m }): _*)
   private lazy val actionCatchGraphTransformError =
     Stream(getModules({ case m: ActionCatchGraphTransformError ⇒ m }): _*)
-  private var connectionCounter = -1
 
   def addConnection(connection: DataHub[_]): Future[Unit] = synchronized {
     console.println(s"~ ${this.getClass.getSimpleName} " +
@@ -62,9 +61,8 @@ trait ConnectionManager[CT] {self: Hub ⇒
         onErrorList map {_ ⇒ Unit}
 
       case Success(_) ⇒
-        console.trace(s"Adding connection; check is Success ${this.getClass.getSimpleName} <-- ${connection} " +
-          s"${connection.id}")
-        connectionCounter += 1
+        console.trace(s"Adding connection; check is Success ${this.getClass.getSimpleName}" +
+          s" <-- ${connection} ${connection.id}")
         connection.setHolder(this)
 
         _connections() = connection :: _connections.now

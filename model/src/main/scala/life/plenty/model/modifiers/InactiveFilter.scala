@@ -30,7 +30,7 @@ class InactiveFilter(override val hub: Hub) extends RxConnectionFilters[Hub] {
         }
       }
     }
-    model.console.trace(s"RemoveFilter $what -> ${filtered} in ${hub.getClass.getSimpleName}")
+    model.console.trace(s"Inactive filter $what -> ${filtered} in ${hub.getClass.getSimpleName}")
     filtered
   }
 

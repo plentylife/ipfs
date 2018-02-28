@@ -136,6 +136,7 @@ trait OctopusConstructor {
       case Failure(e) ⇒
         model.console.error(s"Some of the connections failed to load on instantiation of ${this.getClass}")
         model.console.error(e)
+        e.printStackTrace()
         finished.failure(e)
     }
     finished.future

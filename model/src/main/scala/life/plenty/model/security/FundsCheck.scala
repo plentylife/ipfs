@@ -24,15 +24,20 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     val promise = Promise[Unit]()
+
     connection.value match {
       case t: Transaction ⇒
         model.console.trace(s"Funds check on transaction $t ${t.id}")
         Try {
           // the dataloaders must be present
             t.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
-              model.console.trace("Funds check finish load")
+//              model.console.trace("Funds check finish load")
               t.getOnContribution.now match {
-                case Some(c) ⇒ val w = new Wallet(hub, c)
+                case Some(c) ⇒
+                  // fixme. if the user is the contributor, skip
+//                  if (hub.id == )
+
+                  val w = new Wallet(hub, c)
                   if (w.getThanksBalance.now + w.getUsableThanksLimit.now - t.getAmount.now.get >= 0) {
                     model.console.trace(s"Funds check passed transaction $t ${t.id}")
                     promise.success()
@@ -78,6 +83,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
         model.console.trace(s"Funds check on $connection. Auto pass.")
         promise.success()
     }
+
     promise.future
   }
 }
