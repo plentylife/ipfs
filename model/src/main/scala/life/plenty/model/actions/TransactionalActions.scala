@@ -21,8 +21,13 @@ class ActionGiveThanks(override val hub: Contribution) extends Module[Contributi
   def add(howMuch: Int, by: User) = {
     if (howMuch < 1) throw new Exception("Amount has to be more than 0")
     val t = new Transaction()
+    println(s"NEW TRANSACTION WITH parent ${hub} ${hub.id}")
     t.asNew(Parent(hub), Amount(howMuch))
-    val va = new VoteAllowance()
-    va.asNew(Parent(t), Amount(howMuch))
+
+    t.onNew {
+      println(s"NEW TRANSACTION ${t.sc.all}")
+      val va = new VoteAllowance()
+      va.asNew(Parent(t), Amount(howMuch))
+    }
   }
 }

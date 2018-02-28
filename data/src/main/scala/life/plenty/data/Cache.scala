@@ -11,7 +11,7 @@ object Cache {
 
   val octopusCache = mutable.Map[String, Hub]()
   val connectionCache = mutable.Map[String, DataHub[_]]()
-
+//  val docCache = mutable.Map[String, DocWrapper]()
   val lastAddedRx: Var[Hub] = Var {null}
 
   /** @return the existing hub, or the new hub*/

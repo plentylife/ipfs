@@ -30,6 +30,7 @@ class Transaction() extends WithAmount {
 
   onNew {
     // very important that we don't add any more connections until the From user has been verified
+    // as in they pass the FundsCheck
     getFrom.addConnection(Child(this), execOnSuccess = () ⇒ {
       model.console.trace(s"Transaction added with id ${this.id} ")
       getTo.addConnection(Child(this))

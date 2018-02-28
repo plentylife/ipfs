@@ -52,7 +52,7 @@ class DocWrapper(id: String) {
   private var subscription: Future[Unit] = null
   private var _creationFuture: Future[Unit] = Future {}
   // load right away
-//  if (doSubscribe) subscribe
+  //  if (doSubscribe) subscribe
 
   def getData: Future[JsHub] = exists map { doesExist ⇒
     if (doesExist) doc.data.asInstanceOf[JsHub] else throw new DocDoesNotExist(id) // fixme. shouldn't throw
@@ -74,6 +74,7 @@ class DocWrapper(id: String) {
   }
 
   private def opListener: js.Function2[DbOp, Boolean, Unit] = null
+
   def onRemoteConnectionChange(idCb: String ⇒ Unit) = {
     if (opListener == null) {
       doc.on("op", (ops: js.Array[NativeDbOp], source: Boolean) ⇒ {
@@ -92,13 +93,16 @@ class DocWrapper(id: String) {
   def creationFuture = _creationFuture
 
   def setInitial(info: ⇒ js.Object): Future[Unit] = {
-    if (subscription != null) subscription else if (doc.`type` != null) Future() else fetch
-  } flatMap {_⇒
-    if (doc.`type` == null) {
-      data.console.trace(s"Creating doc with data ${JSON.stringify(info)}")
-      _creationFuture = create(info)
-      _creationFuture
-    } else Future(Unit)
+    _creationFuture = {
+      if (subscription != null) subscription else if (doc.`type` != null) Future() else fetch
+    } flatMap { _ ⇒
+      if (doc.`type` == null) {
+        data.console.trace(s"Creating doc with data ${JSON.stringify(info)}")
+        create(info)
+      } else Future(Unit)
+    }
+    console.trace(s"DocWrapper Creation future set for $id")
+    _creationFuture
   }
 
   def create(data: js.Object): Future[Unit] = {
@@ -106,9 +110,9 @@ class DocWrapper(id: String) {
     errCbToFuture(curry)
   }
 
-  def submitOp(op: DbOp) = {
+  def submitOp(op: DbOp): Future[Unit] = {
     def curry(cb: js.Function1[js.Object, Unit]) = doc.submitOp(op, cb)
-    errCbToFuture(curry)
+    _creationFuture flatMap {_ ⇒ errCbToFuture(curry)}
   }
 
   def fetch = {

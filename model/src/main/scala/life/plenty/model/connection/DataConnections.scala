@@ -31,10 +31,8 @@ object Amount extends InstantiateFromStringByApply[Amount] {
 case class Id(idValue: String) extends DataHub[String] {
   // special case, because if id requered id of parent, it would cause infinite recursion
   override def setHolder(hub: Hub): Unit = Unit
-  override def id: String = {
-    val i = idGivenValue(value)
-    i+i
-  }
+
+  override val idLength: Int = 9
 
   override def value: String = idValue
 }

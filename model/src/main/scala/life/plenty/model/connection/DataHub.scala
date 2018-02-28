@@ -30,6 +30,7 @@ trait DataHub[T] extends Hub {
     } catch {
       case e: Throwable ⇒
         model.console.error(s"Error in connection id generator with value ${value}");
+        model.console.error(e)
         e.printStackTrace();
         throw e
     }

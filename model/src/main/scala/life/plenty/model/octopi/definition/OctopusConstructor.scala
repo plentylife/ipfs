@@ -115,7 +115,7 @@ trait OctopusConstructor {
     val finished = Promise[Unit]()
     initialConnectionCompletion onComplete {
       case Success(_) ⇒
-        model.console.trace(s"New octopus has connections ${connections.now}")
+        model.console.trace(s"New hub [${this.id}] has connections ${connections.now}")
 
         for (p ← required) {
           if (p().now.isEmpty) {

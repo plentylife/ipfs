@@ -17,7 +17,7 @@ class DbInsertConnectionOp(h: Hub) extends DbInsertOp {
 }
 
 object DbWriter {
-  def writeInitial(o: Hub, doc: Option[DocWrapper] = None): Future[Unit] = {
+  def writeInitial(o: Hub, doc: Option[DocWrapper] = None): Future[Unit] = synchronized {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
@@ -33,7 +33,8 @@ object DbWriter {
     forceWriteInitial(o, dbDoc)
   }
 
-  private[data] def forceWriteInitial(o: Hub, doc: DocWrapper, hubClass: Option[String] = None): Future[Unit] = {
+  private[data] def forceWriteInitial(o: Hub, doc: DocWrapper, hubClass: Option[String] = None): Future[Unit] =
+  synchronized {
     val hc: String = hubClass.getOrElse(o.getClass.getSimpleName)
     val connections = o.sc.all
 
@@ -71,9 +72,10 @@ object DbWriter {
     DbWriter.writeInitial(connection) foreach { _ ⇒ // write the new connection
       // add to holder
       // there's a catch. the returned future might be a cached hub, that has not yet been written. consult the doc.
-      getDoc(connection).creationFuture foreach {_ ⇒
-        holderDoc.submitOp(new DbInsertConnectionOp(connection))
-      }
+      // but that should be handled in the docWrapper itself
+//      getDoc(connection).creationFuture foreach {_ ⇒
+      holderDoc.submitOp(new DbInsertConnectionOp(connection))
+//      }
     }
   }
 
