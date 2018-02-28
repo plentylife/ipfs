@@ -13,6 +13,7 @@ trait DataHub[T] extends Hub {
   private var holderId: String = ""
   def setHolder(hub: Hub): Unit = if (holderId.isEmpty) holderId = hub.id
   def getHolder: String = holderId
+  def clearHolder: Unit = holderId = ""
 
   override def id: String = holderPrefix + idGivenValue(value)
 

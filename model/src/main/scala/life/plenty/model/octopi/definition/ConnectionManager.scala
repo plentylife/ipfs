@@ -36,6 +36,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
     Stream(getModules({ case m: ActionCatchGraphTransformError ⇒ m }): _*)
 
   def addConnection(connection: DataHub[_]): Future[Unit] = synchronized {
+    connection.setHolder(this)
     console.println(s"~ ${this.getClass.getSimpleName} " +
       s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}\n" +
       s"\t<-- ${connection.getClass.getSimpleName} " +
@@ -58,15 +59,14 @@ trait ConnectionManager[CT] {self: Hub ⇒
         actionCatchGraphTransformError.foreach(_.catchError(e))
         console.error(s"Failed to add connection ${connection.id}")
         console.error(e)
+        connection.clearHolder
         onErrorList map {_ ⇒ Unit}
 
       case Success(_) ⇒
         console.trace(s"Adding connection; check is Success ${this.getClass.getSimpleName}" +
           s" <-- ${connection} ${connection.id}")
-        connection.setHolder(this)
 
-        _connections() = connection :: _connections.now
-        onConnectionAddedOperations.foreach(f ⇒ f(connection))
+        addConnectionForced(connection)
 
         onErrorList = Future.sequence(actionsAfterGraphTransform map { m ⇒
           m.onConnectionAdd(connection)
@@ -81,6 +81,8 @@ trait ConnectionManager[CT] {self: Hub ⇒
     }
   }
 
-
-
+  protected def addConnectionForced(connection: DataHub[_]): Unit = synchronized {
+    _connections() = connection :: _connections.now
+    onConnectionAddedOperations.foreach(f ⇒ f(connection))
+  }
 }

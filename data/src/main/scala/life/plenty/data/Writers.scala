@@ -107,6 +107,7 @@ class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     // todo. should in theory not write any connections that already exist in the database, but it would be best to
     // check
+    console.println(s"DbWriter on new connection added (MAYBE) ${hub} [${hub.id}] ${connection} ${connection.id}")
     if (connection.tmpMarker != DbMarker && connection.tmpMarker != AtInstantiation) {
       console.println(s"DbWriter on new connection added ${hub} [${hub.id}] ${connection} ")
       DbWriter.writeSingleConnection(dbDoc, connection)

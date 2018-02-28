@@ -29,7 +29,12 @@ trait OctopusConstructor {
     gid
   }
 
+  def setId(_id: String) = {
+    addConnectionForced(Id(_id).inst)
+  }
+
   protected def generateId: String = {
+//    val parentOrCreator =
     generateId(sc.exf({ case CreationTime(t) ⇒ t }), sc.exf({ case Creator(c) ⇒ c }).id)
   }
 
@@ -96,8 +101,8 @@ trait OctopusConstructor {
 
     if (idProp.isEmpty) {
       // in this case there must be a creator
-      setInit(Id(generateId(ct.value, cc.map(_.user.id).get)))
-    } else setInit(idProp.get)
+      setId(generateId(ct.value, cc.map(_.user.id).get))
+    } else setId(idProp.get.id)
 
     if (cc.isEmpty) {
       model.console.error(s"Warning: no creator was set for ${this.getClass}")

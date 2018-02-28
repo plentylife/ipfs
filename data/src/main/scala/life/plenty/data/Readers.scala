@@ -82,6 +82,7 @@ object DbReader {
         try {
           val h = f(cName)
           val res: Option[Future[Hub]] = h map { o ⇒
+            // fixme use setID
             val idCon = Id(id)
             idCon.tmpMarker = DbMarker
 
