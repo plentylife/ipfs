@@ -50,7 +50,7 @@ class DocWrapper(id: String) {
   private val db = ShareDB
   private val doc = db.get("plenty-docs", id)
   private var subscription: Future[Unit] = null
-
+  private var _creationFuture: Future[Unit] = Future {}
   // load right away
 //  if (doSubscribe) subscribe
 
@@ -89,12 +89,15 @@ class DocWrapper(id: String) {
     }
   }
 
+  def creationFuture = _creationFuture
+
   def setInitial(info: ⇒ js.Object): Future[Unit] = {
     if (subscription != null) subscription else if (doc.`type` != null) Future() else fetch
   } flatMap {_⇒
     if (doc.`type` == null) {
       data.console.trace(s"Creating doc with data ${JSON.stringify(info)}")
-      create(info)
+      _creationFuture = create(info)
+      _creationFuture
     } else Future(Unit)
   }
 

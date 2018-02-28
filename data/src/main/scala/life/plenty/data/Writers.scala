@@ -70,7 +70,10 @@ object DbWriter {
   def writeSingleConnection(holderDoc: DocWrapper, connection: DataHub[_]): Unit = {
     DbWriter.writeInitial(connection) foreach { _ ⇒ // write the new connection
       // add to holder
-      holderDoc.submitOp(new DbInsertConnectionOp(connection))
+      // there's a catch. the returned future might be a cached hub, that has not yet been written. consult the doc.
+      getDoc(connection).creationFuture foreach {_ ⇒
+        holderDoc.submitOp(new DbInsertConnectionOp(connection))
+      }
     }
   }
 
