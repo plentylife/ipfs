@@ -19,6 +19,7 @@ class Wallet(u: User, space: Hub)(implicit ctx: Ctx.Owner) {
       val toAmounts = u.getTransactionsTo().map(t ⇒ t.getAmountOrZero())
 
     model.console.trace(s"Wallet thanks count | to ${toAmounts} | from ${fromAmounts}")
+    println(s"WALLET ${u} ${u.sc.all}")
       (0 :: fromAmounts.map(_ * -1) ::: toAmounts).sum
   }
 

@@ -16,17 +16,19 @@ trait DataHub[T] extends Hub {
 
   override def id: String = holderPrefix + idGivenValue(value)
 
-  private def holderPrefix = if (holderId.length >= 5) holderId.substring(0, 5) else holderId
+  private def holderPrefix = if (holderId.length >= 5)
+    holderId.substring(holderId.length - 5, holderId.length) else holderId
 
   protected val idLength = 5
   protected def idGivenValue(v: T): String = {
     try {
-      val bigId = v match {
-        case o: Hub ⇒ model.getHasher.b64(o.id + "connection")
-        case other ⇒ model.getHasher.b64(other.toString)
+      val idBase = v match {
+        case o: Hub ⇒ o.id
+        case other ⇒ other.toString
       }
+      val hashedId = model.getHasher.b64(idBase + this.getClass.getSimpleName)
 
-      bigId.substring(0, idLength)
+      hashedId.substring(0, idLength)
     } catch {
       case e: Throwable ⇒
         model.console.error(s"Error in connection id generator with value ${value}");

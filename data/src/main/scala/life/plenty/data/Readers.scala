@@ -174,7 +174,7 @@ ActionOnFinishDataLoad {
   lazy val dbDoc = data.getWriterModule(hub).dbDoc // get should never trip
 
   override def onConnectionsRequest(): Unit = {
-      console.println(s"Reader got request to load ${hub.getClass} with ${hub.sc.all}")
+//      console.println(s"Reader got request to load ${hub.getClass} with ${hub.sc.all}")
       // so since this will have to happen before the writer gets to us, we just skip the exists check
       load()
   }
