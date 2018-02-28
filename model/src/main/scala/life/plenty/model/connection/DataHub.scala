@@ -18,6 +18,7 @@ trait DataHub[T] extends Hub {
 
   private def holderPrefix = if (holderId.length >= 5) holderId.substring(0, 5) else holderId
 
+  protected val idLength = 5
   protected def idGivenValue(v: T): String = {
     try {
       val bigId = v match {
@@ -25,7 +26,7 @@ trait DataHub[T] extends Hub {
         case other ⇒ model.getHasher.b64(other.toString)
       }
 
-      bigId.substring(0, 5)
+      bigId.substring(0, idLength)
     } catch {
       case e: Throwable ⇒
         model.console.error(s"Error in connection id generator with value ${value}");
