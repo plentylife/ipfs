@@ -132,9 +132,12 @@ object DataHubReader {
 
 
   def read(id: String): Future[DataHub[_]] = {
-    //
-//    val existing =
-    val dbDoc = new DocWrapper(id) // todo. should get from the module
+    val existing = Cache.getDataHub(id)
+    if (existing.nonEmpty) {
+      return Future(existing.get)
+    }
+
+    val dbDoc = new DocWrapper(id)
 
     dbDoc.getData flatMap {data ⇒
       val jsHub = data.asInstanceOf[JsDataHub]
@@ -156,7 +159,9 @@ object DataHubReader {
           h.tmpMarker = DbMarker
           // todo. if this works, modify id getter
           h.setId(id)
-          Cache.put(id, h)
+          val r = Cache.put(id, h)
+          setDoc(r, dbDoc)
+          r
         case _ ⇒ throw new MissingDbClassLoader(jsHub.`class`)
       }
     }

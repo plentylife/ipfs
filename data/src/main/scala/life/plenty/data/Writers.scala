@@ -120,9 +120,3 @@ class SecureUserDbWriterModule(override val hub: SecureUser) extends DbWriterMod
     DbWriter.forceWriteInitial(hub, dbDoc, Option("BasicUser"))
   }
 }
-
-//// fixme. as soon as datahubs become more sophisticated
-//class DataHubDbWriterModule(override val hub: DataHub[_]) extends DbWriterModule(hub) {
-//  // datahubs aren't usually called with asNew, so this never gets called
-//  onNew()
-//}

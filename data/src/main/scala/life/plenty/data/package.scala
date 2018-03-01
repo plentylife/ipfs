@@ -15,5 +15,7 @@ package object data {
 
   /** is not safe, but should never fail */
   def getDoc(h: Hub): DocWrapper = getWriterModule(h).dbDoc
+  /** is not safe, but should never fail */
+  def setDoc(h: Hub, doc: DocWrapper): DocWrapper = getWriterModule(h).setDbDoc(doc)
 
 }
