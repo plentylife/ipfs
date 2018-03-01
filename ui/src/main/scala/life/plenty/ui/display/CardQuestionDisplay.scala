@@ -80,8 +80,6 @@ class CardSignupQuestionDisplay(hub: SignupQuestion) extends CardQuestionDisplay
 
     val dub = new ListBindable(dedupUsers)
 
-    println(s"DEDUP $dedupUsers $users")
-
     <span>
       {for (u <- dub()) yield DisplayModel.display(u, overrides, this).bind}
     </span>
