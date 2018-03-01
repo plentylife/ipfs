@@ -6,6 +6,9 @@ import life.plenty.data
 import life.plenty.data.DbReaderModule
 import org.scalajs.dom.raw.Node
 import rx.{Ctx, Rx, Var}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+import scala.scalajs.js
 
 object LoadIndicator {
   private implicit var ctx = Ctx.Owner.safe()
@@ -36,7 +39,7 @@ object LoadIndicator {
 
     if (res == 0) _forceOpen.value_=(false)
 
-    println(s"LOADING IND $res")
+//    println(s"LOADING IND $res ${list.size} ${list.toSet.size}")
 
     res
   }
@@ -47,9 +50,17 @@ object LoadIndicator {
   }
 
   private lazy val _forceOpen = bVar(false)
-  def forceOpen() = {
-    println("LOADING IND forcedOpen")
+  def forceOpen(): Unit = {
     _forceOpen.value_=(true)
+    autoClose
+  }
+
+  private def autoClose: Unit = Future {
+    js.timers.setTimeout(1000)({
+      if (left.now <= 0) {
+        _forceOpen.value_=(false)
+      } else autoClose
+    })
   }
 
   private val classes = "load-indicator"

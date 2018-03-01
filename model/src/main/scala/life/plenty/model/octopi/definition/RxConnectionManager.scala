@@ -21,7 +21,6 @@ trait RxConnectionManager {
       Var {Option(connection)}
     )((c, f) ⇒ f(c))
     _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[DataHub[_]]]])
-    println(s"RX CONMAN onAddedOp res $connection --> $filteredCon")
     /* end block */
   })
 

@@ -9,7 +9,7 @@ import scala.collection.mutable
 object Cache {
   private implicit val ctx = Ctx.Owner.safe()
 
-  val octopusCache = mutable.Map[String, Hub]()
+  val hubCache = mutable.Map[String, Hub]()
   val dataHubCache = mutable.Map[String, DataHub[_]]()
 //  val docCache = mutable.Map[String, DocWrapper]()
   val lastAddedRx: Var[Hub] = Var {null}
@@ -18,7 +18,7 @@ object Cache {
   def put(hub: Hub): Hub = synchronized {
     val existing = getOctopus(hub.id)
     if (existing.isEmpty) {
-      octopusCache.put(hub.id, hub)
+      hubCache.put(hub.id, hub)
       if (lastAddedRx.now != hub) lastAddedRx() = hub
       hub
     } else {
@@ -41,7 +41,7 @@ object Cache {
   def getDataHub(id: String) = synchronized {dataHubCache.get(id)}
 
   def getOctopus(id: String): Option[Hub] = synchronized {
-    octopusCache.get(id)
+    hubCache.get(id)
   }
 
 //  def getConnection(id: String): Option[DataHub[_]] = getOctopus(id).map(_.asInstanceOf[DataHub[_]]) // shouldn't fail

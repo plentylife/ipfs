@@ -79,7 +79,7 @@ object Main {
 
   @JSExport
   def unloaded() = {
-    data.Cache.octopusCache.foreach(entry ⇒ {
+    data.Cache.hubCache.foreach(entry ⇒ {
       val (_, o) = entry
       o.getTopModule({ case m: DbReaderModule ⇒ m }).foreach {
         m ⇒
@@ -103,6 +103,14 @@ object Main {
           if (c.value.isInstanceOf[Hub]) c.value.asInstanceOf[Hub].id else ""
         }").mkString("\n")
     }")
+  }
+
+  @JSExport
+  def inCache() = {
+    val cs = data.Cache.hubCache.values.toList ::: data.Cache.dataHubCache.values.toList
+    for (c ← cs) {
+      println(c)
+    }
   }
 
 }
