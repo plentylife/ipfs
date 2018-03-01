@@ -32,22 +32,42 @@ object LoadIndicator {
       val v = m.connectionsLeftToLoad()
       if (v > 0) {v} else 0
     }
-    (0 :: mvs).sum
+    val res = (0 :: mvs).sum
+
+    if (res == 0) _forceOpen.value_=(false)
+
+    println(s"LOADING IND $res")
+
+    res
   }
   left.foreach(connectionsLeft.value_=)
 
-  private def loadStr(end: Int): String = (0 to end).map(_ ⇒ ".").mkString
+  private def loadStr(end: Int): String = {
+    (0 until end).map(_ ⇒ ".").mkString
+  }
+
+  private lazy val _forceOpen = bVar(false)
+  def forceOpen() = {
+    println("LOADING IND forcedOpen")
+    _forceOpen.value_=(true)
+  }
 
   private val classes = "load-indicator"
 
+//  <div class={if (connectionsLeft.bind <= 0) "d-none " + classes else classes}>
+//    <div class={classes}>
+
   @dom
   def show(): Binding[Node] = {
-    <div class={if (connectionsLeft.bind <= 0) "d-none " + classes else classes}>
+    val fo = _forceOpen.bind
+
+    <div class={if (connectionsLeft.bind > 0 || fo) classes else "d-none " + classes }>
       <div class="d-inline-flex logo">
         <img src="images/plenty_logo-400.png"/>
       </div>
       <span class="loading-text d-inline-flex">
-        Loading {loadStr(connectionsLeft.bind)}
+        Loading
+        {loadStr(connectionsLeft.bind)}
       </span>
     </div>
   }

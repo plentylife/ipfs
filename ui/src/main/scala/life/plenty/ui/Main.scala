@@ -49,6 +49,7 @@ object Main {
       Router.router.state.bind.spaceId match {
         case Some(id) ⇒
           println(s"UI loading ${id}")
+          LoadIndicator.forceOpen()
           DbReader.read(id) foreach { space ⇒
             println(s"UI loaded $id as $space")
             UiContext.setStatingSpace(space.asInstanceOf[Space])

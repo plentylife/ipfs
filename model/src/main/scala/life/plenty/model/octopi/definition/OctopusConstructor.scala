@@ -39,13 +39,13 @@ trait OctopusConstructor {
   def onSetId(f: String ⇒ Unit) = onSetIdFunctions +:= f
 
   protected def generateId: String = {
-//    val parentOrCreator =
-    generateId(sc.exf({ case CreationTime(t) ⇒ t }), sc.exf({ case Creator(c) ⇒ c }).id)
+    val parentOrCreator: Hub = sc.ex({case Parent(p: Hub) ⇒ p}).getOrElse(sc.exf({ case Creator(c) ⇒ c }))
+    generateId(sc.exf({ case CreationTime(t) ⇒ t }), parentOrCreator.id)
   }
 
-  protected def generateId(time: Long, creatorId: String): String = {
+  protected def generateId(time: Long, parentalId: String): String = {
     // the length is slightly different from the datahubs, thus the ids are in separate spaces
-    val cid = creatorId.substring(0, 5)
+    val cid = parentalId.substring(parentalId.length - 5, parentalId.length)
     val hid = model.getHasher.b64(rand.nextLong().toString + time.toString).substring(0, 6)
     cid + hid
   }
@@ -102,16 +102,18 @@ trait OctopusConstructor {
     val cc: Option[Creator] = _properties.find(_.isInstanceOf[Creator]).map(_.asInstanceOf[Creator]).orElse({
       model.defaultCreator.map(c ⇒ Creator(c))
     })
+    val pp = _properties.collectFirst({case Parent(p: Hub) ⇒ p})
 
     if (sc.ex({case i: Id ⇒ i}).isEmpty) { // setting id, only if there's not one already
       val idProp = _properties.collectFirst({ case Id(i) ⇒ i })
       if (idProp.isEmpty) {
-        // in this case there must be a creator
-        setId(generateId(ct.value, cc.map(_.user.id).get))
+        // in this case there must be a creator or parent
+        val parentalId = pp.orElse(cc).map(_.id).get
+        setId(generateId(ct.value, parentalId))
       } else setId(idProp.get)
 
       if (cc.isEmpty) {
-        model.console.error(s"Warning: no creator was set for ${this.getClass}")
+        model.console.error(s"Warning: no creator or parent was set for ${this.getClass}")
       }
     }
 
