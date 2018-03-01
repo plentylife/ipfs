@@ -17,7 +17,8 @@ class FullUserBadge(override val hub: User) extends DisplayModule[User] {
       {Identicon.generate(hub).bind}
       {hub.getName.dom.bind}
       <script>
-        jdenticon.update("{"#" + Identicon.iconId(hub)}")
+        let c = document.getElementById('{Identicon.iconId(hub)}')
+        jdenticon.update(c)
       </script>
     </div>
   }

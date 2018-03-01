@@ -35,7 +35,7 @@ object Main {
     mInit()
     initialize()
 
-    dom.render(document.body, mainSection())
+    dom.render(document.getElementById("body-container"), mainSection())
 
     UiContext.devLogin
   }
