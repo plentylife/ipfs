@@ -43,16 +43,17 @@ class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(
     displayHubs(getSubSpaces(children), "sub-spaces section")
   )
 
-  lazy val allAnswers = hub.rx.getAll{case Child(a: Proposal) ⇒ a}
+//  lazy val allProposals = children.value.toList.collect({case a: Proposal ⇒ a})
+  lazy val allProposals = rxChildren.map{_.collect({case a: Proposal ⇒ a})}
 
   lazy val signers: Rx[List[User]] = Rx {
-    val answers = allAnswers().filter(_.getBody().exists(_.isEmpty))
+    val answers = allProposals().filter(_.getBody().exists(_.isEmpty))
     answers map {_.getCreator()} flatten;
   }
   lazy val sB: ListBindable[User] = new ListBindable(signers)
 
   lazy val nonEmptyAnswers = Rx {
-    allAnswers().filter(_.getBody().exists(_.nonEmpty))
+    allProposals().filter(_.getBody().exists(_.nonEmpty))
   }
   lazy val aB: ListBindable[Binding[Node]] =
     new ListBindable(nonEmptyAnswers map {_ map { a => DisplayModel.display(a, overrides, Option(this))}})

@@ -10,8 +10,7 @@ import life.plenty.ui.model.{DisplayModel, ModuleOverride}
 import life.plenty.ui.model.DisplayModel.{DisplayModule, getSiblingModules}
 import org.scalajs.dom.html.Div
 import org.scalajs.dom.raw.Node
-import rx.{Obs, Rx}
-
+import rx.{Obs, Rx, Var ⇒ rxVar}
 import scalaz.std.option._
 import scalaz.std.list._
 
@@ -19,14 +18,16 @@ trait LayoutModule[T <: Hub] extends DisplayModule[T] {
 
   protected val siblingModules: Vars[DisplayModule[Hub]] = Vars()
   protected val children: Vars[Hub] = Vars[Hub]()
-  protected var rxChildren: Obs = null
+  protected var rxChildren: Rx[List[Hub]] = null
+  protected var rxChildrenObs: Obs = null
 
   override def update(): Unit = {
     val sms = getSiblingModules(this)
     siblingModules.value.clear()
     siblingModules.value.insertAll(0, sms)
-    if (rxChildren == null) {
-      rxChildren = getChildren.foreach { cs ⇒
+    if (rxChildrenObs == null) {
+      rxChildren = getChildren
+      rxChildrenObs = rxChildren.foreach { cs ⇒
         children.value.clear()
         children.value.insertAll(0, cs)
         console.trace(s"child updated ${hub} $cs")

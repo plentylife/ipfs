@@ -11,7 +11,7 @@ import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model.{ComplexModuleOverride, ModuleOverride, Router, UiContext}
+import life.plenty.ui.model._
 import org.scalajs.dom.Node
 import rx.Rx
 import scalaz.std.list._
@@ -65,12 +65,25 @@ class CardQuestionDisplay(hub: Question) extends CardQuestionDisplayBase(hub) {
 class CardSignupQuestionDisplay(hub: SignupQuestion) extends CardQuestionDisplayBase(hub) {
   @dom
   private def users: Binding[Node] = {
+    // fixme. contributing question should not display proposal creators
     val users: List[Rx[Option[User]]] = children.bind.collect{case a: Answer ⇒
       a.getCreator
     } toList;
 
+    val dedupUsers = Rx {
+      users.foldLeft(List[User]())((l: List[User], rxu) ⇒ {
+        rxu() map {u ⇒
+          if (!l.exists(_.id == u.id)) u :: l else l
+        } getOrElse l
+      })
+    }
+
+    val dub = new ListBindable(dedupUsers)
+
+    println(s"DEDUP $dedupUsers $users")
+
     <span>
-      {for (u <- users) yield new OptBindableHub(u, this).dom.bind}
+      {for (u <- dub()) yield DisplayModel.display(u, overrides, this).bind}
     </span>
   }
 

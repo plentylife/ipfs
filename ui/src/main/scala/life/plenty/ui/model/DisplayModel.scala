@@ -2,8 +2,9 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.definition.{Module, Hub}
+import life.plenty.model.octopi.definition.{Hub, Module}
 import life.plenty.ui
+import life.plenty.ui.model.DisplayModel.DisplayModule
 import org.scalajs.dom.Node
 import rx.Ctx
 
@@ -13,6 +14,11 @@ import scalaz.std.list._
 object DisplayModel {
   implicit def intToStr(i: Int): String = i.toString
 
+
+  def display(o: Hub, overrides: List[ModuleOverride], calledBy: DisplayModule[Hub]): Binding[Node] = {
+    display(o, overrides, Option(calledBy))
+  }
+
   def display(o: Hub, overrides: List[ModuleOverride] = List(),
               calledBy: Option[DisplayModule[_]] = None): Binding[Node] = {
     o.modules.find {
@@ -21,10 +27,6 @@ object DisplayModel {
         dm.doDisplay()
       case _ ⇒ false
     } flatMap {_.asInstanceOf[DisplayModule[_]].display(calledBy, overrides)} getOrElse noDisplay
-
-    //    o.modules.collectFirst({ case dm: DisplayModule[_] ⇒
-    //      dm.display(calledBy, overrides)
-    //    }).flatten getOrElse noDisplay
   }
 
   @dom
