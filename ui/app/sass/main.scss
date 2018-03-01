@@ -28,7 +28,7 @@ body {
   //justify-content: center;
   justify-content: flex-start;
   background-color: rgba(49, 72, 80, 0.05);
-  overflow: hidden;
+  overflow: auto;
 }
 
 #viewport {
@@ -43,6 +43,7 @@ body {
   flex-direction: column;
   flex-wrap: wrap;
   margin-left: 0 !important;
+  overflow: auto;
   //@extend .container
 }
 
@@ -109,11 +110,12 @@ body {
 .login-outer-box {
   z-index: 100;
   position: absolute;
+  overflow: auto;
   top: 0;
   left: 0;
   width: 100%;
   min-height: 100%;
-  overflow: auto;
+  //overflow: auto;
   //bottom: 0;
   background-color: white;
 

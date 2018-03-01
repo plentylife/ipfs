@@ -6,7 +6,7 @@ import life.plenty.model.connection.{Creator, Email, Id, Name}
 import life.plenty.model.octopi._
 import life.plenty.model.security.SecureUser
 import life.plenty.ui
-import life.plenty.ui.display.{ErrorModal, ErrorModals}
+import life.plenty.ui.display.{ErrorModal, ErrorModals, LoadIndicator}
 import org.scalajs.dom.window
 import rx.{Var ⇒ rxVar}
 
@@ -40,7 +40,10 @@ object UiContext {
 
   def login(name: String, email: String, password: String) = {
     storeUser(email)
+    println("making secure user object")
+    LoadIndicator.forceOpen()
     val user = SecureUser(email, password)
+    println("made secure user object")
     DbReader.exists(user.id) foreach {
       case true ⇒
         println("exists true")

@@ -56,7 +56,7 @@ object LoadIndicator {
   }
 
   private def autoClose: Unit = Future {
-    js.timers.setTimeout(1000)({
+    js.timers.setTimeout(2000)({
       if (left.now <= 0) {
         _forceOpen.value_=(false)
       } else autoClose
