@@ -31,7 +31,12 @@ trait OctopusConstructor {
 
   def setId(_id: String) = {
     addConnectionForced(Id(_id).inst)
+    onSetIdFunctions foreach {f ⇒ f(_id)}
+    onSetIdFunctions = Nil
   }
+
+  private var onSetIdFunctions = List[String ⇒ Unit]()
+  def onSetId(f: String ⇒ Unit) = onSetIdFunctions +:= f
 
   protected def generateId: String = {
 //    val parentOrCreator =

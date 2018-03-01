@@ -7,7 +7,7 @@ import life.plenty.model.octopi.GreatQuestions._
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.{Hub, TmpMarker}
 import life.plenty.model.security.SecureUser
-import rx.{Rx, Var}
+import rx.{Ctx, Obs, Rx, Var}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
@@ -132,7 +132,7 @@ object DataHubReader {
 
 
   def read(id: String): Future[DataHub[_]] = {
-    val dbDoc = new DocWrapper(id)
+    val dbDoc = new DocWrapper(id) // todo. should get from the module
 
     dbDoc.getData flatMap {data ⇒
       val jsHub = data.asInstanceOf[JsDataHub]
@@ -152,7 +152,9 @@ object DataHubReader {
       constructed map {
         case Some(h) ⇒
           h.tmpMarker = DbMarker
-          h
+          // todo. if this works, modify id getter
+          h.setId(id)
+          Cache.put(id, h)
         case _ ⇒ throw new MissingDbClassLoader(jsHub.`class`)
       }
     }
@@ -165,9 +167,20 @@ class SecureUserDbReaderModule(u: SecureUser) extends DbReaderModule(u) {
   Cache.put(u)
 }
 
+/** Datahubs should load right away, to see active/inactive status */
+class DbDataHubReaderModule(override val hub: DataHub[_]) extends DbReaderModule(hub) {
+  override def onConnectionsRequest(): Unit = Unit
+
+  // load once there is an id
+  hub.onSetId {id ⇒
+    println(s"DH MODULE LOADING $id")
+    load()
+  }
+}
+
 class DbReaderModule(override val hub: Hub) extends ActionOnConnectionsRequest with
 ActionOnFinishDataLoad {
-  private implicit val ctx = hub.ctx
+  protected implicit val ctx = hub.ctx
 
   var instantiated = false
   val connectionsLeftToLoad = Var(-1)
@@ -180,7 +193,7 @@ ActionOnFinishDataLoad {
       load()
   }
 
-  private def load() = synchronized {
+  protected def load() = synchronized {
     if (!instantiated) {
       instantiated = true
 

@@ -15,7 +15,9 @@ trait DataHub[T] extends Hub {
   def getHolder: String = holderId
   def clearHolder: Unit = holderId = ""
 
-  override def id: String = holderPrefix + idGivenValue(value)
+  override def id: String = sc.ex({ case Id(id) ⇒ id }) getOrElse {
+    holderPrefix + idGivenValue(value)
+  }
 
   private def holderPrefix = if (holderId.length >= 5)
     holderId.substring(holderId.length - 5, holderId.length) else holderId

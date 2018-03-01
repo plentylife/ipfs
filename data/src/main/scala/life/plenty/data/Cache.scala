@@ -10,7 +10,7 @@ object Cache {
   private implicit val ctx = Ctx.Owner.safe()
 
   val octopusCache = mutable.Map[String, Hub]()
-  val connectionCache = mutable.Map[String, DataHub[_]]()
+  val dataHubCache = mutable.Map[String, DataHub[_]]()
 //  val docCache = mutable.Map[String, DocWrapper]()
   val lastAddedRx: Var[Hub] = Var {null}
 
@@ -26,9 +26,23 @@ object Cache {
     }
   }
 
+  /** @return the existing hub, or the new hub*/
+  def put(id: String, hub: DataHub[_]): DataHub[_] = synchronized {
+    val existing = dataHubCache.get(id)
+    if (existing.isEmpty) {
+      dataHubCache.put(id, hub)
+      if (lastAddedRx.now != hub) lastAddedRx() = hub
+      hub
+    } else {
+      existing.get
+    }
+  }
+
+  def getDataHub(id: String) = synchronized {dataHubCache.get(id)}
+
   def getOctopus(id: String): Option[Hub] = synchronized {
     octopusCache.get(id)
   }
 
-  def getConnection(id: String): Option[DataHub[_]] = getOctopus(id).map(_.asInstanceOf[DataHub[_]]) // shouldn't fail
+//  def getConnection(id: String): Option[DataHub[_]] = getOctopus(id).map(_.asInstanceOf[DataHub[_]]) // shouldn't fail
 }

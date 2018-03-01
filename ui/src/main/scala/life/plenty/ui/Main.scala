@@ -93,10 +93,11 @@ object Main {
 
   @JSExport
   def logConnections(of: String) = {
-    println(data.Cache.getOctopus(of).get.rx.cons.now.mkString("\n"))
+    val h = data.Cache.getOctopus(of) orElse data.Cache.getDataHub(of)
+    println(h.get.rx.cons.now.mkString("\n"))
     println("raw")
     println(s"${
-      data.Cache.getOctopus(of).get.sc.all.map(c ⇒
+      h.get.sc.all.map(c ⇒
         s"$c ${c.id} ${
           if (c.value.isInstanceOf[Hub]) c.value.asInstanceOf[Hub].id else ""
         }").mkString("\n")
