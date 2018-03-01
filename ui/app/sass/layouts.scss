@@ -34,19 +34,43 @@
     margin-top: $spacer;
     flex-direction: row;
     flex-wrap: nowrap;
+    overflow: scroll;
+
     & > .section {
       border-left: 1px dotted rgba(119, 136, 153, 0.47);
+      display: flex;
+      flex-grow: 1;
+      flex-direction: column;
+      .section > *:last-child {
+        margin-bottom: auto;
+      }
 
-      $min-break-width: breakpoint-min("md");
+      //$max-break-width: breakpoint-max("xs");
+      $min-width: 200px;
       $column-size: 0.90;
+      min-width: $min-width;
+      max-width: $column-size * 100%;
+
+      @include media-breakpoint-up("sm") {
+        $column-size: 0.90;
+        $min-break-width: breakpoint-min("sm");
+        $min-width: ($min-break-width - ($min-break-width / 6)) * 0.45 ;
+
+        min-width: $min-width;
+        max-width: $column-size * 100%;
+      }
       @include media-breakpoint-up("md") {
         $column-size: 0.45;
         $min-break-width: breakpoint-min("md");
+        $min-width: ($min-break-width - ($min-break-width / 6)) * $column-size ;
+
+        min-width: $min-width;
+        max-width: $column-size * 100%;
       }
 
-      max-width: $column-size * 100%;
-      min-width: ($min-break-width - ($min-break-width / 6)) * $column-size ;
-
+      //max-width: 400px;
+      //min-width: 200px;
+      //min-width: ($max-break-width - ($max-break-width / 6)) * $column-size ;
     }
     .section:first-child {
       border-left: none;
