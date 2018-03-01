@@ -1,7 +1,7 @@
 package life.plenty.model.octopi
 
 import life.plenty.model
-import life.plenty.model.connection.{Child, Parent}
+import life.plenty.model.connection.{Child, Parent, RootParent}
 import life.plenty.model.utils._
 
 class Vote() extends WithAmount {
@@ -25,7 +25,6 @@ class VoteAllowance() extends WithAmount {
 
   addToRequired(onTransaction)
 
-
   onNew {
     onTransaction.foreach(_.foreach { thisTransaction ⇒
       model.console.trace(s"VoteAllowance on ${thisTransaction} ${thisTransaction.id}")
@@ -36,8 +35,12 @@ class VoteAllowance() extends WithAmount {
         val existing = from.rx.get({ case Child(t: Transaction) if t.id == thisTransaction.id ⇒ t })
 
         existing.forEach(t ⇒ {
-          model.console.trace(s"VoteAllowance given to user ${from.id} ${t.id}")
           from.addConnection(Child(this))
+          val rp = GraphUtils.getRootParentOrSelf(t).now
+          this.addConnection(RootParent(rp))
+
+          model.console.trace(s"VoteAllowance given to user ${from.id} ${t.id} | root p ${rp}")
+
           existing.kill()
         })
       })

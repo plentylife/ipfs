@@ -19,11 +19,15 @@ class Transaction() extends WithAmount {
     var ps = properties.toList
     // adding the To connection
     properties.collectFirst {
-      case Parent(c: Contribution) ⇒ {
-        model.console.trace(s"New transaction setting To with ${c.getCreator.now} ${c.sc.all}")
-        To(c.getCreator.now.get)
-      }
-    } foreach {ps +:= _}
+      case Parent(c: Contribution) ⇒
+
+        // todo. check if this ever fails
+        val rp = GraphUtils.getRootParentOrSelf(c).now
+        val cr = c.getCreator.now
+        model.console.trace(s"New transaction setting To with ${cr} ${cr.get.id} | root parent $rp | ${c.sc.all}")
+
+        List(To(c.getCreator.now.get), RootParent(rp))
+    } foreach {ps ++= _}
 
     super.asNew(ps: _*)
   }
