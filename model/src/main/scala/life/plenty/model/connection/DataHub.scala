@@ -11,8 +11,14 @@ trait DataHub[T] extends Hub {
 
   // should not be touched outside hubs
   private var holderId: String = ""
-  def setHolder(hub: Hub): Unit = if (holderId.isEmpty) holderId = hub.id else
-    throw new Exception("Can't have more than one holder")
+  def setHolder(hub: Hub): Unit = if (holderId.isEmpty) holderId = hub.id else {
+    if (holderId != hub.id) {
+      val e = new Exception(s"${getClass.getSimpleName} Can't have more than one holder. " +
+        s"Current $holderId | new ${hub} ${hub.id}")
+      e.printStackTrace()
+      throw e
+    }
+  }
   def getHolder: String = holderId
   def clearHolder: Unit = holderId = ""
 
