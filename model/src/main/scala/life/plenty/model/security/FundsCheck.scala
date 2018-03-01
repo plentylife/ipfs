@@ -73,7 +73,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
             v.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
               v.parentAnswer.now match {
                 case Some(c) ⇒ val w = new Wallet(hub, c)
-                  if (w.getUsableVotes.now - v.getAmount.now.get >= 0) {
+                  if (w.getUsableVotes.now - Math.abs(v.getAmount.now.get) >= 0) {
                     promise.success()
                   } else {
                     model.console.error("Not enough voting power!")
