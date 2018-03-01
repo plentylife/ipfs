@@ -3,6 +3,8 @@ package life.plenty.model.security
 import life.plenty.model.octopi.{BasicUser, User}
 
 class SecureUser(private val _id: String) extends User {
+  setId(_id)
+
   override def id: String = if (_id == null) {
     throw new Exception("SecuredUser ID cannot be null")
   } else _id

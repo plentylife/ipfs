@@ -55,8 +55,8 @@ object UiContext {
 
   private def createAndSetUser(name: String, email: String, user: SecureUser): Unit = {
     if (name != null && email != null && name.nonEmpty && email.nonEmpty) {
-      println(s"createAndSetUser $name $email")
-      user.asNew(Id(user.id), Name(name), Email(email)) foreach {_ ⇒
+      println(s"createAndSetUser $name $email ${user.id}")
+      user.asNew(Name(name), Email(email)) foreach {_ ⇒
         setUser(user)
       }
     } else {

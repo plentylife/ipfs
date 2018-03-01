@@ -102,15 +102,17 @@ trait OctopusConstructor {
     val cc: Option[Creator] = _properties.find(_.isInstanceOf[Creator]).map(_.asInstanceOf[Creator]).orElse({
       model.defaultCreator.map(c ⇒ Creator(c))
     })
-    val idProp = _properties.find(_.isInstanceOf[Id])
 
-    if (idProp.isEmpty) {
-      // in this case there must be a creator
-      setId(generateId(ct.value, cc.map(_.user.id).get))
-    } else setId(idProp.get.id)
+    if (sc.ex({case i: Id ⇒ i}).isEmpty) { // setting id, only if there's not one already
+      val idProp = _properties.collectFirst({ case Id(i) ⇒ i })
+      if (idProp.isEmpty) {
+        // in this case there must be a creator
+        setId(generateId(ct.value, cc.map(_.user.id).get))
+      } else setId(idProp.get)
 
-    if (cc.isEmpty) {
-      model.console.error(s"Warning: no creator was set for ${this.getClass}")
+      if (cc.isEmpty) {
+        model.console.error(s"Warning: no creator was set for ${this.getClass}")
+      }
     }
 
     self.setInit(ct)

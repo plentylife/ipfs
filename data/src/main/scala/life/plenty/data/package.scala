@@ -12,4 +12,8 @@ package object data {
 
   /** this is not safe */
   def getWriterModule(hub: Hub) = hub.getTopModule({case m: DbWriterModule => m}).get
+
+  /** is not safe, but should never fail */
+  def getDoc(h: Hub): DocWrapper = getWriterModule(h).dbDoc
+
 }

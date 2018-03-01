@@ -132,6 +132,8 @@ object DataHubReader {
 
 
   def read(id: String): Future[DataHub[_]] = {
+    //
+//    val existing =
     val dbDoc = new DocWrapper(id) // todo. should get from the module
 
     dbDoc.getData flatMap {data ⇒

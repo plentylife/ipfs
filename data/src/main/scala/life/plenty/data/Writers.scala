@@ -40,7 +40,7 @@ object DbWriter {
 
     //       because datahubs aren't automatically saved by their module (no asNew call)
     // and it needs to happen after the connection has been given to a holder (id depends on it)
-    connections foreach { c ⇒ writeInitial(c) }
+    val cwStatus = Future.sequence(connections map { c ⇒ writeInitial(c) })
 
     // this needs to get processed outside of set initial, otherwise we might end up with duplicates
     val info = js.Dynamic.literal("class" → hc, "connections" → js.Array(
@@ -51,11 +51,13 @@ object DbWriter {
       case _ ⇒
     }
 
-    doc.setInitial(info)
+    // we have to wait for all connections to be written first, otherwise the receiving end will not find them
+    cwStatus flatMap { _ ⇒ doc.setInitial(info)} recover {
+      case e: Throwable ⇒ console.error("Failed to save to database on initial write")
+        console.error(e)
+        throw e
+    }
   }
-
-  /** is not safe, but should never fail */
-  def getDoc(h: Hub): DocWrapper = h.getTopModule({case m: DbWriterModule ⇒ m}).get.dbDoc
 
   private def fillDataHubInfo(c: DataHub[_], info: js.Dynamic): Unit = {
     c.value match {
@@ -71,11 +73,7 @@ object DbWriter {
   def writeSingleConnection(holderDoc: DocWrapper, connection: DataHub[_]): Unit = {
     DbWriter.writeInitial(connection) foreach { _ ⇒ // write the new connection
       // add to holder
-      // there's a catch. the returned future might be a cached hub, that has not yet been written. consult the doc.
-      // but that should be handled in the docWrapper itself
-//      getDoc(connection).creationFuture foreach {_ ⇒
       holderDoc.submitOp(new DbInsertConnectionOp(connection))
-//      }
     }
   }
 
@@ -112,7 +110,7 @@ class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
       console.println(s"DbWriter on new connection added ${hub} [${hub.id}] ${connection} ")
       DbWriter.writeSingleConnection(dbDoc, connection)
     }
-    Future {Right()}
+    Future()
   }
 }
 
