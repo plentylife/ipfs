@@ -13,9 +13,11 @@ class Vote() extends WithAmount {
   addToRequired(parentAnswer)
 
   onNew {
-    parentAnswer.addConnection(Child(this))
-    getCreator.foreach(_.foreach(u ⇒ u.addConnection(Child(this))))
-    model.console.trace(s"New vote added as a child to ${parentAnswer.now} | ${parentAnswer.now.get.sc.all}")
+    getCreator.addConnection(Child(this), () ⇒ {
+      parentAnswer.addConnection(Child(this))
+      model.console.trace(s"New vote added as a child to ${parentAnswer.now} | ${parentAnswer.now.get.sc.all}")
+    })
+
   }
 }
 
