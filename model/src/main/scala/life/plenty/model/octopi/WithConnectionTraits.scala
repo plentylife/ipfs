@@ -17,12 +17,9 @@ trait WithOptParent[T <: Hub] extends Hub {
     getParent.foreach(_.foreach { p: Hub ⇒
       model.console.trace(s"adding child to parent from ${this} to $p")
       p.addConnection(Child(this))
-      GraphUtils.getRootParentConnection(p).foreach(rpOpt ⇒ {
-        model.console.trace(s"adding child to parent from ${this} to $p | ${rpOpt}")
-        rpOpt match {
-          case Some(rp) ⇒ addConnection(rp)
-          case None ⇒ addConnection(RootParent(p))
-        }
+      GraphUtils.getRootParentOrSelf(p).foreach(rp ⇒ {
+        model.console.trace(s"adding child to parent from ${this} to $p | ${rp}")
+        addConnection(RootParent(rp))
       })
     })
   }

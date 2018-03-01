@@ -173,7 +173,6 @@ class DbDataHubReaderModule(override val hub: DataHub[_]) extends DbReaderModule
 
   // load once there is an id
   hub.onSetId {id ⇒
-    println(s"DH MODULE LOADING $id")
     load()
   }
 }

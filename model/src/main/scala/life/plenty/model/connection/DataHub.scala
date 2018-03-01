@@ -11,7 +11,8 @@ trait DataHub[T] extends Hub {
 
   // should not be touched outside hubs
   private var holderId: String = ""
-  def setHolder(hub: Hub): Unit = if (holderId.isEmpty) holderId = hub.id
+  def setHolder(hub: Hub): Unit = if (holderId.isEmpty) holderId = hub.id else
+    throw new Exception("Can't have more than one holder")
   def getHolder: String = holderId
   def clearHolder: Unit = holderId = ""
 
