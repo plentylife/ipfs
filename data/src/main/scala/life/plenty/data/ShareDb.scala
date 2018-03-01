@@ -97,11 +97,18 @@ class DocWrapper(id: String) {
       if (subscription != null) subscription else if (doc.`type` != null) Future() else fetch
     } flatMap { _ ⇒
       if (doc.`type` == null) {
-        data.console.trace(s"Creating doc with data ${JSON.stringify(info)}")
-        create(info)
-      } else Future(Unit)
+        data.console.trace(s"Creating doc $id with data ${JSON.stringify(info)}")
+        val f = create(info)
+        f.onComplete(t ⇒
+          data.console.println(s"Creating doc $id resulted in $t")
+        )
+        f
+      } else {
+        data.console.trace(s"Creating doc $id already exists! ${doc.`type`} ${doc.data}")
+        Future()
+      }
     }
-    console.trace(s"DocWrapper Creation future set for $id")
+    console.trace(s"DocWrapper Creation future set for $id | sub $subscription | type ${doc.`type`} ")
     _creationFuture
   }
 

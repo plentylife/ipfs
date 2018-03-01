@@ -28,8 +28,10 @@ object DbWriter {
       o.tmpMarker = DbMarker
     }
 
+    console.trace(s"dbwriter 1 ${o.id}")
     val dbDoc = doc.getOrElse(getDoc(o))
 
+    console.trace(s"dbwriter 2 ${o.id}")
     forceWriteInitial(o, dbDoc)
   }
 
@@ -38,9 +40,21 @@ object DbWriter {
     val hc: String = hubClass.getOrElse(o.getClass.getSimpleName)
     val connections = o.sc.all
 
+    console.trace(s"dbwriter 3 ${o.id}")
+
     //       because datahubs aren't automatically saved by their module (no asNew call)
     // and it needs to happen after the connection has been given to a holder (id depends on it)
-    val cwStatus = Future.sequence(connections map { c ⇒ writeInitial(c) })
+    val cwfs = connections map { c ⇒
+      console.trace(s"dbwriter 3a ${o.id} has to write ${c.id}")
+      val f = writeInitial(c)
+      f.onComplete(t ⇒
+        console.trace(s"dbwriter 3b ${o.id} has written ${c.id} with res $t")
+      )
+      f
+    }
+    val cwStatus = Future.sequence(cwfs)
+
+    console.trace(s"dbwriter 4 ${o.id} $cwStatus")
 
     // this needs to get processed outside of set initial, otherwise we might end up with duplicates
     val info = js.Dynamic.literal("class" → hc, "connections" → js.Array(
@@ -51,8 +65,13 @@ object DbWriter {
       case _ ⇒
     }
 
+    console.trace(s"dbwriter 5 ${o.id} $cwStatus")
+
     // we have to wait for all connections to be written first, otherwise the receiving end will not find them
-    cwStatus flatMap { _ ⇒ doc.setInitial(info)} recover {
+    cwStatus flatMap { _ ⇒
+      console.trace(s"dbwriter 6 ${o.id} $cwStatus")
+      doc.setInitial(info)
+    } recover {
       case e: Throwable ⇒ console.error("Failed to save to database on initial write")
         console.error(e)
         throw e
