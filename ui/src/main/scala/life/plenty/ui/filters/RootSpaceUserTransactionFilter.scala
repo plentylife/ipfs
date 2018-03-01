@@ -28,19 +28,17 @@ class RootSpaceUserTransactionFilter(override val hub: User) extends RxConnectio
     console.trace(s"filtering on root $rootId connection $con")
     con match {
         // don't forget vote allowance
-      case Child(t: Transaction) ⇒ filterTransaction(rootId, t, ctxOwner) map (_ ⇒ con)
-      case Child(va: VoteAllowance) ⇒ va.onTransaction() flatMap {t ⇒
-        filterTransaction(rootId, t, ctxOwner)} map {_ ⇒ con}
+      case Child(t: Transaction) ⇒ filterOnRoot(rootId, t, ctxOwner) map (_ ⇒ con)
+      case Child(va: VoteAllowance) ⇒ filterOnRoot(rootId, va, ctxOwner) map {_ ⇒ con}
       case _ ⇒ Option(con)
     }
   }
 
-  private def filterTransaction(rootId: String, t: Transaction, ctxOwner: Ctx.Owner)
-                               (implicit ctx: Ctx.Data): Option[Unit] = {
-    t.getOnContribution() flatMap {onContribution ⇒
-      val crp = GraphUtils.getRootParentOrSelf(onContribution)(ctxOwner)
-      console.trace(s"transaction parent root [$rootId] $crp ${crp.now.id} ${crp.now.id == rootId}")
+  // fixme transactions have root parents now
+
+  private def filterOnRoot(rootId: String, h: Hub, ctxOwner: Ctx.Owner)(implicit ctx: Ctx.Data): Option[Unit] = {
+      val crp = GraphUtils.getRootParentOrSelf(h)(ctxOwner)
+      console.trace(s"filtering on parent root $h [$rootId] $crp ${crp.now.id} ${crp.now.id == rootId}")
       if (crp().id == rootId) Option(Unit) else None
-    }
   }
 }

@@ -19,8 +19,12 @@ trait FundsError extends Exception {
 class NotEnoughThanks(override val user: User) extends FundsError
 class NotEnoughVotingPower(override val user: User) extends FundsError
 
+// fixme. this relies on loading order of the DB. if the transactions are out of order, this will trigger
+
 class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
   private implicit val ctx = hub.ctx
+
+  // fixme put wallet here
 
   override def onConnectionAdd(connection: DataHub[_]): Future[Unit] = {
     val promise = Promise[Unit]()
@@ -32,21 +36,26 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
           // the dataloaders must be present
             t.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
 //              model.console.trace("Funds check finish load")
-              t.getOnContribution.now match {
-                case Some(c) ⇒
-                  // fixme. if the user is the contributor, skip
-//                  if (hub.id == )
+              t.getFrom.now match {
+                case Some(from) ⇒
+                  // if the user is not the sender, skip
+                  if (hub.id == from.id) {
 
-                  val w = new Wallet(hub, c)
-                  if (w.getThanksBalance.now + w.getUsableThanksLimit.now - t.getAmount.now.get >= 0) {
-                    model.console.trace(s"Funds check passed transaction $t ${t.id}")
-                    promise.success()
+                    val w = new Wallet(hub, null)
+                    if (w.getThanksBalance.now + w.getUsableThanksLimit.now - t.getAmount.now.get >= 0) {
+                      model.console.trace(s"Funds check passed transaction $t ${t.id}")
+                      promise.success()
+                    } else {
+                      model.console.error("Funds check failed transaction. Not enough funds!")
+                      promise.failure(new NotEnoughThanks(hub))
+                    }
+
                   } else {
-                    model.console.error("Funds check fail. Not enough funds!")
-                    promise.failure(new NotEnoughThanks(hub))
+                    model.console.trace(s"Funds check auto passed transaction $t ${t.id}")
+                    promise.success()
                   }
                 case None ⇒
-                  model.console.error(s"Funds check fail. Transaction ${t} did not have a parent." +
+                  model.console.error(s"Funds check fail. Transaction ${t} did not have a FROM." +
                     s"${t.id}")
                   promise.failure(new Exception("Transaction did not have a parent"))
               }
@@ -68,6 +77,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
                     promise.success()
                   } else {
                     model.console.error("Not enough voting power!")
+                    model.console.println(s"User had following connections ${hub.sc.all} | \n ${hub.rx.cons}")
                     promise.failure(new NotEnoughVotingPower(hub))
                   }
                 case None ⇒ promise.failure(new Exception("Vote did not have a parent"))
