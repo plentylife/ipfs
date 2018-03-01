@@ -59,7 +59,7 @@ trait LayoutModule[T <: Hub] extends DisplayModule[T] {
   protected def displayHubs(seq: BindingSeq[Hub]#WithFilter, cssClass: String,
                             header: Option[Binding[Node]] = None, ifEmpty: Option[Binding[Node]] = None)
                            (implicit os: List[ModuleOverride]):Binding[Node] = {
-    console.trace(s"Layout display list (hubs) $seq")
+    console.trace(s"Layout display list (hubs) $seq $os")
     val displays: BindingSeq[Binding[Node]] = for (c <- seq) yield DisplayModel.display(c, os, Option(this))
     displayHubNodes(displays, cssClass, header, ifEmpty)
   }

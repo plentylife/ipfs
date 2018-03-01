@@ -114,8 +114,8 @@ object DisplayModel {
         case mo: ModuleOverride if mo.creator != this && mo.condition(this) ⇒ mo
       } flatMap {
         case SimpleModuleOverride(_, by, _) ⇒ Option(by)
-        case ComplexModuleOverride(_, finder, _) ⇒ hub.getTopModule[DisplayModule[Hub]](finder)
-          : Option[DisplayModule[Hub]]
+        case ComplexModuleOverride(_, finder, _) ⇒
+          hub.getTopModule[DisplayModule[Hub]](finder): Option[DisplayModule[Hub]]
       }
   }
 

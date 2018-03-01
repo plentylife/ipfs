@@ -16,9 +16,9 @@ class CardSpaceDisplay(override val hub: Space) extends LayoutModule[Space] with
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
-    val inlineQuestins =
-      ComplexModuleOverride(this, {case m: InlineQuestionDisplay ⇒ m}, _.isInstanceOf[CardQuestionDisplay])
-    implicit val os = inlineQuestins :: cos.toList ::: siblingOverrides
+    val inlineQuestions =
+      ComplexModuleOverride(this, {case m: InlineQuestionDisplay ⇒ m}, _.isInstanceOf[CardQuestionDisplayBase])
+    implicit val os = inlineQuestions :: cos.toList ::: siblingOverrides
     val cssClass = ""
 
     <div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>
