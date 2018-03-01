@@ -220,6 +220,7 @@ $event-color: #9f8600;
       width: 100%;
       align-items: center;
       flex-direction: row;
+      flex-wrap: true;
     }
     .user-earned-bar-box {
       display: flex;
