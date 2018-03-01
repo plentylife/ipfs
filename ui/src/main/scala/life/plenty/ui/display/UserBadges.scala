@@ -17,18 +17,18 @@ class FullUserBadge(override val hub: User) extends DisplayModule[User] {
       {Identicon.generate(hub).bind}
       {hub.getName.dom.bind}
       <script>
-        jdenticon.update(document.getElementById('{Identicon.iconId(hub)}'))
+        jdenticon.update('.{Identicon.iconId(hub)}')
       </script>
     </div>
   }
 }
 
 object Identicon {
-  def iconId(u: User) = u.id.replace("@", "").replace(".", "") + "icon"
+  def iconId(u: User) = "icon" + u.id.replace("@", "").replace(".", "")
 
   @dom
   def generate(u: User): Binding[Node] = {
-    val c: Canvas = <canvas data:data-jdenticon-value={u.id} width={32} height={32} id={iconId(u)}>
+    val c: Canvas = <canvas data:data-jdenticon-value={u.id} width={32} height={32} class={iconId(u)}>
       avatar
     </canvas>
     c
