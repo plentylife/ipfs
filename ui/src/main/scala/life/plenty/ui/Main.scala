@@ -113,4 +113,6 @@ object Main {
     }
   }
 
+  @JSExport
+  def getUrl(spaceId: String) = Router.toHash(Router.defaultRoutingParams.copy(spaceId = Option(spaceId)))
 }
