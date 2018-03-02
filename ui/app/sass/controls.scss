@@ -68,6 +68,7 @@
 .section-nav-buttons {
   display: inline-flex;
   justify-content: flex-end;
+  position: relative;
 
   .btn {
     background-color: color("indigo");

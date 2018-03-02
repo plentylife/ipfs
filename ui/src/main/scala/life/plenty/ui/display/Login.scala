@@ -47,7 +47,7 @@ object Login {
   }
 
   private val inProgress = Var(false)
-  private def setInProgress() = inProgress.value_=(true)
+  def setInProgress() = inProgress.value_=(true)
   /* so far only used in case login failed */
   def setFinished() = inProgress.value_=(false)
 
