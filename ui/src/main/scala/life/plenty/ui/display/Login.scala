@@ -7,6 +7,8 @@ import life.plenty.ui.model.UiContext
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.{Event, Node}
 
+import scala.scalajs.js
+
 object Login {
   private val name = Var("")
   private val email = Var(UiContext.getStoredEmail)
@@ -29,8 +31,13 @@ object Login {
     emailEmpty.value_=(email.value.isEmpty)
     if (nameCondition && email.value.nonEmpty) {
       for (pass ← password.get) {
-        val nameValue = if (isSignup.value) name.value else null
-        UiContext.login(nameValue, email.value, pass)
+
+        setInProgress()
+        js.timers.setTimeout(100) { // the timer is for giving an opportunity to display
+          val nameValue = if (isSignup.value) name.value else null
+          UiContext.login(nameValue, email.value, pass)
+        }
+
       }
     }
   }
@@ -38,6 +45,11 @@ object Login {
   private def onSignup(e: Event) = {
     if (isSignup.value) onSubmit(e) else isSignup.value_=(true)
   }
+
+  private val inProgress = Var(false)
+  private def setInProgress() = inProgress.value_=(true)
+  /* so far only used in case login failed */
+  def setFinished() = inProgress.value_=(false)
 
   @dom
   def display(): Binding[Node] = {
@@ -70,21 +82,26 @@ object Login {
           }}<label for="email">Email</label> <br/>
             <input name="email" type="text" autocomplete='email' value={UiContext.getStoredEmail}
                    oninput={e: Event ⇒
-            email.value_=(parseValidEmail(e.target.asInstanceOf[Input].value.trim).getOrElse(""))
-            emailEmpty.value_=(email.value.isEmpty)}/>
+                     email.value_=(parseValidEmail(e.target.asInstanceOf[Input].value.trim).getOrElse(""))
+                     emailEmpty.value_=(email.value.isEmpty)}/>
             <br/>
-          </div>
+          </div>{new InputVarWithPassword(password, "Password").dom.bind}<div class="password-info">
+          this is a high security system
+          <br/>
+          your password is not stored anywhere
+          <br/>
+          it is never sent over the internet
+          <br/>
+          if you forget it, it cannot be retrieved
+        </div>{if (inProgress.bind) {
+          <span class="active-info">Crunching cryptography... this is hard...</span>
+        } else {
+          <span>
+            <input type="submit" class="btn btn-primary" value="Login"/>
+            <div class="btn btn-secondary" onclick={onSignup _}>Sign-up</div>
+          </span>
+        }}
 
-          {new InputVarWithPassword(password, "Password").dom.bind}
-
-          <div class="password-info">
-            this is a high security system<br/>
-            your password is not stored anywhere<br/>
-            it is never sent over the internet<br/>
-            if you forget it, it cannot be retrieved
-          </div>
-          <input type="submit" class="btn btn-primary mt-2" value="Login"/>
-          <div class="btn btn-secondary" onclick={onSignup _}>Sign-up</div>
         </form>
       </div>
     } else {
@@ -93,7 +110,12 @@ object Login {
   }
 
   private val emailRegex =
-    """(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])""".r
+    """(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"
+      |(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9]
+      |(?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
+      |(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:
+      |(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])""".r
+
   private def parseValidEmail(str: String): Option[String] = {
     emailRegex.findFirstIn(str)
   }

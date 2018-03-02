@@ -38,6 +38,10 @@
   margin: $spacer*0.5 0;
 }
 
+.active-info {
+  color: $active-info-color;
+}
+
 // fixme. temporary
 .card.members {
   .open-btn {

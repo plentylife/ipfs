@@ -6,7 +6,7 @@ import life.plenty.model.connection.{Creator, Email, Id, Name}
 import life.plenty.model.octopi._
 import life.plenty.model.security.SecureUser
 import life.plenty.ui
-import life.plenty.ui.display.{ErrorModal, ErrorModals, LoadIndicator}
+import life.plenty.ui.display.{ErrorModal, ErrorModals, LoadIndicator, Login}
 import org.scalajs.dom.window
 import rx.{Var ⇒ rxVar}
 
@@ -41,7 +41,6 @@ object UiContext {
   def login(name: String, email: String, password: String) = {
     storeUser(email)
     println("making secure user object")
-    LoadIndicator.forceOpen()
     val user = SecureUser(email, password)
     println("made secure user object")
     DbReader.exists(user.id) foreach {
@@ -52,6 +51,7 @@ object UiContext {
         println("exists false")
         if (name == null || name.isEmpty) {
           ErrorModal.setContentAndOpen(ErrorModals.noSuchUserFound)
+          Login.setFinished()
         } else createAndSetUser(name, email, user)
     }
   }
@@ -63,6 +63,7 @@ object UiContext {
         setUser(user)
       }
     } else {
+      Login.setFinished()
       ui.console.error(s"UI could not create user from name `${Option(name)}` and email `${Option(email)}`")
     }
   }

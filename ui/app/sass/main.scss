@@ -6,6 +6,9 @@ $confirmed-color: rgba(36, 82, 30, 0.8);
 $money-color: #34ce57;
 
 @import "../node_modules/bootstrap/scss/bootstrap";
+
+$active-info-color: color("indigo");
+
 @import "menu";
 @import "cards";
 @import "images";
