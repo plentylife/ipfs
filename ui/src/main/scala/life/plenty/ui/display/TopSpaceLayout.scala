@@ -65,7 +65,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
       </div>
 
         <div class="zoom-hint">
-          The board zooms and scrolls
+          The board zooms, scrolls, and drags
         </div>
 
         {sectionsDisplay(sections).bind}
