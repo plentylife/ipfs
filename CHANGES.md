@@ -1,4 +1,4 @@
-###March 2nd, 2018
+### March 2nd, 2018
 
 - Improved scrolling and added zoom in the main section of the app
 - Added indication that login form is processing a user logging in
