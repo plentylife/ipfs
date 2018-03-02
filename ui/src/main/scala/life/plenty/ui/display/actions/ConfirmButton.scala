@@ -32,12 +32,12 @@ class ConfirmButton(override val hub: Space) extends ActionDisplay[Space] with M
   @dom
   override def activeDisplay: Binding[Node] = <div class="btn btn-outline-primary"
                                                    onclick={e: Event ⇒ module.get.deconfirm()}>
-    de-confirm
+    unmark final
   </div>
 
   @dom
   override def inactiveDisplay: Binding[Node] = <div class="btn btn-primary"
                                                      onclick={e: Event ⇒ module.get.confirm()}>
-    confirm
+    mark final
   </div>
 }

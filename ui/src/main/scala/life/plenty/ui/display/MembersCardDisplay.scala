@@ -6,6 +6,7 @@ import life.plenty.data.DbReaderModule
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.octopi.{Contribution, Members, Space, User}
 import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphUtils.getBody
 import life.plenty.ui
 import life.plenty.ui.display.actions.AnswerControls
 import life.plenty.ui.display.meta.LayoutModule
@@ -17,7 +18,6 @@ import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 import rx.{Ctx, Obs, Rx, Var ⇒ rxVar}
 import life.plenty.ui.display.utils.Helpers._
-
 import scalaz.std.list._
 
 class MembersCardDisplay(override val hub: Members) extends DisplayModule[Members] with CardNavigation {
@@ -39,10 +39,15 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
   @dom
   override protected def generateHtml(): Binding[Node] = {
     <div class="card d-inline-flex members" id={hub.id}>
-      <span class="card-controls">
-        <div class="btn-help d-inline-flex" onclick={_: Event ⇒ Help.membersCardHelp}>help</div>
-        <div class="btn btn-primary btn-sm open-btn" onclick={navigateTo _}>open</div>
+      <span class="d-flex header-block" onclick={navigateTo _}>
+        <span class="d-flex title-block">
+          <h5 class="card-title">Earnings</h5>
+        </span>
+        <span class="card-controls">
+          <div class="btn-help d-inline-flex" onclick={_: Event ⇒ Help.membersCardHelp}>help</div>
+          <div class="btn btn-primary btn-sm open-btn" onclick={navigateTo _}>open</div>        </span>
       </span>
+
       <div class="card-body">
           {for (m <- members().bind) yield displayMember(m).bind}
       </div>
