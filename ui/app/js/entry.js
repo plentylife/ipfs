@@ -1,4 +1,4 @@
-// require("babel-polyfill");
+require("babel-polyfill");
 
 require('./jsStyling')
 window.sodium = require('libsodium-wrappers-sumo')
