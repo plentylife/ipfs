@@ -68,12 +68,16 @@
 .section-nav-buttons {
   display: inline-flex;
   justify-content: flex-end;
-  position: relative;
+  width: 100%;
+  //position: relative;
 
   .btn {
     background-color: color("indigo");
     color: white;
     border-radius: 0;
     //margin-right: $spacer * 0.25;
+    &.disabled {
+      background-color: grey;
+    }
   }
 }

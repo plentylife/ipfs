@@ -80,8 +80,8 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
         {sectionsDisplay(sections).bind}
 
       <script>
-        positionSectionNav();
-        fitLayoutContainerToEdge();
+//        positionSectionNav();
+        //fitLayoutContainerToEdge();
       </script>
 
     </span>

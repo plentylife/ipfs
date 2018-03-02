@@ -31,13 +31,14 @@
     //flex-basis: 100%;
     flex-grow: 1;
     //height: 100%;
-    //overflow: hidden;
+    overflow: hidden;
   }
 
   .top-space-layout-content {
     //overflow: hidden;
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
     .layout-header {
       display: flex;
       flex-direction: column;
