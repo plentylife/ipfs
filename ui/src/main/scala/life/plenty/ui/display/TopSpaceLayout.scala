@@ -64,6 +64,10 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
         </h5>{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}
       </div>
 
+        <div class="zoom-hint">
+          The board zooms and scrolls
+        </div>
+
         {sectionsDisplay(sections).bind}
 
     </span>

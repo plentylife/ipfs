@@ -1,4 +1,5 @@
-let IScroll = require("iscroll");
+// let IScroll = require("iscroll");
+let IScroll = require("iscroll/build/iscroll-zoom");
 let ResizeSensor = require('css-element-queries/src/ResizeSensor');
 
 function addScroll() {
@@ -28,7 +29,12 @@ function addScroll() {
       scrollbars: true,
       // freeScroll: true,
       scrollX: true,
-
+      scrollY: true,
+      zoom: true,
+      wheelAction: 'zoom',
+      zoomMin: 0.5,
+      zoomMax: 2,
+      startZoom: 0.7
     });
     rs = new ResizeSensor(s, modifyScroller);
   }
