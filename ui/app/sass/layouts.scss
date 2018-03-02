@@ -26,6 +26,24 @@
     width: 100%;
   }
 
+  .scroll-wrapper {
+    display: flex;
+    //flex-basis: 100%;
+    flex-grow: 1;
+    //height: 100%;
+    //overflow: hidden;
+  }
+
+  .top-space-layout-content {
+    //overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    .layout-header {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
   .title.confirmed {
     background-color: $confirmed-color;
   }
@@ -34,6 +52,7 @@
     margin-top: $spacer;
     flex-direction: row;
     flex-wrap: nowrap;
+    position: absolute;
     //overflow: scroll;
 
     & > .section {

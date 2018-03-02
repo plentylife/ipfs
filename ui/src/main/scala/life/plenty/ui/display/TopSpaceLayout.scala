@@ -57,9 +57,9 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
     for (m <- menuBar) yield m.display(this, os) map {_.bind} getOrElse DisplayModel.nospan.bind}
 
 
-      <span class="d-flexflex-column span-separator">
+      <span class="span-separator top-space-layout-content">
 
-      <div class="row flex-column">
+      <div class="layout-header">
         <h3 class={titleClasses}>
           {hub.getTitle.dom.bind}
         </h3>
@@ -80,7 +80,8 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
         {sectionsDisplay(sections).bind}
 
       <script>
-        positionSectionNav()
+        positionSectionNav();
+        fitLayoutContainerToEdge();
       </script>
 
     </span>
@@ -89,8 +90,14 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
   @dom
   protected def sectionsDisplay(sections: List[Binding[Node]]): Binding[Node] = {
-    <div class="top-space-child-display row">
-      {for (s <- sections) yield s.bind}
+    <div class="scroll-wrapper">
+      <div class="top-space-child-display row">
+        {for (s <- sections) yield s.bind}
+
+        <script>
+          addScrollToSectionContainer()
+        </script>
+      </div>
     </div>
   }
 
