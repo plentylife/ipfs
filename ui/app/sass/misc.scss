@@ -48,3 +48,11 @@
     display: none;
   }
 }
+
+.iScrollHorizontalScrollbar {
+  bottom: unset !important;
+  z-index: 100 !important;
+  .iScrollIndicator {
+    background-color: rgba($active-info-color, 0.5) !important;
+  }
+}

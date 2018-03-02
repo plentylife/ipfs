@@ -38,10 +38,6 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
   def getContributions(cs: BindingSeq[Hub]) = cs.withFilter(_.isInstanceOf[Contribution])
 
-//  def nav(dir: Int)(e: Event) = {
-//    val s = document.getElementsByClassName("section")(0).asInstanceOf[Div]
-//    window.scrollBy(s.offsetWidth.toInt * dir, 0)
-//  }
 
   protected val additionalCss = Var("")
 
@@ -68,21 +64,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
         </h5>{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}
       </div>
 
-      <div class="section-nav-buttons">
-        <div class="btn btn-large nav-left">
-          <span class="oi oi-arrow-thick-left"></span>
-        </div>
-        <div class="btn btn-large nav-right">
-          <span class="oi oi-arrow-thick-right"></span>
-        </div>
-      </div>
-
         {sectionsDisplay(sections).bind}
-
-      <script>
-//        positionSectionNav();
-        //fitLayoutContainerToEdge();
-      </script>
 
     </span>
     </div>

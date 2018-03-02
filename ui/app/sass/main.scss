@@ -104,7 +104,8 @@ body, #body-container {
   border-radius: 3%;
   top: 3%;
   left: 33%;
-  right: 33%;
+  //right: 33%;
+  max-width: 400px;
   padding: 15px;
   background: black;
   color: whitesmoke;
