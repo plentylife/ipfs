@@ -65,7 +65,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
       </div>
 
         <div class="zoom-hint">
-          The board zooms, scrolls, and drags
+          The board scrolls
         </div>
 
         {sectionsDisplay(sections).bind}
@@ -78,6 +78,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
   protected def sectionsDisplay(sections: List[Binding[Node]]): Binding[Node] = {
     <div class="scroll-wrapper">
       <div class="top-space-child-display row">
+        <div class="scroll-veil"></div>
         {for (s <- sections) yield s.bind}
 
         <script>

@@ -4,6 +4,7 @@ $theme-colors: (
 
 $confirmed-color: rgba(36, 82, 30, 0.8);
 $money-color: #34ce57;
+$bg-color: rgba(49, 72, 80, 0.05);
 
 @import "../node_modules/bootstrap/scss/bootstrap";
 
@@ -30,7 +31,7 @@ body, #body-container {
   min-height: 100%;
   //justify-content: center;
   justify-content: flex-start;
-  background-color: rgba(49, 72, 80, 0.05);
+  background-color: $bg-color;
   overflow: auto;
 }
 
