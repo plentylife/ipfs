@@ -228,17 +228,23 @@ ActionOnFinishDataLoad {
 
   private def loadConnection(id: String): Future[Unit] = {
     console.trace(s"Reader trying to load connection for ${hub} ${hub.id} with id ${id}")
-    DataHubReader.read(id) flatMap { c ⇒
-      console.trace(s"Reader loaded connection for ${hub} ${c.id} -- $id")
-      val f = hub.addConnection(c)
-      f foreach {_ ⇒ console.trace(s"Reader added connection for ${hub} ${c.id} -- $id")}
-      f
-    } recover {
-      case e: Throwable ⇒
-        console.trace(s"Reader failed to load connection for ${hub} with id ${id}")
-        console.error(e)
-        e.printStackTrace()
+    val p = Promise[Unit]()
+    // playing with setTimeout to allow for ui rendering
+    js.timers.setTimeout(10) {
+      DataHubReader.read(id) flatMap { c ⇒
+        console.trace(s"Reader loaded connection for ${hub} ${c.id} -- $id")
+        val f = hub.addConnection(c)
+        f foreach {_ ⇒ console.trace(s"Reader added connection for ${hub} ${c.id} -- $id")}
+        f
+      } recover {
+        case e: Throwable ⇒
+          console.trace(s"Reader failed to load connection for ${hub} with id ${id}")
+          console.error(e)
+          e.printStackTrace()
+      } onComplete(_ ⇒ p.success())
     }
+
+    p.future
   }
 
   override def onFinishLoad(f: () ⇒ Unit): Unit = {
