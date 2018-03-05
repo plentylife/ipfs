@@ -94,7 +94,7 @@ object Login {
           <br/>
           if you forget it, it cannot be retrieved
         </div>{if (inProgress.bind) {
-          <span class="active-info">Crunching cryptography... this is hard...</span>
+          <span class="active-info">Crunching cryptography... this is hard... 15+ seconds</span>
         } else {
           <span>
             <input type="submit" class="btn btn-primary" value="Login"/>
