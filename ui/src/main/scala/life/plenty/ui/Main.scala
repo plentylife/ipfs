@@ -48,7 +48,7 @@ object Main {
       println(s"Setting default creator to ${UiContext.userVar.bind}")
       defaultCreator_=(UiContext.userVar.bind)
 
-      IntroTutorial(UiContext.userVar.bind)
+//      IntroTutorial(UiContext.userVar.bind)
 
       Router.router.state.bind.spaceId match {
         case Some(id) ⇒

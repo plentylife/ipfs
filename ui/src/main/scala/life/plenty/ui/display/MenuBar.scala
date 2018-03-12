@@ -6,7 +6,7 @@ import life.plenty.model.connection.Parent
 import life.plenty.model.octopi.Space
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui
-import life.plenty.ui.display.actions.MenuAction
+import life.plenty.ui.display.actions.labeltraits.MenuAction
 import life.plenty.ui.display.info.AnswerInfo
 import life.plenty.ui.display.meta.{LayoutModule, NoDisplay}
 import life.plenty.ui.model.DisplayModel.DisplayModule

@@ -6,6 +6,7 @@ import life.plenty.model.connection.{Marker, MarkerEnum}
 import life.plenty.model.octopi.{Contribution, Space}
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui
+import life.plenty.ui.display.actions.labeltraits.MenuAction
 import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.ActionDisplay
 import life.plenty.ui.model.UiContext
@@ -13,12 +14,10 @@ import life.plenty.ui.display.utils.InputVarWithDisplay
 import org.scalajs.dom.{Event, Node}
 import rx.Obs
 
-trait MenuAction
-
 class ConfirmButton(override val hub: Space) extends ActionDisplay[Space] with MenuAction {
 
   private lazy val module: Option[ActionAddConfirmedMarker] = hub
-    .getTopModule({case m: ActionAddConfirmedMarker => m})
+    .getTopModule({ case m: ActionAddConfirmedMarker => m })
   private lazy val isConfirmed = GraphUtils.markedConfirmed(hub)
   private var obs: Obs = null
 
