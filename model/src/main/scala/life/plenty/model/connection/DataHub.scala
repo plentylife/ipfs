@@ -11,7 +11,11 @@ trait DataHub[T] extends Hub {
 
   // should not be touched outside hubs
   private var holderId: String = ""
-  def setHolder(hub: Hub): Unit = if (holderId.isEmpty) holderId = hub.id else {
+  private var holder: Hub = null
+  def setHolder(hub: Hub): Unit = if (holderId.isEmpty) {
+    holderId = hub.id
+    holder = hub
+  } else {
     if (holderId != hub.id) {
       val e = new Exception(s"${getClass.getSimpleName} Can't have more than one holder. " +
         s"Current $holderId | new ${hub} ${hub.id}")
@@ -19,8 +23,11 @@ trait DataHub[T] extends Hub {
       throw e
     }
   }
-  def getHolder: String = holderId
-  def clearHolder: Unit = holderId = ""
+  def getHolder: Hub = holder
+  def clearHolder: Unit = {
+    holderId = ""
+    holder = null
+  }
 
   override def id: String = sc.ex({ case Id(id) ⇒ id }) getOrElse {
     holderPrefix + idGivenValue(value)

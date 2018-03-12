@@ -84,3 +84,13 @@
 .tree-list li {
   list-style-type: none;
 }
+
+.critical-question-list {
+  .board {
+    display: flex;
+    flex-direction: row;
+    .card {
+      margin-right: 0.5em;
+    }
+  }
+}

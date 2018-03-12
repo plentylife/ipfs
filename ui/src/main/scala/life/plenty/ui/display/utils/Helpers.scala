@@ -48,14 +48,28 @@ object Helpers {
 
   implicit class BasicBindable[T](override val rxv: Rx[T]) extends Bindable[T]
 
+  // todo use this for children
   implicit class ListBindable[T](val rxv: Rx[List[T]]) {
     val inner = Vars[T]()
 
     implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
     rxv.foreach(l ⇒ {
-      inner.value.clear()
-      inner.value.insertAll(0, l)
+//      inner.value.clear()
+//      inner.value.insertAll(0, l)
+      val current = inner.value
+      var i = 0
+      current zip l foreach {z ⇒
+        val (o, n) = z
+        if (o != n) current.update(i, n)
+        i += 1
+      }
+      if (current.size > l.size) {
+        current.remove(l.size, current.size - l.size)
+      } else if (l.size > current.size) {
+        current.insertAll(current.size, l.slice(current.size, l.size))
+      }
+
     })
 
     def apply(): Vars[T] = inner

@@ -52,6 +52,11 @@ object GraphUtils {
       allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
   }
 
+  def getAllCreatedByInSpace(space: Space, user: User)(implicit ctx: Ctx.Owner): Rx[List[Creator]] = {
+    collectDownTree[Creator](space, matchBy = {case c @ Creator(u) if u == user ⇒ c},
+      allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
+  }
+
   def findModuleUpParentTree[T](in: Hub, matchBy: PartialFunction[DataHub[_], T]): Option[T] = {
     {
       //      println(s"graph utils", in)

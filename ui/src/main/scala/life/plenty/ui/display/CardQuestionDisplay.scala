@@ -2,8 +2,8 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.BindingSeq
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.model.octopi.{Answer, Question, SignupQuestion, User}
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.octopi._
 import life.plenty.model.utils.GraphUtils
 import life.plenty.model.utils.GraphUtils._
 import life.plenty.ui.display.actions.SpaceActionsBar
@@ -12,11 +12,40 @@ import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.model.DisplayModel.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model._
-import org.scalajs.dom.Node
+import org.scalajs.dom.{Event, Node}
 import rx.Rx
 import scalaz.std.list._
 
 //{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "card-space-menu").bind}
+
+object CardQuestionDisplayBase {
+  @dom
+  def html(hub: Question, body: List[Binding[Node]], onclick: (Event) ⇒ Unit): Binding[Node] = {
+    implicit val ctx = hub.ctx
+    val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(hub)
+    val confirmedCss = if (isConfirmed().bind) " confirmed " else ""
+
+    <div class={"card d-inline-flex flex-column question " + confirmedCss} id={hub.id}>
+      <span class="d-flex header-block" onclick={onclick}>
+        <span class="d-flex title-block">
+          <h5 class="card-title">{hub.getTitle.dom.bind}</h5>
+          <div class="card-subtitle mb-2 text-muted">
+            {getBody(hub).dom.bind}
+          </div>
+        </span>
+        <span class="card-controls">
+          <div class="btn btn-primary btn-sm">open</div>
+        </span>
+      </span>
+
+      {if (body.nonEmpty) {
+      <div class="card-body">
+        {for (s <- body) yield s.bind}
+      </div>
+    } else DisplayModel.nospan.bind }
+    </div>
+  }
+}
 
 abstract class CardQuestionDisplayBase(override val hub: Question) extends LayoutModule[Question] with CardNavigation {
   override def doDisplay() = true
@@ -29,27 +58,8 @@ abstract class CardQuestionDisplayBase(override val hub: Question) extends Layou
     val inlineQuestions =
       ComplexModuleOverride(this, {case m: InlineQuestionDisplay ⇒ m}, _.isInstanceOf[CardQuestionDisplayBase])
     implicit val os = inlineQuestions :: cos.toList ::: siblingOverrides
-    var confirmedCss = if (isConfirmed().bind) " confirmed " else ""
 
-
-    <div class={"card d-inline-flex flex-column question " + confirmedCss}
-         id={hub.id}>
-      <span class="d-flex header-block" onclick={navigateTo _}>
-        <span class="d-flex title-block">
-          <h5 class="card-title">{hub.getTitle.dom.bind}</h5>
-          <div class="card-subtitle mb-2 text-muted">
-            {getBody(hub).dom.bind}
-          </div>
-        </span>
-        <span class="card-controls">
-          <div class="btn btn-primary btn-sm">open</div>
-        </span>
-      </span>
-
-      <div class="card-body">
-          {for (s <- body) yield s.bind}
-        </div>
-    </div>
+    CardQuestionDisplayBase.html(hub, body, navigateTo).bind
   }
 
   def body(implicit os: List[ModuleOverride]): List[Binding[Node]]
