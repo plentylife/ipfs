@@ -44,7 +44,7 @@ object CreateSpace {
 
   def openInModal(ps: Space = null): Unit = {
     parentSpace.value_=(Option(ps))
-    Modal.setContentAndOpen(createSpaceDisplay())
+    Modal.giveContentAndOpen(createSpaceDisplay())
   }
 
   @dom

@@ -8,6 +8,7 @@ import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize
 import life.plenty.ui.display.actions.CreateSpace
 import life.plenty.ui.display.{Help, LoadIndicator, Login, Modal}
 import life.plenty.ui.model._
+import life.plenty.ui.supplemental.IntroTutorial
 import life.plenty.{data, ui}
 import org.scalajs.dom.raw.Node
 import org.scalajs.dom.{Event, document}
@@ -46,6 +47,9 @@ object Main {
       {if (UiContext.userVar.bind != null) {
       println(s"Setting default creator to ${UiContext.userVar.bind}")
       defaultCreator_=(UiContext.userVar.bind)
+
+      IntroTutorial(UiContext.userVar.bind)
+
       Router.router.state.bind.spaceId match {
         case Some(id) ⇒
           println(s"UI loading ${id}")

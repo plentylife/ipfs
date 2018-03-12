@@ -6,7 +6,8 @@ import life.plenty.model.connection.{Creator, Email, Id, Name}
 import life.plenty.model.octopi._
 import life.plenty.model.security.SecureUser
 import life.plenty.ui
-import life.plenty.ui.display.{ErrorModal, ErrorModals, LoadIndicator, Login}
+import life.plenty.ui.display.{ErrorModal, LoadIndicator, Login}
+import life.plenty.ui.supplemental.ErrorModals
 import org.scalajs.dom.window
 import rx.{Var ⇒ rxVar}
 
