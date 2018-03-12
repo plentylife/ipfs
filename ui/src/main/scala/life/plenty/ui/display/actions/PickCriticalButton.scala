@@ -4,7 +4,7 @@ import life.plenty.ui.display.utils.Helpers._
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.{ActionAddConfirmedMarker, ActionToggleCriticalConnection}
 import life.plenty.model.connection.Child
-import life.plenty.model.octopi.{ContainerSpace, Question, Space}
+import life.plenty.model.octopi.{ContainerSpace, Members, Question, Space}
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.{Controller, InlineDisplay, Modal, TreeView}
@@ -16,6 +16,8 @@ import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
 import org.scalajs.dom.{Event, Node}
 import rx.{Ctx, Obs}
 
+
+// todo. would need to extend childDisplay to be Rx
 class PickCriticalButton(override val hub: Space) extends DisplayModule[Space] with MenuAction {
   override def update(): Unit = Unit
   private lazy val module = hub.getTopModule({case m:ActionToggleCriticalConnection ⇒ m})
@@ -30,17 +32,22 @@ class PickCriticalButton(override val hub: Space) extends DisplayModule[Space] w
 
   private def open() = {
     val html = TreeView(spaceController(hub), {
-      case Child(s: ContainerSpace) ⇒ getController(s, spaceController)
-      case Child(q: Question) ⇒ getController(q,questionController)
+      case Child(s: ContainerSpace) ⇒ s.rx.getAll({case Child(c) if c.isInstanceOf[Space] ⇒ null}).now match {
+        case Nil ⇒ None
+        case _ ⇒ Option(getController(s, spaceController))
+      }
+      case Child(q: Question) ⇒ Option(getController(q,questionController))
       }, Option("there are no questions in this space"))
 
     Modal.giveContentAndOpen(displayModal(html))
   }
 
+  private lazy val title = hub.getTitle
   @dom
   private def displayModal(html: Binding[Node]): Binding[Node] = {
     <div>
-      <h5>Users trying to join this space will have to answer selected questions first, to be able to join</h5>
+      <h5>Users trying to join this space will have to answer selected questions first</h5>
+      <p>Below is the list of all questions and spaces within `{title.dom.bind}` </p>
       {html.bind}
     </div>
   }
@@ -91,7 +98,8 @@ class PickCriticalButton(override val hub: Space) extends DisplayModule[Space] w
   private def spaceController(s: Space) = new Controller {
     override def onClick(e: Event): Unit = Unit
     override def cssClasses: Var[String] = Var("")
-    override def content: Binding[Node] = s.getTitle.dom
+    @dom
+    override def content: Binding[Node] = <b>{s.getTitle.dom.bind}</b>
     override def hub: Hub = s
   }
 }

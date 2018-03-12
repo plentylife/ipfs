@@ -21,11 +21,11 @@ trait Controller {
 object TreeView {
 
   @dom
-  def apply(controller: Controller, filter: PartialFunction[DataHub[_], Controller],
+  def apply(controller: Controller, filter: PartialFunction[DataHub[_], Option[Controller]],
             emptyMessage: Option[String] = None): Binding[Node] = {
     implicit val ctx = controller.hub.ctx
 
-    val hubs: ListBindable[Controller] = controller.hub.rx.getAll(filter)
+    val hubs: ListBindable[Controller] = controller.hub.rx.getAll(filter).map(_.flatten)
 
     println(s"TreeView applying hub ${controller.hub} with underlying ${hubs().value} " +
       s"from ${controller.hub.rx.cons.now}")
@@ -43,7 +43,8 @@ object TreeView {
   }
 
   @dom
-  private def display(controller: Controller, filter: PartialFunction[DataHub[_], Controller]): Binding[Node] = {
+  private def display(controller: Controller, filter: PartialFunction[DataHub[_], Option[Controller]]):
+  Binding[Node] = {
     <li class={controller.cssClasses.bind} onclick={controller.onClick _}>
       {controller.content.bind}
       {TreeView(controller, filter).bind}
