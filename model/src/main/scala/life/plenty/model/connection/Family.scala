@@ -37,3 +37,13 @@ object Created extends InstantiateFromOctopusByApply[Created[_]] {
     Created(from)
   }
 }
+
+case class Critical[T <: Hub](critical: T) extends DataHub[T] {
+  override def value: T = critical
+}
+
+object Critical extends InstantiateFromOctopusByApply[Critical[_]] {
+  override def instantiate(from: Hub): Critical[_] = {
+    Critical(from)
+  }
+}

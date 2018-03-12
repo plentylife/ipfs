@@ -40,6 +40,43 @@ class ActionAddConfirmedMarker(override val hub: Hub) extends Module[Hub] {
   }
 }
 
+class ActionToggleCriticalConnection(override val hub: Hub) extends Module[Hub] {
+  private implicit val ctx = hub.ctx
+  private val critical = GraphUtils.getCritical(hub)
+
+  def toggle(what: Hub) = {
+    println(s"Toggle of critical $what")
+    val existing = critical.now.find(_.value == what)
+
+    existing foreach {c ⇒
+      println(s"Toggle found $c ${c.isActive}")
+      if(c.isActive.now) c.inactivate() else c.activate()
+    }
+
+    if (existing.isEmpty) {
+      println(s"Toggle NOT found $what ${critical.now}")
+      on(what)
+    }
+  }
+
+//  def off(what: Hub) = {
+//    println(s"Toggle off")
+//    val existing = critical.now.find(_.id == what.id)
+//
+//    existing foreach {c ⇒
+//      println(s"Toggle found $c ${c.isActive}")
+//      if(c.isActive.now) c.inactivate() else c.activate()
+//    }
+//
+//    if (existing.isEmpty) {
+//      println(s"Toggle NOT found")
+//      on(what)
+//    }
+//  }
+
+  def on(what: Hub) = hub.addConnection(Critical(what))
+}
+
 class ActionAddContributor(override val hub: Contribution) extends Module[Contribution] {
   def add(userId: String) = {
     ???

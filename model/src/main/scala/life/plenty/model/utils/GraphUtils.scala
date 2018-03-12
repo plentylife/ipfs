@@ -27,6 +27,10 @@ object GraphUtils {
   def markedContributing(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] =
     o.rx.get({ case c@Marker(m) if m == MarkerEnum.CONTRIBUTING_QUESTION ⇒ c }).map(m ⇒ {m.nonEmpty})
 
+  def getCritical(h: Hub)(implicit ctx: Ctx.Owner): Rx[List[Critical[Hub]]] = h.rx.getAll({
+    case c : Critical[Hub] ⇒ c
+  })
+
   def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Body(b) ⇒ b })
 
   // fixme use h.connections

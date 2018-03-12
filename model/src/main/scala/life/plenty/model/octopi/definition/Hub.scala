@@ -6,6 +6,7 @@ import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection._
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
+import life.plenty.model.octopi.User
 import life.plenty.model.utils.GraphUtils
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
@@ -56,6 +57,13 @@ trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnecti
     c.asNew()
     addConnection(c)
   }
+
+  override def equals(o: Any): Boolean = o match {
+    case that: Hub => that.id.equalsIgnoreCase(this.id)
+    case _ => false
+  }
+
+  override def hashCode: Int = id.hashCode
 
   /** easy hook for external code */
   var tmpMarker: TmpMarker = NoMarker

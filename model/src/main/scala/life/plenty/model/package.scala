@@ -42,8 +42,9 @@ package object model {
     // one contributor per contribution (the creator)
     //    ModuleRegistry.add { case c: Contribution ⇒ new ActionAddContributor(c) }
 
+    ModuleRegistry.add { case q: ContainerSpace ⇒ new ActionToggleCriticalConnection(q) }
     ModuleRegistry.add { case o: ContainerSpace ⇒ new ActionAddDescription(o) }
-    ModuleRegistry.add { case o: Event ⇒ new ActionAddDescription(o) }
+//    ModuleRegistry.add { case o: Event ⇒ new ActionAddDescription(o) }
 
     ModuleRegistry.add { case o: ContainerSpace ⇒ new InitializeMembersOctopus(o) }
     ModuleRegistry.add { case o: WithMembers ⇒ new ActionAddMember(o) }

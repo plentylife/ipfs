@@ -121,7 +121,7 @@ object DataHubReader {
 
   private val hubReaders = Stream[(String, Hub) ⇒ Option[DataHub[_]]](
     Child(_, _), Parent(_, _), RootParent(_, _), Created(_, _), Creator(_, _), Contributor(_, _),
-    Member(_, _), To(_, _), From(_, _)
+    Member(_, _), To(_, _), From(_, _), Critical(_,_)
   )
 
   private def readHubValue(jsHub: JsDataHub): Future[Option[DataHub[_]]] = {

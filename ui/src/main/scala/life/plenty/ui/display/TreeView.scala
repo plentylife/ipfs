@@ -1,5 +1,6 @@
 package life.plenty.ui.display
 
+import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.DataHub
 import life.plenty.model.octopi.definition.Hub
@@ -11,42 +12,41 @@ import scalaz.std.list._
 import scalaz.std.option._
 
 trait Controller {
-  def cssClasses: String
-  def prependContent: Binding[Node]
+  def hub: Hub
+  def cssClasses: Var[String]
+  def content: Binding[Node]
   def onClick(e: Event): Unit
 }
 
 object TreeView {
 
   @dom
-  def apply(hub: Hub, filter: PartialFunction[DataHub[_], Hub], caller: DisplayModule[Hub],
-            overrides: List[ModuleOverride] = List(),
-            controllerGenerator: Hub => Controller): Binding[Node] = {
-    implicit val ctx = hub.ctx
+  def apply(controller: Controller, filter: PartialFunction[DataHub[_], Controller],
+            emptyMessage: Option[String] = None): Binding[Node] = {
+    implicit val ctx = controller.hub.ctx
 
-    val hubs: ListBindable[Hub] = hub.rx.getAll(filter)
+    val hubs: ListBindable[Controller] = controller.hub.rx.getAll(filter)
 
-    println(s"TreeView applying hub ${hub} with underlying ${hubs().value} from ${hub.rx.cons.now}")
+    println(s"TreeView applying hub ${controller.hub} with underlying ${hubs().value} " +
+      s"from ${controller.hub.rx.cons.now}")
 
     <span>
-      {DisplayModel.display(hub, overrides, caller).bind}
       {if (hubs().bind.nonEmpty) {
-        val ds = hubs().map(h ⇒ display(h, filter, caller, overrides, controllerGenerator).bind)
+        val ds = hubs().map(c ⇒ display(c, filter))
         <ul class="tree-list">
-          {for (d <- ds) yield d}
+          {for (d <- ds) yield d.bind}
         </ul>
-      } else DisplayModel.nospan.bind}
+      } else {
+      emptyMessage map {m => <span>{m}</span>} getOrElse DisplayModel.nospan.bind
+    }}
     </span>
   }
 
   @dom
-  private def display(hub: Hub, filter: PartialFunction[DataHub[_], Hub], caller: DisplayModule[Hub],
-                      overrides: List[ModuleOverride],
-                      controllerGenerator: Hub => Controller): Binding[Node] = {
-    val c = controllerGenerator(hub)
-    <li class={c.cssClasses} onclick={c.onClick _}>
-      {c.prependContent.bind}
-      {TreeView(hub, filter, caller, overrides, controllerGenerator).bind}
+  private def display(controller: Controller, filter: PartialFunction[DataHub[_], Controller]): Binding[Node] = {
+    <li class={controller.cssClasses.bind} onclick={controller.onClick _}>
+      {controller.content.bind}
+      {TreeView(controller, filter).bind}
     </li>
   }
 }

@@ -5,17 +5,19 @@ import com.thoughtworks.binding.{Binding, dom}
 import org.scalajs.dom.Node
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Event
-
+import rx.{Var ⇒ rxVar}
 import scala.util.Try
 
 trait InputVar[T] {
   val innerVar: Var[Option[T]]
+  val inputRx: rxVar[Option[T]] = rxVar(None)
   val extractor: Event ⇒ Option[T]
 
   val isEmpty = Var(false)
 
   def input(e: Event): Unit = {
     innerVar.value_=(extractor(e))
+    inputRx.update(innerVar.value)
     check()
   }
 
@@ -49,7 +51,6 @@ class TransactionalAmountVar(override val innerVar: Var[Option[Int]] = Var(None)
 class BooleanInputVar(override val innerVar: Var[Option[Boolean]] = Var(None)) extends InputVar[Boolean] {
   override val extractor: Event ⇒ Option[Boolean] = e ⇒ {
     val v = e.target.asInstanceOf[Input].checked
-    println(s"extracted $v")
     Option(v)
   }
 }
