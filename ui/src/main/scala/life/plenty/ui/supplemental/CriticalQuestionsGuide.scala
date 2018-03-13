@@ -30,7 +30,7 @@ object CriticalQuestionsGuide {
         if (list.nonEmpty) {
           Modal.giveContentAndOpen(this, html(critical()), hasCloseButton = false)
         } else {
-          Modal.close(this)
+          Modal.remove(this)
         }
       }
 
@@ -57,7 +57,7 @@ object CriticalQuestionsGuide {
   private var waitingOn: rxVar[Option[Question]] = rxVar(None)
 
   private def onOpen(q: Question)(e: Event) = {
-    Modal.close(this)
+    Modal.remove(this)
     Router.navigateToOctopus(q)
   }
 

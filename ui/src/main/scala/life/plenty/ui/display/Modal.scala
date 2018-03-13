@@ -16,6 +16,7 @@ object Modal {
   private val defualtClasses = "modal-outer-box d-flex justify-content-center align-items-center "
   private val closeButtonText = Var("close")
   private val hasCloseButton = Var(true)
+  private var currentCaller: Any = null
 
   private var contentQueue = Queue[ContentInfo]()
 
@@ -36,6 +37,7 @@ object Modal {
           outerClasses.value_=(content.cssClass)
           this.closeButtonText.value_=(content.closeBtnText)
           this.hasCloseButton.value_=(content.hasCloseButton)
+          this.currentCaller = content.caller
           this.content.value_=(content.content)
           isOpen.value_=(true)
         case _ ⇒
@@ -45,8 +47,15 @@ object Modal {
     }
   }
 
-  def close(caller: Any) = {
-    contentQueue = contentQueue.filterNot(_.caller == caller)
+  def remove(caller: Any) = {
+    if (caller == this.currentCaller) {
+      close()
+    } else {
+      contentQueue = contentQueue.filterNot(_.caller == caller)
+    }
+  }
+
+  def close() = {
     isOpen.value_=(false)
     setContent()
   }
