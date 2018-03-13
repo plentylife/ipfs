@@ -16,12 +16,13 @@ trait RxConnectionManager {
 
   def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]): Unit = onConnectionsRequest :::= fList
 
-  onConnectionAddedOperation(connection ⇒ {
+  onConnectionAddedOperation(connection ⇒ synchronized {
     /*filtering block*/
     val filteredCon: Rx[Option[DataHub[_]]] = connectionFilters.foldLeft[Rx[Option[DataHub[_]]]](
       Var {Option(connection)}
     )((c, f) ⇒ f(c))
     _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[DataHub[_]]]])
+
     /* end block */
   })
 
@@ -69,6 +70,11 @@ trait RxConnectionManager {
       Lazy.getAll(f)
     }
 
+    def getAllRaw[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
+      onConnectionsRequest.foreach(f ⇒ f())
+      Lazy.getAll(f)
+    }
+
     object Lazy {
       def lazyCons(implicit ctx: Ctx.Owner): RxConsList = toRxConsList(_connectionsRx)
 
@@ -76,56 +82,28 @@ trait RxConnectionManager {
         lazyCons(ctx) map {_.collectFirst(f)}
 
       def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
-        // todo. this can be optimized with getWatch
-//                _connectionsRx.map(_ map { rx ⇒
-//                  rx.map({ opt ⇒ opt.collect(f) })(ctx)
-//                } flatMap { rx ⇒ rx() })(ctx)
+        if (_connections.now.length != _connectionsRx.now.length) {
+          println("ERROR: GETALL has different sizes")
+          throw new Exception("GET ALL has different sizes")
+        }
+        val initial: List[Rx.Dynamic[Option[T]]] = _connections.now zip _connectionsRx.now collect {
+          case (s, rx) if f isDefinedAt s ⇒ rx map {_ map f}
+        }
 
-          val initialIndicies = _connections.now.zipWithIndex.collect({
-            case (dh, i) if f.isDefinedAt(dh) ⇒ i
-          })
+        val headRx: Rx[Option[DataHub[_]]] = _connections.map(_.headOption)
+          .filter(_ map { h ⇒ f isDefinedAt h} getOrElse false)
 
-          val initial = initialIndicies.map(i ⇒
-            _connectionsRx.now(i) map {_ map {v ⇒
-
-              try {
-                f(v)
-            } catch {
-              case e: Throwable ⇒
-                model.console.error(s"Failed on getAll initial.")
-                model.console.error(e)
-              //            throw e
-            }
-
-            }})
-
-
-          Rx {
-            val list: Var[List[Rx[Option[Any]]]] = Var(initial)
-            if (f.isDefinedAt(_connections().head)) {
-              try {
-                list() = (_connectionsRx().head map {_ map {v ⇒
-
-                  try {
-                    f(v)
-                  } catch {
-                    case e: Throwable ⇒
-                      println("CONTINUOUS ERROR")
-                      e.printStackTrace()
-                      throw e;
-                  }
-
-                }}) :: list.now
-              } catch {
-                case e: Throwable ⇒
-                  model.console.error(s"Failed on partial function. ${_connections().head} " +
-                    s"${_connectionsRx().head}")
-                  model.console.error(e)
-              }
-            }
-            list() flatMap { rx ⇒ rx() }
+        Rx {
+          var list = initial
+          headRx foreach {_ ⇒
+            val h = _connectionsRx().head map {_ collect f}
+            list = h :: list
           }
 
+          println(s"GETALL rx ${_connections.now}")
+
+          list flatMap {rx ⇒ rx()}
+        }
 
       }
     }
