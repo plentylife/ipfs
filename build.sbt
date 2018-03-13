@@ -22,7 +22,8 @@ lazy val model = project.enablePlugins(ScalaJSPlugin).in(file("model"))
     relativeSourceMaps := true,
     emitSourceMaps := true,
     libraryDependencies ++= Seq(
-      "com.lihaoyi" %%% "scalarx" % "0.3.2"
+      "com.lihaoyi" %%% "scalarx" % "0.3.2",
+      "io.monix" %%% "monix" % "3.0.0-M3"
     )
   )
 

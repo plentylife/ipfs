@@ -11,6 +11,7 @@ import life.plenty.model.utils.GraphUtils
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
 
+//with MonixConnectionManager
 trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnectionManager {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 

@@ -1,5 +1,6 @@
 package life.plenty.model.octopi.definition
 
+import life.plenty.model
 import life.plenty.model.connection.DataHub
 import life.plenty.model.modifiers.RxConnectionFilters
 import rx.opmacros.Utils.Id
@@ -43,14 +44,14 @@ trait RxConnectionManager {
       onConnectionsRequest.foreach(f ⇒ f())
 
       Rx {
-        val rightRxIndex = _connections.map{list ⇒
+        val rightRxIndex = _connections.map { list ⇒
           val processed = list.map(f.isDefinedAt)
           processed.indexOf(true) // if None, won't be found
         }
         val res: Rx[Option[T]] = rightRxIndex.flatMap { i ⇒
-          if (i < 0 ) Var(None) else {
+          if (i < 0) Var(None) else {
             val rxList = _connectionsRx()
-            rxList(i) map {rx: Option[DataHub[_]] ⇒ rx collect f}
+            rxList(i) map { rx: Option[DataHub[_]] ⇒ rx collect f }
           }
         }
 
@@ -59,9 +60,9 @@ trait RxConnectionManager {
       }
     }
 
-//    def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-//      cons(ctx) map {_.collectFirst(f)}
-//    }
+    //    def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
+    //      cons(ctx) map {_.collectFirst(f)}
+    //    }
 
     def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       onConnectionsRequest.foreach(f ⇒ f())
@@ -76,9 +77,56 @@ trait RxConnectionManager {
 
       def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
         // todo. this can be optimized with getWatch
-        _connectionsRx.map(_ map { rx ⇒
-          rx.map({ opt ⇒ opt.collect(f) })(ctx)
-        } flatMap { rx ⇒ rx() })(ctx)
+//                _connectionsRx.map(_ map { rx ⇒
+//                  rx.map({ opt ⇒ opt.collect(f) })(ctx)
+//                } flatMap { rx ⇒ rx() })(ctx)
+
+          val initialIndicies = _connections.now.zipWithIndex.collect({
+            case (dh, i) if f.isDefinedAt(dh) ⇒ i
+          })
+
+          val initial = initialIndicies.map(i ⇒
+            _connectionsRx.now(i) map {_ map {v ⇒
+
+              try {
+                f(v)
+            } catch {
+              case e: Throwable ⇒
+                model.console.error(s"Failed on getAll initial.")
+                model.console.error(e)
+              //            throw e
+            }
+
+            }})
+
+
+          Rx {
+            val list: Var[List[Rx[Option[Any]]]] = Var(initial)
+            if (f.isDefinedAt(_connections().head)) {
+              try {
+                list() = (_connectionsRx().head map {_ map {v ⇒
+
+                  try {
+                    f(v)
+                  } catch {
+                    case e: Throwable ⇒
+                      println("CONTINUOUS ERROR")
+                      e.printStackTrace()
+                      throw e;
+                  }
+
+                }}) :: list.now
+              } catch {
+                case e: Throwable ⇒
+                  model.console.error(s"Failed on partial function. ${_connections().head} " +
+                    s"${_connectionsRx().head}")
+                  model.console.error(e)
+              }
+            }
+            list() flatMap { rx ⇒ rx() }
+          }
+
+
       }
     }
 
