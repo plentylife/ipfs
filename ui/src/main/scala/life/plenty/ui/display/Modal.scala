@@ -19,12 +19,12 @@ object Modal {
 
   private var contentQueue = Queue[ContentInfo]()
 
-  private case class ContentInfo(content: Binding[Node], cssClass: String, closeBtnText: String,
+  private case class ContentInfo(caller: Any, content: Binding[Node], cssClass: String, closeBtnText: String,
                                  hasCloseButton: Boolean)
 
-  def giveContentAndOpen(c: Binding[Node], addClass: String = "", closeBtnText: String = "close",
+  def giveContentAndOpen(caller: Any, c: Binding[Node], addClass: String = "", closeBtnText: String = "close",
                          hasCloseButton: Boolean = true) = {
-    contentQueue = contentQueue.enqueue(ContentInfo(c, addClass, closeBtnText, hasCloseButton))
+    contentQueue = contentQueue.enqueue(ContentInfo(caller, c, addClass, closeBtnText, hasCloseButton))
     setContent()
   }
 
@@ -45,7 +45,8 @@ object Modal {
     }
   }
 
-  def close() = {
+  def close(caller: Any) = {
+    contentQueue = contentQueue.filterNot(_.caller == caller)
     isOpen.value_=(false)
     setContent()
   }
@@ -70,8 +71,9 @@ object Modal {
 }
 
 object ErrorModal {
+  // fixme should get caller from actual caller
   def setContentAndOpen(c: Binding[Node]): Unit = {
-    Modal.giveContentAndOpen(withHeader(c), "error", "close")
+    Modal.giveContentAndOpen(this, withHeader(c), "error", "close")
   }
 
   @dom

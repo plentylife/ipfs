@@ -7,7 +7,7 @@ import org.scalajs.dom.Node
 
 object IntroTutorial {
   def apply(user: User): Unit = {
-    Modal.giveContentAndOpen(content, "tutorial-modal-box")
+    Modal.giveContentAndOpen(this, content, "tutorial-modal-box")
   }
 
   @dom

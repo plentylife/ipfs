@@ -39,7 +39,7 @@ class PickCriticalButton(override val hub: Space) extends DisplayModule[Space] w
       case Child(q: Question) ⇒ Option(getController(q,questionController))
       }, Option("there are no questions in this space"))
 
-    Modal.giveContentAndOpen(displayModal(html))
+    Modal.giveContentAndOpen(this, displayModal(html))
   }
 
   private lazy val title = hub.getTitle

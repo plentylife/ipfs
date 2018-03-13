@@ -5,7 +5,7 @@ import life.plenty.ui.display.Modal
 import org.scalajs.dom.{Event, Node}
 
 trait ModalFormAction {
-  protected def onClick(e: Event): Unit = Modal.giveContentAndOpen(_createDialog())
+  protected def onClick(e: Event): Unit = Modal.giveContentAndOpen(this, _createDialog())
 
   @dom
   private def _createDialog(): Binding[Node] = {

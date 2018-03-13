@@ -9,9 +9,9 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.{CardQuestionDisplayBase, Modal}
 import life.plenty.ui.display.utils.Helpers.ListBindable
-import life.plenty.ui.model.UiContext
+import life.plenty.ui.model.{Router, UiContext}
 import org.scalajs.dom.{Event, Node}
-import rx.{Ctx, Rx}
+import rx.{Ctx, Rx, Var ⇒ rxVar}
 import rx.async._
 import rx.async.Platform._
 
@@ -26,20 +26,39 @@ object CriticalQuestionsGuide {
           case Critical(q: Question) ⇒ q
         }) flatMap {qs ⇒ filterCritical(qs) }
 
-      Modal.giveContentAndOpen(html(critical()), hasCloseButton = false)
+      critical.rxv foreach {list ⇒
+        if (list.nonEmpty) {
+          Modal.giveContentAndOpen(this, html(critical()), hasCloseButton = false)
+        } else {
+          Modal.close(this)
+        }
+      }
+
     })
 
   }
 
   /** check that the question isn't finalized, or that the user has already answered it */
   private def filterCritical(list: List[RxOpt[Question]]): Rx[List[Question]] = Rx {
-    println(s"FILTERING CRITICAL $list")
     list flatMap {rx ⇒ rx() flatMap {q ⇒
-      val hasCreated = GraphUtils.getAllCreatedByInSpace(q, UiContext.getUser) // shouldn't be null
-      println(s"HAS CREATED IN $q $hasCreated")
-      if (hasCreated().exists(_.getHolder != q)) Some(q) else None
+      val r = filterSingleCritical(q)
+      r()
+    }}
+  }
+
+  private def filterSingleCritical(q: Question)(): Rx[Option[Question]] = {
+    val hasCreated = GraphUtils.getAllCreatedByInSpace(q, UiContext.getUser) // shouldn't be null
+    val isFinalized = GraphUtils.markedConfirmed(q)
+    Rx {
+      if (isFinalized() || hasCreated().exists(_.getHolder != q)) None else Some(q)
     }
-    }
+  }
+
+  private var waitingOn: rxVar[Option[Question]] = rxVar(None)
+
+  private def onOpen(q: Question)(e: Event) = {
+    Modal.close(this)
+    Router.navigateToOctopus(q)
   }
 
   @dom
@@ -53,7 +72,7 @@ object CriticalQuestionsGuide {
   @dom
   private def board(critical: Vars[Question]): Binding[Node] = {
     <div class="board">
-      {for (q <- critical) yield CardQuestionDisplayBase.html(q, List(), (e: Event) => Unit).bind}
+      {for (q <- critical) yield CardQuestionDisplayBase.html(q, List(), onOpen(q)).bind}
     </div>
   }
 

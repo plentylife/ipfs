@@ -60,7 +60,7 @@ trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnecti
   }
 
   override def equals(o: Any): Boolean = o match {
-    case that: Hub => that.id.equalsIgnoreCase(this.id)
+    case that: Hub => that.id == this.id
     case _ => false
   }
 
