@@ -7,6 +7,7 @@ import life.plenty.model.connection.Critical
 import life.plenty.model.octopi.Question
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.utils.GraphUtils
+import life.plenty.ui
 import life.plenty.ui.display.{CardQuestionDisplayBase, Modal}
 import life.plenty.ui.display.utils.Helpers.ListBindable
 import life.plenty.ui.model.{Router, UiContext}
@@ -64,7 +65,8 @@ object CriticalQuestionsGuide {
   @dom
   private def html(critical: Vars[Question]): Binding[Node] = {
     <div class="critical-question-list">
-      <p>Please answer all of the following questions</p>
+      <p>Please answer all of the following questions. Voting, giving {ui.thanks}hanks, asking sub-questions and
+        creating sub-spaces also counts.</p>
       {board(critical).bind}
     </div>
   }
