@@ -15,8 +15,8 @@ trait RxConnectionManager {
   self: Hub ⇒
   protected lazy val _connectionsRx: Var[List[Rx[Option[DataHub[_]]]]] =
     Var(List.empty[Rx[Option[DataHub[_]]]])
-  protected lazy val _last: Var[DataHub[_]] =
-    Var(null)
+  protected lazy val _connectionsRxMap: Var[List[(DataHub[_], Rx[Option[DataHub[_]]])]] =
+    Var(List())
 
   private lazy val connectionFilters = getAllModules({ case m: RxConnectionFilters[_] ⇒ m })
 
@@ -30,8 +30,8 @@ trait RxConnectionManager {
       Var {Option(connection)}
     )((c, f) ⇒ f(c))
     _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[DataHub[_]]]])
+    _connectionsRxMap() = (connection → filteredCon) :: _connectionsRxMap.now
     /* end block */
-    _last() = connection
   })
 
   object rx {
@@ -89,32 +89,17 @@ trait RxConnectionManager {
         lazyCons(ctx) map {_.collectFirst(f)}
 
       def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner):
-      Rx[List[Rx[Option[T]]]] = {
-        if (_connections.now.length != _connectionsRx.now.length) {
-          model.console.error("Rx Connection manager has different sizes of lists" +
-            s"${_connections.now.length} ${_connectionsRx.now.length}")
-          throw new Exception("rx.getAll has different sized lists")
-        }
-        // tail is important because the head gets processed next
-        val initial: List[Rx[Option[T]]] = _connections.now.tail zip _connectionsRx.now.tail collect {
-          case (s, rx) if f isDefinedAt s ⇒ rx map {_ map f} debounce(debounceDuration)
-        }
+      Rx[List[Rx[Option[T]]]] = synchronized {
 
-        var add = _last.now == null
-        val headRx: Rx[DataHub[_]] = _last.filter(h => h != null && (f isDefinedAt h)).debounce(debounceDuration)
+        _connectionsRxMap.debounce(debounceDuration).fold(List[Rx[Option[T]]]() → 0)((listWithMark, csMap) ⇒ {
+          val take = csMap.length - listWithMark._2
 
-        headRx.fold(initial)((list, e) ⇒ {
-          val cs = _connectionsRx.debounce(debounceDuration)
-          println(s"OCMP ${cs().head} --> ${e}")
-          val h = cs().head.debounce(debounceDuration) map {_ collect f}
-          // so we don't add the head twice
-          if (_last.now != null && add) {
-            h :: list
-          } else {
-            add = true
-            list
+          val list = csMap.take(take) collect {
+            case (s, rx) if f isDefinedAt s ⇒ rx.debounce(debounceDuration) map {_ map f}
           }
-        }).debounce(debounceDuration)
+
+          list → csMap.length
+        }).debounce(debounceDuration).map(_._1)
 
       }
     }
