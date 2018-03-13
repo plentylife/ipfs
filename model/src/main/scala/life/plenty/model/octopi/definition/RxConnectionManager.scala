@@ -1,14 +1,22 @@
 package life.plenty.model.octopi.definition
 
 import life.plenty.model
+import life.plenty.model.RxConsList
 import life.plenty.model.connection.DataHub
 import life.plenty.model.modifiers.RxConnectionFilters
 import rx.opmacros.Utils.Id
 import rx.{Ctx, Rx, Var}
+import rx.async._
+import rx.async.Platform._
+
+import scala.concurrent.duration._
 
 trait RxConnectionManager {
   self: Hub ⇒
-  protected lazy val _connectionsRx: Var[List[Rx[Option[DataHub[_]]]]] = Var(List.empty[Rx[Option[DataHub[_]]]])
+  protected lazy val _connectionsRx: Var[List[Rx[Option[DataHub[_]]]]] =
+    Var(List.empty[Rx[Option[DataHub[_]]]])
+  protected lazy val _last: Var[DataHub[_]] =
+    Var(null)
 
   private lazy val connectionFilters = getAllModules({ case m: RxConnectionFilters[_] ⇒ m })
 
@@ -22,12 +30,12 @@ trait RxConnectionManager {
       Var {Option(connection)}
     )((c, f) ⇒ f(c))
     _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[DataHub[_]]]])
-
     /* end block */
+    _last() = connection
   })
 
   object rx {
-    type RxConsList = Rx[List[DataHub[_]]]
+    val debounceDuration = 1000 milliseconds
 
     def toRxConsList(in: Var[scala.List[Rx[Option[DataHub[_]]]]])(implicit ctx: Ctx.Owner): RxConsList = {
       in.map({ list ⇒
@@ -61,16 +69,15 @@ trait RxConnectionManager {
       }
     }
 
-    //    def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-    //      cons(ctx) map {_.collectFirst(f)}
-    //    }
-
     def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       onConnectionsRequest.foreach(f ⇒ f())
-      Lazy.getAll(f)
+      Rx {
+        val raw = Lazy.getAll(f)
+        raw() flatMap {rx ⇒ rx()}
+      }.debounce(debounceDuration)
     }
 
-    def getAllRaw[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
+    def getAllRaw[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner) = {
       onConnectionsRequest.foreach(f ⇒ f())
       Lazy.getAll(f)
     }
@@ -81,29 +88,33 @@ trait RxConnectionManager {
       def lazyGet[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] =
         lazyCons(ctx) map {_.collectFirst(f)}
 
-      def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
+      def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner):
+      Rx[List[Rx[Option[T]]]] = {
         if (_connections.now.length != _connectionsRx.now.length) {
-          println("ERROR: GETALL has different sizes")
-          throw new Exception("GET ALL has different sizes")
+          model.console.error("Rx Connection manager has different sizes of lists" +
+            s"${_connections.now.length} ${_connectionsRx.now.length}")
+          throw new Exception("rx.getAll has different sized lists")
         }
-        val initial: List[Rx.Dynamic[Option[T]]] = _connections.now zip _connectionsRx.now collect {
-          case (s, rx) if f isDefinedAt s ⇒ rx map {_ map f}
+        // tail is important because the head gets processed next
+        val initial: List[Rx[Option[T]]] = _connections.now.tail zip _connectionsRx.now.tail collect {
+          case (s, rx) if f isDefinedAt s ⇒ rx map {_ map f} debounce(debounceDuration)
         }
 
-        val headRx: Rx[Option[DataHub[_]]] = _connections.map(_.headOption)
-          .filter(_ map { h ⇒ f isDefinedAt h} getOrElse false)
+        var add = _last.now == null
+        val headRx: Rx[DataHub[_]] = _last.filter(h => h != null && (f isDefinedAt h)).debounce(debounceDuration)
 
-        Rx {
-          var list = initial
-          headRx foreach {_ ⇒
-            val h = _connectionsRx().head map {_ collect f}
-            list = h :: list
+        headRx.fold(initial)((list, e) ⇒ {
+          val cs = _connectionsRx.debounce(debounceDuration)
+          println(s"OCMP ${cs().head} --> ${e}")
+          val h = cs().head.debounce(debounceDuration) map {_ collect f}
+          // so we don't add the head twice
+          if (_last.now != null && add) {
+            h :: list
+          } else {
+            add = true
+            list
           }
-
-          println(s"GETALL rx ${_connections.now}")
-
-          list flatMap {rx ⇒ rx()}
-        }
+        }).debounce(debounceDuration)
 
       }
     }

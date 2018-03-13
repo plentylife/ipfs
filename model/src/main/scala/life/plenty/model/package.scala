@@ -2,13 +2,19 @@ package life.plenty
 
 
 import life.plenty.model.actions._
+import life.plenty.model.connection.DataHub
 import life.plenty.model.modifiers.{AnswerVoteOrder, InactiveFilter}
 import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.security.FundsCheck
 import life.plenty.model.utils.{Console, Hash}
+import rx.Rx
 
 package object model {
+  type RxOpt[T] = Rx[Option[T]]
+  type RxConsList = Rx[List[DataHub[_]]]
+
+
   val console = new Console(false, true, "Model")
   private var _hasher: Hash = _
   private var _defaultCreator: Option[User] = None

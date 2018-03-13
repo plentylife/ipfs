@@ -2,6 +2,7 @@ package life.plenty.ui.supplemental
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.model.RxOpt
 import life.plenty.model.connection.Critical
 import life.plenty.model.octopi.Question
 import life.plenty.model.octopi.definition.Hub
@@ -11,29 +12,33 @@ import life.plenty.ui.display.utils.Helpers.ListBindable
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.{Event, Node}
 import rx.{Ctx, Rx}
+import rx.async._
+import rx.async.Platform._
+
+import scala.concurrent.duration._
 
 object CriticalQuestionsGuide {
   private implicit val ctx = Ctx.Owner.safe()
 
   def apply(): Unit = {
     UiContext.startingSpaceRx.foreach(_ foreach {space ⇒
-      val critical: ListBindable[Question] = Rx {
-        val cs = GraphUtils.getCritical(space)
-        println(s"GETTING CRITICAL $cs")
-        val qs = cs() collect {case Critical(q: Question) ⇒ q}
-        filterCritical(qs)()
-      }
+      val critical: ListBindable[Question] = space.rx.getAllRaw({
+          case Critical(q: Question) ⇒ q
+        }) flatMap {qs ⇒ filterCritical(qs) }
+
       Modal.giveContentAndOpen(html(critical()), hasCloseButton = false)
     })
 
   }
 
   /** check that the question isn't finalized, or that the user has already answered it */
-  private def filterCritical(list: List[Question]): Rx[List[Question]] = Rx {
-    list filter {q ⇒
+  private def filterCritical(list: List[RxOpt[Question]]): Rx[List[Question]] = Rx {
+    println(s"FILTERING CRITICAL $list")
+    list flatMap {rx ⇒ rx() flatMap {q ⇒
       val hasCreated = GraphUtils.getAllCreatedByInSpace(q, UiContext.getUser) // shouldn't be null
       println(s"HAS CREATED IN $q $hasCreated")
-      hasCreated().exists(_.getHolder != q)
+      if (hasCreated().exists(_.getHolder != q)) Some(q) else None
+    }
     }
   }
 
