@@ -57,7 +57,7 @@ object Main {
           LoadIndicator.forceOpen()
           DbReader.read(id) foreach { hub ⇒
             println(s"UI loaded $id as $hub")
-            UiContext.setStatingSpace(hub)
+            UiContext.setPointer(hub)
           }
         case None ⇒ CreateSpace.openInModal()
       }
@@ -71,7 +71,7 @@ object Main {
     <div id="viewport" onclick={e: Event ⇒ Help.triggerClose()}>
       {Modal.display().bind}{LoadIndicator.show().bind}{showUi().bind}{Help.display().bind}{Login.display().bind}{
       //
-      if(UiContext.startingSpace.bind.nonEmpty) DisplayModel.display(UiContext.startingSpace.bind.get).bind //
+      if(UiContext.pointer.bind.nonEmpty) DisplayModel.display(UiContext.pointer.bind.get).bind //
       else <span style="position: fixed; top: 0; left: 0">
         Opening up...
       </span>}

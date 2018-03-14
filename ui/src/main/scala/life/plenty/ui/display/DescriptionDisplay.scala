@@ -21,7 +21,7 @@ class DescriptionDisplay(override val hub: Space) extends DisplayModule[Space] {
     })
   }
 
-  override def doDisplay(): Boolean = UiContext.startingSpace.value.get.id == hub.id
+  override def doDisplay(): Boolean = UiContext.pointer.value.get.id == hub.id
 
 
   private lazy val description: Var[String] = Var("")

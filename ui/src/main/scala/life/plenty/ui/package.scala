@@ -58,6 +58,7 @@ package object ui {
     ModuleRegistry add { case o: Question ⇒ new CardQuestionDisplay(o) }
     ModuleRegistry add { case o: SignupQuestion ⇒ new CardSignupQuestionDisplay(o) }
     ModuleRegistry add { case o: Answer ⇒ new CardAnswerDisplay(o) }
+    ModuleRegistry add { case o: User ⇒ new UserLayout(o) }
     ModuleRegistry add { case o: Space ⇒ new TopSpaceLayout(o) }
     ModuleRegistry add { case o: SignupQuestion ⇒ new SignupQuestionSpaceLayout(o) }
 

@@ -65,7 +65,7 @@ object CriticalQuestionsGuide {
 
   private def onOpen(q: Question)(e: Event) = {
     Modal.remove(this)
-    Router.navigateToOctopus(q)
+    Router.navigateToHub(q)
   }
 
   @dom

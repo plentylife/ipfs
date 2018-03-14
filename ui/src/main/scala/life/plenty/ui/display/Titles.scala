@@ -72,7 +72,7 @@ class QuestionTitle(override val hub: Space) extends DisplayModule[Space] with T
     ui.console.println(s"question title display ${editor.module}")
     <div class="question-title" id={hub.id}>
       {ChangeParent.displayActiveOnly(hub).bind}{editor.dom.bind}<span class="title-text" onclick={e: Event
-    => Router.navigateToOctopus(hub)}>
+    => Router.navigateToHub(hub)}>
       {gqTitle.dom.bind}{hub.getTitle.dom.bind}
       ?
     </span>

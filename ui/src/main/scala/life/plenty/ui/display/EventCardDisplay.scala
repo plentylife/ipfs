@@ -13,9 +13,9 @@ import rx.Rx
 class EventCardDisplay(override val hub: Event) extends DisplayModule[Event] {
   override def update(): Unit = Unit
 
-  override def doDisplay(): Boolean = UiContext.startingSpace.value.get.id != hub.id
+  override def doDisplay(): Boolean = UiContext.pointer.value.get.id != hub.id
 
-  private def navigateTo(e: MouseEvent) = Router.navigateToOctopus(hub)
+  private def navigateTo(e: MouseEvent) = Router.navigateToHub(hub)
 
   private lazy val editor: BindableAction[EditSpace] = new BindableAction(hub.getTopModule({ case
     m: EditSpace ⇒ m

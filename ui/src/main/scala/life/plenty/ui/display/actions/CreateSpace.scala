@@ -33,7 +33,7 @@ object CreateSpace {
       space.asNew(params:_*) foreach {_ ⇒
         println(space.sc.all)
 
-        Router.navigateToOctopus(space)
+        Router.navigateToHub(space)
         Modal.close()
         title.reset
         description.reset

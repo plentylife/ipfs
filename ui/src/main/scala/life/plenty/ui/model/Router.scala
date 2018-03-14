@@ -50,7 +50,7 @@ object Router {
   def changeViewState(s: ViewState, routingParams: RoutingParams) =
     routingParams.copy(stateId = s.id)
 
-  def navigateToOctopus(o: Hub) = {
+  def navigateToHub(o: Hub) = {
     router.state.value_=(router.state.value.copy(hubId = Option(o.id)))
   }
 }

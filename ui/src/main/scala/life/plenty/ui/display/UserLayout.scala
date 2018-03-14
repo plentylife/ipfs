@@ -16,7 +16,7 @@ import scalaz.std.option._
 
 class UserLayout(override val hub: User) extends LayoutModule[User] {
 
-  override def doDisplay(): Boolean = true
+  override def doDisplay(): Boolean = UiContext.pointer.value.exists(_.id == hub.id)
 
   def getMemberships(cs: BindingSeq[Hub]): BindingSeq[Hub]#WithFilter = cs.withFilter({
     case m: Members ⇒ true

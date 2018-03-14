@@ -19,8 +19,8 @@ object UiContext {
   private val _pointer: Var[Option[Hub]] = Var(None)
   val pointerRx: rxVar[Option[Hub]] = rxVar(None)
 
-  def startingSpace: Var[Option[Hub]] = _pointer
-  def setStatingSpace(s: Hub) = {
+  def pointer: Var[Option[Hub]] = _pointer
+  def setPointer(s: Hub) = {
     _pointer.value_=(Option(s))
     pointerRx.update(Option(s))
   }

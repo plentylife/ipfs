@@ -9,9 +9,9 @@ import life.plenty.ui
 import life.plenty.ui.display.actions.labeltraits.MenuAction
 import life.plenty.ui.display.info.AnswerInfo
 import life.plenty.ui.display.meta.{LayoutModule, NoDisplay}
-import life.plenty.ui.model.DisplayModule
+import life.plenty.ui.model._
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model.{ModuleOverride, Router, SimpleModuleOverride}
+import org.scalajs.dom.Event
 import org.scalajs.dom.raw.{MouseEvent, Node}
 import rx.Obs
 
@@ -35,7 +35,7 @@ class MenuBar(override val hub: Hub) extends LayoutModule[Hub] {
   @dom
   private def backBtn: Binding[Node] = if (parentSpace.bind.nonEmpty) {
     <div class="btn btn-outline-light navigation-back" onclick={e: MouseEvent ⇒
-      Router.navigateToOctopus(parentSpace.value.get)}>back</div>
+      Router.navigateToHub(parentSpace.value.get)}>back</div>
   } else {<span class="d-none"></span>}
 
   @dom
@@ -52,6 +52,9 @@ class MenuBar(override val hub: Hub) extends LayoutModule[Hub] {
 
       <div class="actions">
         {displayModules(siblingModules.withFilter(_.isInstanceOf[MenuAction]), "modules").bind}
+      </div>
+      <div class="links">
+        <span onclick={(e: Event) ⇒ Router.navigateToHub(UiContext.getUser)}>open feed</span>
       </div>
     </div>
   }

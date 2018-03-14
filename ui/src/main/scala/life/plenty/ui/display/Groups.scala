@@ -13,7 +13,7 @@ class TopSpaceGroups(private val _withinOctopus: Hub) extends GroupedChildDispla
 
   override def doDisplay() = {
     // fixme the second condition is temporary
-    UiContext.startingSpace.value.get.id == _withinOctopus.id && !_withinOctopus.isInstanceOf[Question]
+    UiContext.pointer.value.get.id == _withinOctopus.id && !_withinOctopus.isInstanceOf[Question]
   }
 
   override protected def groupBy(o: Hub): String = o match {
@@ -39,7 +39,7 @@ class QuestionModuleGroup(private val _withinOctopus: Hub) extends GroupedModula
 
   override def doDisplay() = {
     //    println(s"Question module group starting ${UiContext.startingSpace.value.get.id} ${_withinOctopus.id}")
-    UiContext.startingSpace.value.map(_.id).getOrElse("") != _withinOctopus.id
+    UiContext.pointer.value.map(_.id).getOrElse("") != _withinOctopus.id
   }
 
   override protected def groupBy(m: DisplayModule[_]): String = m match {

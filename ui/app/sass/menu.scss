@@ -71,6 +71,15 @@
     margin-top: $spacer * 1.5
   }
 
+  .links {
+    margin-top: $spacer * 1.5;
+    & > * {
+      color: #974bde;
+      text-decoration: underline;
+    }
+
+  }
+
   .btn {
     white-space: unset;
   }
