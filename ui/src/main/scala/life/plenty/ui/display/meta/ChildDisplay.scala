@@ -6,8 +6,8 @@ import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.console
-import life.plenty.ui.model.{DisplayModel, ModuleOverride, SimpleModuleOverride}
-import life.plenty.ui.model.DisplayModel.{DisplayModule, getSiblingModules}
+import life.plenty.ui.model.{DisplayModel, DisplayModule, ModuleOverride, SimpleModuleOverride}
+import life.plenty.ui.model.DisplayModel.getSiblingModules
 import org.scalajs.dom.raw.Node
 import rx.{Obs, Rx}
 

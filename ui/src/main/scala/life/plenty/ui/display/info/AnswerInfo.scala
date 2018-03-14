@@ -4,7 +4,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.{Answer, Contribution}
 import life.plenty.ui
 import life.plenty.ui.display.actions.AnswerControls
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.Node
 

@@ -5,7 +5,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.DataHub
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.display.utils.Helpers.ListBindable
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.model.{DisplayModel, ModuleOverride}
 import org.scalajs.dom.{Event, Node}
 import scalaz.std.list._

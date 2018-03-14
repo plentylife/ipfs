@@ -5,7 +5,7 @@ import life.plenty.model.actions.{ActionCreateAnswer, ActionCreateQuestion}
 import life.plenty.model.octopi.definition.{Hub, Module}
 import life.plenty.ui
 import life.plenty.ui.display.utils.{InputVarWithTextarea, ModalFormAction, StringInputVar}
-import life.plenty.ui.model.DisplayModel.{DisplayModule, SingleActionModuleDisplay}
+import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
 import life.plenty.ui.display.utils.InputVarWithTextarea
 import org.scalajs.dom.{Event, Node}
 

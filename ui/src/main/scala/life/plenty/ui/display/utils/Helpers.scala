@@ -3,18 +3,21 @@ package life.plenty.ui.display.utils
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.definition.Hub
-import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
-import life.plenty.ui.model.{DisplayModel, ModuleOverride, UiContext}
+import life.plenty.ui.model.DisplayModel.ActionDisplay
+import life.plenty.ui.model.{DisplayModel, DisplayModule, ModuleOverride, UiContext}
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
 import scalaz.std.list._
 import scalaz.std.option._
 
+import scala.language.implicitConversions
+
 object Helpers {
+  implicit def intToStr(i: Int): String = i.toString
 
   @dom
   def strIntoParagraphs(str: String): Binding[Node] = {
-    val split = str.split("\n").toList
+    val split = str.split("\n").toList.filter(_.nonEmpty)
     <span>
       {for (line ← split) yield {
       <p>
@@ -86,7 +89,7 @@ object Helpers {
     def dom: Binding[Node] = {
       if (inner.bind.nonEmpty) {
         <span class={s"${rxv.getClass.getSimpleName}"}>
-          {inner.bind: String}
+          {strIntoParagraphs(inner.bind).bind}
         </span>
       } else {
         <span></span>

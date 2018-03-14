@@ -3,7 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.User
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import org.scalajs.dom.Node
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.jdenticon

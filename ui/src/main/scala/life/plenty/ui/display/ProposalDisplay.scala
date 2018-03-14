@@ -6,7 +6,7 @@ import life.plenty.model.actions.ActionUpDownVote
 import life.plenty.model.octopi._
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.actions.{ChangeParent, ConfirmActionDisplay, EditSpace}
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.Event

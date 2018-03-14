@@ -11,8 +11,8 @@ import life.plenty.ui.display.{Controller, InlineDisplay, Modal, TreeView}
 import life.plenty.ui.display.actions.labeltraits.MenuAction
 import life.plenty.ui.display.utils.{BooleanInputVar, InputVarWithCheckbox}
 import life.plenty.ui.display.utils.Helpers.BasicBindable
-import life.plenty.ui.model.ComplexModuleOverride
-import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
+import life.plenty.ui.model.{ComplexModuleOverride, DisplayModule}
+import life.plenty.ui.model.DisplayModel.ActionDisplay
 import org.scalajs.dom.{Event, Node}
 import rx.{Ctx, Obs}
 

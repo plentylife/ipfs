@@ -3,7 +3,7 @@ package life.plenty.ui.display.actions
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionAddContributor
 import life.plenty.model.octopi.Contribution
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 

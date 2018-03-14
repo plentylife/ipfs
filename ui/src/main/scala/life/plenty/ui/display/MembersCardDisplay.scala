@@ -11,7 +11,7 @@ import life.plenty.ui
 import life.plenty.ui.display.actions.AnswerControls
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers.{BasicBindable, BindableModule, OptBindableProperty}
 import life.plenty.ui.model.{ComplexModuleOverride, DisplayModel, ModuleOverride, UiContext}
 import org.scalajs.dom.Event
@@ -79,8 +79,6 @@ class BadgeMemberEarned(val user: User, contributions: Rx[List[Contribution]],
                         userEarned: Rx[Int], maxEarned: Rx[Int],
                         caller: DisplayModule[Hub])
                        (implicit ctx: Ctx.Owner) {
-  private implicit def parser(i: Int): String = i.toString
-
   private lazy val badgeDisplay = new BindableModule(user.getTopModule({case m: FullUserBadge ⇒ m}), caller)
   private lazy val contributionsCount = contributions.map(_.size)
   private lazy val barWidth: BasicBindable[Double] = Rx {

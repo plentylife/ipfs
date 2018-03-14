@@ -7,7 +7,7 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.octopi.pseudo.Wallet
 import life.plenty.ui
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model.DisplayModel.intToStr
+import life.plenty.ui.display.utils.Helpers.intToStr
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node

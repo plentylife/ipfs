@@ -1,7 +1,6 @@
 package life.plenty.ui.model
 
 import life.plenty.model.octopi.definition.{Hub, Module}
-import life.plenty.ui.model.DisplayModel.DisplayModule
 
 sealed trait ModuleOverride {
   val creator: DisplayModule[Hub]

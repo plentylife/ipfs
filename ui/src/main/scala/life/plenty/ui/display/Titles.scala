@@ -8,7 +8,7 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.octopi.{GreatQuestion, Space}
 import life.plenty.ui
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.Router
 import org.scalajs.dom.Event

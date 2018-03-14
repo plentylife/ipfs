@@ -6,7 +6,7 @@ import life.plenty.model.actions.ActionAddDescription
 import life.plenty.model.connection.Body
 import life.plenty.model.octopi.Space
 import life.plenty.ui.display.utils.Helpers
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.model.{DisplayModel, UiContext}
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.{Event, Node}

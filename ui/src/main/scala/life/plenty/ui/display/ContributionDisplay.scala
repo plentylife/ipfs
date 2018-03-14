@@ -6,7 +6,7 @@ import life.plenty.model.actions.ActionGiveThanks
 import life.plenty.model.octopi.{Contribution, User}
 import life.plenty.ui
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event

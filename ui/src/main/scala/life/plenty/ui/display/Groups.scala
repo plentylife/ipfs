@@ -4,7 +4,7 @@ import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.display.actions.CreateAnswer
 import life.plenty.ui.display.meta.{GroupedChildDisplay, GroupedModularDisplay}
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.model.UiContext
 
 class TopSpaceGroups(private val _withinOctopus: Hub) extends GroupedChildDisplay(_withinOctopus) {

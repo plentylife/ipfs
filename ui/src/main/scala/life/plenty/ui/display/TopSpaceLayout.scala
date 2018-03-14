@@ -19,6 +19,8 @@ import scala.xml.NodeBuffer
 import scalaz.std.list._
 import scalaz.std.option._
 
+
+
 class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
   override def doDisplay(): Boolean = UiContext.startingSpace.value.exists(_.id == hub.id)

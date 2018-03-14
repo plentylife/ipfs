@@ -1,28 +1,24 @@
 package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.{ContainerSpace, Question, Space}
-import life.plenty.ui.model.{DisplayModel, UiContext}
-import life.plenty.ui.model.DisplayModel.{ActionDisplay, DisplayModule}
-import org.scalajs.dom.{Event, Node}
+import life.plenty.model.octopi.Space
 import life.plenty.ui.display.utils.Helpers._
-
+import life.plenty.ui.model.DisplayModule
+import org.scalajs.dom.{Event, Node}
 import scalaz.std.option._
 
 class SpaceActionsBar(override val hub: Space) extends DisplayModule[Space] {
   override def update(): Unit = Unit
 
-  private lazy val ask = new BindableModule(hub.getTopModule({case m: CreateQuestionButton ⇒ m}), this)
-  private lazy val answer = new BindableModule(hub.getTopModule({case m: CreateAnswerButton ⇒ m}), this)
-  private lazy val signup = new BindableModule(hub.getTopModule({case m: SignupButton ⇒ m}), this)
+  private lazy val ask = new BindableModule(hub.getTopModule({ case m: CreateQuestionButton ⇒ m }), this)
+  private lazy val answer = new BindableModule(hub.getTopModule({ case m: CreateAnswerButton ⇒ m }), this)
+  private lazy val signup = new BindableModule(hub.getTopModule({ case m: SignupButton ⇒ m }), this)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     <div class="d-inline-flex space-actions-bar">
-      <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div>
-      {ask.dom.bind}
-      {answer.dom.bind}
-      {signup.dom.bind}
+      <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div>{ask.dom.bind}{answer.dom
+      .bind}{signup.dom.bind}
     </div>
   }
 
@@ -30,11 +26,3 @@ class SpaceActionsBar(override val hub: Space) extends DisplayModule[Space] {
     CreateSpace.openInModal(hub)
   }
 }
-
-//{if(!withinOctopus.isInstanceOf[Question])
-//  <div class="btn btn-primary" onclick={onCreateSpace _}>create a space</div> else DisplayModel.nospan.bind}
-
-//{if (UiContext.startingSpace.bind.exists{_.id != withinOctopus.id} && withinOctopus.isInstanceOf[ContainerSpace])
-//  <div class="btn btn-primary">answer</div>
-//  else DisplayModel.nospan.bind
-//}

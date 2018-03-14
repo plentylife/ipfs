@@ -5,7 +5,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.Space
 import life.plenty.ui.display.utils.{BooleanInputVar, InputVarWithCheckbox}
 import life.plenty.ui.display.utils.Helpers.BasicBindable
-import life.plenty.ui.model.DisplayModel.DisplayModule
+import life.plenty.ui.model.DisplayModule
 import org.scalajs.dom.{Event, Node}
 
 //class SelectCritical(override val hub: Space) extends DisplayModule[Space] {
