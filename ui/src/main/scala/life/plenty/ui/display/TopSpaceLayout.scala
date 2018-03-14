@@ -62,7 +62,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
           {hub.getTitle.dom.bind}
         </h3>
         <h5 class="sub-title mt-1 ml-2 text-muted">
-          {GraphUtils.getBody(hub).dom.bind}
+          {new OptBindableHtmlProperty(GraphUtils.getBody(hub), strIntoParagraphs).dom.bind}
         </h5>{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}
       </div>
 

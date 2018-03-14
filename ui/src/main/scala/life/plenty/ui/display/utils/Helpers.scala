@@ -86,11 +86,16 @@ object Helpers {
   implicit class OptBindableProperty[T](override val rxv: Rx[Option[T]])(implicit _parser: T ⇒ String) extends
     BindableDom[Option[T]] {
     @dom
+    def innerHtml: Binding[Node] = {
+      <span class={s"${rxv.getClass.getSimpleName}"}>
+        {inner.bind}
+      </span>
+    }
+
+    @dom
     def dom: Binding[Node] = {
       if (inner.bind.nonEmpty) {
-        <span class={s"${rxv.getClass.getSimpleName}"}>
-          {strIntoParagraphs(inner.bind).bind}
-        </span>
+        innerHtml.bind
       } else {
         <span></span>
       }
@@ -98,6 +103,14 @@ object Helpers {
 
     override implicit val parser: Option[T] ⇒ String = opt ⇒ opt.map(_parser).getOrElse("")
   }
+
+  class OptBindableHtmlProperty[T](override val rxv: Rx[Option[T]], htmlParser: String ⇒ Binding[Node])
+                                  (implicit _parser: T ⇒ String) extends OptBindableProperty[T](rxv) {
+
+    @dom
+    override def innerHtml: Binding[Node] = htmlParser(inner.bind).bind
+  }
+
 
   class OptBindableHub(override val rxv: Rx[Option[Hub]], caller: DisplayModule[Hub],
                        overrides: List[ModuleOverride] = Nil)    extends    Bindable[Option[Hub]] {
