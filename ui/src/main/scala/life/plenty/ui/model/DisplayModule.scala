@@ -20,7 +20,7 @@ trait DisplayModule[+T <: Hub] extends Module[T] {
 
 
   private var _hasRenderedOnce = false
-  private var lastCaller: Option[DisplayModule[_]] = None
+  protected var lastCaller: Option[DisplayModule[_]] = None
   private var needsRefresh: Boolean = false
 
   private var htmlCache: Binding[Node] = _

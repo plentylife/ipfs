@@ -39,25 +39,13 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
 
   def getTopMemberships = Rx {
     val ms = getMemberships
-    val r = ms().filterNot { h =>
+    ms().filterNot { h =>
       val in = GraphUtils.hasParentInChain(h, ms() filterNot {_ == h})
       in()
     }
-    lastUpdate = new Date().getTime
-    // should cancel previous
-    if (timer != null) js.timers.clearTimeout(timer)
-    timer = js.timers.setTimeout(1500) {
-      if (new Date().getTime - lastUpdate >= 1000) canShow.value_=(true)
-      println(s"LAST UPDATE ${new Date().getTime - lastUpdate}")
-    }
-    r
   }
 
   private lazy val membershipsList = new ListBindable(getTopMemberships)
-
-  private var lastUpdate = new Date().getTime
-  private var timer: SetTimeoutHandle = null
-  private lazy val canShow = Var(false)
 
   override def overrides = List(ExclusiveModuleOverride(m ⇒ m.isInstanceOf[TopSpaceLayout] || m
     .isInstanceOf[CardSpaceDisplay] ), ExclusiveModuleOverride(m ⇒ m.isInstanceOf[UserLayout] ))
@@ -75,15 +63,15 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
         </h3>
       </div>
 
-      {if (canShow.bind )
       <div class="user-feed">
         {for (s <- sections) yield s.bind}
-      </div> //
-    else DisplayModel.nospan.bind
-      }
+      </div>
 
     </div>
   }
+
+//  @dom
+// todo if empty
 
   protected def sections(implicit overrides: List[ModuleOverride]): List[Binding[Node]] =
     displayHubs(membershipsList(), "administrative section") :: Nil

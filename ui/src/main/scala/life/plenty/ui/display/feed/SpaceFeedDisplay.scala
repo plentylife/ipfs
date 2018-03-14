@@ -47,7 +47,10 @@ class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with
       </span>
 
       <div class="card-body">
-        {for (c <- aggregatedB()) yield DisplayModel.display(c, os).bind}
+        {for (c <- aggregatedB()) yield {
+        println(s"FEED DISP simple parent ${c} --> ${os}")
+        DisplayModel.display(c, os, this).bind
+      }}
       </div>
 
     </div>

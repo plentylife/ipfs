@@ -6,7 +6,7 @@ import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.utils.Console
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions._
-import life.plenty.ui.display.feed.{FeedAnswerDisplay, SpaceFeedDisplay}
+import life.plenty.ui.display.feed.{FeedAnswerDisplay, FeedQuestionDisplay, FeedSpaceDisplay, SpaceFeedDisplay}
 import life.plenty.ui.display.info.ThanksGiven
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
 import life.plenty.ui.filters.{BasicSpaceDisplayOrder, FundsCheckErrorCatcher, RootSpaceUserTransactionFilter}
@@ -56,7 +56,9 @@ package object ui {
     ModuleRegistry add { case o: Members ⇒ new MembersCardDisplay(o) }
 
     // feed
+    ModuleRegistry add { case o: Space ⇒ new FeedSpaceDisplay(o) }
     ModuleRegistry add { case o: Answer ⇒ new FeedAnswerDisplay(o) }
+    ModuleRegistry add { case o: Question ⇒ new FeedQuestionDisplay(o) }
     ModuleRegistry add { case o: Space ⇒ new SpaceFeedDisplay(o) }
     // feed end
 
