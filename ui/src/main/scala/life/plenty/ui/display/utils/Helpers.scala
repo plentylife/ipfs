@@ -15,6 +15,8 @@ import scala.language.implicitConversions
 object Helpers {
   implicit def intToStr(i: Int): String = i.toString
 
+  implicit def rxOptString(opt: Rx[Option[String]])(implicit ctx: Ctx.Owner): Rx[String] = opt map {_ getOrElse ""}
+
   @dom
   def strIntoParagraphs(str: String): Binding[Node] = {
     val split = str.split("\n").toList.filter(_.nonEmpty)
@@ -127,6 +129,12 @@ object Helpers {
         {parser(inner.bind)}
       </span>
     }
+  }
+
+  class BindableHtmlProperty[T](override val rxv: Rx[T], htmlParser: String ⇒ Binding[Node])
+                               (implicit val parser: T ⇒ String) extends BindableDom[T] {
+    @dom
+    def dom: Binding[Node] = htmlParser(parser(inner.bind)).bind
   }
 
   class BindableAction[T <: ActionDisplay[_]](override val module: Option[T], calledBy: DisplayModule[Hub]) extends
