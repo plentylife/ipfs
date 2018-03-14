@@ -35,6 +35,7 @@ object GraphUtils {
   def getName(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Name(b) ⇒ b })
   def getMemberships(u: User)(implicit ctx: Ctx.Owner): Rx[List[Members]] =
     u.rx.getAll({ case Parent(m: Members) ⇒ m })
+  def getTitle(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Title(b) ⇒ b })
 
   // fixme use h.connections
   def isActive(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {

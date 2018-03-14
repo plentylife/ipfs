@@ -20,9 +20,9 @@ class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
-    val selfOs =
-      ExclusiveModuleOverride(_.isInstanceOf[SpaceFeedDisplay])
+    val selfOs = ExclusiveModuleOverride(!_.isInstanceOf[FeedDisplay])
     implicit val os = selfOs :: cos.toList ::: siblingOverrides
+//    implicit val os = cos.toList ::: siblingOverrides
     val cssClass = ""
 
     <div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>

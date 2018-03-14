@@ -40,7 +40,8 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
 
   private lazy val membershipsList = new ListBindable(getTopMemberships)
 
-  override def overrides = List(ExclusiveModuleOverride(m ⇒ !m.isInstanceOf[SpaceFeedDisplay] ))
+  override def overrides = List(ExclusiveModuleOverride(m ⇒ m.isInstanceOf[TopSpaceLayout] || m
+    .isInstanceOf[CardSpaceDisplay] ), ExclusiveModuleOverride(m ⇒ m.isInstanceOf[UserLayout] ))
 
   @dom
   override protected def generateHtml(): Binding[Node] = {

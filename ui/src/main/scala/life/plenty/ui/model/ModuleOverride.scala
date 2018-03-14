@@ -10,6 +10,7 @@ sealed trait ConditionalModuleOverride extends ModuleOverride {
 }
 
 case class ExclusiveModuleOverride(excluded: DisplayModule[_] ⇒ Boolean) extends ModuleOverride
+case class InclusiveModuleOverride(included: DisplayModule[_] ⇒ Boolean) extends ModuleOverride
 
 case class SimpleModuleOverride(creator: DisplayModule[Hub], by: DisplayModule[Hub], condition:
 (DisplayModule[Hub]) ⇒ Boolean) extends ConditionalModuleOverride
