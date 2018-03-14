@@ -17,6 +17,7 @@ import rx.async._
 import rx.async.Platform._
 
 import scala.concurrent.duration._
+import scala.scalajs.js
 
 object CriticalQuestionsGuide {
   private implicit val ctx = Ctx.Owner.safe()
@@ -30,7 +31,9 @@ object CriticalQuestionsGuide {
       var opened = false
       critical.rxv foreach {list ⇒
         if (list.nonEmpty && !opened) {
-          Modal.giveContentAndOpen(this, html(critical()), hasCloseButton = false)
+          js.timers.setTimeout(2000){
+            if (opened) Modal.giveContentAndOpen(this, html(critical()), hasCloseButton = false)
+          }
           opened = true
         } else if (list.isEmpty) {
           Modal.remove(this)
