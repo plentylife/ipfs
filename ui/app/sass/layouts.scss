@@ -155,6 +155,17 @@
   flex-direction: column;
 }
 
+.feed {
+  display: flex;
+  align-items: center;
+  & > * {
+    margin-left: $spacer * 0.25;
+  }
+  & > *:first-child {
+    margin-left: 0;
+  }
+}
+
 //.top-space-layout.contributing-signup {
 //  .top-space-child-display {
 //

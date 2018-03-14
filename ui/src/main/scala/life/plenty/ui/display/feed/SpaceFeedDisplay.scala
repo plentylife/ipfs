@@ -20,7 +20,7 @@ class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with
     case Child(h: Hub) ⇒ h
     case m: Marker ⇒ m
   },
-    allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
+    allowedPath = {case Child(h: Hub) ⇒ h})
   private lazy val aggregatedB = new ListBindable(aggregated)
 
   // todo. display confirmed

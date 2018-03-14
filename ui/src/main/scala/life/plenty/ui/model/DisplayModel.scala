@@ -26,7 +26,7 @@ object DisplayModel {
   }
 
   @dom
-  private def noDisplay: Binding[Node] = <div>This octopus has no display</div>
+  private def noDisplay: Binding[Node] = <div>This card has no display</div>
 
   def reRender(o: Hub, moduleSelector: PartialFunction[Module[Hub], DisplayModule[Hub]] = {
     case m: DisplayModule[_] ⇒ m
