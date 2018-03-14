@@ -27,11 +27,14 @@ object CriticalQuestionsGuide {
           case Critical(q: Question) ⇒ q
         }) flatMap {qs ⇒ filterCritical(qs) }
 
+      var opened = false
       critical.rxv foreach {list ⇒
-        if (list.nonEmpty) {
+        if (list.nonEmpty && !opened) {
           Modal.giveContentAndOpen(this, html(critical()), hasCloseButton = false)
-        } else {
+          opened = true
+        } else if (list.isEmpty) {
           Modal.remove(this)
+          opened = false
         }
       }
 
