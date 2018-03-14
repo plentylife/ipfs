@@ -3,7 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Parent
-import life.plenty.model.octopi.Space
+import life.plenty.model.octopi.{Space, User}
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui
 import life.plenty.ui.display.actions.labeltraits.MenuAction
@@ -46,9 +46,13 @@ class MenuBar(override val hub: Hub) extends LayoutModule[Hub] {
 
     <div class="menu-bar d-flex">
       {backBtn.bind}
+
+      {if (!hub.isInstanceOf[User])
       <div class="wallet">
         {CurrentUserWallet.generateHtml(hub).bind}
       </div>
+    else DisplayModel.nospan.bind }
+
 
       <div class="actions">
         {displayModules(siblingModules.withFilter(_.isInstanceOf[MenuAction]), "modules").bind}

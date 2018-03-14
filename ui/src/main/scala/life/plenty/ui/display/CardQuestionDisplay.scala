@@ -67,8 +67,8 @@ abstract class CardQuestionDisplayBase(override val hub: Question) extends Layou
 
 class CardQuestionDisplay(hub: Question) extends CardQuestionDisplayBase(hub) {
   override def body(implicit os: List[ModuleOverride]): List[Binding[Node]] = List(
-    displayHubs(children.withFilter(_.isInstanceOf[Answer]), "answers"),
-    displayHubs(children.withFilter(_.isInstanceOf[Question]), "inner-questions")
+    displayHubsF(children.withFilter(_.isInstanceOf[Answer]), "answers"),
+    displayHubsF(children.withFilter(_.isInstanceOf[Question]), "inner-questions")
   )
 }
 
@@ -97,6 +97,6 @@ class CardSignupQuestionDisplay(hub: SignupQuestion) extends CardQuestionDisplay
 
   override def body(implicit os: List[ModuleOverride]): List[Binding[Node]] = List(
     users,
-    displayHubs(children.withFilter(_.isInstanceOf[Question]), "inner-questions")
+    displayHubsF(children.withFilter(_.isInstanceOf[Question]), "inner-questions")
   )
 }

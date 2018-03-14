@@ -2,7 +2,7 @@ package life.plenty.model.utils
 
 import life.plenty.model
 import life.plenty.model.connection._
-import life.plenty.model.octopi.{Contribution, Space, User}
+import life.plenty.model.octopi.{Contribution, Members, Space, User}
 import life.plenty.model.octopi.definition.Hub
 import rx.{Ctx, Rx, Var}
 
@@ -33,6 +33,8 @@ object GraphUtils {
 
   def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Body(b) ⇒ b })
   def getName(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Name(b) ⇒ b })
+  def getMemberships(u: User)(implicit ctx: Ctx.Owner): Rx[List[Members]] =
+    u.rx.getAll({ case Parent(m: Members) ⇒ m })
 
   // fixme use h.connections
   def isActive(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {
@@ -58,21 +60,34 @@ object GraphUtils {
       allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
   }
 
-  def findModuleUpParentTree[T](in: Hub, matchBy: PartialFunction[DataHub[_], T]): Option[T] = {
-    {
+  def findUpParentTree[T](in: Hub, matchBy: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner)
+  : Rx[Option[T]] = Rx {
+
       //      println(s"graph utils", in)
-      val within = in.sc.ex(matchBy)
+      val within = in.rx.get(matchBy)
       //                  println("graph utils", within, in, in.connections)
-      within orElse {
-        in.sc.ex({ case Parent(p: Hub) ⇒ p }) flatMap {
+      within() orElse {
+        val p = in.rx.get({ case Parent(p: Hub) ⇒ p })
+        p() flatMap {
           p ⇒
             if (p == in) {
               println("Error in findModule of ActionAddMember: same parent")
               None
             } else {
-              findModuleUpParentTree(p, matchBy)
+              val f = findUpParentTree(p, matchBy)
+              f()
             }
         }
+      }
+  }
+
+  def hasParentInChain(hub: Hub, parents: List[Hub])(implicit ctx: Ctx.Owner): Rx[Boolean] = Rx {
+    if (parents contains hub) true else {
+      val p = getParent(hub)
+      p() match {
+        case Some(p) ⇒ val pin = hasParentInChain(p, parents)
+          pin()
+        case None ⇒ false
       }
     }
   }

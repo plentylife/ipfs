@@ -91,8 +91,8 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
   }
 
   protected def sections(implicit overrides: List[ModuleOverride]): List[Binding[Node]] =
-    displayHubs(getMembers(children), "administrative section") ::
-    displayHubs(getQuestions(children), "questions section") ::
-    displayHubs(getProposals(children), "answers section") ::
-    displayHubs(getSubSpaces(children), "sub-spaces section") :: Nil
+    displayHubsF(getMembers(children), "administrative section") ::
+    displayHubsF(getQuestions(children), "questions section") ::
+    displayHubsF(getProposals(children), "answers section") ::
+    displayHubsF(getSubSpaces(children), "sub-spaces section") :: Nil
 }

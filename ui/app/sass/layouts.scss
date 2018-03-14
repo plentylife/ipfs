@@ -142,7 +142,6 @@
   }
 }
 
-
 .top-space-layout.basic-signup {
   .basic-signup.section::before {
     content: "Signed-up"
@@ -150,6 +149,10 @@
   .contributions.section {
     display: none;
   }
+}
+
+.top-space-layout.user-feed {
+  flex-direction: column;
 }
 
 //.top-space-layout.contributing-signup {

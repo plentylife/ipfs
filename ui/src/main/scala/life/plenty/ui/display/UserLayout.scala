@@ -10,20 +10,34 @@ import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{DisplayModel, ModuleOverride, UiContext}
 import org.scalajs.dom.raw.Node
+import rx.Rx
 import scalaz.std.list._
 import scalaz.std.option._
 
 
 class UserLayout(override val hub: User) extends LayoutModule[User] {
 
+  // todo don't forget about root space filter
+
   override def doDisplay(): Boolean = UiContext.pointer.value.exists(_.id == hub.id)
 
-  def getMemberships(cs: BindingSeq[Hub]): BindingSeq[Hub]#WithFilter = cs.withFilter({
-    case m: Members ⇒ true
-    case _ ⇒ false
-  })
+  def getMemberships = Rx {
+    val ms = GraphUtils.getMemberships(hub)
+    ms().flatMap {m ⇒
+      val p = GraphUtils.getParent(m)
+      p()
+    }
+  }
 
-  protected val additionalCss = Var("")
+  def getTopMemberships = Rx {
+    val ms = getMemberships
+    ms().filterNot { h =>
+      val in = GraphUtils.hasParentInChain(h, ms() filterNot {_ == h})
+      in()
+    }
+  }
+
+  private lazy val membershipsList = new ListBindable(getTopMemberships)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -31,14 +45,7 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
     implicit val os = cos.toList ::: siblingOverrides ::: overrides
     val titleClasses = "title ml-2 "
 
-    <div class={"top-space-layout " + additionalCss.bind}>
-
-      {val menuBar = siblingModules.withFilter(_.isInstanceOf[MenuBar])
-    for (m <- menuBar) yield m.display(this, os) map {_.bind} getOrElse DisplayModel.nospan.bind}
-
-
-      <span class="span-separator top-space-layout-content">
-
+    <div class={"top-space-layout user-feed"}>
       <div class="layout-header">
         <h3 class={titleClasses}>
           {GraphUtils.getName(hub).dom.bind}
@@ -48,10 +55,9 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
       <div class="user-feed">
         {for (s <- sections) yield s.bind}
       </div>
-    </span>
     </div>
   }
 
   protected def sections(implicit overrides: List[ModuleOverride]): List[Binding[Node]] =
-    displayHubs(getMemberships(children), "administrative section") :: Nil
+    displayHubs(membershipsList(), "administrative section") :: Nil
 }

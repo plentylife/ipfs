@@ -37,10 +37,10 @@ class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(
   override protected def sections(implicit overrides: List[ModuleOverride]): List[Binding[Node]] = List(
     {displayHubs(getContributions(children), "contributions section", signup.dom, ifEmpty)},
     basicSignupSection,
-    displayHubs(getMembers(children), "administrative section"),
-    displayHubs(getQuestions(children), "questions section"),
+    displayHubsF(getMembers(children), "administrative section"),
+    displayHubsF(getQuestions(children), "questions section"),
     displayHubNodes(aB(), "answers section"),
-    displayHubs(getSubSpaces(children), "sub-spaces section")
+    displayHubsF(getSubSpaces(children), "sub-spaces section")
   )
 
 //  lazy val allProposals = children.value.toList.collect({case a: Proposal ⇒ a})

@@ -40,7 +40,7 @@ class CardSpaceDisplay(override val hub: Space) extends LayoutModule[Space] with
       </span>
 
       <div class="card-body">
-        {displayHubs(children.withFilter(_.isInstanceOf[Question]), "inner-questions").bind}
+        {displayHubsF(children.withFilter(_.isInstanceOf[Question]), "inner-questions").bind}
       </div>
 
     </div>
