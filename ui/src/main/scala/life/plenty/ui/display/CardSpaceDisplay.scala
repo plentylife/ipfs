@@ -11,7 +11,7 @@ import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.Node
 
 class CardSpaceDisplay(override val hub: Space) extends LayoutModule[Space] with CardNavigation {
-  override def doDisplay() = !sameAsUiStarting(hub)
+  override def doDisplay() = !sameAsUiPointer(hub)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {

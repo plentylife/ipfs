@@ -6,9 +6,10 @@ import life.plenty.model.octopi._
 import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.actions.SpaceActionsBar
+import life.plenty.ui.display.feed.SpaceFeedDisplay
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model.{DisplayModel, ModuleOverride, UiContext}
+import life.plenty.ui.model._
 import org.scalajs.dom.raw.Node
 import rx.Rx
 import scalaz.std.list._
@@ -38,6 +39,8 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
   }
 
   private lazy val membershipsList = new ListBindable(getTopMemberships)
+
+  override def overrides = List(ExclusiveModuleOverride(m ⇒ !m.isInstanceOf[SpaceFeedDisplay] ))
 
   @dom
   override protected def generateHtml(): Binding[Node] = {

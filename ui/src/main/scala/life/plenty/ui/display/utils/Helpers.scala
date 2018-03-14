@@ -27,7 +27,7 @@ object Helpers {
     </span>
   }
 
-  def sameAsUiStarting(h: Hub): Boolean = UiContext.pointer.value.exists(_.id == h.id)
+  def sameAsUiPointer(h: Hub): Boolean = UiContext.pointer.value.exists(_.id == h.id)
 
   trait Bindable[T] {
     val rxv: Rx[T]

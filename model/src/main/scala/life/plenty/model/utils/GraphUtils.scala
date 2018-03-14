@@ -55,6 +55,11 @@ object GraphUtils {
       allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
   }
 
+  def getAllChildrenInSpace(space: Space)(implicit ctx: Ctx.Owner): Rx[List[Hub]] = {
+    collectDownTree[Hub](space, matchBy = {case Child(h: Hub) ⇒ h},
+      allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
+  }
+
   def getAllCreatedByInSpace(space: Space, user: User)(implicit ctx: Ctx.Owner): Rx[List[Creator]] = {
     collectDownTree[Creator](space, matchBy = {case c @ Creator(u) if u == user ⇒ c},
       allowedPath = {case Child(h: Hub) ⇒ h}, 1000)

@@ -35,7 +35,7 @@ class CardAnswerDisplay(override val hub: Answer) extends LayoutModule[Answer] w
         <span class="d-flex title-block" onclick={navigateTo _}>
           <h5 class="card-title">
             {if (hub.isInstanceOf[Proposal]) "proposal" else
-          if (hub.isInstanceOf[Contribution]) "helper" else ""}
+          if (hub.isInstanceOf[Contribution]) "contribution" else ""}
           </h5>
           <div class="card-subtitle">
             {creator.dom.bind}

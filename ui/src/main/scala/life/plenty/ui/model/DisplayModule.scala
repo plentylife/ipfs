@@ -72,7 +72,7 @@ trait DisplayModule[+T <: Hub] extends Module[T] {
 
   private def overriddenBy(overrides: List[ModuleOverride]): Option[DisplayModule[_]] =
     overrides.collectFirst {
-      case mo: ModuleOverride if mo.creator != this && mo.condition(this) ⇒ mo
+      case mo: ConditionalModuleOverride if mo.creator != this && mo.condition(this) ⇒ mo
     } flatMap {
       case SimpleModuleOverride(_, by, _) ⇒ Option(by)
       case ComplexModuleOverride(_, finder, _) ⇒

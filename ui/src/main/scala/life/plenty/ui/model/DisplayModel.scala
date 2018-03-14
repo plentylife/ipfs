@@ -15,10 +15,12 @@ object DisplayModel {
 
   def display(o: Hub, overrides: List[ModuleOverride] = List(),
               calledBy: Option[DisplayModule[_]] = None): Binding[Node] = {
+    val excludes = overrides collect {case o: ExclusiveModuleOverride ⇒ o.excluded}
     o.modules.find {
       case dm: DisplayModule[_] ⇒
-        ui.console.trace(s"DisplayModel searching for an available display module: ${dm} ${dm.doDisplay()}")
-        dm.doDisplay()
+        ui.console.trace(s"DisplayModel searching for an available display module: ${dm} ${dm.doDisplay()} " +
+          s"${excludes map {f ⇒ f(dm)} }")
+        dm.doDisplay() && {excludes map {f ⇒ f(dm)} forall {_ == false}}
       case _ ⇒ false
     } flatMap {_.asInstanceOf[DisplayModule[_]].display(calledBy, overrides)} getOrElse noDisplay
   }

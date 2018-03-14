@@ -24,6 +24,7 @@ object UiContext {
     _pointer.value_=(Option(s))
     pointerRx.update(Option(s))
   }
+  def getPointer: Option[Hub] = _pointer.value
 
   def getUser: User = userVar.value
 

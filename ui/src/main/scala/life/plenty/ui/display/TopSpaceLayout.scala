@@ -23,7 +23,7 @@ import scalaz.std.option._
 
 class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
-  override def doDisplay(): Boolean = UiContext.pointer.value.exists(_.id == hub.id)
+  override def doDisplay(): Boolean = sameAsUiPointer(hub)
 
   private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(hub)
 

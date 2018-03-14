@@ -18,7 +18,7 @@ trait LayoutModule[T <: Hub] extends DisplayModule[T] {
 
   protected val siblingModules: Vars[DisplayModule[Hub]] = Vars()
   protected val children: Vars[Hub] = Vars[Hub]()
-  protected var rxChildren: Rx[List[Hub]] = null
+  protected var rxChildren: Rx[List[Hub]] = null //fixme use ListBindable
   protected var rxChildrenObs: Obs = null
 
   override def update(): Unit = {
