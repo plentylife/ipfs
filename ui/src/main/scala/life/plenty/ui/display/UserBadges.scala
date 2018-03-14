@@ -3,16 +3,19 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.User
-import life.plenty.ui.model.DisplayModule
+import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule, jdenticon}
 import org.scalajs.dom.Node
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model.jdenticon
 import org.scalajs.dom.html.{Canvas, Div}
 class FullUserBadge(override val hub: User) extends DisplayModule[User] {
   override def update(): Unit = Unit
 
+  override protected def generateHtml(): Binding[Node] = FullUserBadge.html(hub)
+}
+
+object FullUserBadge extends SimpleDisplayModule[User]{
   @dom
-  override protected def generateHtml(): Binding[Node] = {
+  override def html(hub: User): Binding[Node] = {
     <div class="user-badge">
       {Identicon.generate(hub).bind}
       {hub.getName.dom.bind}
