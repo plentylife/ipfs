@@ -1,5 +1,7 @@
 package life.plenty.ui.display
 
+import java.util.Date
+
 import com.thoughtworks.binding.Binding.{BindingSeq, Var}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi._
@@ -14,6 +16,9 @@ import org.scalajs.dom.raw.Node
 import rx.Rx
 import scalaz.std.list._
 import scalaz.std.option._
+
+import scala.scalajs.js
+import scala.scalajs.js.timers.SetTimeoutHandle
 
 
 class UserLayout(override val hub: User) extends LayoutModule[User] {
@@ -30,15 +35,29 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
     }
   }
 
+
+
   def getTopMemberships = Rx {
     val ms = getMemberships
-    ms().filterNot { h =>
+    val r = ms().filterNot { h =>
       val in = GraphUtils.hasParentInChain(h, ms() filterNot {_ == h})
       in()
     }
+    lastUpdate = new Date().getTime
+    // should cancel previous
+    if (timer != null) js.timers.clearTimeout(timer)
+    timer = js.timers.setTimeout(1500) {
+      if (new Date().getTime - lastUpdate >= 1000) canShow.value_=(true)
+      println(s"LAST UPDATE ${new Date().getTime - lastUpdate}")
+    }
+    r
   }
 
   private lazy val membershipsList = new ListBindable(getTopMemberships)
+
+  private var lastUpdate = new Date().getTime
+  private var timer: SetTimeoutHandle = null
+  private lazy val canShow = Var(false)
 
   override def overrides = List(ExclusiveModuleOverride(m ⇒ m.isInstanceOf[TopSpaceLayout] || m
     .isInstanceOf[CardSpaceDisplay] ), ExclusiveModuleOverride(m ⇒ m.isInstanceOf[UserLayout] ))
@@ -56,9 +75,13 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
         </h3>
       </div>
 
+      {if (canShow.bind )
       <div class="user-feed">
         {for (s <- sections) yield s.bind}
-      </div>
+      </div> //
+    else DisplayModel.nospan.bind
+      }
+
     </div>
   }
 
