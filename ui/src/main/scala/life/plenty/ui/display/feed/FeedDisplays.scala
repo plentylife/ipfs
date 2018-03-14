@@ -21,8 +21,8 @@ import scalaz.std.option._
 //  override protected val cssClass: String = "answer"
 //}
 
-object FeedQuestionDisplay extends FeedDisplaySimple[Question] {
-  override protected val action = Rx {"asked"}
+trait FeedQuestionDisplayImpl {self: FeedDisplaySimple[Question] ⇒
+  override protected def action(implicit ctx: Ctx.Owner) = Rx {"asked"}
   override protected def actionTarget(implicit hub:Question, ctx: Ctx.Owner): Rx[String] = {
     hub.getTitle
   }

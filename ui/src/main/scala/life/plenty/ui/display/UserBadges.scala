@@ -3,6 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.octopi.User
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule, jdenticon}
 import org.scalajs.dom.Node
 import life.plenty.ui.display.utils.Helpers._
@@ -24,6 +25,7 @@ object FullUserBadge extends SimpleDisplayModule[User]{
       </script>
     </div>
   }
+  override def fits(hub: Hub): Boolean = hub.isInstanceOf[User]
 }
 
 object Identicon {

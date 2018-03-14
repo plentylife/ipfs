@@ -12,16 +12,18 @@ import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.display.{CardQuestionDisplayBase, FullUserBadge, InlineQuestionDisplay}
-import life.plenty.ui.model.{ComplexModuleOverride, DisplayModel, ExclusiveModuleOverride, ModuleOverride}
+import life.plenty.ui.model._
 import org.scalajs.dom.Node
 
 class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with CardNavigation {
   private lazy val aggregated = collectDownTree[Hub](hub, matchBy = {
     case Child(h: Hub) ⇒ h
     case m: Marker ⇒ m
-  },
-    allowedPath = {case Child(h: Hub) ⇒ h})
-  private lazy val aggregatedB = new ListBindable(aggregated)
+  },allowedPath = {case Child(h: Hub) ⇒ h})
+
+  private lazy val aggregatedB: ListBindable[(SimpleDisplayModule[Hub], Hub)] = new ListBindable(aggregated map {
+    list ⇒ list flatMap {h ⇒ FeedModuleDirectory getTogether h}
+  })
 
   // todo. display confirmed
 
@@ -47,8 +49,8 @@ class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with
       </span>
 
       <div class="card-body">
-        {for (c <- aggregatedB()) yield {
-          DisplayModel.display(c, os, this).bind
+        {for (mh <- aggregatedB()) yield {
+          mh._1.html(mh._2).bind
       }}
       </div>
 
