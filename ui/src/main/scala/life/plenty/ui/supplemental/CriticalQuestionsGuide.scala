@@ -23,7 +23,7 @@ object CriticalQuestionsGuide {
   private implicit val ctx = Ctx.Owner.safe()
 
   def apply(): Unit = {
-    UiContext.startingSpaceRx.foreach(_ foreach {space ⇒
+    UiContext.pointerRx.foreach(_ foreach { space ⇒
       val critical: ListBindable[Question] = space.rx.getAllRaw({
           case Critical(q: Question) ⇒ q
         }) flatMap {qs ⇒ filterCritical(qs) }

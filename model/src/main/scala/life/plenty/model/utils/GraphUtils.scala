@@ -32,6 +32,7 @@ object GraphUtils {
   })
 
   def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Body(b) ⇒ b })
+  def getName(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Name(b) ⇒ b })
 
   // fixme use h.connections
   def isActive(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {

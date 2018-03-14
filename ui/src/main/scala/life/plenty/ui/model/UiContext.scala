@@ -4,6 +4,7 @@ import com.thoughtworks.binding.Binding.Var
 import life.plenty.data.DbReader
 import life.plenty.model.connection.{Creator, Email, Id, Name}
 import life.plenty.model.octopi._
+import life.plenty.model.octopi.definition.Hub
 import life.plenty.model.security.SecureUser
 import life.plenty.ui
 import life.plenty.ui.display.{ErrorModal, LoadIndicator, Login}
@@ -15,13 +16,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object UiContext {
   val userVar: Var[User] = Var(null)
-  private val _startingSpace: Var[Option[Space]] = Var(None)
-  val startingSpaceRx: rxVar[Option[Space]] = rxVar(None)
+  private val _pointer: Var[Option[Hub]] = Var(None)
+  val pointerRx: rxVar[Option[Hub]] = rxVar(None)
 
-  def startingSpace: Var[Option[Space]] = _startingSpace
-  def setStatingSpace(s: Space) = {
-    _startingSpace.value_=(Option(s))
-    startingSpaceRx.update(Option(s))
+  def startingSpace: Var[Option[Hub]] = _pointer
+  def setStatingSpace(s: Hub) = {
+    _pointer.value_=(Option(s))
+    pointerRx.update(Option(s))
   }
 
   def getUser: User = userVar.value

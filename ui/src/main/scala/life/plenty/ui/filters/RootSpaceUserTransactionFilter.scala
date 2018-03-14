@@ -13,7 +13,7 @@ class RootSpaceUserTransactionFilter(override val hub: User) extends RxConnectio
 //  private implicit val ctx = Ctx.Owner.safe()
 
   override def apply(what: Rx[Option[DataHub[_]]])(implicit ctx: Ctx.Owner): Rx[Option[DataHub[_]]] = Rx {
-    val spOpt = UiContext.startingSpaceRx()
+    val spOpt = UiContext.pointerRx()
     // if starting space is not set, just pass
     spOpt.fold(what())(
       {sp ⇒

@@ -51,7 +51,7 @@ object Router {
     routingParams.copy(stateId = s.id)
 
   def navigateToOctopus(o: Hub) = {
-    router.state.value_=(router.state.value.copy(spaceId = Option(o.id)))
+    router.state.value_=(router.state.value.copy(hubId = Option(o.id)))
   }
 }
 
@@ -60,7 +60,7 @@ object ViewState extends Enumeration {
   val DISCUSSION, RATING = Value
 }
 
-case class RoutingParams(stateId: Int, spaceId: Option[String]) {
+case class RoutingParams(stateId: Int, hubId: Option[String]) {
   def state = ViewState(stateId)
 }
 

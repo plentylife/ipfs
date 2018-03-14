@@ -51,13 +51,13 @@ object Main {
 //      IntroTutorial(UiContext.userVar.bind)
       CriticalQuestionsGuide.apply()
 
-      Router.router.state.bind.spaceId match {
+      Router.router.state.bind.hubId match {
         case Some(id) ⇒
           println(s"UI loading ${id}")
           LoadIndicator.forceOpen()
-          DbReader.read(id) foreach { space ⇒
-            println(s"UI loaded $id as $space")
-            UiContext.setStatingSpace(space.asInstanceOf[Space])
+          DbReader.read(id) foreach { hub ⇒
+            println(s"UI loaded $id as $hub")
+            UiContext.setStatingSpace(hub)
           }
         case None ⇒ CreateSpace.openInModal()
       }
@@ -119,5 +119,5 @@ object Main {
   }
 
   @JSExport
-  def getUrl(spaceId: String) = Router.toHash(Router.defaultRoutingParams.copy(spaceId = Option(spaceId)))
+  def getUrl(spaceId: String) = Router.toHash(Router.defaultRoutingParams.copy(hubId = Option(spaceId)))
 }
