@@ -17,7 +17,7 @@ package object feed {
 
   sealed trait FeedDisplaySimple[T <: Hub] extends FeedDisplay[T] {
 
-    protected def action(implicit ctx: Ctx.Owner): Rx[String]
+    protected def action(hub: T)(implicit ctx: Ctx.Owner): Rx[String]
     protected def actionTarget(implicit hub:T, ctx: Ctx.Owner): Rx[String]
     protected val cssClass: String
 
@@ -29,7 +29,7 @@ package object feed {
       implicit val c = hub.ctx
       val parent = GraphUtils.getParent(hub)
       val atb = new BindableHtmlProperty(actionTarget(hub, c), actionTargetHtml)
-      val ab = new BindableHtmlProperty(action, actionHtml)
+      val ab = new BindableHtmlProperty(action(hub), actionHtml)
 
       <div class={"feed " + cssClass} id={hub.id}>
         {SimpleDisplayModule.html(FullUserBadge, hub.getCreator).bind} {ab.dom.bind} {atb.dom.bind}
@@ -41,9 +41,21 @@ package object feed {
     override def fits(hub: Hub): Boolean = hub.isInstanceOf[Question]
   }
 
+  case object FeedAnswerDisplay extends FeedDisplaySimple[Answer] with FeedAnswerDisplayImpl {
+    override def fits(hub: Hub): Boolean = hub.isInstanceOf[Answer]
+  }
+
+  case object FeedSpaceDisplay extends FeedDisplaySimple[Space] with FeedSpaceDisplayImpl {
+    override def fits(hub: Hub): Boolean = hub.isInstanceOf[Space]
+  }
+
+  case object FeedTransactionDisplay extends FeedDisplay[Transaction] with FeedTransactionDisplayImpl {
+    override def fits(hub: Hub): Boolean = hub.isInstanceOf[Transaction]
+  }
+
   object FeedModuleDirectory extends SimpleDisplayModuleDirectory[FeedDisplay[_]] {
     override val directory: List[FeedDisplay[_]] = List(
-      FeedQuestionDisplay
+      FeedQuestionDisplay, FeedAnswerDisplay, FeedTransactionDisplay, FeedSpaceDisplay
     )
   }
 

@@ -8,6 +8,7 @@ import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule, jdenticon}
 import org.scalajs.dom.Node
 import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.html.{Canvas, Div}
+
 class FullUserBadge(override val hub: User) extends DisplayModule[User] {
   override def update(): Unit = Unit
 

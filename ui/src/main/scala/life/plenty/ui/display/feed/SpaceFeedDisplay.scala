@@ -14,15 +14,19 @@ import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.display.{CardQuestionDisplayBase, FullUserBadge, InlineQuestionDisplay}
 import life.plenty.ui.model._
 import org.scalajs.dom.Node
+import rx.async._
+import rx.async.Platform._
+import scala.concurrent.duration._
 
 class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with CardNavigation {
   private lazy val aggregated = collectDownTree[Hub](hub, matchBy = {
     case Child(h: Hub) ⇒ h
     case m: Marker ⇒ m
-  },allowedPath = {case Child(h: Hub) ⇒ h})
+  },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
 
   private lazy val aggregatedB: ListBindable[(SimpleDisplayModule[Hub], Hub)] = new ListBindable(aggregated map {
-    list ⇒ list flatMap {h ⇒ FeedModuleDirectory getTogether h}
+    list ⇒
+      list flatMap {h ⇒ FeedModuleDirectory getTogether h}
   })
 
   // todo. display confirmed
