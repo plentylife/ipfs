@@ -1,14 +1,16 @@
 package life.plenty.model.hub.pseudo
+import life.plenty.model.connection.DataHub
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 trait StrongHub {
-  private var properties = List[StrongProperty[_, _]]()
+  private var properties = List[StrongProperty[_]]()
   private var readyProperties = 0
   private var failed = false
 
-  private[pseudo] def register[T](p: StrongProperty[T, _]) = {
+  private[pseudo] def register[T](p: StrongProperty[T]) = {
     properties +:= p
     p.ready.onComplete {_ match {
       case Success(_) ⇒ readyProperties += 1
@@ -18,10 +20,11 @@ trait StrongHub {
   def ready: Future[this.type] = ???
 }
 
-class StrongProperty[T, H <: StrongHub](insideOf: H) {
+trait StrongProperty[T] {
+  val insideOf: StrongHub
   private var _value: T = _
-  def apply(v: T): H = {
-    _value = v; insideOf
+  def set(v: T): Unit = {
+    _value = v
   }
   def value: T = {
 //    readyPromise.future
@@ -35,4 +38,8 @@ class StrongProperty[T, H <: StrongHub](insideOf: H) {
   private def register() = insideOf.register(this)
 
   register()
+}
+
+case class ValStrongProperty[T](valValue: T, override val insideOf: StrongHub) extends StrongProperty[T] {
+  set(valValue)
 }

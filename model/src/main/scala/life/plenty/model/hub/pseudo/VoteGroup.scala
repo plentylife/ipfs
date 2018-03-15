@@ -1,17 +1,13 @@
 package life.plenty.model.hub.pseudo
 
-import life.plenty.model.connection.{Created, Parent}
 import life.plenty.model.hub.{Answer, Vote}
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphExtractors._
 import rx.{Ctx, Rx}
 
-import scala.collection.parallel.IterableSplitter
 import scala.language.postfixOps
 
-case class VoteGroup(votes: Iterable[Vote]) extends StrongHub {
-  val created = new StrongProperty[Long, this.type](this)
-}
+case class VoteGroup(created: Long, votes: Iterable[Vote])
 
 object VoteGroup {
   def groupByAnswer(list: Iterable[Hub])(implicit ctx: Ctx.Owner): Rx[Iterable[VoteGroup]] = Rx {
@@ -27,13 +23,13 @@ object VoteGroup {
     }
   }
 
-  def pack(votes: Iterable[Vote])(implicit ctx: Ctx.Owner): Option[VoteGroup] = {
+  def pack(votes: Iterable[Vote])(implicit ctx: Ctx.Owner, cd: Ctx.Data): Option[VoteGroup] = {
     val created = votes map {v ⇒
       val t = getCreationTime(v).filter(_.nonEmpty)
       t()
     } collect {case Some(t) ⇒ t}
     created.headOption map {
-      _ ⇒ VoteGroup(votes).created(created.min)
+      _ ⇒ VoteGroup(created.min, votes)
     }
   }
 }

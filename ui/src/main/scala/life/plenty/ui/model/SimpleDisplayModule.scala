@@ -7,14 +7,14 @@ import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx, Var ⇒ rxVar}
 
-trait SimpleDisplayModule[T <: Hub] {
-  def html(hub: T): Binding[Node]
-  def fits(hub: Hub): Boolean
+trait SimpleDisplayModule[T] {
+  def html(what: T): Binding[Node]
+  def fits(what: Any): Boolean
 }
 
 object SimpleDisplayModule {
   @dom
-  def html[T <: Hub](module: SimpleDisplayModule[T], hub: Rx[Option[T]]): Binding[Node] = {
+  def html[T](module: SimpleDisplayModule[T], hub: Rx[Option[T]]): Binding[Node] = {
     val hb: BasicBindable[Option[T]] = hub
     hb().bind match {
       case Some(h) ⇒ module.html(h).bind
@@ -27,7 +27,7 @@ object SimpleDisplayModule {
 
 trait SimpleDisplayModuleDirectory[L <: SimpleDisplayModule[_]] {
   val directory : List[L]
-  def get[T <: Hub](hub: T): Option[SimpleDisplayModule[T]] =
-    directory find {m ⇒ m.fits(hub)} map {_.asInstanceOf[SimpleDisplayModule[T]]}
+  def get[T](what: T): Option[SimpleDisplayModule[T]] =
+    directory find {m ⇒ m.fits(what)} map {_.asInstanceOf[SimpleDisplayModule[T]]}
   def getTogether[T <: Hub](hub: T): Option[(SimpleDisplayModule[T], T)] = get(hub) map {_ → hub}
 }

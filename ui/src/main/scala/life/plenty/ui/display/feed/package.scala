@@ -38,19 +38,19 @@ package object feed {
   }
 
   case object FeedQuestionDisplay extends FeedDisplaySimple[Question] with FeedQuestionDisplayImpl {
-    override def fits(hub: Hub): Boolean = hub.isInstanceOf[Question]
+    override def fits(hub: Any): Boolean = hub.isInstanceOf[Question]
   }
 
   case object FeedAnswerDisplay extends FeedDisplaySimple[Answer] with FeedAnswerDisplayImpl {
-    override def fits(hub: Hub): Boolean = hub.isInstanceOf[Answer]
+    override def fits(hub: Any): Boolean = hub.isInstanceOf[Answer]
   }
 
   case object FeedSpaceDisplay extends FeedDisplaySimple[Space] with FeedSpaceDisplayImpl {
-    override def fits(hub: Hub): Boolean = hub.isInstanceOf[Space]
+    override def fits(hub: Any): Boolean = hub.isInstanceOf[Space]
   }
 
   case object FeedTransactionDisplay extends FeedDisplay[Transaction] with FeedTransactionDisplayImpl {
-    override def fits(hub: Hub): Boolean = hub.isInstanceOf[Transaction]
+    override def fits(hub: Any): Boolean = hub.isInstanceOf[Transaction]
   }
 
   object FeedModuleDirectory extends SimpleDisplayModuleDirectory[FeedDisplay[_]] {
