@@ -3,8 +3,8 @@ package life.plenty.ui.display.feed
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Child, Marker}
-import life.plenty.model.octopi.Space
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.Space
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
 import life.plenty.model.utils.GraphUtils.collectDownTree
 import life.plenty.ui.display.actions.OpenButton
@@ -25,8 +25,7 @@ class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with
   },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
 
   private lazy val aggregatedB: ListBindable[(SimpleDisplayModule[Hub], Hub)] = new ListBindable(aggregated map {
-    list ⇒
-      list flatMap {h ⇒ FeedModuleDirectory getTogether h}
+    list ⇒ list flatMap {h ⇒ FeedModuleDirectory getTogether h}
   })
 
   // todo. display confirmed

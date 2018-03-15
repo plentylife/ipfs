@@ -1,8 +1,8 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection._
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.{Hub, Module}
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.{Hub, Module}
 import life.plenty.model.utils.GraphUtils
 import rx.Ctx
 

@@ -1,7 +1,7 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection.{Child, Parent}
-import life.plenty.model.octopi.definition.{Module, Hub}
+import life.plenty.model.hub.definition.{Module, Hub}
 import rx.Ctx
 
 class ActionMove(override val hub: Hub) extends Module[Hub] {

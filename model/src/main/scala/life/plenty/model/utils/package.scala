@@ -2,7 +2,7 @@ package life.plenty.model
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import life.plenty.model.connection._
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import rx.{Ctx, Rx}
 
 import scala.concurrent.Future

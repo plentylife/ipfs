@@ -1,6 +1,6 @@
 package life.plenty.ui.model
 
-import life.plenty.model.octopi.definition.{Hub, Module}
+import life.plenty.model.hub.definition.{Hub, Module}
 
 sealed trait ModuleOverride
 

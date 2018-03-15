@@ -2,7 +2,7 @@ package life.plenty.data
 
 import life.plenty.model.actions.ActionAfterGraphTransform
 import life.plenty.model.connection.DataHub
-import life.plenty.model.octopi.definition.{AtInstantiation, Hub, Module}
+import life.plenty.model.hub.definition.{AtInstantiation, Hub, Module}
 import life.plenty.model.security.SecureUser
 import rx.Ctx
 

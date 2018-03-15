@@ -1,8 +1,8 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection._
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Module
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Module
 import MarkerEnum.CONTRIBUTING_QUESTION
 
 class ActionCreateQuestion(override val hub: Space) extends Module[Space] {

@@ -1,8 +1,8 @@
 package life.plenty
 
 import life.plenty.model._
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.Console
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions._

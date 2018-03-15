@@ -3,7 +3,7 @@ package life.plenty.model.connection
 import java.util.Date
 
 import life.plenty.model
-import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
+import life.plenty.model.hub.definition.{AtInstantiation, Hub}
 import life.plenty.model.utils.GraphUtils
 
 trait DataHub[T] extends Hub {

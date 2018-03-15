@@ -3,9 +3,9 @@ package life.plenty.data
 import life.plenty.data
 import life.plenty.model.actions.{ActionOnConnectionsRequest, ActionOnFinishDataLoad}
 import life.plenty.model.connection._
-import life.plenty.model.octopi.GreatQuestions._
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.{Hub, TmpMarker}
+import life.plenty.model.hub.GreatQuestions._
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.{Hub, TmpMarker}
 import life.plenty.model.security.SecureUser
 import rx.{Ctx, Obs, Rx, Var}
 

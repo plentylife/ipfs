@@ -3,7 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionGiveThanks
-import life.plenty.model.octopi.{Contribution, User}
+import life.plenty.model.hub.{Contribution, User}
 import life.plenty.ui
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
 import life.plenty.ui.model.DisplayModule

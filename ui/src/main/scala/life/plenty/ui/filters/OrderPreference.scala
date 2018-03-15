@@ -1,8 +1,8 @@
 package life.plenty.ui.filters
 
 import life.plenty.model.modifiers.OctopusOrdering
-import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.octopi.{ContainerSpace, Members}
+import life.plenty.model.hub.definition.Hub
+import life.plenty.model.hub.{ContainerSpace, Members}
 import rx.{Ctx, Rx}
 //
 //trait OrderPreference[IT, L<: Iterable[IT], T <: Octopus] extends Module[T] {

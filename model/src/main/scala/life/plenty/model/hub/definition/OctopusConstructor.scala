@@ -1,4 +1,4 @@
-package life.plenty.model.octopi.definition
+package life.plenty.model.hub.definition
 
 import java.util.Date
 
@@ -6,7 +6,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import life.plenty.model
 import life.plenty.model.actions.ActionOnNew
 import life.plenty.model.connection._
-import life.plenty.model.octopi.User
+import life.plenty.model.hub.User
 import life.plenty.model.utils._
 import rx.{Rx, Var}
 

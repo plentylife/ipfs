@@ -3,7 +3,7 @@ package life.plenty.ui.display.actions
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateAnswer
-import life.plenty.model.octopi.Question
+import life.plenty.model.hub.Question
 import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.model.UiContext
 import org.scalajs.dom.Event

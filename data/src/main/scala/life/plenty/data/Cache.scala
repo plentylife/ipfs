@@ -1,7 +1,7 @@
 package life.plenty.data
 
 import life.plenty.model.connection.DataHub
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import rx.{Ctx, Var}
 
 import scala.collection.mutable

@@ -4,8 +4,8 @@ package life.plenty
 import life.plenty.model.actions._
 import life.plenty.model.connection.DataHub
 import life.plenty.model.modifiers.{AnswerVoteOrder, InactiveFilter}
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.security.FundsCheck
 import life.plenty.model.utils.{Console, Hash}
 import rx.Rx

@@ -2,7 +2,7 @@ package life.plenty.ui.model
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx, Var ⇒ rxVar}

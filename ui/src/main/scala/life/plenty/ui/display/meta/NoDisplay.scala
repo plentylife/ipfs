@@ -1,7 +1,7 @@
 package life.plenty.ui.display.meta
 
 import com.thoughtworks.binding.Binding
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.model.DisplayModule
 import org.scalajs.dom.raw.Node
 

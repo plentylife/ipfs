@@ -1,7 +1,7 @@
 package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.Space
+import life.plenty.model.hub.Space
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.DisplayModule
 import org.scalajs.dom.{Event, Node}

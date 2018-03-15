@@ -2,7 +2,7 @@ package life.plenty.data
 
 import life.plenty.model.ModuleRegistry
 import life.plenty.model.connection.DataHub
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.security.SecureUser
 import life.plenty.{data, model}
 

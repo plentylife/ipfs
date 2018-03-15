@@ -1,4 +1,4 @@
-package life.plenty.model.octopi.definition
+package life.plenty.model.hub.definition
 
 import life.plenty.model
 import life.plenty.model.RxConsList

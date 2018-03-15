@@ -2,7 +2,7 @@ package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionCreateAnswer
-import life.plenty.model.octopi.definition.{Hub, Module}
+import life.plenty.model.hub.definition.{Hub, Module}
 import life.plenty.ui.model.DisplayModel.SingleActionModuleDisplay
 import org.scalajs.dom.Node
 

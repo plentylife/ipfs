@@ -2,9 +2,9 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.Space
-import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.octopi.pseudo.Wallet
+import life.plenty.model.hub.Space
+import life.plenty.model.hub.definition.Hub
+import life.plenty.model.hub.pseudo.Wallet
 import life.plenty.ui
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.display.utils.Helpers.intToStr

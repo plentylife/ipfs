@@ -2,8 +2,8 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.User
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.User
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule, jdenticon}
 import org.scalajs.dom.Node
 import life.plenty.ui.display.utils.Helpers._

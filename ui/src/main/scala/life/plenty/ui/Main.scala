@@ -2,8 +2,8 @@ package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{DbReader, DbReaderModule, ShareDB, Main ⇒ dataMain}
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
 import life.plenty.ui.display.actions.CreateSpace
 import life.plenty.ui.display.{Help, LoadIndicator, Login, Modal}

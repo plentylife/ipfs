@@ -2,7 +2,7 @@ package life.plenty.ui.filters
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.modifiers.FilterModule
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.model.ViewState.ViewState
 import life.plenty.ui.model.{Router, ViewState}

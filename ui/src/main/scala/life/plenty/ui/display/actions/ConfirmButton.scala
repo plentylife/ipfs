@@ -3,7 +3,7 @@ package life.plenty.ui.display.actions
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.{ActionAddConfirmedMarker, ActionGiveThanks}
 import life.plenty.model.connection.{Marker, MarkerEnum}
-import life.plenty.model.octopi.{Contribution, Space}
+import life.plenty.model.hub.{Contribution, Space}
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui
 import life.plenty.ui.display.actions.labeltraits.MenuAction

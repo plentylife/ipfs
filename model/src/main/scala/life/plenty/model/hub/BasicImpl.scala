@@ -1,7 +1,7 @@
-package life.plenty.model.octopi
+package life.plenty.model.hub
 
 import life.plenty.model.connection.Parent
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
 import rx.Rx
 

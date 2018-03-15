@@ -1,6 +1,6 @@
 package life.plenty
 
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.Console
 
 import scala.scalajs.js

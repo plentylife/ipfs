@@ -1,8 +1,8 @@
-package life.plenty.model.octopi.pseudo
+package life.plenty.model.hub.pseudo
 
 import life.plenty.model
-import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.octopi.{Space, User}
+import life.plenty.model.hub.definition.Hub
+import life.plenty.model.hub.{Space, User}
 import life.plenty.model.utils.GraphUtils
 import rx.{Ctx, Rx, Var}
 

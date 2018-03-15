@@ -1,4 +1,4 @@
-package life.plenty.model.octopi.definition
+package life.plenty.model.hub.definition
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import life.plenty.model

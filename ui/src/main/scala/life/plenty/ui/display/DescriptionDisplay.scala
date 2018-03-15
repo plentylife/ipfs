@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionAddDescription
 import life.plenty.model.connection.Body
-import life.plenty.model.octopi.Space
+import life.plenty.model.hub.Space
 import life.plenty.ui.display.utils.Helpers
 import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.model.{DisplayModel, UiContext}

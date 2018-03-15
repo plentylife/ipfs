@@ -2,8 +2,8 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.Binding.{BindingSeq, SingleMountPoint, Var}
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.LayoutModule

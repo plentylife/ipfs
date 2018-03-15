@@ -3,9 +3,9 @@ package life.plenty.model.security
 import life.plenty.model
 import life.plenty.model.actions.{ActionOnFinishDataLoad, ActionOnGraphTransform}
 import life.plenty.model.connection.DataHub
-import life.plenty.model.octopi.{Transaction, User, Vote}
-import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.octopi.pseudo.Wallet
+import life.plenty.model.hub.{Transaction, User, Vote}
+import life.plenty.model.hub.definition.Hub
+import life.plenty.model.hub.pseudo.Wallet
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import rx.Ctx

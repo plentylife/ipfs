@@ -3,8 +3,8 @@ package life.plenty.ui
 import java.util.Date
 
 import life.plenty.model.connection._
-import life.plenty.model.octopi.GreatQuestions.Who
-import life.plenty.model.octopi._
+import life.plenty.model.hub.GreatQuestions.Who
+import life.plenty.model.hub._
 import life.plenty.ui.model.UiContext.getCreator
 import rx.Ctx
 

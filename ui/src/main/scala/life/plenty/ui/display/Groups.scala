@@ -1,7 +1,7 @@
 package life.plenty.ui.display
 
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.display.actions.CreateAnswer
 import life.plenty.ui.display.meta.{GroupedChildDisplay, GroupedModularDisplay}
 import life.plenty.ui.model.DisplayModule

@@ -1,7 +1,7 @@
 package life.plenty.model.modifiers
 
 import life.plenty.model.connection.DataHub
-import life.plenty.model.octopi.definition.{Module, Hub}
+import life.plenty.model.hub.definition.{Module, Hub}
 import rx.{Ctx, Rx}
 
 trait CollectionModificationModule[+O <: Hub, Elem, L <: Iterable[Elem]] extends Module[O] {

@@ -1,7 +1,7 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection.DataHub
-import life.plenty.model.octopi.definition.{Hub, Module}
+import life.plenty.model.hub.definition.{Hub, Module}
 
 import scala.concurrent.Future
 

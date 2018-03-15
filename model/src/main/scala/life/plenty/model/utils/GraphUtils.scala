@@ -2,8 +2,8 @@ package life.plenty.model.utils
 
 import life.plenty.model
 import life.plenty.model.connection._
-import life.plenty.model.octopi.{Contribution, Members, Space, User}
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.{Contribution, Members, Space, User}
+import life.plenty.model.hub.definition.Hub
 import rx.{Ctx, Rx, Var}
 
 import scala.language.postfixOps

@@ -2,8 +2,8 @@ package life.plenty.model.modifiers
 
 import life.plenty.model
 import life.plenty.model.console
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Hub
 import rx.{Ctx, Rx}
 
 class AnswerVoteOrder(override val hub: Question) extends OctopusOrdering[Question] {

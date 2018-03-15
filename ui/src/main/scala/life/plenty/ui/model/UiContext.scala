@@ -3,8 +3,8 @@ import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.Var
 import life.plenty.data.DbReader
 import life.plenty.model.connection.{Creator, Email, Id, Name}
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.security.SecureUser
 import life.plenty.ui
 import life.plenty.ui.display.{ErrorModal, LoadIndicator, Login}

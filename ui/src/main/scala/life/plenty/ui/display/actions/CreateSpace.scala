@@ -3,7 +3,7 @@ package life.plenty.ui.display.actions
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.{Body, DataHub, Parent, Title}
-import life.plenty.model.octopi.{ContainerSpace, Space}
+import life.plenty.model.hub.{ContainerSpace, Space}
 import life.plenty.ui
 import life.plenty.ui.display.Login._
 import life.plenty.ui.display.Modal

@@ -3,7 +3,7 @@ package life.plenty.ui.display.actions
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.{ActionCreateAnswer, ActionSignup}
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui
 import life.plenty.ui.display.utils.ModalFormAction
 import life.plenty.ui.model.DisplayModel.{ActionDisplay, SingleActionModuleDisplay}

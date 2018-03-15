@@ -2,7 +2,7 @@ package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionAddConfirmedMarker
-import life.plenty.model.octopi.Space
+import life.plenty.model.hub.Space
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.model.DisplayModel.ActionDisplay
 import org.scalajs.dom.Event

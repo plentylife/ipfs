@@ -3,8 +3,8 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.DbReaderModule
-import life.plenty.model.octopi.definition.Hub
-import life.plenty.model.octopi.{Contribution, Members, Space, User}
+import life.plenty.model.hub.definition.Hub
+import life.plenty.model.hub.{Contribution, Members, Space, User}
 import life.plenty.model.utils.GraphUtils
 import life.plenty.model.utils.GraphUtils.getBody
 import life.plenty.ui

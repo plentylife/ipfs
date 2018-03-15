@@ -2,8 +2,8 @@ package life.plenty.ui.display.actions
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionGiveThanks
-import life.plenty.model.octopi.{Contribution, Space}
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.{Contribution, Space}
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui
 import life.plenty.ui.display.utils.{CardNavigation, ModalFormAction}
 import life.plenty.ui.model.DisplayModule

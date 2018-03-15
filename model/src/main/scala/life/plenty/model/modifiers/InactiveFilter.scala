@@ -3,7 +3,7 @@ package life.plenty.model.modifiers
 import life.plenty.model
 import life.plenty.model.connection.MarkerEnum._
 import life.plenty.model.connection._
-import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
+import life.plenty.model.hub.definition.{AtInstantiation, Hub}
 import rx.{Ctx, Rx}
 
 class InactiveFilter(override val hub: Hub) extends RxConnectionFilters[Hub] {

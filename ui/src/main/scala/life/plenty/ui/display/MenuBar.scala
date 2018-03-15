@@ -3,8 +3,8 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Parent
-import life.plenty.model.octopi.{Space, User}
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.{Space, User}
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui
 import life.plenty.ui.display.actions.labeltraits.MenuAction
 import life.plenty.ui.display.info.AnswerInfo

@@ -1,4 +1,4 @@
-package life.plenty.model.octopi
+package life.plenty.model.hub
 
 import life.plenty.model
 import life.plenty.model.connection._

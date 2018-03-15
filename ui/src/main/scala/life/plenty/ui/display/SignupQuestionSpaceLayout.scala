@@ -3,8 +3,8 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.Binding.{BindingSeq, Var ⇒ bVar, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Child
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.actions.{SignupButton, SpaceActionsBar}
 import life.plenty.ui.display.meta.LayoutModule

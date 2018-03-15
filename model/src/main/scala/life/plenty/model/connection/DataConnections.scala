@@ -1,6 +1,6 @@
 package life.plenty.model.connection
 
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 
 import scala.util.Try
 

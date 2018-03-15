@@ -4,8 +4,8 @@ import life.plenty.ui.display.utils.Helpers._
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.{ActionAddConfirmedMarker, ActionToggleCriticalConnection}
 import life.plenty.model.connection.Child
-import life.plenty.model.octopi.{ContainerSpace, Members, Question, Space}
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.{ContainerSpace, Members, Question, Space}
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.{Controller, InlineDisplay, Modal, TreeView}
 import life.plenty.ui.display.actions.labeltraits.MenuAction

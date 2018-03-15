@@ -1,7 +1,7 @@
 package life.plenty.ui.display
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.{Event, User}
+import life.plenty.model.hub.{Event, User}
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
 import life.plenty.ui.display.meta.{ChildDisplay, NoDisplay}
 import life.plenty.ui.model.DisplayModule

@@ -1,7 +1,7 @@
 package life.plenty.model.connection
 
-import life.plenty.model.octopi.User
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.User
+import life.plenty.model.hub.definition.Hub
 
 trait UserDataHub extends DataHub[User] {
   val user: User

@@ -1,6 +1,6 @@
 package life.plenty.model.security
 
-import life.plenty.model.octopi.{BasicUser, User}
+import life.plenty.model.hub.{BasicUser, User}
 
 class SecureUser(private val _id: String) extends User {
   setId(_id)

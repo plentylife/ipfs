@@ -1,4 +1,4 @@
-package life.plenty.model.octopi.definition
+package life.plenty.model.hub.definition
 
 import java.util.Date
 
@@ -6,7 +6,7 @@ import life.plenty.model.actions._
 import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection._
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
-import life.plenty.model.octopi.User
+import life.plenty.model.hub.User
 import life.plenty.model.utils.GraphUtils
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}

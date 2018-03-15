@@ -4,8 +4,8 @@ import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.RxOpt
 import life.plenty.model.connection.Critical
-import life.plenty.model.octopi.Question
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.Question
+import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui
 import life.plenty.ui.display.{CardQuestionDisplayBase, Modal}

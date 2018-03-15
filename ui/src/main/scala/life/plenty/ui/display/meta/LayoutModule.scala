@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.{BindingSeq, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.console
 import life.plenty.ui.model.{DisplayModel, DisplayModule, ModuleOverride}
 import life.plenty.ui.model.DisplayModel.getSiblingModules

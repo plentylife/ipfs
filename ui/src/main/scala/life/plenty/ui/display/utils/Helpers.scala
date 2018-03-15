@@ -2,7 +2,7 @@ package life.plenty.ui.display.utils
 
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.definition.Hub
+import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.model.DisplayModel.ActionDisplay
 import life.plenty.ui.model.{DisplayModel, DisplayModule, ModuleOverride, UiContext}
 import org.scalajs.dom.Node

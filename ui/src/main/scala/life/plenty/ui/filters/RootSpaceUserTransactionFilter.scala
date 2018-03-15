@@ -4,8 +4,8 @@ import life.plenty.model
 import life.plenty.ui.console
 import life.plenty.model.connection._
 import life.plenty.model.modifiers.RxConnectionFilters
-import life.plenty.model.octopi.{Transaction, User, VoteAllowance}
-import life.plenty.model.octopi.definition.{AtInstantiation, Hub}
+import life.plenty.model.hub.{Transaction, User, VoteAllowance}
+import life.plenty.model.hub.definition.{AtInstantiation, Hub}
 import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.model.UiContext
 import rx.{Ctx, Rx}

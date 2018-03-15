@@ -1,8 +1,8 @@
 package life.plenty.model.actions
 
 import life.plenty.model.connection.{Amount, Creator, Parent}
-import life.plenty.model.octopi._
-import life.plenty.model.octopi.definition.Module
+import life.plenty.model.hub._
+import life.plenty.model.hub.definition.Module
 
 
 class ActionUpDownVote(override val hub: Answer) extends Module[Answer] {

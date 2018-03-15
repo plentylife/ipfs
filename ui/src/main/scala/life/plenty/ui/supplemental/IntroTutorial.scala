@@ -1,7 +1,7 @@
 package life.plenty.ui.supplemental
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.User
+import life.plenty.model.hub.User
 import life.plenty.ui.display.Modal
 import org.scalajs.dom.Node
 

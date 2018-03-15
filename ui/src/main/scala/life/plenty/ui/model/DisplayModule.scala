@@ -1,12 +1,12 @@
 package life.plenty.ui.model
 
 import com.thoughtworks.binding.Binding
-import life.plenty.model.octopi.definition.{Hub, Module}
+import life.plenty.model.hub.definition.{Hub, Module}
 import org.scalajs.dom.Node
 import rx.Ctx
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.octopi.definition.{Hub, Module}
+import life.plenty.model.hub.definition.{Hub, Module}
 import life.plenty.ui
 import org.scalajs.dom.Node
 import rx.Ctx
