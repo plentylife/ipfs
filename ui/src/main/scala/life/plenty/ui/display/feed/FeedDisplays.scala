@@ -3,6 +3,7 @@ package life.plenty.ui.display.feed
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
+import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.ui
 import life.plenty.ui.display.FullUserBadge
 import life.plenty.ui.display.utils.CardNavigation
@@ -53,6 +54,8 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
 
   @dom
   override def html(hub: Transaction): Binding[Node] = {
+    println(s"DISPLAYING ${this}")
+
     val amount = new BindableProperty(hub.getAmountOrZero)(a ⇒ a + ui.thanks)
 
     <div class={"feed " + cssClass} id={hub.id}>
@@ -60,5 +63,12 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
       {SimpleDisplayModule.html(FullUserBadge, hub.getTo).bind}
       <span class="amount">{amount.dom.bind}</span>
     </div>
+  }
+}
+
+trait FeedVoteGroupDisplayImpl {self: FeedDisplay[VoteGroup] ⇒
+  @dom
+  override def html(what: VoteGroup): Binding[Node] = {
+    <h5>Vote group</h5>
   }
 }

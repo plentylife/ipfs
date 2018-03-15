@@ -4,6 +4,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.{Child, Marker}
 import life.plenty.model.hub.Space
 import life.plenty.model.hub.definition.Hub
+import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.model.utils.GraphUtils.collectDownTree
 import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.actions.OpenButton
@@ -24,8 +25,13 @@ class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with
     case m: Marker ⇒ m
   },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
 
-  private lazy val aggregatedB: ListBindable[(SimpleDisplayModule[Hub], Hub)] = new ListBindable(aggregated map {
-    list ⇒ list flatMap {h ⇒ FeedModuleDirectory getTogether h}
+  private lazy val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
+    list ⇒
+      val additional = VoteGroup.groupByAnswer(list)
+      val fullList = list ::: additional()
+      fullList flatMap {h: Any ⇒
+        FeedModuleDirectory get h map {m ⇒ m.html(h)}
+      } : List[Binding[Node]]
   })
 
   // todo. display confirmed
@@ -52,9 +58,7 @@ class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with
       </span>
 
       <div class="card-body">
-        {for (mh <- aggregatedB()) yield {
-          mh._1.html(mh._2).bind
-      }}
+        {for (b <- aggregatedB()) yield {b.bind}}
       </div>
 
     </div>

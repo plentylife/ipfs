@@ -29,5 +29,5 @@ trait SimpleDisplayModuleDirectory[L <: SimpleDisplayModule[_]] {
   val directory : List[L]
   def get[T](what: T): Option[SimpleDisplayModule[T]] =
     directory find {m ⇒ m.fits(what)} map {_.asInstanceOf[SimpleDisplayModule[T]]}
-  def getTogether[T <: Hub](hub: T): Option[(SimpleDisplayModule[T], T)] = get(hub) map {_ → hub}
+  def getTogether[T](hub: T): Option[(SimpleDisplayModule[T], T)] = get(hub) map {_ → hub}
 }

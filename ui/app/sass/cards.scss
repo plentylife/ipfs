@@ -266,3 +266,25 @@ $event-color: #9f8600;
     }
   }
 }
+
+.feed {
+  display: flex;
+  align-items: center;
+  margin-top: $spacer * 0.35;
+  margin-bottom: $spacer * 0.35;
+  & > * {
+    margin-left: $spacer * 0.25;
+    margin-bottom: 0;
+  }
+  & > *:first-child {
+    margin-left: 0;
+  }
+
+  .action-text {
+    font-weight: bold;
+  }
+}
+
+.feed:first-child {
+  margin-top: 0;
+}

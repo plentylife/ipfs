@@ -3,14 +3,16 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.hub.pseudo.VoteGroup
+import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.utils.Helpers.{BindableHtmlProperty, OptBindableHtmlProperty, OptBindableHub, OptBindableProperty}
 import life.plenty.ui.model._
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
 
 package object feed {
-  sealed trait FeedDisplay[T <: Hub] extends SimpleDisplayModule[T] {
+  sealed trait FeedDisplay[T] extends SimpleDisplayModule[T] {
     @dom
     protected def actionHtml(a: String): Binding[Node] = <p class="action-text">{a}</p>
   }
@@ -26,6 +28,8 @@ package object feed {
 
     @dom
     override def html(hub: T): Binding[Node] = {
+      println(s"DISPLAYING ${this}")
+
       implicit val c = hub.ctx
       val parent = GraphExtractors.getParent(hub)
       val atb = new BindableHtmlProperty(actionTarget(hub, c), actionTargetHtml)
@@ -53,9 +57,13 @@ package object feed {
     override def fits(hub: Any): Boolean = hub.isInstanceOf[Transaction]
   }
 
+  case object FeedVoteGroupDisplay extends FeedDisplay[VoteGroup] with FeedVoteGroupDisplayImpl {
+    override def fits(hub: Any): Boolean = hub.isInstanceOf[VoteGroup]
+  }
+
   object FeedModuleDirectory extends SimpleDisplayModuleDirectory[FeedDisplay[_]] {
     override val directory: List[FeedDisplay[_]] = List(
-      FeedQuestionDisplay, FeedAnswerDisplay, FeedTransactionDisplay, FeedSpaceDisplay
+      FeedQuestionDisplay, FeedAnswerDisplay, FeedTransactionDisplay, FeedVoteGroupDisplay, FeedSpaceDisplay
     )
   }
 

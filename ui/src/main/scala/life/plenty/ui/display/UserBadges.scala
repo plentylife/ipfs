@@ -26,7 +26,7 @@ object FullUserBadge extends SimpleDisplayModule[User]{
       </script>
     </div>
   }
-  override def fits(hub: Hub): Boolean = hub.isInstanceOf[User]
+  override def fits(hub: Any): Boolean = hub.isInstanceOf[User]
 }
 
 object Identicon {
