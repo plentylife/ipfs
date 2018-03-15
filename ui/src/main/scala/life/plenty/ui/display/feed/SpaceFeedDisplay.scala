@@ -13,47 +13,44 @@ import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.display.{CardQuestionDisplayBase, FullUserBadge, InlineQuestionDisplay}
 import life.plenty.ui.model._
-import org.scalajs.dom.Node
+import org.scalajs.dom.{Event, Node}
 import rx.async._
 import rx.async.Platform._
 
 import scala.concurrent.duration._
 
-class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with CardNavigation {
-  private lazy val aggregated = collectDownTree[Hub](hub, matchBy = {
-    case Child(h: Hub) ⇒ h
-    case m: Marker ⇒ m
-  },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
-
-  private lazy val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
-    list ⇒
-      val additional = VoteGroup.groupByAnswer(list)
-      val fullList = list ::: additional()
-      fullList flatMap {h: Any ⇒
-        FeedModuleDirectory get h map {m ⇒ m.html(h)}
-      } : List[Binding[Node]]
-  })
-
-  // todo. display confirmed
+object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
+  def fits(what: Any) = what.isInstanceOf[Space]
 
   @dom
-  override protected def generateHtml(): Binding[Node] = {
-    val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
-    val selfOs = ExclusiveModuleOverride(m => !(m.isInstanceOf[FeedDisplay[_]] || m.isInstanceOf[FullUserBadge]))
-    implicit val os = selfOs :: cos.toList ::: siblingOverrides
-//    implicit val os = cos.toList ::: siblingOverrides
+  def html(hub: Space): Binding[Node] = {
+    implicit val ctx = hub.ctx
+    val aggregated = collectDownTree[Hub](hub, matchBy = {
+      case Child(h: Hub) ⇒ h
+      case m: Marker ⇒ m
+    },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
+
+    val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
+      list ⇒
+        val additional = VoteGroup.groupByAnswer(list)
+        val fullList = list ::: additional()
+        fullList flatMap {h: Any ⇒
+          FeedModuleDirectory get h map {m ⇒ m.html(h)}
+        } : List[Binding[Node]]
+    })
+
     val cssClass = ""
 
     <div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>
       <span class="d-flex header-block">
-        <span class="d-flex title-block" onclick={navigateTo _}>
+        <span class="d-flex title-block" onclick={e: Event ⇒ Router.navigateToHub(hub)}>
           <h5 class="card-title">
             {hub.getTitle.dom.bind}
           </h5>
         </span>
 
         <span class="card-controls">
-          {displayModules(siblingModules.withFilter(m => m.isInstanceOf[OpenButton]), "modules").bind}
+          {OpenButton.html(hub).bind}
         </span>
       </span>
 

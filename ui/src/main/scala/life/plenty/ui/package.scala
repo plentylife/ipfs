@@ -60,7 +60,7 @@ package object ui {
 //    ModuleRegistry add { case o: Space ⇒ new FeedSpaceDisplay(o) }
 //    ModuleRegistry add { case o: Answer ⇒ new FeedAnswerDisplay(o) }
 //    ModuleRegistry add { case o: Question ⇒ new FeedQuestionDisplay(o) }
-    ModuleRegistry add { case o: Space ⇒ new SpaceFeedDisplay(o) }
+//    ModuleRegistry add { case o: Space ⇒ new SpaceFeedDisplay(o) }
     // feed end
 
     ModuleRegistry add { case o: Space ⇒ new CardSpaceDisplay(o) } // can apply to question too

@@ -68,10 +68,10 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
 }
 
 trait FeedVoteGroupDisplayImpl {self: FeedDisplay[VoteGroup] ⇒
-  implicit val ctx = Ctx.Owner.Unsafe
 
   @dom
   override def html(what: VoteGroup): Binding[Node] = {
+    implicit val ctx = Ctx.Owner.Unsafe
     val uv = VoteGroup.countByUser(what.votes)
     val uvb = new ListBindable(uv map {_.toList})
 

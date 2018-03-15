@@ -9,6 +9,7 @@ import rx.{Ctx, Rx, Var ⇒ rxVar}
 
 trait SimpleDisplayModule[T] {
   def html(what: T): Binding[Node]
+  def htmlOpt(what: Any): Option[Binding[Node]] = if (fits(what)) Option(html(what.asInstanceOf[T])) else None
   def fits(what: Any): Boolean
 }
 

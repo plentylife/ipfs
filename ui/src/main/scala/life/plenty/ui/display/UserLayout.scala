@@ -6,7 +6,9 @@ import com.thoughtworks.binding.Binding.{BindingSeq, Var}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphExtractors
+import life.plenty.ui
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.feed.SpaceFeedDisplay
 import life.plenty.ui.display.meta.LayoutModule
@@ -45,7 +47,9 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
     }
   }
 
-  private lazy val membershipsList = new ListBindable(getTopMemberships)
+  private lazy val membershipsList = new ListBindable(getTopMemberships map {
+    _ flatMap SpaceFeedDisplay.htmlOpt
+  })
 
   override def overrides = List(ExclusiveModuleOverride(m ⇒ m.isInstanceOf[TopSpaceLayout] || m
     .isInstanceOf[CardSpaceDisplay] ), ExclusiveModuleOverride(m ⇒ m.isInstanceOf[UserLayout] ))
@@ -64,7 +68,14 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
       </div>
 
       <div class="user-feed">
-        {for (s <- sections) yield s.bind}
+        {try {
+          for (m <- membershipsList()) yield m.bind
+      } catch {
+        case e: Throwable =>
+          ui.console.error("Failed during render inside UserLayout")
+          ui.console.error(e)
+          throw e;
+      } }
       </div>
 
     </div>
@@ -73,6 +84,6 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
 //  @dom
 // todo if empty
 
-  protected def sections(implicit overrides: List[ModuleOverride]): List[Binding[Node]] =
-    displayHubs(membershipsList(), "administrative section") :: Nil
+//  protected def sections(implicit overrides: List[ModuleOverride]): List[Binding[Node]] =
+//    displayHubs(membershipsList(), "administrative section") :: Nil
 }
