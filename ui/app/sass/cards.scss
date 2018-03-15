@@ -283,6 +283,29 @@ $event-color: #9f8600;
   .action-text {
     font-weight: bold;
   }
+
+  &.vote-group {
+    display:flex;
+    align-items: unset;
+    flex-direction: column;
+    .vote-group-body {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      align-items: flex-end;
+
+      & > * {
+        align-items: center;
+        & > * {
+          margin-left: $spacer * 0.25;
+        }
+      }
+    }
+  }
+
+  .proposal-body {
+    background-color: rgba(119, 136, 153, 0.10);
+  }
 }
 
 .feed:first-child {

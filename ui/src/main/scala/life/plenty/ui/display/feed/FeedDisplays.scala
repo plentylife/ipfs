@@ -13,6 +13,7 @@ import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
 import scalaz.std.list._
 import scalaz.std.option._
+import scalaz.std.map._
 
 trait FeedAnswerDisplayImpl {self: FeedDisplaySimple[Answer] ⇒
   override protected def action(hub: Answer)(implicit ctx: Ctx.Owner) = Rx {
@@ -67,8 +68,24 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
 }
 
 trait FeedVoteGroupDisplayImpl {self: FeedDisplay[VoteGroup] ⇒
+  implicit val ctx = Ctx.Owner.Unsafe
+
   @dom
   override def html(what: VoteGroup): Binding[Node] = {
-    <h5>Vote group</h5>
+    val uv = VoteGroup.countByUser(what.votes)
+    val uvb = new ListBindable(uv map {_.toList})
+
+    <div class="feed vote-group">
+      <p class="vote-group-title">Proposal <span class="proposal-body">{what.answer.getBody.dom.bind}</span> received
+        votes</p>
+      <p class="vote-group-body">
+        {for(uve <- uvb()) yield voteEntry(uve._1, uve._2).bind}
+      </p>
+    </div>
   }
+
+  @dom
+  private def voteEntry(u: User, votes: Int): Binding[Node] = <span>
+    {FullUserBadge.html(u).bind} {actionHtml("voted").bind} {plusMinus(votes).bind}
+  </span>
 }

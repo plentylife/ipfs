@@ -38,27 +38,34 @@ trait DisplayModule[+T <: Hub] extends Module[T] {
 
   def display(calledBy: Option[DisplayModule[_]], overrides: List[ModuleOverride]): Option[Binding[Node]] =
     synchronized {
-      overriddenBy(overrides) match {
-        case Some(module) ⇒
-          ui.console.trace(s"${this} overriden by $module according to ${overrides}")
-          module.display(calledBy, overrides)
-        case _ ⇒ if (doDisplay()) {
-          //          println("displaying ", this, withinOctopus, calledBy)
-          cachedOverrides.value.clear()
-          cachedOverrides.value.insertAll(0, overrides)
-          update()
-          needsRefresh = !lastCaller.contains(calledBy.orNull) || calledBy.exists(_.needsRefresh)
-          val displayResult = if (!_hasRenderedOnce || needsRefresh) {
-            _hasRenderedOnce = true
-            val html = generateHtml()
-            htmlCache = html
-            Option(html)
-          } else {
-            Option(htmlCache)
-          }
-          lastCaller = calledBy
-          displayResult
-        } else None
+      try {
+        overriddenBy(overrides) match {
+          case Some(module) ⇒
+            ui.console.trace(s"${this} overriden by $module according to ${overrides}")
+            module.display(calledBy, overrides)
+          case _ ⇒ if (doDisplay()) {
+            //          println("displaying ", this, withinOctopus, calledBy)
+            cachedOverrides.value.clear()
+            cachedOverrides.value.insertAll(0, overrides)
+            update()
+            needsRefresh = !lastCaller.contains(calledBy.orNull) || calledBy.exists(_.needsRefresh)
+            val displayResult = if (!_hasRenderedOnce || needsRefresh) {
+              _hasRenderedOnce = true
+              val html = generateHtml()
+              htmlCache = html
+              Option(html)
+            } else {
+              Option(htmlCache)
+            }
+            lastCaller = calledBy
+            displayResult
+          } else None
+        }
+      } catch {
+        case e: Throwable ⇒
+          ui.console.error(s"While displaying $this")
+          ui.console.error(e)
+          None
       }
     }
 

@@ -95,7 +95,8 @@ object DbReader {
           }
           res
         } catch {
-          case e: Throwable ⇒ console.error(e); e.printStackTrace(); None
+          case e: Throwable ⇒ console.error("DBReader failed while reading a connection"); console.error(e);
+            e.printStackTrace(); None
         }
       })
 

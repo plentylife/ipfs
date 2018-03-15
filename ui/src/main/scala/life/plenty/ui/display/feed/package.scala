@@ -14,7 +14,7 @@ import rx.{Ctx, Rx}
 package object feed {
   sealed trait FeedDisplay[T] extends SimpleDisplayModule[T] {
     @dom
-    protected def actionHtml(a: String): Binding[Node] = <p class="action-text">{a}</p>
+    protected def actionHtml(a: String): Binding[Node] = <span class="action-text">{a}</span>
   }
 
   sealed trait FeedDisplaySimple[T <: Hub] extends FeedDisplay[T] {
