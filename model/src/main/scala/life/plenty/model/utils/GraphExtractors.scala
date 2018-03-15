@@ -36,6 +36,7 @@ object GraphExtractors {
   def getMemberships(u: User)(implicit ctx: Ctx.Owner): Rx[List[Members]] =
     u.rx.getAll({ case Parent(m: Members) ⇒ m })
   def getTitle(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Title(b) ⇒ b })
+  def getCreationTime(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Long]] = h.rx.get({ case CreationTime(b) ⇒ b })
 
   def isActive(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {
     val count: Rx[List[Int]] = o.connections.map {
