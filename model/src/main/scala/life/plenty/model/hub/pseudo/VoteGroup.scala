@@ -9,7 +9,9 @@ import rx.{Ctx, Rx}
 import scala.collection.parallel.IterableSplitter
 import scala.language.postfixOps
 
-case class VoteGroup(votes: Iterable[Vote], created: Long) extends CreatedProperty
+case class VoteGroup(votes: Iterable[Vote]) extends StrongHub {
+  val created = new StrongProperty[Long, this.type](this)
+}
 
 object VoteGroup {
   def groupByAnswer(list: Iterable[Hub])(implicit ctx: Ctx.Owner): Rx[Iterable[VoteGroup]] = Rx {
@@ -21,17 +23,17 @@ object VoteGroup {
     withParent.groupBy(_._2).filter(_._1.nonEmpty) flatMap {g ⇒
       val vg: Iterable[(Vote, Option[Answer])] = g._2
       val vs: Iterable[Vote] = vg map {v ⇒ v._1}
-      VoteGroup(vs)
+      VoteGroup.pack(vs)
     }
   }
 
-  def apply(votes: Iterable[Vote])(implicit ctx: Ctx.Data): Option[VoteGroup] = {
+  def pack(votes: Iterable[Vote])(implicit ctx: Ctx.Owner): Option[VoteGroup] = {
     val created = votes map {v ⇒
       val t = getCreationTime(v).filter(_.nonEmpty)
       t()
     } collect {case Some(t) ⇒ t}
     created.headOption map {
-      _ ⇒ VoteGroup(votes, created.min)
+      _ ⇒ VoteGroup(votes).created(created.min)
     }
   }
 }
