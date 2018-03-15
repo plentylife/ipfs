@@ -98,7 +98,7 @@ trait OctopusConstructor {
     model.console.trace(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
 
     // has to be first for purposes of creating ids
-    val ct = CreationTime(new Date().getTime)
+    val ct = _properties.collectFirst({case ct: CreationTime ⇒ ct}) getOrElse CreationTime(new Date().getTime)
     val cc: Option[Creator] = _properties.find(_.isInstanceOf[Creator]).map(_.asInstanceOf[Creator]).orElse({
       model.defaultCreator.map(c ⇒ Creator(c))
     })

@@ -1,12 +1,11 @@
 package life.plenty.ui.display.feed
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection.{Child, Marker}
 import life.plenty.model.hub.Space
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils
 import life.plenty.model.utils.GraphUtils.collectDownTree
+import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.actions.OpenButton
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
@@ -16,6 +15,7 @@ import life.plenty.ui.model._
 import org.scalajs.dom.Node
 import rx.async._
 import rx.async.Platform._
+
 import scala.concurrent.duration._
 
 class SpaceFeedDisplay(override val hub: Space) extends LayoutModule[Space] with CardNavigation {

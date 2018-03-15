@@ -6,7 +6,7 @@ import life.plenty.model.connection._
 import life.plenty.model.modifiers.RxConnectionFilters
 import life.plenty.model.hub.{Transaction, User, VoteAllowance}
 import life.plenty.model.hub.definition.{AtInstantiation, Hub}
-import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.model.UiContext
 import rx.{Ctx, Rx}
 class RootSpaceUserTransactionFilter(override val hub: User) extends RxConnectionFilters[User] {
@@ -17,7 +17,7 @@ class RootSpaceUserTransactionFilter(override val hub: User) extends RxConnectio
     // if starting space is not set, just pass
     spOpt.fold(what())(
       {sp ⇒
-      val root = GraphUtils.getRootParentOrSelf(sp)
+      val root = GraphExtractors.getRootParentOrSelf(sp)
       val rootId = root().id
 
       what() flatMap { con: DataHub[_] ⇒ filter(rootId, con, ctx)}
@@ -37,7 +37,7 @@ class RootSpaceUserTransactionFilter(override val hub: User) extends RxConnectio
   // fixme transactions have root parents now
 
   private def filterOnRoot(rootId: String, h: Hub, ctxOwner: Ctx.Owner)(implicit ctx: Ctx.Data): Option[Unit] = {
-      val crp = GraphUtils.getRootParentOrSelf(h)(ctxOwner)
+      val crp = GraphExtractors.getRootParentOrSelf(h)(ctxOwner)
       console.trace(s"filtering on parent root $h [$rootId] $crp ${crp.now.id} ${crp.now.id == rootId}")
       if (crp().id == rootId) Option(Unit) else None
   }

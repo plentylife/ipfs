@@ -6,7 +6,7 @@ import com.thoughtworks.binding.Binding.{BindingSeq, Var}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.feed.SpaceFeedDisplay
 import life.plenty.ui.display.meta.LayoutModule
@@ -28,9 +28,9 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
   override def doDisplay(): Boolean = UiContext.pointer.value.exists(_.id == hub.id)
 
   def getMemberships = Rx {
-    val ms = GraphUtils.getMemberships(hub)
+    val ms = GraphExtractors.getMemberships(hub)
     ms().flatMap {m ⇒
-      val p = GraphUtils.getParent(m)
+      val p = GraphExtractors.getParent(m)
       p()
     }
   }
@@ -59,7 +59,7 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
     <div class={"top-space-layout user-feed"}>
       <div class="layout-header">
         <h3 class={titleClasses}>
-          {GraphUtils.getName(hub).dom.bind}
+          {GraphExtractors.getName(hub).dom.bind}
         </h3>
       </div>
 

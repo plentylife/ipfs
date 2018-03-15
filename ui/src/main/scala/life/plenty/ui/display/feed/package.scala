@@ -3,7 +3,7 @@ package life.plenty.ui.display
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.utils.Helpers.{BindableHtmlProperty, OptBindableHtmlProperty, OptBindableHub, OptBindableProperty}
 import life.plenty.ui.model._
 import org.scalajs.dom.Node
@@ -27,7 +27,7 @@ package object feed {
     @dom
     override def html(hub: T): Binding[Node] = {
       implicit val c = hub.ctx
-      val parent = GraphUtils.getParent(hub)
+      val parent = GraphExtractors.getParent(hub)
       val atb = new BindableHtmlProperty(actionTarget(hub, c), actionTargetHtml)
       val ab = new BindableHtmlProperty(action(hub), actionHtml)
 

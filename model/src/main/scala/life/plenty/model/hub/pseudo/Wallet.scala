@@ -3,7 +3,7 @@ package life.plenty.model.hub.pseudo
 import life.plenty.model
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.{Space, User}
-import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
 import rx.{Ctx, Rx, Var}
 
 class Wallet(u: User, space: Hub)(implicit ctx: Ctx.Owner) {

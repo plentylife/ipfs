@@ -6,7 +6,7 @@ import life.plenty.model.actions.{ActionAddConfirmedMarker, ActionToggleCritical
 import life.plenty.model.connection.Child
 import life.plenty.model.hub.{ContainerSpace, Members, Question, Space}
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.{Controller, InlineDisplay, Modal, TreeView}
 import life.plenty.ui.display.actions.labeltraits.MenuAction
 import life.plenty.ui.display.utils.{BooleanInputVar, InputVarWithCheckbox}
@@ -52,7 +52,7 @@ class PickCriticalButton(override val hub: Space) extends DisplayModule[Space] w
     </div>
   }
 
-  private val critical = GraphUtils.getCritical(hub)
+  private val critical = GraphExtractors.getCritical(hub)
   private var controllers = Map[Hub, Controller]()
 
   private def getController[T <: Hub](h: T, generator: T ⇒ Controller): Controller = synchronized {

@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.{BindingSeq, SingleMountPoint, Var}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.Helpers._
@@ -25,7 +25,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
   override def doDisplay(): Boolean = sameAsUiPointer(hub)
 
-  private lazy val isConfirmed: BasicBindable[Boolean] = GraphUtils.markedConfirmed(hub)
+  private lazy val isConfirmed: BasicBindable[Boolean] = GraphExtractors.markedConfirmed(hub)
 
   def getMembers(cs: BindingSeq[Hub]): BindingSeq[Hub]#WithFilter = cs.withFilter({
     case m: Members ⇒ true
@@ -62,7 +62,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
           {hub.getTitle.dom.bind}
         </h3>
         <h5 class="sub-title mt-1 ml-2 text-muted">
-          {new OptBindableHtmlProperty(GraphUtils.getBody(hub), strIntoParagraphs).dom.bind}
+          {new OptBindableHtmlProperty(GraphExtractors.getBody(hub), strIntoParagraphs).dom.bind}
         </h5>{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}
       </div>
 
