@@ -8,3 +8,6 @@ ui/app/entry.js
 **/iconic
 **/target/*
 *.png
+.classpath
+.project
+.settings
