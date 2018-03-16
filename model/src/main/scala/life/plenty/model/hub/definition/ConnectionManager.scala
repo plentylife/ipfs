@@ -13,17 +13,23 @@ import scala.util.{Failure, Success}
 trait ConnectionManager[CT] {self: Hub ⇒
   private var onConnectionAddedOperations: List[(DataHub[_]) ⇒ Unit] = List()
   protected var _connections: List[DataHub[_]] = List.empty[DataHub[_]]
+  val loadComplete = Promise[Unit]()
+  var onConnectionsRequest: List[() ⇒ Unit] = List()
 
   protected def onConnectionAddedOperation(op: (DataHub[_]) ⇒ Unit): Unit = {
     onConnectionAddedOperations +:= op
   }
+  def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]): Unit = onConnectionsRequest :::= fList
 
   def connections: List[DataHub[_]] = _connections
 
-  val loadComplete = Promise[Unit]()
-
   object sc {
-    def all: List[DataHub[_]] = _connections
+    def all: List[DataHub[_]] = {
+      onConnectionsRequest.foreach(f ⇒ f())
+      _connections
+    }
+
+    def getList[T](f: PartialFunction[DataHub[_], T]): List[T] = sc.all.collect(f)
 
     def get[T](f: PartialFunction[DataHub[_], DataHub[T]]): Option[DataHub[T]] = sc.all.collectFirst(f)
 

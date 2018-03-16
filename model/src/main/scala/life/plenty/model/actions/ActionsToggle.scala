@@ -23,18 +23,11 @@ class ActionAddConfirmedMarker(override val hub: Hub) extends Module[Hub] {
 
   def confirm() = {
     hub.addConnection(Marker(MarkerEnum.CONFIRMED))
-    println(s"added confirm marker ${hub.sc.all}")
-    println(s"${hub.rx.cons}")
   }
 
   def deconfirm() = {
     GraphExtractors.confirmedMarker(hub).now.foreach { m ⇒
-      println(s"marker is active ${m.isActive.now}")
       m.inactivate()
-
-      println(s"removed marker ${m.sc.all}")
-      println(s"marker is active ${m.isActive.now}")
-      println(s"${hub.rx.cons}")
     }
 
   }
@@ -50,7 +43,7 @@ class ActionToggleCriticalConnection(override val hub: Hub) extends Module[Hub] 
 
     existing foreach {c ⇒
       println(s"Toggle found $c ${c.isActive}")
-      if(c.isActive.now) c.inactivate() else c.activate()
+      if(c.isActive) c.inactivate() else c.activate()
     }
 
     if (existing.isEmpty) {

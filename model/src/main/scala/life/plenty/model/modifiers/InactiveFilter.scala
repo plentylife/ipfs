@@ -18,7 +18,7 @@ class InactiveFilter(override val hub: Hub) extends RxConnectionFilters[Hub] {
         // (usually)
         if (!(con.isInstanceOf[Id] || con.tmpMarker == AtInstantiation)) {
           // is connection active? if not, remove
-          if (con.isActive()) {
+          if (con.isActive) {
             // is the contents of the connection active? if not, remove
             filterOnValue(con)
           } else {
@@ -36,7 +36,7 @@ class InactiveFilter(override val hub: Hub) extends RxConnectionFilters[Hub] {
 
   private def filterOnValue(con: DataHub[_])(implicit ctx: Ctx.Data): Option[DataHub[_]] = {
     con.value match {
-      case o: Hub ⇒ if (o.isActive()) {
+      case o: Hub ⇒ if (o.isActive) {
         model.console.trace(s"InactiveFilter passed contents ${con} ${con.id} ")
         Option(con)
       } else {

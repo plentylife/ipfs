@@ -29,7 +29,7 @@ trait User extends Hub {
   }
 
   override def generateId: String = {
-    throw new NotImplementedError(s"this method not supposed to be used for users. Connections ${_connections.now}")
+    throw new NotImplementedError(s"this method not supposed to be used for users. Connections ${_connections}")
   }
 
   def getName: Rx[Option[String]] = rx.get({ case Name(n: String) ⇒ n })

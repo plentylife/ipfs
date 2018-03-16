@@ -24,7 +24,7 @@ object CriticalQuestionsGuide {
 
   def apply(): Unit = {
     UiContext.pointerRx.foreach(_ foreach { space ⇒
-      val critical: ListBindable[Question] = space.rx.getAllRaw({
+      val critical: ListBindable[Question] = space.rx.getAll({
           case Critical(q: Question) ⇒ q
         }) flatMap {qs ⇒ filterCritical(qs) }
 
@@ -46,14 +46,14 @@ object CriticalQuestionsGuide {
   }
 
   /** check that the question isn't finalized, or that the user has already answered it */
-  private def filterCritical(list: List[RxOpt[Question]]): Rx[List[Question]] = Rx {
-    list flatMap {rx ⇒ rx() flatMap {q ⇒
+  private def filterCritical(list: List[Question]): Rx[List[Question]] = Rx {
+    list flatMap {q ⇒
       val r = filterSingleCritical(q)
       r()
-    }}
+    }
   }
 
-  private def filterSingleCritical(q: Question)(): Rx[Option[Question]] = {
+  private def filterSingleCritical(q: Question): Rx[Option[Question]] = {
     val hasCreated = GraphExtractors.getAllCreatedByInSpace(q, UiContext.getUser) // shouldn't be null
     val isFinalized = GraphExtractors.markedConfirmed(q)
     Rx {
