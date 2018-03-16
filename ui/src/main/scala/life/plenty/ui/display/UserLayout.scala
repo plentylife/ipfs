@@ -47,9 +47,7 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
     }
   }
 
-  private lazy val membershipsList = new ListBindable(getTopMemberships map {
-    _ flatMap SpaceFeedDisplay.htmlOpt
-  })
+  private lazy val membershipsList = new ListBindable(getTopMemberships)
 
   override def overrides = List(ExclusiveModuleOverride(m ⇒ m.isInstanceOf[TopSpaceLayout] || m
     .isInstanceOf[CardSpaceDisplay] ), ExclusiveModuleOverride(m ⇒ m.isInstanceOf[UserLayout] ))
@@ -69,7 +67,7 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
 
       <div class="user-feed">
         {try {
-          for (m <- membershipsList()) yield m.bind
+          for (m <- membershipsList()) yield {SpaceFeedDisplay.htmlOpt(m)(null) getOrElse DisplayModel.nospan}.bind
       } catch {
         case e: Throwable =>
           ui.console.error("Failed during render inside UserLayout")

@@ -23,7 +23,9 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   def fits(what: Any) = what.isInstanceOf[Space]
 
   @dom
-  def html(hub: Space): Binding[Node] = {
+  def htmlGen(hub: Space): Binding[Node] = {
+    println(s"CREATED SPACEFEED $hub")
+
     implicit val ctx = hub.ctx
     val aggregated = collectDownTree[Hub](hub, matchBy = {
       case Child(h: Hub) ⇒ h
@@ -35,7 +37,7 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
         val additional = VoteGroup.groupByAnswer(list)
         val fullList = list ::: additional()
         fullList flatMap {h: Any ⇒
-          FeedModuleDirectory get h map {m ⇒ m.html(h)}
+          FeedModuleDirectory get h map {m ⇒ m.html(this, h)}
         } : List[Binding[Node]]
     })
 

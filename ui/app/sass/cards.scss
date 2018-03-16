@@ -295,6 +295,7 @@ $event-color: #9f8600;
       align-items: flex-end;
 
       & > * {
+        display: flex;
         align-items: center;
         & > * {
           margin-left: $spacer * 0.25;

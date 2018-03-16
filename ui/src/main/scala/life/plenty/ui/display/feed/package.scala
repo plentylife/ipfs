@@ -27,7 +27,7 @@ package object feed {
     private def actionTargetHtml(at: String): Binding[Node] = <p class="action-target-text">{at}</p>
 
     @dom
-    override def html(hub: T): Binding[Node] = {
+    override def htmlGen(hub: T): Binding[Node] = {
       println(s"DISPLAYING ${this}")
 
       implicit val c = hub.ctx

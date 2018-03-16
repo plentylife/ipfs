@@ -41,7 +41,7 @@ trait FeedQuestionDisplayImpl {self: FeedDisplaySimple[Question] ⇒
 }
 
 trait FeedSpaceDisplayImpl {self: FeedDisplaySimple[Space] ⇒
-  override protected def action(hub: Space)(implicit ctx: Ctx.Owner) = Rx {"created"}
+  override protected def action(hub: Space)(implicit ctx: Ctx.Owner) = Rx {"created space"}
   override protected def actionTarget(implicit hub:Space, ctx: Ctx.Owner): Rx[String] = {
     hub.getTitle
   }
@@ -54,7 +54,7 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
   private val cssClass: String = "transaction"
 
   @dom
-  override def html(hub: Transaction): Binding[Node] = {
+  override def htmlGen(hub: Transaction): Binding[Node] = {
     println(s"DISPLAYING ${this}")
 
     val amount = new BindableProperty(hub.getAmountOrZero)(a ⇒ a + ui.thanks)
@@ -70,7 +70,7 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
 trait FeedVoteGroupDisplayImpl {self: FeedDisplay[VoteGroup] ⇒
 
   @dom
-  override def html(what: VoteGroup): Binding[Node] = {
+  override def htmlGen(what: VoteGroup): Binding[Node] = {
     implicit val ctx = Ctx.Owner.Unsafe
     val uv = VoteGroup.countByUser(what.votes)
     val uvb = new ListBindable(uv map {_.toList})
