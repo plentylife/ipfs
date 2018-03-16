@@ -12,12 +12,12 @@ import org.scalajs.dom.html.{Canvas, Div}
 class FullUserBadge(override val hub: User) extends DisplayModule[User] {
   override def update(): Unit = Unit
 
-  override protected def generateHtml(): Binding[Node] = FullUserBadge.html(hub)(null)
+  override protected def generateHtml(): Binding[Node] = FullUserBadge.html(hub)
 }
 
 object FullUserBadge extends SimpleDisplayModule[User]{
   @dom
-  override def htmlGen(hub: User): Binding[Node] = {
+  override def html(hub: User): Binding[Node] = {
     println("DISPLAYING USER BADGE")
     <div class="user-badge">
       {Identicon.generate(hub).bind}

@@ -12,6 +12,7 @@ import life.plenty.ui
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.feed.SpaceFeedDisplay
 import life.plenty.ui.display.meta.LayoutModule
+import life.plenty.ui.display.utils.{DomList, DomListSingleModule}
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model._
 import org.scalajs.dom.raw.Node
@@ -41,13 +42,13 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
 
   def getTopMemberships = Rx {
     val ms = getMemberships
-    ms().filterNot { h =>
+    ms().collect({case h: Space ⇒ h}).filterNot { h =>
       val in = GraphUtils.hasParentInChain(h, ms() filterNot {_ == h})
       in()
     }
   }
 
-  private lazy val membershipsList = new ListBindable(getTopMemberships)
+  private lazy val membershipsList = new DomListSingleModule[Space](getTopMemberships, SpaceFeedDisplay)
 
   override def overrides = List(ExclusiveModuleOverride(m ⇒ m.isInstanceOf[TopSpaceLayout] || m
     .isInstanceOf[CardSpaceDisplay] ), ExclusiveModuleOverride(m ⇒ m.isInstanceOf[UserLayout] ))
@@ -67,7 +68,7 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
 
       <div class="user-feed">
         {try {
-          for (m <- membershipsList()) yield {SpaceFeedDisplay.htmlOpt(m)(null) getOrElse DisplayModel.nospan}.bind
+          for (m <- membershipsList()) yield m.bind
       } catch {
         case e: Throwable =>
           ui.console.error("Failed during render inside UserLayout")

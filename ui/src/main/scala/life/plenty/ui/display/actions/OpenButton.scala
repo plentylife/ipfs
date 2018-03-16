@@ -16,12 +16,12 @@ class OpenButton(override val hub: Space) extends CardControls {
 
   override def update(): Unit = Unit
 
-  override protected def generateHtml(): Binding[Node] = OpenButton.html(hub)(null)
+  override protected def generateHtml(): Binding[Node] = OpenButton.html(hub)
 }
 
 object OpenButton extends SimpleDisplayModule[Space] {
   @dom
-  override def htmlGen(what: Space): Binding[Node] = {
+  override def html(what: Space): Binding[Node] = {
     <div class="btn btn-primary btn-sm open-btn" onclick={e: Event ⇒ Router.navigateToHub(what)}>open</div>
   }
   override def fits(what: Any): Boolean = what.isInstanceOf[Space]

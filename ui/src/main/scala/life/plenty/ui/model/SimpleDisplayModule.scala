@@ -8,28 +8,15 @@ import org.scalajs.dom.Node
 import rx.{Ctx, Rx, Var ⇒ rxVar}
 
 trait SimpleDisplayModule[T] {
-  implicit val selfImplicit: SimpleDisplayModule[T] = this
-  private var cache: Map[(T, Any), Binding[Node]] = Map()
-
-  protected def htmlGen(what: T): Binding[Node]
-  def html(what: T)(implicit caller: SimpleDisplayModule[_]): Binding[Node] = {
-    val c = cache.get(what → caller)
-    c getOrElse {
-      val gen = htmlGen(what)
-      cache += (what → caller) → gen
-      gen
-    }
-  }
-  def htmlOpt(what: Any)(implicit caller: SimpleDisplayModule[_]) : Option[Binding[Node]] =
+  def html(what: T): Binding[Node]
+  def htmlOpt(what: Any): Option[Binding[Node]] =
     if (fits(what)) Option(html(what.asInstanceOf[T])) else None
   def fits(what: Any): Boolean
 }
 
-// fixme caller should be a simpledisplaymodule
-
 object SimpleDisplayModule {
   @dom
-  def html[T](module: SimpleDisplayModule[T], hub: Rx[Option[T]])(implicit caller: SimpleDisplayModule[_]): Binding[Node] = {
+  def html[T](module: SimpleDisplayModule[T], hub: Rx[Option[T]]): Binding[Node] = {
     val hb: BasicBindable[Option[T]] = hub
     hb().bind match {
       case Some(h) ⇒ module.html(h).bind
