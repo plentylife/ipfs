@@ -222,6 +222,10 @@ ActionOnFinishDataLoad {
         case e: DocDoesNotExist ⇒ connectionsLeftToLoad() = 0
       }
 
+      onFinishLoad {() ⇒
+        hub.loadedRx.update(true)
+      }
+
       dbDoc.onRemoteConnectionChange(loadConnection)
     }
 

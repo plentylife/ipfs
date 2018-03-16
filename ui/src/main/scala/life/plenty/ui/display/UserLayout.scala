@@ -24,7 +24,7 @@ import scala.scalajs.js
 import scala.scalajs.js.timers.SetTimeoutHandle
 
 
-class UserLayout(override val hub: User) extends LayoutModule[User] {
+class UserLayout(override val hub: User) extends DisplayModule[User] {
 
   // todo don't forget about root space filter
 
@@ -48,15 +48,19 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
     }
   }
 
-  private lazy val membershipsList = new DomListSingleModule[Space](getTopMemberships, SpaceFeedDisplay)
+  private lazy val membershipsList = new DomListSingleModule[Space](getMemberships map {
+    _ collect {case h: Space ⇒ h}
+  }, SpaceFeedDisplay)
+//  private lazy val membershipsList = new DomListSingleModule[Space](getTopMemberships, SpaceFeedDisplay)
+//  private lazy val membershipsList = new DomListSingleModule[Space](Rx{List()}, SpaceFeedDisplay)
 
   override def overrides = List(ExclusiveModuleOverride(m ⇒ m.isInstanceOf[TopSpaceLayout] || m
     .isInstanceOf[CardSpaceDisplay] ), ExclusiveModuleOverride(m ⇒ m.isInstanceOf[UserLayout] ))
 
+
   @dom
   override protected def generateHtml(): Binding[Node] = {
-    val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
-    implicit val os = cos.toList ::: siblingOverrides ::: overrides
+    println("Generating UserLayout")
     val titleClasses = "title ml-2 "
 
     <div class={"top-space-layout user-feed"}>
@@ -68,7 +72,8 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
 
       <div class="user-feed">
         {try {
-          for (m <- membershipsList()) yield m.bind
+         for (m <- membershipsList()) yield m.bind
+//        ""
       } catch {
         case e: Throwable =>
           ui.console.error("Failed during render inside UserLayout")
@@ -85,4 +90,5 @@ class UserLayout(override val hub: User) extends LayoutModule[User] {
 
 //  protected def sections(implicit overrides: List[ModuleOverride]): List[Binding[Node]] =
 //    displayHubs(membershipsList(), "administrative section") :: Nil
+  override def update(): Unit = Unit
 }

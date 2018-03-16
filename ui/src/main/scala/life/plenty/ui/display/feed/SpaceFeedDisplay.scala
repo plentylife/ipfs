@@ -27,39 +27,43 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
     println(s"CREATED SPACEFEED $hub")
 
     implicit val ctx = hub.ctx
-    val aggregated = collectDownTree[Hub](hub, matchBy = {
-      case Child(h: Hub) ⇒ h
-      case m: Marker ⇒ m
-    },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
+//    val aggregated = collectDownTree[Hub](hub, matchBy = {
+//      case Child(h: Hub) ⇒ h
+//      case m: Marker ⇒ m
+//    },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
 
-    val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
-      list ⇒
-        val additional = VoteGroup.groupByAnswer(list)
-        val fullList = list ::: additional()
-        fullList flatMap {h: Any ⇒
-          FeedModuleDirectory get h map {m ⇒ m.html(h)}
-        } : List[Binding[Node]]
-    })
+//    val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
+//      list ⇒
+//        val additional = VoteGroup.groupByAnswer(list)
+//        val fullList = list ::: additional()
+//        fullList flatMap {h: Any ⇒
+//          FeedModuleDirectory get h map {m ⇒ m.html(h)}
+//        } : List[Binding[Node]]
+//    })
 
     val cssClass = ""
 
     <div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>
-      <span class="d-flex header-block">
-        <span class="d-flex title-block" onclick={e: Event ⇒ Router.navigateToHub(hub)}>
-          <h5 class="card-title">
-            {hub.getTitle.dom.bind}
-          </h5>
-        </span>
-
-        <span class="card-controls">
-          {OpenButton.html(hub).bind}
-        </span>
-      </span>
-
-      <div class="card-body">
-        {for (b <- aggregatedB()) yield {b.bind}}
-      </div>
-
     </div>
   }
+  //        {for (b <- aggregatedB()) yield {b.bind}}
+
 }
+
+//<div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>
+//<span class="d-flex header-block">
+//<span class="d-flex title-block" onclick={e: Event ⇒ Router.navigateToHub(hub)}>
+//<h5 class="card-title">
+//{hub.getTitle.dom.bind}
+//</h5>
+//</span>
+//
+//<span class="card-controls">
+//{OpenButton.html(hub).bind}
+//</span>
+//</span>
+//
+//<div class="card-body">
+//</div>
+//
+//</div>

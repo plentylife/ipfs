@@ -34,6 +34,8 @@ trait RxConnectionManager {
     /* end block */
   })
 
+  val loadedRx = Var(false)
+
   object rx {
     val debounceDuration = 1000 milliseconds
 
@@ -52,21 +54,26 @@ trait RxConnectionManager {
     def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
       onConnectionsRequest.foreach(f ⇒ f())
 
-      Rx {
-        val rightRxIndex = _connections.map { list ⇒
-          val processed = list.map(f.isDefinedAt)
-          processed.indexOf(true) // if None, won't be found
-        }
-        val res: Rx[Option[T]] = rightRxIndex.flatMap { i ⇒
-          if (i < 0) Var(None) else {
-            val rxList = _connectionsRx()
-            rxList(i) map { rx: Option[DataHub[_]] ⇒ rx collect f }
-          }
-        }
+//      _connectionsRxMap map {list ⇒
+//        list collectFirst()
+//      }
 
-        res.foreach(r ⇒ if (r.nonEmpty) rightRxIndex.kill())
-        res()
-      }
+       loadedRx map {
+         case false ⇒ None
+         case true ⇒ val rightRxIndex = _connections.map { list ⇒
+           val processed = list.map(f.isDefinedAt)
+           processed.indexOf(true) // if None, won't be found
+         }
+           val res: Rx[Option[T]] = rightRxIndex.flatMap { i ⇒
+             if (i < 0) Var(None) else {
+               val rxList = _connectionsRx()
+               rxList(i) map { rx: Option[DataHub[_]] ⇒ rx collect f }
+             }
+           }
+
+           res.foreach(r ⇒ if (r.nonEmpty) rightRxIndex.kill())
+           res()
+       }
     }
 
     def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
@@ -91,15 +98,19 @@ trait RxConnectionManager {
       def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner):
       Rx[List[Rx[Option[T]]]] = synchronized {
 
-        _connectionsRxMap.debounce(debounceDuration).fold(List[Rx[Option[T]]]() → 0)((listWithMark, csMap) ⇒ {
-          val take = csMap.length - listWithMark._2
+        loadedRx flatMap {
+          case false ⇒ Rx {List()}
+          case true ⇒ _connectionsRxMap.debounce(debounceDuration).fold(List[Rx[Option[T]]]() → 0)((listWithMark, csMap) ⇒ {
+            val take = csMap.length - listWithMark._2
 
-          val list = csMap.take(take) collect {
-            case (s, rx) if f isDefinedAt s ⇒ rx.debounce(debounceDuration) map {_ map f}
-          }
+            val list = csMap.take(take) collect {
+              case (s, rx) if f isDefinedAt s ⇒ rx.debounce(debounceDuration) map {_ map f}
+            }
 
-          list → csMap.length
-        }).debounce(debounceDuration).map(_._1)
+            list → csMap.length
+          }).debounce(debounceDuration).map(_._1)
+
+        }
 
       }
     }
