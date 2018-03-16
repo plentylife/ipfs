@@ -2,8 +2,9 @@ package life.plenty.ui.display
 
 import java.util.Date
 
-import com.thoughtworks.binding.Binding.{BindingSeq, Var}
+import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
+import life.plenty.model.connection.DataHub
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
@@ -19,7 +20,7 @@ import org.scalajs.dom.raw.Node
 import rx.Rx
 import scalaz.std.list._
 import scalaz.std.option._
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.scalajs.js
 import scala.scalajs.js.timers.SetTimeoutHandle
 
@@ -48,10 +49,33 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
     }
   }
 
-  private lazy val membershipsList = new DomListSingleModule[Space](getMemberships map {
-    _ collect {case h: Space ⇒ h}
-  }, SpaceFeedDisplay)
-//  private lazy val membershipsList = new DomListSingleModule[Space](getTopMemberships, SpaceFeedDisplay)
+  lazy val membershipsList = Vars[Binding[Node]]()
+  def loadAll(h: Hub, depth: Int): Unit = {
+    if (!h.loadComplete.isCompleted && depth < 4) {
+      println(s"LOADING $h ${h.onConnectionsRequest}")
+      h.onConnectionsRequest.foreach(f ⇒ f())
+      h.loadComplete.future foreach {_ ⇒
+        println(s"LOADING COMPLETE $h ${h.sc.all}")
+        h.sc.all.foreach {
+          case d: DataHub[_] if d.value.isInstanceOf[Hub] && !d.value.isInstanceOf[User] ⇒
+            println(d → d.value)
+            loadAll(d.value.asInstanceOf[Hub], depth + 1)
+          case _ ⇒
+        }
+      }
+    }
+  }
+
+  loadAll(hub, 0)
+
+
+
+//  private lazy val membershipsList = new DomListSingleModule[Space](getMemberships map {
+//    _ collect {case h: Space ⇒ h}
+//  }, SpaceFeedDisplay)
+//  private lazy val membershipsList = new DomListSingleModule[Space](getTopMemberships map {
+//  _ ⇒ List()
+//}, SpaceFeedDisplay)
 //  private lazy val membershipsList = new DomListSingleModule[Space](Rx{List()}, SpaceFeedDisplay)
 
   override def overrides = List(ExclusiveModuleOverride(m ⇒ m.isInstanceOf[TopSpaceLayout] || m
@@ -72,7 +96,7 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
 
       <div class="user-feed">
         {try {
-         for (m <- membershipsList()) yield m.bind
+         for (m <- membershipsList) yield m.bind
 //        ""
       } catch {
         case e: Throwable =>

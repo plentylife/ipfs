@@ -7,7 +7,7 @@ import life.plenty.model.connection.{DataHub, Id}
 import rx.{Rx, Var}
 import model._
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 trait ConnectionManager[CT] {self: Hub ⇒
@@ -19,6 +19,8 @@ trait ConnectionManager[CT] {self: Hub ⇒
   }
 
   def connections: Rx[List[DataHub[_]]] = _connections
+
+  val loadComplete = Promise[Unit]()
 
   object sc {
     def all: List[DataHub[_]] = _connections.now

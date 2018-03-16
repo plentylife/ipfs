@@ -20,19 +20,19 @@ trait RxConnectionManager {
 
   private lazy val connectionFilters = getAllModules({ case m: RxConnectionFilters[_] ⇒ m })
 
-  private var onConnectionsRequest: List[() ⇒ Unit] = List()
+  var onConnectionsRequest: List[() ⇒ Unit] = List()
 
   def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]): Unit = onConnectionsRequest :::= fList
 
-  onConnectionAddedOperation(connection ⇒ synchronized {
-    /*filtering block*/
-    val filteredCon: Rx[Option[DataHub[_]]] = connectionFilters.foldLeft[Rx[Option[DataHub[_]]]](
-      Var {Option(connection)}
-    )((c, f) ⇒ f(c))
-    _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[DataHub[_]]]])
-    _connectionsRxMap() = (connection → filteredCon) :: _connectionsRxMap.now
-    /* end block */
-  })
+//  onConnectionAddedOperation(connection ⇒ synchronized {
+//    /*filtering block*/
+//    val filteredCon: Rx[Option[DataHub[_]]] = connectionFilters.foldLeft[Rx[Option[DataHub[_]]]](
+//      Var {Option(connection)}
+//    )((c, f) ⇒ f(c))
+//    _connectionsRx() = filteredCon :: (_connectionsRx.now: List[Rx[Option[DataHub[_]]]])
+//    _connectionsRxMap() = (connection → filteredCon) :: _connectionsRxMap.now
+//    /* end block */
+//  })
 
   val loadedRx = Var(false)
 

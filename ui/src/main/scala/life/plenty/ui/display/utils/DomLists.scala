@@ -42,6 +42,7 @@ abstract class DomList[T](list: Rx[List[T]]) {
     if (timeout != null) js.timers.clearTimeout(timeout)
     timeout = js.timers.setTimeout(3000)({
 //      if (new Date().getTime - lastUpdate > 2000) {
+      println(s"BINDING ${l}")
         val bindings = l map {e ⇒ e → render(e)} collect {case(e, Some(r)) ⇒ e -> r}
         inner.value.clear()
         inner.value.insertAll(0, bindings)
