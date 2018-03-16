@@ -80,17 +80,11 @@ object DbReader {
       console.println(s"DbReader is constructing $cName $id")
       val potentials: Stream[Hub] = availableClasses.flatMap(f ⇒ {
         try {
-          println(0)
           val h = f(cName)
           val res: Option[Hub] = h map { o ⇒
-            // fixme use setID
-            println(1)
-            val idCon = o.setId(id)
-            println(2)
-
+            o.setId(id)
             val exH = Cache.put(o) // this gives back the existing
             data.getWriterModule(exH).setDbDoc(dbDoc)
-            println(4)
             exH
           }
           res
