@@ -38,17 +38,13 @@ object GraphExtractors {
   def getTitle(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Title(b) ⇒ b })
   def getCreationTime(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Long]] = h.rx.get({ case CreationTime(b) ⇒ b })
 
-  def isActive(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {
-    val count: Rx[List[Int]] = o.connections.map {
-      _ collect {
+  def isActive(o: Hub)(implicit ctx: Ctx.Owner): Boolean = {
+    val count: List[Int] = o.connections collect {
         case Inactive(_) ⇒ -1
         case Active(_) ⇒ 1
       }
-    }
-    count map { list: List[Int] ⇒
-      val s = (0 :: list).sum
+      val s = (0 :: count).sum
       s >= 0
-    }
   }
 
   def getAllContributionsInSpace(space: Space)(implicit ctx: Ctx.Owner): Rx[List[Contribution]] = {

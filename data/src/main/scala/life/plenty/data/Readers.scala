@@ -208,7 +208,7 @@ ActionOnFinishDataLoad {
       console.println(s"Reader loading ${hub} ${hub.id}")
 
       dbDoc.getData map { data ⇒
-        val existingIds = hub.connections.now.map(_.id)
+        val existingIds = hub.connections.map(_.id)
         // the reverse is important -- making sure that we are loading the oldest first
         val unloadedIds = data.connections.toList.filterNot(existingIds.contains).reverse
         connectionsLeftToLoad() = unloadedIds.size

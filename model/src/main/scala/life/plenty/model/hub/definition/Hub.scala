@@ -48,12 +48,12 @@ trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnecti
   }
 
   lazy val isActive = GraphExtractors.isActive(this)
-  def inactivate() = if (isActive.now) {
+  def inactivate() = if (isActive) {
     val c = Inactive(new Date().getTime)
     c.asNew()
     addConnection(c)
   }
-  def activate() = if (!isActive.now) {
+  def activate() = if (!isActive) {
     val c = Active(new Date().getTime)
     c.asNew()
     addConnection(c)

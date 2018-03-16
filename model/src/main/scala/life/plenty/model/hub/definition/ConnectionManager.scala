@@ -12,18 +12,18 @@ import scala.util.{Failure, Success}
 
 trait ConnectionManager[CT] {self: Hub ⇒
   private var onConnectionAddedOperations: List[(DataHub[_]) ⇒ Unit] = List()
-  protected lazy val _connections: Var[List[DataHub[_]]] = Var(List.empty[DataHub[_]])
+  protected var _connections: List[DataHub[_]] = List.empty[DataHub[_]]
 
   protected def onConnectionAddedOperation(op: (DataHub[_]) ⇒ Unit): Unit = {
     onConnectionAddedOperations +:= op
   }
 
-  def connections: Rx[List[DataHub[_]]] = _connections
+  def connections: List[DataHub[_]] = _connections
 
   val loadComplete = Promise[Unit]()
 
   object sc {
-    def all: List[DataHub[_]] = _connections.now
+    def all: List[DataHub[_]] = _connections
 
     def get[T](f: PartialFunction[DataHub[_], DataHub[T]]): Option[DataHub[T]] = sc.all.collectFirst(f)
 
@@ -84,7 +84,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
   }
 
   protected def addConnectionForced(connection: DataHub[_]): Unit = synchronized {
-    _connections() = connection :: _connections.now
+    _connections = connection :: _connections
     onConnectionAddedOperations.foreach(f ⇒ f(connection))
   }
 }

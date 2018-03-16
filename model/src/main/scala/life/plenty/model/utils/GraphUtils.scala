@@ -37,20 +37,6 @@ object GraphUtils {
     u.rx.getAll({ case Parent(m: Members) ⇒ m })
   def getTitle(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Title(b) ⇒ b })
 
-  // fixme use h.connections
-  def isActive(o: Hub)(implicit ctx: Ctx.Owner): Rx[Boolean] = {
-    val count: Rx[List[Int]] = o.connections.map {
-      _ collect {
-        case Inactive(_) ⇒ -1
-        case Active(_) ⇒ 1
-      }
-    }
-    count map { list: List[Int] ⇒
-      val s = (0 :: list).sum
-      s >= 0
-    }
-  }
-
   def getAllContributionsInSpace(space: Space)(implicit ctx: Ctx.Owner): Rx[List[Contribution]] = {
     collectDownTree[Contribution](space, matchBy = {case Child(c: Contribution) ⇒ c},
       allowedPath = {case Child(h: Hub) ⇒ h}, 1000)

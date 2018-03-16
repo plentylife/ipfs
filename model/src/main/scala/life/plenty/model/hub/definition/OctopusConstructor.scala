@@ -129,12 +129,12 @@ trait OctopusConstructor {
     val finished = Promise[Unit]()
     initialConnectionCompletion onComplete {
       case Success(_) ⇒
-        model.console.trace(s"New hub [${this.id}] has connections ${connections.now}")
+        model.console.trace(s"New hub [${this.id}] has connections ${connections}")
 
         for (p ← required) {
           if (p().now.isEmpty) {
             val msg = s"Class ${this.getClass} was not properly instantiated. " +
-              s"Connections ${this._connections.now}"
+              s"Connections ${this._connections}"
             model.console.error(msg)
             throw new Exception(msg)
           }
