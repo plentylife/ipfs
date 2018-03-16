@@ -6,6 +6,7 @@ import life.plenty.model.hub.{Contribution, Members, Space, User}
 import life.plenty.model.utils.GraphUtils.collectDownTree
 import rx.{Ctx, Rx}
 
+import scala.concurrent.Future
 import scala.language.postfixOps
 
 object GraphExtractors {
@@ -33,8 +34,8 @@ object GraphExtractors {
 
   def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Body(b) ⇒ b })
   def getName(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Name(b) ⇒ b })
-  def getMemberships(u: User)(implicit ctx: Ctx.Owner): Rx[List[Members]] =
-    u.rx.getAll({ case Parent(m: Members) ⇒ m })
+  def getMemberships(u: User)(implicit ctx: Ctx.Owner): Future[List[Members]] =
+    u.conExList({ case Parent(m: Members) ⇒ m })
   def getTitle(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Title(b) ⇒ b })
   def getCreationTime(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Long]] = h.rx.get({ case CreationTime(b) ⇒ b })
 

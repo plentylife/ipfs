@@ -4,7 +4,7 @@ import java.util.Date
 
 import com.thoughtworks.binding.Binding.{BindingSeq, Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.connection.DataHub
+import life.plenty.model.connection.{DataHub, Parent}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
@@ -20,7 +20,9 @@ import org.scalajs.dom.raw.Node
 import rx.Rx
 import scalaz.std.list._
 import scalaz.std.option._
+
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.timers.SetTimeoutHandle
 
@@ -31,60 +33,31 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
 
   override def doDisplay(): Boolean = UiContext.pointer.value.exists(_.id == hub.id)
 
-  def getMemberships = Rx {
-    val ms = GraphExtractors.getMemberships(hub)
-    ms().flatMap {m ⇒
-      val p = GraphExtractors.getParent(m)
-      p()
+  def getMemberships: Future[List[Space]] = GraphExtractors.getMemberships(hub) flatMap { m ⇒
+      val ps = m map {_.conEx {case Parent(p: Space) ⇒ p}}
+      Future.sequence(ps).map(_.flatten)
     }
-  }
 
-
-
-  def getTopMemberships = Rx {
-    val ms = getMemberships
-    ms().collect({case h: Space ⇒ h}).filterNot { h =>
-      val in = GraphUtils.hasParentInChain(h, ms() filterNot {_ == h})
-      in()
-    }
-  }
-
-  lazy val membershipsList = Vars[Binding[Node]]()
-  def loadAll(h: Hub, depth: Int): Unit = {
-    if (!h.loadComplete.isCompleted && depth < 4) {
-      println(s"LOADING $h ${h.onConnectionsRequest}")
-      h.onConnectionsRequest.foreach(f ⇒ f())
-      h.loadComplete.future foreach {_ ⇒
-        println(s"LOADING COMPLETE $h ${h.sc.all}")
-        h.sc.all.foreach {
-          case d: DataHub[_] if d.value.isInstanceOf[Hub] && !d.value.isInstanceOf[User] ⇒
-            println(d → d.value)
-            loadAll(d.value.asInstanceOf[Hub], depth + 1)
-          case _ ⇒
-        }
+  def getTopMemberships: Future[List[Space]] =
+    getMemberships flatMap {ms ⇒
+      val inChain: List[Future[(Space, Boolean)]] = ms map { h ⇒
+        GraphUtils.hasParentInChain(h, ms filterNot {_ == h}) map {h → _}
       }
+      Future.sequence(inChain)
+    } map {ms ⇒
+      ms.filterNot(_._2).map(_._1)
     }
+
+  lazy val membershipsList = Vars[Space]()
+
+  getTopMemberships foreach {l ⇒
+    membershipsList.value.insertAll(0, l)
   }
-
-  loadAll(hub, 0)
-
-
-
-//  private lazy val membershipsList = new DomListSingleModule[Space](getMemberships map {
-//    _ collect {case h: Space ⇒ h}
-//  }, SpaceFeedDisplay)
-//  private lazy val membershipsList = new DomListSingleModule[Space](getTopMemberships map {
-//  _ ⇒ List()
-//}, SpaceFeedDisplay)
-//  private lazy val membershipsList = new DomListSingleModule[Space](Rx{List()}, SpaceFeedDisplay)
-
-  override def overrides = List(ExclusiveModuleOverride(m ⇒ m.isInstanceOf[TopSpaceLayout] || m
-    .isInstanceOf[CardSpaceDisplay] ), ExclusiveModuleOverride(m ⇒ m.isInstanceOf[UserLayout] ))
-
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
     println("Generating UserLayout")
+
     val titleClasses = "title ml-2 "
 
     <div class={"top-space-layout user-feed"}>
@@ -96,8 +69,7 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
 
       <div class="user-feed">
         {try {
-         for (m <- membershipsList) yield m.bind
-//        ""
+         for (m <- membershipsList) yield SpaceFeedDisplay.html(m).bind
       } catch {
         case e: Throwable =>
           ui.console.error("Failed during render inside UserLayout")

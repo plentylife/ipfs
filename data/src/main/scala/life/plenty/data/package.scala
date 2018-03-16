@@ -6,7 +6,7 @@ import life.plenty.model.utils.Console
 import scala.scalajs.js
 
 package object data {
-  val console = new Console(false, true, "DB")
+  val console = new Console(true, true, "DB")
 
   var db: ShareDB = null
 

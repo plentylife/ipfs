@@ -13,23 +13,27 @@ import scala.util.{Failure, Success}
 trait ConnectionManager[CT] {self: Hub ⇒
   private var onConnectionAddedOperations: List[(DataHub[_]) ⇒ Unit] = List()
   protected var _connections: List[DataHub[_]] = List.empty[DataHub[_]]
-  val loadComplete = Promise[Unit]()
-  var onConnectionsRequest: List[() ⇒ Unit] = List()
+  val loadComplete = Promise[Unit]() // accessed by db
+  private var onConnectionsRequest: List[() ⇒ Unit] = List()
 
   protected def onConnectionAddedOperation(op: (DataHub[_]) ⇒ Unit): Unit = {
     onConnectionAddedOperations +:= op
   }
   def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]): Unit = onConnectionsRequest :::= fList
 
-  def connections: List[DataHub[_]] = _connections
+  def loadCompleted = loadComplete.future
+  def connections: List[DataHub[_]] = {
+    onConnectionsRequest.foreach(f ⇒ f())
+    _connections
+  }
+  def conEx[T](f: PartialFunction[DataHub[_], T]): Future[Option[T]] = loadCompleted map {_ ⇒ sc.ex(f)}
+  def conExList[T](f: PartialFunction[DataHub[_], T]): Future[List[T]] =
+    loadCompleted map {_ ⇒ sc.exList(f)}
 
   object sc {
-    def all: List[DataHub[_]] = {
-      onConnectionsRequest.foreach(f ⇒ f())
-      _connections
-    }
+    def all: List[DataHub[_]] = connections
 
-    def getList[T](f: PartialFunction[DataHub[_], T]): List[T] = sc.all.collect(f)
+    def exList[T](f: PartialFunction[DataHub[_], T]): List[T] = sc.all.collect(f)
 
     def get[T](f: PartialFunction[DataHub[_], DataHub[T]]): Option[DataHub[T]] = sc.all.collectFirst(f)
 

@@ -28,7 +28,7 @@ trait RxConnectionManager {
     }
 
     def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
-      Rx {sc.getList(f)}
+      Rx {sc.exList(f)}
     }
   }
 

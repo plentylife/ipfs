@@ -5,7 +5,8 @@ import life.plenty.model.connection._
 import life.plenty.model.hub.{Contribution, Members, Space, User}
 import life.plenty.model.hub.definition.Hub
 import rx.{Ctx, Rx, Var}
-
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.language.postfixOps
 
 object GraphUtils {
@@ -73,13 +74,11 @@ object GraphUtils {
       }
   }
 
-  def hasParentInChain(hub: Hub, parents: List[Hub])(implicit ctx: Ctx.Owner): Rx[Boolean] = Rx {
-    if (parents contains hub) true else {
-      val p = getParent(hub)
-      p() match {
-        case Some(p) ⇒ val pin = hasParentInChain(p, parents)
-          pin()
-        case None ⇒ false
+  def hasParentInChain(hub: Hub, parents: List[Hub])(implicit ctx: Ctx.Owner): Future[Boolean] = {
+    if (parents contains hub) Future(true) else {
+      hub conEx {case Parent(p: Hub) ⇒ p} flatMap {
+        case Some(p) ⇒ hasParentInChain(p, parents)
+        case None ⇒ Future(false)
       }
     }
   }
