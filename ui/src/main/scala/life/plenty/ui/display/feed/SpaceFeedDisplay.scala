@@ -1,7 +1,7 @@
 package life.plenty.ui.display.feed
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.connection.{Child, Marker}
+import life.plenty.model.connection.{Child, Marker, Title}
 import life.plenty.model.hub.Space
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
@@ -9,7 +9,7 @@ import life.plenty.model.utils.GraphUtils.collectDownTree
 import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.actions.OpenButton
 import life.plenty.ui.display.meta.LayoutModule
-import life.plenty.ui.display.utils.CardNavigation
+import life.plenty.ui.display.utils.{CardNavigation, DomBinders}
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.display.{CardQuestionDisplayBase, FullUserBadge, InlineQuestionDisplay}
 import life.plenty.ui.model._
@@ -26,7 +26,6 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   def html(hub: Space): Binding[Node] = {
     println(s"CREATED SPACEFEED $hub")
 
-    implicit val ctx = hub.ctx
 //    val aggregated = collectDownTree[Hub](hub, matchBy = {
 //      case Child(h: Hub) ⇒ h
 //      case m: Marker ⇒ m
@@ -44,26 +43,24 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
     val cssClass = ""
 
     <div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>
+        <span class="d-flex header-block">
+          <span class="d-flex title-block" onclick={e: Event ⇒ Router.navigateToHub(hub)}>
+            <h5 class="card-title">
+              {DomBinders.text(hub conEx {case Title(t) => t}).bind}
+            </h5>
+          </span>
+
+          <span class="card-controls">
+            {OpenButton.html(hub).bind}
+          </span>
+        </span>
+
+        <div class="card-body">
+        </div>
+
     </div>
   }
   //        {for (b <- aggregatedB()) yield {b.bind}}
 
 }
 
-//<div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>
-//<span class="d-flex header-block">
-//<span class="d-flex title-block" onclick={e: Event ⇒ Router.navigateToHub(hub)}>
-//<h5 class="card-title">
-//{hub.getTitle.dom.bind}
-//</h5>
-//</span>
-//
-//<span class="card-controls">
-//{OpenButton.html(hub).bind}
-//</span>
-//</span>
-//
-//<div class="card-body">
-//</div>
-//
-//</div>
