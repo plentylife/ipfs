@@ -10,7 +10,7 @@ import model._
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
-trait ConnectionManager[CT] {self: Hub ⇒
+trait ConnectionManager extends ConnectionFeed {self: Hub ⇒
   private var onConnectionAddedOperations: List[(DataHub[_]) ⇒ Unit] = List()
   protected var _connections: List[DataHub[_]] = List.empty[DataHub[_]]
   val loadComplete = Promise[Unit]() // accessed by db
@@ -97,5 +97,6 @@ trait ConnectionManager[CT] {self: Hub ⇒
   protected def addConnectionForced(connection: DataHub[_]): Unit = synchronized {
     _connections = connection :: _connections
     onConnectionAddedOperations.foreach(f ⇒ f(connection))
+    onInsert(connection)
   }
 }

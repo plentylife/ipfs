@@ -16,13 +16,7 @@ class DomFutureOpt[T](f: Future[Option[T]]) {
   f foreach {v.value_=}
 }
 
-object DomBinders {
-  @dom
-  def text(f: Future[Option[String]]): Binding[Node] = new DomFutureOpt(f).v.bind match {
-    case Some(t) ⇒ <span>t</span>
-    case _ ⇒ DisplayModel.nospan.bind
-  }
-}
+
 
 //class UpdateWithTimeout(updater: Future[timeoutDuration: Int) {
 //
