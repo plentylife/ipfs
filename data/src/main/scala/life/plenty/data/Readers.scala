@@ -76,26 +76,22 @@ object DbReader {
       case e: DocDoesNotExist ⇒ console.error(s"Failed loading on ID `$id`"); throw e
     }
 
-    className flatMap (cName ⇒ {
+    className map (cName ⇒ {
       console.println(s"DbReader is constructing $cName $id")
-      val potentials: Stream[Future[Hub]] = availableClasses.flatMap(f ⇒ {
+      val potentials: Stream[Hub] = availableClasses.flatMap(f ⇒ {
         try {
+          println(0)
           val h = f(cName)
-          val res: Option[Future[Hub]] = h map { o ⇒
+          val res: Option[Hub] = h map { o ⇒
             // fixme use setID
             println(1)
-            val idCon = Id(id)
-            idCon.tmpMarker = DbMarker
+            val idCon = o.setId(id)
             println(2)
 
-            // have to wait on id!!
-            o.addConnection(idCon) map {_ ⇒
-              println(3)
-              val exH = Cache.put(o) // this gives back the existing
-              data.getWriterModule(exH).setDbDoc(dbDoc)
-              println(4)
-              exH
-            }
+            val exH = Cache.put(o) // this gives back the existing
+            data.getWriterModule(exH).setDbDoc(dbDoc)
+            println(4)
+            exH
           }
           res
         } catch {
@@ -107,7 +103,7 @@ object DbReader {
       potentials.headOption match {
         case None ⇒ console.error(s"Could not find loader with class ${cName}")
           throw new MissingDbClassLoader(cName)
-        case Some(f) ⇒ f
+        case Some(h) ⇒ h
       }
 
     })
@@ -198,10 +194,13 @@ ActionOnFinishDataLoad {
 //  private lazy val allCons = hub.connections.map(_.map(_.id))
   lazy val dbDoc = data.getWriterModule(hub).dbDoc // get should never trip
 
+  val idP = Promise[Unit]()
+  hub.onSetId(_ ⇒ idP.success())
+
   override def onConnectionsRequest(): Unit = {
 //      console.println(s"Reader got request to load ${hub.getClass} with ${hub.sc.all}")
       // so since this will have to happen before the writer gets to us, we just skip the exists check
-      load()
+      idP.future foreach {_ ⇒ load()}
   }
 
   protected def load() = synchronized {
