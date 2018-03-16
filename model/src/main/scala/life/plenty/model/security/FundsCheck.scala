@@ -77,7 +77,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
                     promise.success()
                   } else {
                     model.console.error("Not enough voting power!")
-                    model.console.println(s"User had following connections ${hub.sc.all} | \n ${hub.rx.cons}")
+                    model.console.println(s"User had following connections ${hub.sc.lazyAll} | \n ${hub.rx.cons}")
                     promise.failure(new NotEnoughVotingPower(hub))
                   }
                 case None ⇒ promise.failure(new Exception("Vote did not have a parent"))

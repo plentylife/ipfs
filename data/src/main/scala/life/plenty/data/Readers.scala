@@ -83,13 +83,17 @@ object DbReader {
           val h = f(cName)
           val res: Option[Future[Hub]] = h map { o ⇒
             // fixme use setID
+            println(1)
             val idCon = Id(id)
             idCon.tmpMarker = DbMarker
+            println(2)
 
             // have to wait on id!!
             o.addConnection(idCon) map {_ ⇒
+              println(3)
               val exH = Cache.put(o) // this gives back the existing
               data.getWriterModule(exH).setDbDoc(dbDoc)
+              println(4)
               exH
             }
           }

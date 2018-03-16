@@ -18,7 +18,7 @@ class DbInsertConnectionOp(h: Hub) extends DbInsertOp {
 
 object DbWriter {
   def writeInitial(o: Hub, doc: Option[DocWrapper] = None): Future[Unit] = synchronized {
-    console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
+    console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.lazyAll}")
     if (Cache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
       return Future{}
@@ -38,7 +38,7 @@ object DbWriter {
   private[data] def forceWriteInitial(o: Hub, doc: DocWrapper, hubClass: Option[String] = None): Future[Unit] =
   synchronized {
     val hc: String = hubClass.getOrElse(o.getClass.getSimpleName)
-    val connections = o.sc.all
+    val connections = o.sc.lazyAll
 
     console.trace(s"dbwriter 3 ${o.id}")
 
@@ -117,7 +117,7 @@ class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
   hub.onNew(onNew())
 
   protected def onNew() = {
-    console.println(s"Instantiation Gun Writer ${hub} ${hub.id} ${hub.sc.all}")
+    console.println(s"Instantiation Gun Writer ${hub} ${hub.id} ${hub.sc.lazyAll}")
     DbWriter.writeInitial(hub, Option(dbDoc))
   }
 

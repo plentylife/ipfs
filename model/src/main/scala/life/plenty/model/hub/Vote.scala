@@ -15,7 +15,7 @@ class Vote() extends WithAmount {
   onNew {
     getCreator.addConnection(Child(this), () ⇒ {
       parentAnswer.addConnection(Child(this))
-      model.console.trace(s"New vote added as a child to ${parentAnswer.now} | ${parentAnswer.now.get.sc.all}")
+      model.console.trace(s"New vote added as a child to ${parentAnswer.now} | ${parentAnswer.now.get.sc.lazyAll}")
     })
 
   }

@@ -25,7 +25,7 @@ class ActionGiveThanks(override val hub: Contribution) extends Module[Contributi
     t.asNew(Parent(hub), Amount(howMuch))
 
     t.onNew {
-      println(s"NEW TRANSACTION ${t.sc.all}")
+      println(s"NEW TRANSACTION ${t.sc.lazyAll}")
       val va = new VoteAllowance()
       va.asNew(Parent(t), Amount(howMuch))
     }

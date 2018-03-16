@@ -19,7 +19,7 @@ trait RxConnectionManager {
   object rx {
 
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
-      Rx {sc.all}
+      Rx {sc.lazyAll}
     }
 
     /** @return first found non empty rx */

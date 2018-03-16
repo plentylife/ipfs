@@ -103,7 +103,7 @@ object Main {
     println(h.get.rx.cons.now.mkString("\n"))
     println("raw")
     println(s"${
-      h.get.sc.all.map(c ⇒
+      h.get.sc.lazyAll.map(c ⇒
         s"$c ${c.id} ${
           if (c.value.isInstanceOf[Hub]) c.value.asInstanceOf[Hub].id else ""
         }").mkString("\n")

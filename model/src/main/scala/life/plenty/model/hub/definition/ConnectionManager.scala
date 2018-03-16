@@ -31,13 +31,14 @@ trait ConnectionManager[CT] {self: Hub ⇒
     loadCompleted map {_ ⇒ sc.exList(f)}
 
   object sc {
-    def all: List[DataHub[_]] = connections
 
-    def exList[T](f: PartialFunction[DataHub[_], T]): List[T] = sc.all.collect(f)
+    def lazyAll: List[DataHub[_]] = _connections
 
-    def get[T](f: PartialFunction[DataHub[_], DataHub[T]]): Option[DataHub[T]] = sc.all.collectFirst(f)
+    def exList[T](f: PartialFunction[DataHub[_], T]): List[T] = connections.collect(f)
 
-    def ex[T](f: PartialFunction[DataHub[_], T]): Option[T] = sc.all.collectFirst(f)
+    def get[T](f: PartialFunction[DataHub[_], DataHub[T]]): Option[DataHub[T]] = connections.collectFirst(f)
+
+    def ex[T](f: PartialFunction[DataHub[_], T]): Option[T] = connections.collectFirst(f)
 
     def exf[T](f: PartialFunction[DataHub[_], T]): T = ex(f).get
   }
@@ -50,12 +51,12 @@ trait ConnectionManager[CT] {self: Hub ⇒
   def addConnection(connection: DataHub[_]): Future[Unit] = synchronized {
     connection.setHolder(this)
     console.println(s"~ ${this.getClass.getSimpleName} " +
-      s"${sc.all.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}\n" +
+      s"${sc.lazyAll.collectFirst({case Id(i) ⇒ i}).getOrElse("*")}\n" +
       s"\t<-- ${connection.getClass.getSimpleName} " +
       s"${connection.id}")
 
     // duplicates are silently dropped
-    val existing = sc.all.find {c: DataHub[_] ⇒ c.id == connection.id}
+    val existing = sc.lazyAll.find { c: DataHub[_] ⇒ c.id == connection.id}
     if (existing.nonEmpty) {
       console.trace(s"found existing connection ${existing.get} ${existing.get.id}")
       existing.get.activate()

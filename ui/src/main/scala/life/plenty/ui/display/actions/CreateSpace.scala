@@ -31,7 +31,7 @@ object CreateSpace {
       ui.console.trace(s"Creating space with params $params `$t` `$d`")
       // fixme. there should be an error message on fail
       space.asNew(params:_*) foreach {_ ⇒
-        println(space.sc.all)
+        println(space.sc.lazyAll)
 
         Router.navigateToHub(space)
         Modal.close()
