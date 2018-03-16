@@ -8,12 +8,13 @@ import monix.execution.cancelables.SingleAssignCancelable
 import monix.execution.Scheduler.Implicits.global
 
 trait ConnectionFeed {self: ConnectionManager ⇒
-  val (insertSub, inserts) = Observable.multicast[DataHub[_]](MulticastStrategy.replay)
-  val (removeSub, removes) = Observable.multicast[DataHub[_]](MulticastStrategy.replay)
+  val (insertSub, inserts) = Observable.multicast[DataHub[_]](MulticastStrategy.publish)
+  val (removeSub, removes) = Observable.multicast[DataHub[_]](MulticastStrategy.publish)
 
   def onInsert(con: DataHub[_]) = {
-
-    insertSub.onNext(con)
+    if (con.isActive)
+      insertSub.onNext(con)
+    con.removed.foreach(r ⇒ if (r) removeSub.onNext(con))
   }
 
   val removed = inserts.collect {

@@ -16,10 +16,10 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   def html(hub: Space): Binding[Node] = {
     println(s"CREATED SPACEFEED $hub")
 
-    //    val aggregated = collectDownTree[Hub](hub, matchBy = {
-    //      case Child(h: Hub) ⇒ h
-    //      case m: Marker ⇒ m
-    //    },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
+        val aggregated = collectDownTree[Hub](hub, matchBy = {
+          case Child(h: Hub) ⇒ h
+          case m: Marker ⇒ m
+        },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
 
     //    val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
     //      list ⇒

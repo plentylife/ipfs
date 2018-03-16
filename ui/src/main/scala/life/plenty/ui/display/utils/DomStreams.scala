@@ -8,7 +8,10 @@ import monix.execution.Scheduler.Implicits.global
 class DomStream[T](hub: Hub, extractor: PartialFunction[DataHub[_], T]) {
   val v = Vars[T]()
 
-  hub.inserts.collect(extractor).foreach(dh ⇒ v.value.insert(0, dh))
+  hub.conExList(extractor) foreach {list ⇒
 
-  hub.inserts.foreach(dh ⇒ println(s"Dom Stream got $dh"))
+    hub.inserts.collect(extractor).foreach(dh ⇒ v.value.insert(0, dh))
+    hub.removes.collect(extractor).foreach(dh ⇒ v.value.remove(v.value.indexOf(dh)))
+  }
+
 }

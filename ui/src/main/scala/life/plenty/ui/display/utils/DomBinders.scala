@@ -12,5 +12,7 @@ object DomBinders {
     case Some(t) ⇒ <span>t</span>
     case _ ⇒ DisplayModel.nospan.bind
   }
-
+//
+//  @dom
+//  def coverEmpty
 }
