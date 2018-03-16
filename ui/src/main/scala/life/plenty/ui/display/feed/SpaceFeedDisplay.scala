@@ -1,13 +1,14 @@
 package life.plenty.ui.display.feed
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.connection.{Child, Title}
+import life.plenty.model.connection.{Child, Marker, Title}
 import life.plenty.model.hub.Space
 import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.display.actions.OpenButton
-import life.plenty.ui.display.utils.{DomBinders, DomStream}
+import life.plenty.ui.display.utils.{DomBinders, DomStream, DomStreamObs}
 import life.plenty.ui.model._
 import org.scalajs.dom.{Event, Node}
+import life.plenty.model.utils.ObservableGraphUtils._
 
 object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   def fits(what: Any) = what.isInstanceOf[Space]
@@ -16,10 +17,12 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   def html(hub: Space): Binding[Node] = {
     println(s"CREATED SPACEFEED $hub")
 
-        val aggregated = collectDownTree[Hub](hub, matchBy = {
-          case Child(h: Hub) ⇒ h
-          case m: Marker ⇒ m
-        },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
+
+
+    val aggregated = collectDownTree[Hub](hub, matchBy = {
+      case Child(h: Hub) ⇒ h
+      case m: Marker ⇒ m
+    },allowedPath = {case Child(h: Hub) ⇒ h})
 
     //    val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
     //      list ⇒
@@ -46,7 +49,7 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
       </span>
 
       <div class="card-body">
-        {for (dh <- new DomStream(hub, { case Child(any: Hub) => any }).v) yield {
+        {for (dh <- new DomStreamObs(aggregated).v) yield {
         FeedModuleDirectory.get(dh).map {
           m => m.html(dh)
         } getOrElse DisplayModel.nospan
@@ -59,3 +62,8 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
 
 }
 
+//{for (dh <- new DomStream(hub, { case Child(any: Hub) => any }).v) yield {
+//  FeedModuleDirectory.get(dh).map {
+//  m => m.html(dh)
+//} getOrElse DisplayModel.nospan
+//}.bind}
