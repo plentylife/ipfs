@@ -9,6 +9,7 @@ import life.plenty.ui.display.utils.{DomBinders, DomStream, DomStreamObs}
 import life.plenty.ui.model._
 import org.scalajs.dom.{Event, Node}
 import life.plenty.model.utils.ObservableGraphUtils._
+import monix.execution.Scheduler.Implicits.global
 
 object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   def fits(what: Any) = what.isInstanceOf[Space]
@@ -23,6 +24,9 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
       case Child(h: Hub) ⇒ h
       case m: Marker ⇒ m
     },allowedPath = {case Child(h: Hub) ⇒ h})
+
+    aggregated._inserts.foreach(i ⇒
+    println(s"AGGR $i"))
 
     //    val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
     //      list ⇒

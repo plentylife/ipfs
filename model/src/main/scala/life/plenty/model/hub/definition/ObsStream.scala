@@ -3,6 +3,7 @@ package life.plenty.model.hub.definition
 import monix.reactive.Observable
 
 import scala.concurrent.Future
+import monix.execution.Scheduler.Implicits.global
 
 trait ObsStream[T] {
   val _inserts: Observable[T]
@@ -16,7 +17,16 @@ trait ObsStream[T] {
       obs.flatMap(os ⇒ os._inserts ++ os._removes)
     }
     val i = m flatMap {_._2._inserts}
+    _inserts.toListL.foreach(_il ⇒
+      i.toListL.foreach(il ⇒
+        println(s"FLAT COMBINE ${_il} ${il}")
+      )
+    )
     ObsStream(i, r)
+  }
+
+  def ++ (other: ObsStream[T]): ObsStream[T] = {
+    ObsStream(_inserts ++ other._removes, _removes ++ other._removes)
   }
 }
 
