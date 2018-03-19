@@ -24,15 +24,22 @@ class DomStream(stream: Observable[Hub]) {
   stream.foreach(h ⇒ v.value.insert(0, h))
 }
 
-class DomValStream[T <% String](stream: Observable[T]) {
+class DomValStream[T](stream: Observable[T]) {
   val v = Var[Option[T]](None)
   stream.foreach(h ⇒ v.value_=(Option(h)))
+}
 
-  @dom
-  def dom: Binding[String] = {
-    v.bind match {
-      case Some(value) ⇒ (value : String)
-      case None ⇒ ""
+object DomValStream {
+  implicit class StringDom[T <% String](dv: DomValStream[T]) {
+    @dom
+    def dom: Binding[String] = {
+      dv.v.bind match {
+        case Some(value) ⇒ (value : String)
+        case None ⇒ ""
+      }
     }
   }
+
+
 }
+

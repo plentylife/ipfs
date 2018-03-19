@@ -3,7 +3,9 @@ package life.plenty.ui.model
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub.definition.Hub
+import life.plenty.ui.display.utils.DomValStream
 import life.plenty.ui.display.utils.Helpers._
+import monix.reactive.Observable
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx, Var ⇒ rxVar}
 
@@ -16,15 +18,13 @@ trait SimpleDisplayModule[T] {
 
 object SimpleDisplayModule {
   @dom
-  def html[T](module: SimpleDisplayModule[T], hub: Rx[Option[T]]): Binding[Node] = {
-    val hb: BasicBindable[Option[T]] = hub
-    hb().bind match {
-      case Some(h) ⇒ module.html(h).bind
+  def html[T](module: SimpleDisplayModule[T], what: Observable[T]): Binding[Node] = {
+    new DomValStream(what).v.bind match {
+      case Some(value) ⇒ module.html(value).bind
       case None ⇒ DisplayModel.nospan.bind
     }
   }
 
-//  def html[T <: Hub](mh: (SimpleDisplayModule[T], Rx[Option[T]])): Binding[Node] = html(mh._1, mh._2)
 }
 
 trait SimpleDisplayModuleDirectory[L <: SimpleDisplayModule[_]] {

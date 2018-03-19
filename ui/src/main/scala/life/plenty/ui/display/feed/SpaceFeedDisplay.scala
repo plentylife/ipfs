@@ -24,6 +24,10 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
       case m: Marker ⇒ m
     },allowedPath = {case Child(h: Hub) ⇒ h})
 
+//    aggregated.foreach(println)
+
+//    val voteGroups = aggregated.collect()
+
     //    val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
     //      list ⇒
     //        val additional = VoteGroup.groupByAnswer(list)

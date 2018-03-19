@@ -8,10 +8,11 @@ import scala.concurrent.Future
 
 object DomBinders {
   @dom
-  def text(f: Future[Option[String]]): Binding[Node] = new DomFutureOpt(f).v.bind match {
-    case Some(t) ⇒ <span>t</span>
-    case _ ⇒ DisplayModel.nospan.bind
+  def text(f: Future[Option[String]]): Binding[String] = new DomFutureOpt(f).v.bind match {
+    case Some(t) ⇒ t
+    case _ ⇒ ""
   }
+
 //
 //  @dom
 //  def coverEmpty

@@ -30,13 +30,13 @@ package object feed {
 
     @dom
     override def html(hub: T): Binding[Node] = {
-      println(s"DISPLAYING ${this}")
+//      println(s"DISPLAYING ${this}")
 
       implicit val c = hub.ctx
       val parent = GraphExtractors.getParent(hub)
 
       <div class={"feed " + cssClass} id={hub.id}>
-        {SimpleDisplayModule.html(FullUserBadge, hub.getCreator).bind} {actionHtml(action(hub)).bind}
+        {SimpleDisplayModule.html(FullUserBadge, hub.creator).bind} {actionHtml(action(hub)).bind}
           <p class="action-target-text">{new DomValStream(actionTarget(hub)).dom.bind}</p>
       </div>
     }

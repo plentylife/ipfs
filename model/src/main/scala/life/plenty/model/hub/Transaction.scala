@@ -10,10 +10,12 @@ class Transaction() extends WithAmount {
   addToRequired(getOnContribution)
 
   def getTo = rx.get({ case To(u) ⇒ u })
+  lazy val to = getInsertStream.collect({ case To(u) ⇒ u })
 
   def getOnContribution = rx.get({ case Parent(c: Contribution) ⇒ c })
 
   def getFrom = getCreator
+  lazy val from = getInsertStream.collect({ case From(u) ⇒ u })
 
   override def asNew(properties: DataHub[_]*): Future[Unit] = {
     var ps = properties.toList

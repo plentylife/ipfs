@@ -53,6 +53,7 @@ trait OctopusConstructor {
   lazy val getCreationTime: Rx[Option[Long]] = rx.get({ case CreationTime(t) ⇒ t })
 
   lazy val getCreator: Rx[Option[User]] = rx.get({ case Creator(t) ⇒ t })
+  lazy val creator = getInsertStream.collect({ case Creator(t) ⇒ t })
 
   private var _required: Set[() ⇒ Rx[Option[_]]] = Set(() ⇒ getCreator)
 
