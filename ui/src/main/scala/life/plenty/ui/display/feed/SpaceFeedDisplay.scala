@@ -19,16 +19,15 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   def html(hub: Space): Binding[Node] = {
     println(s"CREATED SPACEFEED $hub")
 
-
-
     val aggregated = collectDownTree[Hub](hub, matchBy = {
       case Child(h: Hub) ⇒ h
       case m: Marker ⇒ m
     },allowedPath = {case Child(h: Hub) ⇒ h})
 
-    val ag = Vars[Hub]()
-    aggregated foreach {
-      ag.value insertAll(0, _)
+    val aggr = Vars[Hub]()
+    aggregated foreach {ag ⇒
+      aggr.value.insertAll(0, ag)
+      println(s"SPFEED AG ${ag}")
     }
 //
 //    aggregated._inserts.foreach(i ⇒
@@ -59,7 +58,7 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
       </span>
 
       <div class="card-body">
-        {for (dh <- ag) yield {
+        {for (dh <- aggr) yield {
         FeedModuleDirectory.get(dh).map {
           m => m.html(dh)
         } getOrElse DisplayModel.nospan
