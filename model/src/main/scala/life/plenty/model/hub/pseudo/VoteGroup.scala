@@ -2,7 +2,7 @@ package life.plenty.model.hub.pseudo
 
 import life.plenty.model.hub.{Answer, User, Vote}
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphExtractors._
+import life.plenty.model.utils.DeprecatedGraphExtractors._
 import life.plenty.model.utils.GraphUtils
 import rx.{Ctx, Rx}
 

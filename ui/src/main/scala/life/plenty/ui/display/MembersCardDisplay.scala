@@ -5,7 +5,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.DbReaderModule
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.{Contribution, Members, Space, User}
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.DeprecatedGraphExtractors
 import life.plenty.ui
 import life.plenty.ui.display.actions.AnswerControls
 import life.plenty.ui.display.meta.LayoutModule
@@ -54,7 +54,7 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
   }
 
   private val contributions: Rx[List[Contribution]] = Rx {hub.getParent() match {
-    case Some(p: Space) ⇒ val l = GraphExtractors.getAllContributionsInSpace(p); l()
+    case Some(p: Space) ⇒ val l = DeprecatedGraphExtractors.getAllContributionsInSpace(p); l()
     case _ ⇒ List()
   }}
   private lazy val maxEarned: rxVar[Int] = rxVar(0)

@@ -5,7 +5,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Child
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.DeprecatedGraphExtractors
 import life.plenty.ui.display.actions.{SignupButton, SpaceActionsBar}
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.Helpers._
@@ -18,7 +18,7 @@ import scalaz.std.option._
 
 class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(hub) {
   private lazy val signup = new BindableModule(hub.getTopModule({case m: SignupButton ⇒ m}), this)
-  private lazy val contributing = GraphExtractors.markedContributing(hub)
+  private lazy val contributing = DeprecatedGraphExtractors.markedContributing(hub)
   private lazy val contributingB = bVar(false)
 
   private var obs: Obs = null

@@ -34,6 +34,7 @@ trait KeyPair extends js.Object {
 
 object LibSodiumWrapper {
   def crypto_pwhash(keySize: Int, pass: String, salt: Uint8Array): Uint8Array =
-    LibSodium.crypto_pwhash(keySize, pass, salt, crypto_pwhash_OPSLIMIT_INTERACTIVE, crypto_pwhash_MEMLIMIT_INTERACTIVE,
+    LibSodium.crypto_pwhash(keySize, pass, salt, crypto_pwhash_OPSLIMIT_INTERACTIVE,
+      crypto_pwhash_MEMLIMIT_INTERACTIVE / 2,
       crypto_pwhash_ALG_DEFAULT)
 }

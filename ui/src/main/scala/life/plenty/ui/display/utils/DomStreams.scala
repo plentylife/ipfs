@@ -21,7 +21,10 @@ import org.scalajs.dom.Node
 
 class DomHubStream(stream: Observable[Hub]) {
   val v = Vars[Hub]()
-  stream.foreach(h ⇒ v.value.insert(0, h))
+  stream.foreach { h =>
+    val c = v.value
+    if (c.indexOf(h) < 0) v.value.insert(0, h)
+  }
 }
 
 class DomOpStream[T](stream: Observable[GraphOp[T]]) {
@@ -40,6 +43,12 @@ class DomValStream[T](stream: Observable[T]) {
 }
 
 object DomValStream {
+  implicit class ImplicitStringDom[T <% String](dv: Observable[T]) {
+    def dom: Binding[String] = {
+      new StringDom(new DomValStream(dv)).dom
+    }
+  }
+
   implicit class StringDom[T <% String](dv: DomValStream[T]) {
     @dom
     def dom: Binding[String] = {
@@ -50,6 +59,14 @@ object DomValStream {
     }
   }
 
-
+  implicit class BooleanDom(dv: DomValStream[Boolean]) {
+    @dom
+    def dom: Binding[Boolean] = {
+      dv.v.bind match {
+        case Some(value) ⇒ value
+        case None ⇒ false
+      }
+    }
+  }
 }
 

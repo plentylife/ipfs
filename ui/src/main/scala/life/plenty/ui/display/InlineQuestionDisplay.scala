@@ -6,6 +6,7 @@ import life.plenty.model.hub.{Question, Space}
 import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
 import org.scalajs.dom.Node
+import life.plenty.ui.display.utils.DomValStream
 
 trait InlineDisplay extends DisplayModule[Space] {
   override def doDisplay() = true
@@ -15,7 +16,7 @@ trait InlineDisplay extends DisplayModule[Space] {
   @dom
   override protected def generateHtml(): Binding[Node] = {
     <div class={cssClass} id={hub.id}>
-      {hub.getTitle.dom.bind}
+      {new DomValStream(hub.title).dom.bind}
     </div>
   }
 

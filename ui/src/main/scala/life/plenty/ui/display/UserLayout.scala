@@ -8,7 +8,7 @@ import life.plenty.model.connection.{DataHub, Parent}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
-import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.DeprecatedGraphExtractors
 import life.plenty.ui
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.feed.SpaceFeedDisplay
@@ -33,7 +33,7 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
 
   override def doDisplay(): Boolean = UiContext.pointer.value.exists(_.id == hub.id)
 
-  def getMemberships: Future[List[Space]] = GraphExtractors.getMemberships(hub) flatMap { m ⇒
+  def getMemberships: Future[List[Space]] = DeprecatedGraphExtractors.getMemberships(hub) flatMap { m ⇒
       val ps = m map {_.conEx {case Parent(p: Space) ⇒ p}}
       Future.sequence(ps).map(_.flatten)
     }
@@ -66,7 +66,7 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
     <div class={"top-space-layout user-feed"}>
       <div class="layout-header">
         <h3 class={titleClasses}>
-          {GraphExtractors.getName(hub).dom.bind}
+          {DeprecatedGraphExtractors.getName(hub).dom.bind}
         </h3>
       </div>
 

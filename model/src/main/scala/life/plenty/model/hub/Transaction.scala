@@ -24,7 +24,7 @@ class Transaction() extends WithAmount {
       case Parent(c: Contribution) ⇒
 
         // todo. check if this ever fails
-        val rp = GraphExtractors.getRootParentOrSelf(c).now
+        val rp = DeprecatedGraphExtractors.getRootParentOrSelf(c).now
         val cr = c.getCreator.now
         model.console.trace(s"New transaction setting To with ${cr} ${cr.get.id} | root parent $rp | ${c.sc.lazyAll}")
 

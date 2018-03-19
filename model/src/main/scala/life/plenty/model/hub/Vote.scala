@@ -38,7 +38,7 @@ class VoteAllowance() extends WithAmount {
 
         existing.forEach(t ⇒ {
           from.addConnection(Child(this))
-          val rp = GraphExtractors.getRootParentOrSelf(t).now
+          val rp = DeprecatedGraphExtractors.getRootParentOrSelf(t).now
           this.addConnection(RootParent(rp))
 
           model.console.trace(s"VoteAllowance given to user ${from.id} ${t.id} | root p ${rp}")

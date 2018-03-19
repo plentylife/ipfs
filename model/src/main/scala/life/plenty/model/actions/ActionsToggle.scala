@@ -3,12 +3,12 @@ package life.plenty.model.actions
 import life.plenty.model.connection._
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.{Hub, Module}
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.DeprecatedGraphExtractors
 import rx.Ctx
 
 class ActionSignup(override val hub: SignupQuestion) extends Module[SignupQuestion] {
   private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-  private lazy val contributing = GraphExtractors.markedContributing(hub)
+  private lazy val contributing = DeprecatedGraphExtractors.markedContributing(hub)
 
   def signup(who: User) = {
     val a = if (contributing.now) new Contribution() else new Proposal()
@@ -26,7 +26,7 @@ class ActionAddConfirmedMarker(override val hub: Hub) extends Module[Hub] {
   }
 
   def deconfirm() = {
-    GraphExtractors.confirmedMarker(hub).now.foreach { m ⇒
+    DeprecatedGraphExtractors.confirmedMarker(hub).now.foreach { m ⇒
       m.inactivate()
     }
 
@@ -35,7 +35,7 @@ class ActionAddConfirmedMarker(override val hub: Hub) extends Module[Hub] {
 
 class ActionToggleCriticalConnection(override val hub: Hub) extends Module[Hub] {
   private implicit val ctx = hub.ctx
-  private val critical = GraphExtractors.getCritical(hub)
+  private val critical = DeprecatedGraphExtractors.getCritical(hub)
 
   def toggle(what: Hub) = {
     println(s"Toggle of critical $what")

@@ -2,7 +2,7 @@ package life.plenty.ui.display
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub.{Answer, Contribution, Proposal}
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.DeprecatedGraphExtractors
 import life.plenty.model.utils.GraphUtils._
 import life.plenty.ui.display.actions.{AnswerControls, CardControls}
 import life.plenty.ui.display.info.AnswerInfo
@@ -20,7 +20,7 @@ import scalaz.std.option._
 class CardAnswerDisplay(override val hub: Answer) extends LayoutModule[Answer] with CardNavigation {
   override def doDisplay() = true
   private val creator = new OptBindableHub(hub.getCreator, this)
-  private lazy val isConfirmed: BasicBindable[Boolean] = GraphExtractors.markedConfirmed(hub)
+  private lazy val isConfirmed: BasicBindable[Boolean] = DeprecatedGraphExtractors.markedConfirmed(hub)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {

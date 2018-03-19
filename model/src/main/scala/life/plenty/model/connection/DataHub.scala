@@ -4,7 +4,7 @@ import java.util.Date
 
 import life.plenty.model
 import life.plenty.model.hub.definition.{AtInstantiation, Hub}
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.DeprecatedGraphExtractors
 
 trait DataHub[T] extends Hub {
   def value: T
