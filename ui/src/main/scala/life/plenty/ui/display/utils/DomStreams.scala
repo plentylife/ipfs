@@ -4,6 +4,7 @@ import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.DataHub
 import life.plenty.model.hub.definition.{GraphOp, Hub, Insert, Remove}
+import life.plenty.ui.model.DisplayModel
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.Observable
 import org.scalajs.dom.Node
@@ -55,6 +56,16 @@ object DomValStream {
       dv.v.bind match {
         case Some(value) ⇒ (value : String)
         case None ⇒ ""
+      }
+    }
+  }
+
+  implicit class BindingDom[T <% Binding[Node]](dv: DomValStream[T]) {
+    @dom
+    def dom: Binding[Node] = {
+      dv.v.bind match {
+        case Some(value) ⇒ (value : Binding[Node]).bind
+        case None ⇒ DisplayModel.nospan.bind
       }
     }
   }

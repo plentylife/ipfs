@@ -30,6 +30,13 @@ object GraphOp {
       }
     }
   }
+  implicit class GraphOpsStream[T](stream: Observable[GraphOp[T]]) {
+    def collectOps[R](f: PartialFunction[T, R]): Observable[GraphOp[R]] =
+      stream.map(_.collect(f)).collect({case Some(op) ⇒ op})
+
+  }
+
+
 
 //  implicit class DependencyStream()
 
@@ -41,9 +48,12 @@ case class Remove[+T](value: T) extends GraphOp[T]
 class StateList[T](val stream: Observable[GraphOp[T]]) {
   private var state = List[T]()
 
-  stream foreach {
+  stream foreach {elem ⇒
+    println(s"StateList foreach $elem")
+    elem match {
     case Insert(i) ⇒ if (!state.contains(i)) state = i :: state
     case Remove(i) ⇒ state = state.filterNot(_ == i)
+  }
   }
 
   def flatMap[M](op: T ⇒ Observable[M]): StateList[M] = {
@@ -64,9 +74,19 @@ class StateList[T](val stream: Observable[GraphOp[T]]) {
     
     val insertObs = inserts.map(_._2.stream)
     val insertCon = Observable.concat(insertObs:_*)
-    
+
+    println("FLATMAP")
+    println(state)
+    println(inserts)
+    insertCon.dump("FM").subscribe()
+    println("--")
+
     new StateList[M](Observable.concat(removals, insertCon))
   }
+
+//  def filter(op: T ⇒ Boolean): StateList[T] = {
+//
+//  }
 
   def get: Observable[GraphOp[T]] = Observable.fromIterable(state map { elem ⇒ Insert(elem)}) ++ stream
 }

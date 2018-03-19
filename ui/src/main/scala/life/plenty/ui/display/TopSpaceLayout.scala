@@ -4,9 +4,10 @@ import com.thoughtworks.binding.Binding.{BindingSeq, SingleMountPoint, Var}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.DeprecatedGraphExtractors
+import life.plenty.model.utils.{DeprecatedGraphExtractors, GraphExtractors, GraphUtils}
 import life.plenty.ui.display.actions.SpaceActionsBar
 import life.plenty.ui.display.meta.LayoutModule
+import life.plenty.ui.display.utils.DomValStream
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{DisplayModel, ModuleOverride, UiContext}
 import org.scalajs.dom.html.Div
@@ -59,10 +60,10 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
       <div class="layout-header">
         <h3 class={titleClasses}>
-          {hub.getTitle.dom.bind}
+          {new DomValStream(hub.title).dom.bind}
         </h3>
         <h5 class="sub-title mt-1 ml-2 text-muted">
-          {new OptBindableHtmlProperty(DeprecatedGraphExtractors.getBody(hub), strIntoParagraphs).dom.bind}
+          {new DomValStream(GraphExtractors.getBody(hub).map(strIntoParagraphs)).dom.bind}
         </h5>{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "top-space-menu").bind}
       </div>
 

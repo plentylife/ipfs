@@ -74,6 +74,10 @@ class CardSignupQuestionDisplay(hub: SignupQuestion) extends CardQuestionDisplay
   private def users: Binding[Node] = {
     val users = new StateList(hub.getStream({case c: Contribution ⇒ c})).flatMap(c ⇒ c.creator)
 
+    println("Users")
+    hub.getStream({case c: Contribution ⇒ c}).dump("U:")
+    users.stream.dump("UOP:")
+
     <span>
       {for (u <- new DomOpStream(users.get).v) yield FullUserBadge.html(u).bind}
     </span>
