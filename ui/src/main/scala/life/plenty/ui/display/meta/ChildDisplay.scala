@@ -14,6 +14,7 @@ import rx.{Obs, Rx}
 import scala.language.postfixOps
 import scalaz.std.list._
 
+@deprecated
 class ChildDisplay(override val hub: Hub) extends DisplayModule[Hub] {
 
   private lazy val modifiers: List[OctopusModifier[Hub]] = {

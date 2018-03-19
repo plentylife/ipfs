@@ -47,8 +47,8 @@ package object ui {
     ModuleRegistry add { case a: Proposal ⇒ new ProposalDisplay(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
 
-    ModuleRegistry add { case o: Hub if !(o.isInstanceOf[Vote] || o.isInstanceOf[Question] ||
-      o.isInstanceOf[Space]) ⇒      new ChildDisplay(o) }
+//    ModuleRegistry add { case o: Hub if !(o.isInstanceOf[Vote] || o.isInstanceOf[Question] ||
+//      o.isInstanceOf[Space]) ⇒      new ChildDisplay(o) }
 
     ModuleRegistry add { case o: Hub ⇒ new ModularDisplay(o) }
 
