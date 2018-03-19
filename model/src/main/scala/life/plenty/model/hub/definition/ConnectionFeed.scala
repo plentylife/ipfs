@@ -12,18 +12,24 @@ import scala.concurrent.Future
 
 sealed trait GraphOp[+T] {
   val value: T
-//  def collect[R](f: PartialFunction[T, R]): Option[this.type[R]]
 }
-case class Insert[+T](value: T) extends GraphOp[T] {
-//  override def collect[R](f: PartialFunction[T, R]): Option[Insert[R]] = {
-//    Option(value).collect(f).map(Insert(_))
-//  }
+
+object GraphOp {
+  implicit class GraphOps[T](op: GraphOp[T]) {
+    def collect[R](f: PartialFunction[T, R]): Option[GraphOp[R]] = {
+      Option(op.value).collect(f) map {v ⇒
+        op match {
+          case Insert(_) ⇒ Insert(v)
+          case Remove(_) ⇒ Remove(v)
+        }
+      }
+    }
+  }
 }
-case class Remove[+T](value: T) extends GraphOp[T] {
-//  override def collect[R](f: PartialFunction[T, R]): Option[Remove[R]] = {
-//    Option(value).collect(f).map(Remove(_))
-//  }
-}
+
+case class Insert[+T](value: T) extends GraphOp[T]
+case class Remove[+T](value: T) extends GraphOp[T]
+
 
 
 trait ConnectionFeed {self: ConnectionManager ⇒
@@ -43,6 +49,9 @@ trait ConnectionFeed {self: ConnectionManager ⇒
     val existing: List[GraphOp[DataHub[_]]] = connections map {h ⇒ Insert(h : DataHub[_])}
     val existingObs: Observable[GraphOp[DataHub[_]]] = Observable.fromIterable(existing)
     existingObs ++ feed
+  }
+  def getStream[T](extractor: PartialFunction[DataHub[_], T]): Observable[GraphOp[T]] = {
+    getStream.map(_.collect(extractor)).collect({case Some(op) ⇒ op})
   }
   def getInsertStream: Observable[DataHub[_]] = {
     Observable.fromIterable(connections) ++ feed.collect({case Insert(h) ⇒ h})

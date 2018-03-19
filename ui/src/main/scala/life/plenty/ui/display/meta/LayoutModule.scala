@@ -6,6 +6,7 @@ import life.plenty.model.connection.Child
 import life.plenty.model.modifiers.OctopusModifier
 import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.console
+import life.plenty.ui.display.utils.{DomHubStream, DomOpStream}
 import life.plenty.ui.model.{DisplayModel, DisplayModule, ModuleOverride}
 import life.plenty.ui.model.DisplayModel.getSiblingModules
 import org.scalajs.dom.html.Div
@@ -16,23 +17,13 @@ import scalaz.std.list._
 
 trait LayoutModule[T <: Hub] extends DisplayModule[T] {
 
-  protected val siblingModules: Vars[DisplayModule[Hub]] = Vars()
-  protected val children: Vars[Hub] = Vars[Hub]()
-  protected var rxChildren: Rx[List[Hub]] = null //fixme use ListBindable
-  protected var rxChildrenObs: Obs = null
+  protected lazy val siblingModules: Vars[DisplayModule[Hub]] = Vars()
+  protected lazy val children: Vars[Hub] = getChildren.v
 
   override def update(): Unit = {
     val sms = getSiblingModules(this)
     siblingModules.value.clear()
     siblingModules.value.insertAll(0, sms)
-    if (rxChildrenObs == null) {
-      rxChildren = getChildren
-      rxChildrenObs = rxChildren.foreach { cs ⇒
-        children.value.clear()
-        children.value.insertAll(0, cs)
-        console.trace(s"child updated ${hub} $cs")
-      }
-    }
     console.trace(s"layout display updating $this $hub $sms overrides ${this.cachedOverrides.value}")
   }
 
@@ -41,14 +32,15 @@ trait LayoutModule[T <: Hub] extends DisplayModule[T] {
     hub.getModules({ case m: OctopusModifier[Hub] ⇒ m })
   }
 
-  private def getChildren: Rx[List[Hub]] = {
+  private def getChildren: DomOpStream[Hub] = {
     console.trace(s"getting children ${hub} ${hub.id}")
-    val childrenRx: Rx[List[Hub]] = hub.rx.getAll({ case Child(c: Hub) ⇒ c })
-    val ordered = modifiers.foldLeft(childrenRx)((cs, mod) ⇒ {
-      console.trace(s"applying modifiers ${hub}")
-      mod.applyRx(cs): Rx[List[Hub]]
-    })
-    ordered
+//    val ordered = modifiers.foldLeft(childrenRx)((cs, mod) ⇒ {
+//      console.trace(s"applying modifiers ${hub}")
+//      mod.applyRx(cs): Rx[List[Hub]]
+//    })
+
+    // fixme ordering for answers is missing
+    new DomOpStream(hub.getStream({case Child(h: Hub) ⇒ h}))
   }
 
   protected def displayHubs(seq: BindingSeq[Hub]#WithFilter, cssClass: String,

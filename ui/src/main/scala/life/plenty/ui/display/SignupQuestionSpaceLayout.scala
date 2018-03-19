@@ -44,19 +44,23 @@ class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(
   )
 
 //  lazy val allProposals = children.value.toList.collect({case a: Proposal ⇒ a})
-  lazy val allProposals = rxChildren.map{_.collect({case a: Proposal ⇒ a})}
+//  lazy val allProposals = rxChildren.map{_.collect({case a: Proposal ⇒ a})}
+//
+//  lazy val signers: Rx[List[User]] = Rx {
+//    val answers = allProposals().filter(_.getBody().exists(_.isEmpty))
+//    answers map {_.getCreator()} flatten;
+//  }
+//  lazy val sB: ListBindable[User] = new ListBindable(signers)
+//
+//  lazy val nonEmptyAnswers = Rx {
+//    allProposals().filter(_.getBody().exists(_.nonEmpty))
+//  }
+//  lazy val aB: ListBindable[Binding[Node]] =
+//    new ListBindable(nonEmptyAnswers map {_ map { a => DisplayModel.display(a, overrides, Option(this))}})
 
-  lazy val signers: Rx[List[User]] = Rx {
-    val answers = allProposals().filter(_.getBody().exists(_.isEmpty))
-    answers map {_.getCreator()} flatten;
-  }
-  lazy val sB: ListBindable[User] = new ListBindable(signers)
-
-  lazy val nonEmptyAnswers = Rx {
-    allProposals().filter(_.getBody().exists(_.nonEmpty))
-  }
+    lazy val sB: ListBindable[User] = new ListBindable(Rx{List()})
   lazy val aB: ListBindable[Binding[Node]] =
-    new ListBindable(nonEmptyAnswers map {_ map { a => DisplayModel.display(a, overrides, Option(this))}})
+    new ListBindable(Rx{List()})
 
 
   @dom

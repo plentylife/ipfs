@@ -3,7 +3,7 @@ package life.plenty.ui.display.utils
 import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.DataHub
-import life.plenty.model.hub.definition.Hub
+import life.plenty.model.hub.definition.{GraphOp, Hub, Insert, Remove}
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.Observable
 import org.scalajs.dom.Node
@@ -19,9 +19,19 @@ import org.scalajs.dom.Node
 //
 //}
 
-class DomStream(stream: Observable[Hub]) {
+class DomHubStream(stream: Observable[Hub]) {
   val v = Vars[Hub]()
   stream.foreach(h ⇒ v.value.insert(0, h))
+}
+
+class DomOpStream[T](stream: Observable[GraphOp[T]]) {
+  val v = Vars[T]()
+  stream.foreach {
+    case Insert(what) ⇒ v.value.insert(0, what)
+    case Remove(what) ⇒ val current = v.value
+      val index = current.indexOf(what)
+      if (index > -1) current.remove(index)
+  }
 }
 
 class DomValStream[T](stream: Observable[T]) {

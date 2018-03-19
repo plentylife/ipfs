@@ -6,7 +6,7 @@ import life.plenty.model.connection.{Child, Marker, Title}
 import life.plenty.model.hub.Space
 import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.display.actions.OpenButton
-import life.plenty.ui.display.utils.{DomBinders, DomStream}
+import life.plenty.ui.display.utils.{DomBinders, DomHubStream}
 import life.plenty.ui.model._
 import org.scalajs.dom.{Event, Node}
 import life.plenty.model.utils.ObservableGraphUtils._
@@ -53,7 +53,7 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
       </span>
 
       <div class="card-body">
-        {for (dh <- new DomStream(aggregated).v) yield {
+        {for (dh <- new DomHubStream(aggregated).v) yield {
         FeedModuleDirectory.get(dh).map {
           m => m.html(dh)
         } getOrElse DisplayModel.nospan
