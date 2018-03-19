@@ -11,6 +11,7 @@ trait Answer extends Space with WithParent[Space] {
   addToRequired(getBody)
 
   def getBody = rx.get({ case Body(b) ⇒ b })
+  lazy val body = getInsertStream.collect {case Body(t) ⇒ t}
 
   lazy val allVotes = rx.getAll({ case Child(v: Vote) ⇒ v })
 

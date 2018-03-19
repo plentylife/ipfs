@@ -44,6 +44,9 @@ trait ConnectionFeed {self: ConnectionManager ⇒
     val existingObs: Observable[GraphOp[DataHub[_]]] = Observable.fromIterable(existing)
     existingObs ++ feed
   }
+  def getInsertStream: Observable[DataHub[_]] = {
+    Observable.fromIterable(connections) ++ feed.collect({case Insert(h) ⇒ h})
+  }
 
   val isRemoved = feed.collect {
     case Insert(Inactive(_)) ⇒ -1
