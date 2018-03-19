@@ -12,6 +12,11 @@ import scala.concurrent.Future
 
 sealed trait GraphOp[+T] {
   val value: T
+  private[GraphOp] var _produced: List[GraphOp[_]] = List()
+  def produce[P](graphOp: GraphOp[P]): GraphOp[P] = {
+    _produced = graphOp :: _produced
+    graphOp
+  }
 }
 
 object GraphOp {
@@ -19,16 +24,52 @@ object GraphOp {
     def collect[R](f: PartialFunction[T, R]): Option[GraphOp[R]] = {
       Option(op.value).collect(f) map {v ⇒
         op match {
-          case Insert(_) ⇒ Insert(v)
-          case Remove(_) ⇒ Remove(v)
+          case i @ Insert(_) ⇒ i.produce(Insert(v))
+          case r @ Remove(_) ⇒ r.produce(Remove(v))
         }
       }
     }
   }
+
+//  implicit class DependencyStream()
+
 }
 
 case class Insert[+T](value: T) extends GraphOp[T]
 case class Remove[+T](value: T) extends GraphOp[T]
+
+class StateList[T](val stream: Observable[GraphOp[T]]) {
+  private var state = List[T]()
+
+  stream foreach {
+    case Insert(i) ⇒ if (!state.contains(i)) state = i :: state
+    case Remove(i) ⇒ state = state.filterNot(_ == i)
+  }
+
+  def flatMap[M](op: T ⇒ Observable[M]): StateList[M] = {
+    val inserts = state.map { elem ⇒
+      val depObs = op(elem)
+      elem → new StateList[M](depObs.map(Insert(_)))
+    }
+
+    val insertsMap = inserts.toMap
+    val removals = stream.collect({
+      case Remove(what) ⇒ what
+    }).flatMap {r ⇒
+      val depRem: List[Remove[M]] = insertsMap.get(r).map{ dep ⇒
+        dep.state map {Remove(_)}
+      }.getOrElse(List())
+      Observable.fromIterable(depRem)
+    }
+    
+    val insertObs = inserts.map(_._2.stream)
+    val insertCon = Observable.concat(insertObs:_*)
+    
+    new StateList[M](Observable.concat(removals, insertCon))
+  }
+
+  def get: Observable[GraphOp[T]] = Observable.fromIterable(state map { elem ⇒ Insert(elem)}) ++ stream
+}
 
 
 
