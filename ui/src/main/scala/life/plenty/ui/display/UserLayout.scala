@@ -57,6 +57,9 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
   @dom
   override protected def generateHtml(): Binding[Node] = {
     println("Generating UserLayout")
+    for (ms ← getMemberships; mst ← getTopMemberships) {
+      println(s"MEMS ${ms} $mst")
+    }
 
     val titleClasses = "title ml-2 "
 
