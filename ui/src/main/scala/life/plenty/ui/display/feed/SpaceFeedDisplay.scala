@@ -6,10 +6,10 @@ import life.plenty.model.connection.{Child, Marker, Title}
 import life.plenty.model.hub.Space
 import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.display.actions.OpenButton
-import life.plenty.ui.display.utils.DomBinders
+import life.plenty.ui.display.utils.{DomBinders, DomStream}
 import life.plenty.ui.model._
 import org.scalajs.dom.{Event, Node}
-import life.plenty.model.utils.SimpleGraphUtils._
+import life.plenty.model.utils.ObservableGraphUtils._
 import monix.execution.Scheduler.Implicits.global
 
 object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
@@ -23,15 +23,6 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
       case Child(h: Hub) ⇒ h
       case m: Marker ⇒ m
     },allowedPath = {case Child(h: Hub) ⇒ h})
-
-    val aggr = Vars[Hub]()
-    aggregated foreach {ag ⇒
-      aggr.value.insertAll(0, ag)
-      println(s"SPFEED AG ${ag}")
-    }
-//
-//    aggregated._inserts.foreach(i ⇒
-//    println(s"AGGR $i"))
 
     //    val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
     //      list ⇒
@@ -58,7 +49,7 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
       </span>
 
       <div class="card-body">
-        {for (dh <- aggr) yield {
+        {for (dh <- new DomStream(aggregated).v) yield {
         FeedModuleDirectory.get(dh).map {
           m => m.html(dh)
         } getOrElse DisplayModel.nospan
@@ -70,9 +61,3 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   }
 
 }
-
-//{for (dh <- new DomStreamObs(aggregated).v) yield {
-//  FeedModuleDirectory.get(dh).map {
-//  m => m.html(dh)
-//} getOrElse DisplayModel.nospan
-//}.bind}
