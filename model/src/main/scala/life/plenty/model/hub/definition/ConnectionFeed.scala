@@ -12,11 +12,12 @@ import scala.concurrent.Future
 
 sealed trait GraphOp[+T] {
   val value: T
-  private[GraphOp] var _produced: List[GraphOp[_]] = List()
+  private[GraphOp] var _produced: Set[GraphOp[_]] = Set()
   def produce[P](graphOp: GraphOp[P]): GraphOp[P] = {
-    _produced = graphOp :: _produced
+    _produced += graphOp
     graphOp
     }
+  def produced = _produced
 }
 
 object GraphOp {
@@ -30,19 +31,15 @@ object GraphOp {
       }
     }
   }
+
   implicit class GraphOpsStream[T](stream: Observable[GraphOp[T]]) {
     def collectOps[R](f: PartialFunction[T, R]): Observable[GraphOp[R]] =
       stream.map(_.collect(f)).collect({case Some(op) ⇒ op})
 
-    def depMap[M](operation: T ⇒ Observable[M]): Observable[GraphOp[M]] = {
-      val branches = stream.collect({case Insert(e) ⇒ e}).map { elem ⇒
-        val depObs = operation(elem)
-        val in = depObs.map(Insert(_))
-        val out = stream.collect({case Remove(elem) ⇒ in.map(op ⇒
-          Remove(op.value)
-        )}).flatten
-
-        Observable.concat(in, out)
+    def depMap[M](mapFunction: T ⇒ Observable[M]): Observable[GraphOp[M]] = {
+      val branches = stream.filter(_.isInstanceOf[Insert]).map { op ⇒
+        val depObs = mapFunction(op.value)
+        val in = depObs.map(dep ⇒ op.produce(Insert(dep)))
       }
 
       val single: Observable[GraphOp[M]] = branches.flatten
@@ -60,9 +57,13 @@ object GraphOp {
       case Remove(_) ⇒ false
       case Insert(_) ⇒ true
     })
-
   }
 
+  def collectLeafDependants(op: GraphOp[_]): Set[GraphOp[_]] = {
+    val leaf = op.produced filter {_.produced.isEmpty}
+    val node = op.produced flatMap  {_.produced} flatMap collectLeafDependants
+    leaf ++ node
+  }
 }
 
 case class Insert[+T](value: T) extends GraphOp[T]
@@ -73,12 +74,26 @@ trait ConnectionFeed {self: ConnectionManager ⇒
   val (feedSub, feed) = Observable.multicast[GraphOp[DataHub[_]]](MulticastStrategy.publish)
 
   def onInsert(con: DataHub[_]): Unit = {
+    var lastInsert: Option[Insert[DataHub[_]]] = None
+
     if (con.isActive) {
-      feedSub.onNext(Insert(con))
+      val in = Insert(con)
+      lastInsert = Option(in)
+      feedSub.onNext(in)
     }
     con.isRemoved.foreach {r ⇒
-      val op = if (r) Remove(con) else Insert(con)
-      feedSub.onNext(op)
+      if (r) {
+        lastInsert foreach {in ⇒
+          val leafs = GraphOp.collectLeafDependants(in)
+          val removes = leafs map {l ⇒ Remove(l.value)}
+          feedSub.feed(removes.toIterable)
+        }
+      } else {
+        val in = Insert(con)
+        lastInsert = Option(in)
+        feedSub.onNext(in)
+      }
+
     }
   }
 
