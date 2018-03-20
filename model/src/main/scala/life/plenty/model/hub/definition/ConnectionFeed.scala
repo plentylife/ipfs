@@ -16,7 +16,7 @@ sealed trait GraphOp[+T] {
   def produce[P](graphOp: GraphOp[P]): GraphOp[P] = {
     _produced = graphOp :: _produced
     graphOp
-  }
+    }
 }
 
 object GraphOp {
@@ -34,63 +34,39 @@ object GraphOp {
     def collectOps[R](f: PartialFunction[T, R]): Observable[GraphOp[R]] =
       stream.map(_.collect(f)).collect({case Some(op) ⇒ op})
 
+    def depMap[M](operation: T ⇒ Observable[M]): Observable[GraphOp[M]] = {
+      val branches = stream.collect({case Insert(e) ⇒ e}).map { elem ⇒
+        val depObs = operation(elem)
+        val in = depObs.map(Insert(_))
+        val out = stream.collect({case Remove(elem) ⇒ in.map(op ⇒
+          Remove(op.value)
+        )}).flatten
+
+        Observable.concat(in, out)
+      }
+
+      val single: Observable[GraphOp[M]] = branches.flatten
+      println("FLATMAP")
+      println(branches)
+      single.dump("FM").subscribe()
+      println("--")
+
+      single
+    }
+
+    def strip = stream.map(_.value)
+
+    def asBoolean = stream.map({
+      case Remove(_) ⇒ false
+      case Insert(_) ⇒ true
+    })
+
   }
-
-
-
-//  implicit class DependencyStream()
 
 }
 
 case class Insert[+T](value: T) extends GraphOp[T]
 case class Remove[+T](value: T) extends GraphOp[T]
-
-class StateList[T](val stream: Observable[GraphOp[T]]) {
-  private var state = List[T]()
-
-  stream foreach {elem ⇒
-    println(s"StateList foreach $elem")
-    elem match {
-    case Insert(i) ⇒ if (!state.contains(i)) state = i :: state
-    case Remove(i) ⇒ state = state.filterNot(_ == i)
-  }
-  }
-
-  def flatMap[M](op: T ⇒ Observable[M]): StateList[M] = {
-    val inserts = state.map { elem ⇒
-      val depObs = op(elem)
-      elem → new StateList[M](depObs.map(Insert(_)))
-    }
-
-    val insertsMap = inserts.toMap
-    val removals = stream.collect({
-      case Remove(what) ⇒ what
-    }).flatMap {r ⇒
-      val depRem: List[Remove[M]] = insertsMap.get(r).map{ dep ⇒
-        dep.state map {Remove(_)}
-      }.getOrElse(List())
-      Observable.fromIterable(depRem)
-    }
-    
-    val insertObs = inserts.map(_._2.stream)
-    val insertCon = Observable.concat(insertObs:_*)
-
-    println("FLATMAP")
-    println(state)
-    println(inserts)
-    insertCon.dump("FM").subscribe()
-    println("--")
-
-    new StateList[M](Observable.concat(removals, insertCon))
-  }
-
-//  def filter(op: T ⇒ Boolean): StateList[T] = {
-//
-//  }
-
-  def get: Observable[GraphOp[T]] = Observable.fromIterable(state map { elem ⇒ Insert(elem)}) ++ stream
-}
-
 
 
 trait ConnectionFeed {self: ConnectionManager ⇒

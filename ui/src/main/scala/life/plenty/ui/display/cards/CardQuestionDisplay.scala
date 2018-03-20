@@ -2,7 +2,6 @@ package life.plenty.ui.display.cards
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
-import life.plenty.model.hub.definition.StateList
 import life.plenty.model.utils.{DeprecatedGraphExtractors, GraphUtils}
 import life.plenty.model.utils.GraphExtractors._
 import life.plenty.ui.display.{FullUserBadge, InlineQuestionDisplay}
@@ -72,14 +71,14 @@ class CardQuestionDisplay(hub: Question) extends CardQuestionDisplayBase(hub) {
 class CardSignupQuestionDisplay(hub: SignupQuestion) extends CardQuestionDisplayBase(hub) {
   @dom
   private def users: Binding[Node] = {
-    val users = new StateList(hub.getStream({case c: Contribution ⇒ c})).flatMap(c ⇒ c.creator)
+    val users = hub.getStream({case c: Contribution ⇒ c}).depMap(c ⇒ c.creator)
 
     println("Users")
     hub.getStream({case c: Contribution ⇒ c}).dump("U:")
-    users.stream.dump("UOP:")
+    users.dump("UOP:")
 
     <span>
-      {for (u <- new DomOpStream(users.get).v) yield FullUserBadge.html(u).bind}
+      {for (u <- new DomOpStream(users).v) yield FullUserBadge.html(u).bind}
     </span>
   }
 

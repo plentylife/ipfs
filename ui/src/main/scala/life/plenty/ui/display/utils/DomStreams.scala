@@ -8,37 +8,32 @@ import life.plenty.ui.model.DisplayModel
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.Observable
 import org.scalajs.dom.Node
-//
-//class DomStream[T](hub: Hub, extractor: PartialFunction[DataHub[_], T]) {
-//  val v = Vars[T]()
-//
-//  hub.conExList(extractor) foreach { list ⇒
-//    v.value.insertAll(0, list)
-//    hub.feed.collect(extractor).foreach(dh ⇒ v.value.insert(0, dh))
-//    hub.removes.collect(extractor).foreach(dh ⇒ v.value.remove(v.value.indexOf(dh)))
-//  }
-//
-//}
 
-class DomHubStream(stream: Observable[Hub]) {
-  val v = Vars[Hub]()
-  stream.foreach { h =>
+class DomStream[T](stream: Observable[T]) {
+  val v = Vars[T]()
+  stream.foreach { elem =>
     val c = v.value
-    if (c.indexOf(h) < 0) v.value.insert(0, h)
+    if (c.indexOf(elem) < 0) v.value.insert(0, elem)
   }
 }
 
+class DomHubStream(stream: Observable[Hub]) extends DomStream[Hub](stream)
+
 class DomOpStream[T](stream: Observable[GraphOp[T]]) {
   val v = Vars[T]()
+
   stream.foreach {
-    case Insert(what) ⇒ v.value.insert(0, what)
+    case Insert(what) ⇒
+      println(s"DOS $what")
+      v.value.insert(0, what)
+      println(s"DOS ${v.value}")
     case Remove(what) ⇒ val current = v.value
       val index = current.indexOf(what)
       if (index > -1) current.remove(index)
   }
 }
 
-class DomValStream[T](stream: Observable[T]) {
+class DomValStream[T](val stream: Observable[T]) {
   val v = Var[Option[T]](None)
   stream.foreach(h ⇒ v.value_=(Option(h)))
 }

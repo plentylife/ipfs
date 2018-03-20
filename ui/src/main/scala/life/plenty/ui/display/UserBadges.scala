@@ -17,7 +17,7 @@ class FullUserBadge(override val hub: User) extends DisplayModule[User] {
 
 object FullUserBadge extends SimpleDisplayModule[User]{
   @dom
-  override def html(hub: User): Binding[Node] = {
+  override def  html(hub: User): Binding[Node] = {
     <div class="user-badge">
       {Identicon.generate(hub).bind}
       {hub.getName.dom.bind}
