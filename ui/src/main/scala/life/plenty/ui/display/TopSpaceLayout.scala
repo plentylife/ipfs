@@ -44,6 +44,8 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
   protected val additionalCss = Var("")
 
+  val title = new DomValStream(hub.title)
+
   @dom
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
@@ -60,7 +62,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
       <div class="layout-header">
         <h3 class={titleClasses}>
-          {new DomValStream(hub.title).dom.bind}
+          {title.dom.bind}
         </h3>
         <h5 class="sub-title mt-1 ml-2 text-muted">
           {new DomValStream(GraphExtractors.getBody(hub).map(strIntoParagraphs)).dom.bind}

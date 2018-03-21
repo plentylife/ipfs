@@ -41,7 +41,7 @@ object DeprecatedGraphExtractors {
   def getCreationTime(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Long]] = h.rx.get({ case CreationTime(b) ⇒ b })
 
   def isActive(o: Hub)(implicit ctx: Ctx.Owner): Boolean = {
-    val count: List[Int] = o.connections collect {
+    val count: List[Int] = o.lc.exList {
         case Inactive(_) ⇒ -1
         case Active(_) ⇒ 1
       }

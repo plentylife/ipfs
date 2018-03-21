@@ -36,6 +36,8 @@ class DomOpStream[T](stream: Observable[GraphOp[T]]) {
 class DomValStream[T](val stream: Observable[T]) {
   val v = Var[Option[T]](None)
   stream.foreach(h ⇒ v.value_=(Option(h)))
+
+  stream.dump("VAL").subscribe()
 }
 
 object DomValStream {

@@ -14,7 +14,7 @@ trait ConnectionManager extends ConnectionFeed {self: Hub ⇒
   private var onConnectionAddedOperations: List[(DataHub[_]) ⇒ Unit] = List()
   protected var _connections: List[DataHub[_]] = List.empty[DataHub[_]]
   val loadComplete = Promise[Unit]() // accessed by db
-  private var onConnectionsRequest: List[() ⇒ Unit] = List()
+  protected var onConnectionsRequest: List[() ⇒ Unit] = List()
 
   protected def onConnectionAddedOperation(op: (DataHub[_]) ⇒ Unit): Unit = {
     onConnectionAddedOperations +:= op

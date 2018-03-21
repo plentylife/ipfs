@@ -14,6 +14,7 @@ sealed trait GraphOp[+T] {
   }
 
   def produced = _produced
+
   def clear() = {
     val p = _produced
     _produced = Set()
@@ -45,13 +46,13 @@ object GraphOp {
         case op@Insert(elem) ⇒
           val depObs = mapFunction(op.value)
           val in = depObs.map(dep ⇒ op.produce(Insert(dep)))
-          lastInserts += op.value → in.scan(List[M]()){(list, sop) ⇒
+          lastInserts += op.value → in.scan(List[M]()) { (list, sop) ⇒
             sop.value :: list
           }
           in
         case op@Remove(elem) ⇒
           lastInserts.get(elem).map(ins ⇒ {
-            ins.lastF.flatMap(list ⇒ Observable.fromIterable(list map {in ⇒ Remove(in)}))
+            ins.lastF.flatMap(list ⇒ Observable.fromIterable(list map { in ⇒ Remove(in) }))
           }) getOrElse Observable.empty[GraphOp[M]]
       }
 
@@ -72,12 +73,13 @@ object GraphOp {
       case Insert(_) ⇒ true
     })
   }
-//
-//  def collectLeafDependants(op: GraphOp[_]): Set[GraphOp[_]] = {
-//    val leaf = op.produced filter {_.produced.isEmpty}
-//    val node = op.produced flatMap {_.produced} flatMap collectLeafDependants
-//    leaf ++ node
-//  }
+
+  //
+  //  def collectLeafDependants(op: GraphOp[_]): Set[GraphOp[_]] = {
+  //    val leaf = op.produced filter {_.produced.isEmpty}
+  //    val node = op.produced flatMap {_.produced} flatMap collectLeafDependants
+  //    leaf ++ node
+  //  }
 }
 
 case class Insert[+T](value: T) extends GraphOp[T]
@@ -90,12 +92,10 @@ trait ConnectionFeed {
   val (feedSub, feed) = Observable.multicast[GraphOp[DataHub[_]]](MulticastStrategy.publish)
 
   def onInsert(con: DataHub[_]): Unit = {
-    con.isRemoved.lastOptionL.foreach(isActive ⇒ {
-      if (isActive.nonEmpty && isActive.get) {
-        val in = Insert(con)
-        feedSub.onNext(in)
-      }
-    })
+    if (con.isActive) {
+      val in = Insert(con)
+      feedSub.onNext(in)
+    }
 
     con.isRemoved.foreach { r ⇒
       val op = if (r) {
@@ -109,6 +109,7 @@ trait ConnectionFeed {
   }
 
   def getStream: Observable[GraphOp[DataHub[_]]] = {
+    self.onConnectionsRequest.foreach(f ⇒ f())
     val existing: List[GraphOp[DataHub[_]]] = connections map { h ⇒ Insert(h: DataHub[_]) }
     val existingObs: Observable[GraphOp[DataHub[_]]] = Observable.fromIterable(existing)
     existingObs ++ feed
