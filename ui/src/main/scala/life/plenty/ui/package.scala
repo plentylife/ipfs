@@ -6,7 +6,7 @@ import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.Console
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions._
-import life.plenty.ui.display.cards.{CardAnswerDisplay, CardQuestionDisplay, CardSignupQuestionDisplay}
+import life.plenty.ui.display.cards._
 import life.plenty.ui.display.feed.SpaceFeedDisplay
 import life.plenty.ui.display.layouts.SignupQuestionSpaceLayout
 //import life.plenty.ui.display.feed.{FeedAnswerDisplay, FeedQuestionDisplay, FeedSpaceDisplay, SpaceFeedDisplay}

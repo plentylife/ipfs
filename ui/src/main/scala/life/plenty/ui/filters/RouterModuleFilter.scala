@@ -1,8 +1,9 @@
 package life.plenty.ui.filters
 
 import life.plenty.model.modifiers.ModuleFilters
-import life.plenty.model.hub.definition.{Module, Hub}
+import life.plenty.model.hub.definition.{Hub, Module}
 import life.plenty.ui.display._
+import life.plenty.ui.display.cards.MembersCardDisplay
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
 import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.model.ViewState
