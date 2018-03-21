@@ -1,6 +1,7 @@
 package life.plenty.model.hub.definition
 
 import life.plenty.model.connection.{Active, DataHub, Inactive}
+import monix.eval.Coeval
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.{MulticastStrategy, Observable}
 
@@ -23,8 +24,9 @@ sealed trait GraphOp[+T] {
 }
 
 object GraphOp {
+  type Feed[T] = Observable[GraphOp[T]]
 
-  implicit class GraphOps[T](op: GraphOp[T]) {
+  implicit class GraphOpSuperset[T](op: GraphOp[T]) {
     def collect[R](f: PartialFunction[T, R]): Option[GraphOp[R]] = {
       Option(op.value).collect(f) map { v ⇒
         op match {
@@ -35,14 +37,14 @@ object GraphOp {
     }
   }
 
-  implicit class GraphOpsStream[T](stream: Observable[GraphOp[T]]) {
+  implicit class GraphOpsStream[T](feed: Observable[GraphOp[T]]) {
     def collectOps[R](f: PartialFunction[T, R]): Observable[GraphOp[R]] =
-      stream.map(_.collect(f)).collect({ case Some(op) ⇒ op })
+      feed.map(_.collect(f)).collect({ case Some(op) ⇒ op })
 
     def depMap[M](mapFunction: T ⇒ Observable[M]): Observable[GraphOp[M]] = {
       var lastInserts = Map[T, Observable[List[M]]]()
 
-      val branches = stream.map {
+      val branches = feed.map {
         case op@Insert(elem) ⇒
           val depObs = mapFunction(op.value)
           val in = depObs.map(dep ⇒ op.produce(Insert(dep)))
@@ -52,7 +54,11 @@ object GraphOp {
           in
         case op@Remove(elem) ⇒
           lastInserts.get(elem).map(ins ⇒ {
-            ins.lastF.flatMap(list ⇒ Observable.fromIterable(list map { in ⇒ Remove(in) }))
+            // get the last element of the scanned feed (all the elements depending on the Insert that pushed this elem
+            val feed = ins.lastF.flatMap(list ⇒ Observable.fromIterable(list map { in ⇒ Remove(in) }))
+            // remove those from memory
+            lastInserts -= elem
+            feed
           }) getOrElse Observable.empty[GraphOp[M]]
       }
 
@@ -66,12 +72,66 @@ object GraphOp {
       single
     }
 
-    def strip = stream.map(_.value)
+    def depMapLast[M](mapFunction: T ⇒ Observable[M]): Observable[GraphOp[M]] = {
+      var lastInserts = Map[T, M]()
 
-    def asBoolean = stream.map({
+      val branches: Observable[Observable[GraphOp[M]]] = feed.map {
+        case op@Insert(elem) ⇒
+          val depObs = mapFunction(op.value)
+          depObs.lastF.flatMap(dep ⇒ {
+            // inserting the new value, and removing the old
+            val in = Insert(dep)
+            var obsList = List[GraphOp[M]](in)
+            lastInserts.get(elem).foreach(lastDep ⇒ obsList :+= Remove(lastDep))
+            // registering the latest dep elem
+            lastInserts += op.value → dep
+            Observable.fromIterable(obsList)
+          })
+        case op@Remove(elem) ⇒ lastInserts.get(elem).map(lastElem ⇒ {
+          // get the last element of the scanned feed (all the elements depending on the Insert that pushed this elem
+          val feed = Observable.coeval(Coeval(Remove(lastElem)))
+          // remove those from memory
+          lastInserts -= elem
+          feed
+        }) getOrElse Observable.empty[GraphOp[M]]
+      }
+
+
+      val single: Observable[GraphOp[M]] = branches.flatten
+      println("DEP MAP LAST")
+      println(branches)
+      single.dump("DML").subscribe()
+      println("--")
+
+      single
+    }
+
+//    def mapToLastList[M](mapFunction: T ⇒ Observable[M]): Observable[]
+
+    def strip = feed.map(_.value)
+
+    def asBoolean = feed.map({
       case Remove(_) ⇒ false
       case Insert(_) ⇒ true
     })
+
+    def scanToList: Observable[List[T]] = feed.scan(List.empty[T]){ (list, op) ⇒
+      op match {
+        case Remove(what) ⇒ list diff List(what)
+        case Insert(what) ⇒ what :: list
+      }
+    }
+  }
+
+  def byType[T, R](op: GraphOp[T], ifInsert: T ⇒ R, ifRemove: T ⇒ R): R = {
+    op match {
+      case Remove(what) ⇒ ifRemove(what)
+      case Insert(what) ⇒ ifInsert(what)
+    }
+  }
+
+  implicit def numericOp[T : Numeric](op: GraphOp[T])(implicit num: Numeric[T]): T = {
+    byType[T, T](op, {v ⇒ v}, {v ⇒ num.mkNumericOps(v).unary_-()})
   }
 
   //
@@ -97,30 +157,32 @@ trait ConnectionFeed {
       feedSub.onNext(in)
     }
 
-    con.isRemoved.foreach { r ⇒
-      val op = if (r) {
-        Remove(con)
-      } else {
-        Insert(con)
+    con.loadCompleted foreach {_ ⇒
+      con.isRemoved.foreach { r ⇒
+        val op = if (r) {
+          Remove(con)
+        } else {
+          Insert(con)
+        }
+        feedSub.onNext(op)
       }
-      feedSub.onNext(op)
-
     }
+
   }
 
-  def getStream: Observable[GraphOp[DataHub[_]]] = {
+  def getFeed: Observable[GraphOp[DataHub[_]]] = {
     self.onConnectionsRequest.foreach(f ⇒ f())
     val existing: List[GraphOp[DataHub[_]]] = connections map { h ⇒ Insert(h: DataHub[_]) }
     val existingObs: Observable[GraphOp[DataHub[_]]] = Observable.fromIterable(existing)
     existingObs ++ feed
   }
 
-  def getStream[T](extractor: PartialFunction[DataHub[_], T]): Observable[GraphOp[T]] = {
-    getStream.map(_.collect(extractor)).collect({ case Some(op) ⇒ op })
+  def getFeed[T](extractor: PartialFunction[DataHub[_], T]): Observable[GraphOp[T]] = {
+    getFeed.map(_.collect(extractor)).collect({ case Some(op) ⇒ op })
   }
 
-  def getInsertStream: Observable[DataHub[_]] = {
-    getStream.collect({ case Insert(h) ⇒ h })
+  def getInsertFeed: Observable[DataHub[_]] = {
+    getFeed.collect({ case Insert(h) ⇒ h })
   }
 
   val isRemoved = feed.collect {

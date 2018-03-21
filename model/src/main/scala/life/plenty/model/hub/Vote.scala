@@ -6,8 +6,11 @@ import life.plenty.model.utils._
 
 class Vote() extends WithAmount {
 
-  lazy val sizeAndDirection = getAmount
+  @deprecated
+  lazy val sizeAndDirection = getAmountRx
   lazy val parentAnswer = rx.get({ case Parent(a: Answer) ⇒ a })
+
+  lazy val amount =
 
   addToRequired(sizeAndDirection)
   addToRequired(parentAnswer)

@@ -40,7 +40,7 @@ trait LayoutModule[T <: Hub] extends DisplayModule[T] {
 //    })
 
     // fixme ordering for answers is missing
-    new DomOpStream(hub.getStream({case Child(h: Hub) ⇒ h}))
+    new DomOpStream(hub.getFeed({case Child(h: Hub) ⇒ h}))
   }
 
   protected def displayHubs(seq: BindingSeq[Hub]#WithFilter, cssClass: String,

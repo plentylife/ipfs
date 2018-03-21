@@ -5,6 +5,7 @@ import life.plenty.model.connection.{Amount, Child, Parent, RootParent}
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.DeprecatedGraphExtractors
 import rx.Rx
+import life.plenty.model.hub.definition.GraphOp._
 
 trait WithParent[T <: Hub] extends WithOptParent[T] {
   addToRequired(getParent)
@@ -26,11 +27,16 @@ trait WithOptParent[T <: Hub] extends Hub {
 }
 
 trait WithAmount extends Hub {
-  addToRequired(getAmount)
+  addToRequired(getAmountRx)
 
-  def getAmount = rx.get({ case Amount(a) ⇒ a })
+  @deprecated
+  def getAmountRx = rx.get({ case Amount(a) ⇒ a })
 
-  def getAmountOrZero: Rx[Int] = getAmount.map(_.getOrElse(0))
+  @deprecated
+  def getAmountOrZeroRx: Rx[Int] = getAmountRx.map(_.getOrElse(0))
+
+  def getAmountOrZero = getFeed({case Amount(a) ⇒ a}).map(op ⇒ numericOp(op)).sumF
+//  def getAmountFeed = getFeed({case Amount(a) ⇒ a})
 }
 
 trait WithMembers extends Space {

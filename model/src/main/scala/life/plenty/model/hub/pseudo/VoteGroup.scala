@@ -27,7 +27,7 @@ object VoteGroup {
   def countByUser(list: List[Vote])(implicit ctx: Ctx.Owner): Rx[Map[User, Int]] = Rx {
     list groupBy(v ⇒ v.getCreator()) collect {case (Some(u), lv) ⇒ u -> lv} map {
       case (u, lv) ⇒
-        val voteAmounts = lv map {v ⇒ v.getAmountOrZero()}
+        val voteAmounts = lv map {v ⇒ v.getAmountOrZeroRx()}
         u -> (0 :: voteAmounts).sum
     }
   }

@@ -39,7 +39,7 @@ class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(
     displayHubsF(getSubSpaces(children), "sub-spaces section")
   )
 
-  lazy val allProposals = hub.getStream({case Child(a: Proposal) ⇒ a})
+  lazy val allProposals = hub.getFeed({case Child(a: Proposal) ⇒ a})
   lazy val proposalsWithBody: Observable[GraphOp[(Proposal, Boolean)]] =
     new GraphOpsStream(allProposals).depMap(p ⇒ p.body.map(p → _.isEmpty))
   lazy val signers = proposalsWithBody.depMap({

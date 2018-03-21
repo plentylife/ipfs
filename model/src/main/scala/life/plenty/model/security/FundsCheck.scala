@@ -42,7 +42,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
                   if (hub.id == from.id) {
 
                     val w = new Wallet(hub, null)
-                    if (w.getThanksBalance.now + w.getUsableThanksLimit.now - t.getAmount.now.get >= 0) {
+                    if (w.getThanksBalance.now + w.getUsableThanksLimit.now - t.getAmountRx.now.get >= 0) {
                       model.console.trace(s"Funds check passed transaction $t ${t.id}")
                       promise.success()
                     } else {
@@ -73,7 +73,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
             v.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
               v.parentAnswer.now match {
                 case Some(c) ⇒ val w = new Wallet(hub, c)
-                  if (w.getUsableVotes.now - Math.abs(v.getAmount.now.get) >= 0) {
+                  if (w.getUsableVotes.now - Math.abs(v.getAmountRx.now.get) >= 0) {
                     promise.success()
                   } else {
                     model.console.error("Not enough voting power!")

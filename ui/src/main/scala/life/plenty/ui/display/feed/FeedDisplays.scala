@@ -58,7 +58,7 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
   override def html(hub: Transaction): Binding[Node] = {
 //    println(s"DISPLAYING ${this}")
 
-    val amount = new BindableProperty(hub.getAmountOrZero)(a ⇒ a + ui.thanks)
+    val amount = new BindableProperty(hub.getAmountOrZeroRx)(a ⇒ a + ui.thanks)
 
     <div class={"feed " + cssClass} id={hub.id}>
       {SimpleDisplayModule.html(FullUserBadge, hub.from).bind} {actionHtml(action).bind}

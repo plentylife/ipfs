@@ -12,8 +12,8 @@ import scala.concurrent.Future
 object ObservableGraphUtils {
   def collectDownTree[T <: Hub](in: Hub, matchBy: PartialFunction[DataHub[_], T],
                                 allowedPath: PartialFunction[DataHub[_],Hub]): Observable[T] = {
-    val pathCons = in.getStream.collect({case Insert(h) ⇒ h}).collect(allowedPath)
-    val hubs = in.getStream.collect({case Insert(h) ⇒ h}).collect(matchBy)
+    val pathCons = in.getFeed.collect({case Insert(h) ⇒ h}).collect(allowedPath)
+    val hubs = in.getFeed.collect({case Insert(h) ⇒ h}).collect(matchBy)
 
     val res = pathCons flatMap {h ⇒
       collectDownTree(h, matchBy, allowedPath)

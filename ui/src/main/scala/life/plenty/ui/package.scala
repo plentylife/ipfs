@@ -6,7 +6,7 @@ import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.Console
 import life.plenty.ui.display._
 import life.plenty.ui.display.actions._
-import life.plenty.ui.display.cards.{CardQuestionDisplay, CardSignupQuestionDisplay}
+import life.plenty.ui.display.cards.{CardAnswerDisplay, CardQuestionDisplay, CardSignupQuestionDisplay}
 import life.plenty.ui.display.feed.SpaceFeedDisplay
 import life.plenty.ui.display.layouts.SignupQuestionSpaceLayout
 //import life.plenty.ui.display.feed.{FeedAnswerDisplay, FeedQuestionDisplay, FeedSpaceDisplay, SpaceFeedDisplay}
@@ -46,7 +46,6 @@ package object ui {
     ModuleRegistry add { case q: Space ⇒ new InlineSpaceDisplay(q) }
 
     ModuleRegistry add { case a: Answer ⇒ new ConfirmActionDisplay(a) }
-    ModuleRegistry add { case a: Proposal ⇒ new ProposalDisplay(a) }
     ModuleRegistry add { case c: Contribution ⇒ new ContributionDisplay(c) }
 
 //    ModuleRegistry add { case o: Hub if !(o.isInstanceOf[Vote] || o.isInstanceOf[Question] ||

@@ -9,11 +9,11 @@ import rx.{Ctx, Rx}
 object GraphExtractors {
 
   def isMarkedConfirmed(h: Hub): Observable[Boolean] =
-    h.getStream({case Marker(MarkerEnum.CONFIRMED) ⇒ true}).asBoolean
+    h.getFeed({case Marker(MarkerEnum.CONFIRMED) ⇒ true}).asBoolean
 
-  def getBody(h: Hub) = h.getInsertStream.collect({ case Body(b) ⇒ b })
+  def getBody(h: Hub) = h.getInsertFeed.collect({ case Body(b) ⇒ b })
 
   def isMarkedContributing(h: Hub): Observable[Boolean] =
-    h.getStream({ case c@Marker(m) if m == MarkerEnum.CONTRIBUTING_QUESTION ⇒ c }).asBoolean
+    h.getFeed({ case c@Marker(m) if m == MarkerEnum.CONTRIBUTING_QUESTION ⇒ c }).asBoolean
 
 }

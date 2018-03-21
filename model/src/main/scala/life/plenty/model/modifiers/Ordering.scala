@@ -22,16 +22,16 @@ class AnswerVoteOrder(override val hub: Question) extends OctopusOrdering[Questi
       }
     }
 
-    answers = answers.sortBy(_.votes.now).reverse
+    answers = answers.sortBy(_.votesRx.now).reverse
 
-    model.console.println(s"Sorting answers ${answers.map(a ⇒ a.getBody.now → a.votes.now)}")
+    model.console.println(s"Sorting answers ${answers.map(a ⇒ a.getBody.now → a.votesRx.now)}")
     answers ::: others
   }
 
   override def applyRx(whatRx: Rx[List[Hub]])(implicit ctx: Ctx.Owner): Rx[List[Hub]] = whatRx.map {
     what ⇒
       val byVote: List[(Hub, Int)] = what.map {
-        case a: Answer ⇒ a -> a.votes()
+        case a: Answer ⇒ a -> a.votesRx()
         case o: Hub ⇒ o -> 0
       }
       console.trace(s"rxSort answers ${byVote}")

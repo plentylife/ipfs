@@ -104,27 +104,4 @@ object GraphUtils {
 
     hubs() ::: nextHubs
   }
-
-//  /** @param matchBy should be able to handle [[DataHub]] */
-//  def collectDownTree[T](in: Hub, matchBy: DataHub[_] ⇒ Rx[Option[T]],
-//                         allowedPath: PartialFunction[DataHub[_],Hub], debounceDuration: Int = 0)
-//                        (implicit ctx: Ctx.Owner): Rx[List[T]] = Rx {
-//    val pathCons = in.rx.getAll(allowedPath).debounce(20000 millis)
-//    val _hubs = in.rx.cons.debounce(20000 millis)
-//    val hubs = _hubs map {list ⇒
-//      println(s"@")
-//      list flatMap {h ⇒ val r = matchBy(h); print('`'); r()}
-//    } debounce(20000 millis)
-//
-//    //    model.console.trace(s"collectDownTree ${pathCons} | $hubs")
-//    println(s"collectDownTree ${in}")
-//    //    println(s"collectDownTree ${in} -->\n\t $hubs || $pathCons ")
-//
-//    val nextHubs = pathCons() flatMap { h ⇒
-//      val r = collectDownTree(h, matchBy, allowedPath)
-//      r()
-//    }
-//
-//    hubs() ::: nextHubs
-//  }
 }
