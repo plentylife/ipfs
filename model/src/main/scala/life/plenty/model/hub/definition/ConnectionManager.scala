@@ -26,13 +26,19 @@ trait ConnectionManager extends ConnectionFeed {self: Hub ⇒
     onConnectionsRequest.foreach(f ⇒ f())
     _connections
   }
-  def conEx[T](f: PartialFunction[DataHub[_], T]): Future[Option[T]] = loadCompleted map {_ ⇒ sc.ex(f)}
+  def conEx[T](f: PartialFunction[DataHub[_], T]): Future[Option[T]] = loadCompleted map {_ ⇒ lc.ex(f)}
   def conExList[T](f: PartialFunction[DataHub[_], T]): Future[List[T]] =
-    loadCompleted map {_ ⇒ sc.exList(f)}
+    loadCompleted map {_ ⇒ lc.exList(f)}
+
+  object lc {
+    def lazyAll: List[DataHub[_]] = _connections
+    def ex[T](f: PartialFunction[DataHub[_], T]): Option[T] = _connections.collectFirst(f)
+    def exList[T](f: PartialFunction[DataHub[_], T]): List[T] = _connections.collect(f)
+  }
 
   object sc {
 
-    def lazyAll: List[DataHub[_]] = _connections
+    def lazyAll: List[DataHub[_]] = lc.lazyAll
 
     def exList[T](f: PartialFunction[DataHub[_], T]): List[T] = connections.collect(f)
 

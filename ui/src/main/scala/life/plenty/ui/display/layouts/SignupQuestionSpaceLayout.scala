@@ -39,13 +39,14 @@ class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(
     displayHubsF(getSubSpaces(children), "sub-spaces section")
   )
 
-//  lazy val allProposals = children.value.toList.collect({case a: Proposal ⇒ a})
   lazy val allProposals = hub.getStream({case Child(a: Proposal) ⇒ a})
   lazy val proposalsWithBody: Observable[GraphOp[(Proposal, Boolean)]] =
     new GraphOpsStream(allProposals).depMap(p ⇒ p.body.map(p → _.isEmpty))
   lazy val signers = proposalsWithBody.depMap({
     case (p, isEmpty) ⇒ if (isEmpty) p.creator else Observable.empty[User]
   })
+
+  /** OLD */
 
 //
 //  lazy val signers: Rx[List[User]] = Rx {
@@ -59,6 +60,8 @@ class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(
 //  }
 //  lazy val aB: ListBindable[Binding[Node]] =
 //    new ListBindable(nonEmptyAnswers map {_ map { a => DisplayModel.display(a, overrides, Option(this))}})
+
+/** OLD END */
 
   lazy val aB: ListBindable[Binding[Node]] =
     new ListBindable(Rx{List()})

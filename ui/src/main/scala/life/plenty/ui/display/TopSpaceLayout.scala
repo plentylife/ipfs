@@ -26,7 +26,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
 
   override def doDisplay(): Boolean = sameAsUiPointer(hub)
 
-  private lazy val isConfirmed: BasicBindable[Boolean] = DeprecatedGraphExtractors.markedConfirmed(hub)
+  private lazy val isConfirmed = new DomValStream(GraphExtractors.isMarkedConfirmed(hub))
 
   def getMembers(cs: BindingSeq[Hub]): BindingSeq[Hub]#WithFilter = cs.withFilter({
     case m: Members ⇒ true
@@ -48,7 +48,7 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
   override protected def generateHtml(): Binding[Node] = {
     val cos: Seq[ModuleOverride] = this.cachedOverrides.bind
     implicit val os = cos.toList ::: siblingOverrides ::: overrides
-    val titleClasses = "title ml-2 " + {if (isConfirmed().bind) "confirmed" else ""}
+    val titleClasses = "title ml-2 " + {if (isConfirmed.dom.bind) "confirmed" else ""}
 
     <div class={"top-space-layout " + additionalCss.bind}>
 
@@ -76,6 +76,8 @@ class TopSpaceLayout(override val hub: Space) extends LayoutModule[Space] {
     </span>
     </div>
   }
+
+
 
   @dom
   protected def sectionsDisplay(sections: List[Binding[Node]]): Binding[Node] = {

@@ -174,9 +174,10 @@ class DbDataHubReaderModule(override val hub: DataHub[_]) extends DbReaderModule
   override def onConnectionsRequest(): Unit = Unit
 
   // load once there is an id
-  hub.onSetId {id ⇒
-    load()
-  }
+  // fixme. was this necessary?
+//  hub.onSetId {id ⇒
+//    load()
+//  }
 }
 
 class DbReaderModule(override val hub: Hub) extends ActionOnConnectionsRequest with
@@ -194,6 +195,7 @@ ActionOnFinishDataLoad {
   override def onConnectionsRequest(): Unit = {
 //      console.println(s"Reader got request to load ${hub.getClass} with ${hub.sc.all}")
       // so since this will have to happen before the writer gets to us, we just skip the exists check
+
       idP.future foreach {_ ⇒ load()}
   }
 
@@ -205,7 +207,7 @@ ActionOnFinishDataLoad {
       console.println(s"Reader loading ${hub} ${hub.id}")
 
       dbDoc.getData map { data ⇒
-        val existingIds = hub.connections.map(_.id)
+        val existingIds = hub.sc.lazyAll.map(_.id)
         // the reverse is important -- making sure that we are loading the oldest first
         val unloadedIds = data.connections.toList.filterNot(existingIds.contains).reverse
         connectionsLeftToLoad() = unloadedIds.size
@@ -233,7 +235,9 @@ ActionOnFinishDataLoad {
     console.trace(s"Reader trying to load connection for ${hub} ${hub.id} with id ${id}")
     val p = Promise[Unit]()
     // playing with setTimeout to allow for ui rendering
+    // fixme remove
     js.timers.setTimeout(10) {
+
       DataHubReader.read(id) flatMap { c ⇒
         console.trace(s"Reader loaded connection for ${hub} ${c.id} -- $id")
         val f = hub.addConnection(c)
@@ -245,6 +249,7 @@ ActionOnFinishDataLoad {
           console.error(e)
           e.printStackTrace()
       } onComplete(_ ⇒ p.success())
+
     }
 
     p.future

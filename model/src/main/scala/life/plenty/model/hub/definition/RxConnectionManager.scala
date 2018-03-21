@@ -19,16 +19,16 @@ trait RxConnectionManager {
   object rx {
 
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
-      Rx {sc.lazyAll}
+      Rx {lc.lazyAll}
     }
 
     /** @return first found non empty rx */
     def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
-      Rx {sc.ex(f)}
+      Rx {lc.ex(f)}
     }
 
     def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
-      Rx {sc.exList(f)}
+      Rx {lc.exList(f)}
     }
   }
 

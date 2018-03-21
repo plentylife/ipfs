@@ -23,7 +23,7 @@ trait OctopusConstructor {
   def getRxId: Rx[Option[String]] = rx.get({ case Id(id) ⇒ id })
 
   /** Either retrieves the id, or generates a new one, and sets it */
-  def id: String = sc.ex({ case Id(id) ⇒ id }) getOrElse {
+  def id: String = lc.ex({ case Id(id) ⇒ id }) getOrElse {
     val gid = generateId
     setInit(Id(gid))
     gid

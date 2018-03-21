@@ -90,10 +90,13 @@ trait ConnectionFeed {
   val (feedSub, feed) = Observable.multicast[GraphOp[DataHub[_]]](MulticastStrategy.publish)
 
   def onInsert(con: DataHub[_]): Unit = {
-    if (con.isActive) {
-      val in = Insert(con)
-      feedSub.onNext(in)
-    }
+    con.isRemoved.lastOptionL.foreach(isActive ⇒ {
+      if (isActive.nonEmpty && isActive.get) {
+        val in = Insert(con)
+        feedSub.onNext(in)
+      }
+    })
+
     con.isRemoved.foreach { r ⇒
       val op = if (r) {
         Remove(con)
@@ -116,7 +119,7 @@ trait ConnectionFeed {
   }
 
   def getInsertStream: Observable[DataHub[_]] = {
-    Observable.fromIterable(connections) ++ feed.collect({ case Insert(h) ⇒ h })
+    getStream.collect({ case Insert(h) ⇒ h })
   }
 
   val isRemoved = feed.collect {

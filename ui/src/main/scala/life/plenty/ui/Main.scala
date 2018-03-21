@@ -78,7 +78,6 @@ object Main {
     </div>
   }
 
-
   @JSExport
   def console() = ui.console.active = true
 
@@ -120,4 +119,7 @@ object Main {
 
   @JSExport
   def getUrl(spaceId: String) = Router.toHash(Router.defaultRoutingParams.copy(hubId = Option(spaceId)))
+
+  @JSExport
+  def load(id: String) = DbReader.read(id)
 }
