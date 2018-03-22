@@ -15,7 +15,7 @@ package object model {
   type RxConsList = Rx[List[DataHub[_]]]
 
 
-  val console = new Console(true, true, "Model")
+  val console = new Console(false, true, "Model")
   private var _hasher: Hash = _
   private var _defaultCreator: Option[User] = None
 
@@ -30,7 +30,8 @@ package object model {
   def initialize(): Unit = {
     println("Model is adding modules to registry")
 
-    ModuleRegistry.add { case u: User ⇒ new FundsCheck(u) }
+    // fixme enable
+//    ModuleRegistry.add { case u: User ⇒ new FundsCheck(u) }
 
     ModuleRegistry.add { case q: Question ⇒ new ActionAddConfirmedMarker(q) }
     ModuleRegistry.add { case q: Question ⇒ new ActionCreateQuestion(q) }

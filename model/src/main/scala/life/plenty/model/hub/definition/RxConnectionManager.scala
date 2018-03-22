@@ -26,12 +26,13 @@ trait RxConnectionManager {
   def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]): Unit = onConnectionsRequest :::= fList
 
 
-  val loadComplete = Promise[Unit]()
+  lazy val loadComplete = Promise[Unit]()
   /** triggers load */
   def loadCompleted: Future[Unit] = {
     onConnectionsRequest.foreach(f ⇒ f())
     loadComplete.future
   }
+  lazy val loadCompletedRx = loadCompleted.map { _ ⇒ true}.toRx(false)
 
 
 
@@ -54,9 +55,19 @@ trait RxConnectionManager {
       })
     }
 
+    var lcFlag = false
+
     def onLoaded[T](whenLoadedDo: ⇒ Rx[T], default: T) = {
 
-      loadCompleted.map { _ ⇒ true} .toRx(true) flatMap {isLoaded ⇒ if (isLoaded) {
+//      if (!lcFlag) {
+//        loadCompletedRx foreach {status ⇒
+//          println(s"LC ${self} ${status}")
+//        }
+//        lcFlag = true
+//      }
+
+
+        loadCompletedRx flatMap {isLoaded ⇒ if (isLoaded) {
         whenLoadedDo
       } else Rx {default}
       }
@@ -92,15 +103,18 @@ trait RxConnectionManager {
 
     def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {
       onConnectionsRequest.foreach(f ⇒ f())
-      Rx {
+      def whenLoaded = Rx {
         val raw = Lazy.getAll(f)
         raw() flatMap {rx ⇒ rx()}
-      }.debounce(debounceDuration)
+      }
+
+      onLoaded(whenLoaded, List.empty[T])
     }
 
     def getAllRaw[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner) = {
       onConnectionsRequest.foreach(f ⇒ f())
-      Lazy.getAll(f)
+
+      onLoaded(Lazy.getAll(f), List.empty)
     }
 
     object Lazy {

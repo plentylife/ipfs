@@ -13,6 +13,12 @@ import rx.Ctx
 import scala.concurrent.{Future, Promise}
 import scala.util.Try
 
+import rx.async._
+import rx.async.Platform._
+
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+
 trait FundsError extends Exception {
   val user: User
 }
@@ -73,6 +79,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
             v.loadCompleted foreach (_ ⇒ {
               println(s"VOTE CONS ${v.sc.all} ${v.rx.cons}")
               println(s"PARENT ${v.parentAnswer}")
+              println(s"LOAD STATUS ${v.loadCompleted.map { _ ⇒ true}.toRx(false)}")
               v.parentAnswer.now match {
                 case Some(c) ⇒ val w = new Wallet(hub, c)
                   if (w.getUsableVotes.now - Math.abs(v.getAmount.now.get) >= 0) {
