@@ -8,10 +8,6 @@ import rx.{Ctx, Rx}
 
 class AnswerVoteOrder(override val hub: Question) extends OctopusOrdering[Question] {
 
-  model.console.trace(s"AnswerVoteOrder was instantiated in $hub")
-
-  //  private implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
-
   override def order(what: List[Hub]): List[Hub] = {
     var answers = List[Answer]()
     var others = List[Hub]()
