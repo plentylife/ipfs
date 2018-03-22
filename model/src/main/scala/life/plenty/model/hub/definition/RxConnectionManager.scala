@@ -10,6 +10,8 @@ import rx.async._
 import rx.async.Platform._
 
 import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Future, Promise}
 
 trait RxConnectionManager {
   self: Hub ⇒
@@ -21,8 +23,17 @@ trait RxConnectionManager {
   private lazy val connectionFilters = getAllModules({ case m: RxConnectionFilters[_] ⇒ m })
 
   private var onConnectionsRequest: List[() ⇒ Unit] = List()
-
   def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]): Unit = onConnectionsRequest :::= fList
+
+
+  val loadComplete = Promise[Unit]()
+  /** triggers load */
+  def loadCompleted: Future[Unit] = {
+    onConnectionsRequest.foreach(f ⇒ f())
+    loadComplete.future
+  }
+
+
 
   onConnectionAddedOperation(connection ⇒ synchronized {
     /*filtering block*/
@@ -43,6 +54,14 @@ trait RxConnectionManager {
       })
     }
 
+    def onLoaded[T](whenLoadedDo: ⇒ Rx[T], default: T) = {
+
+      loadCompleted.map { _ ⇒ true} .toRx(true) flatMap {isLoaded ⇒ if (isLoaded) {
+        whenLoadedDo
+      } else Rx {default}
+      }
+    }
+
     def cons(implicit ctx: Ctx.Owner): RxConsList = {
       onConnectionsRequest.foreach(f ⇒ f())
       toRxConsList(_connectionsRx)
@@ -52,7 +71,7 @@ trait RxConnectionManager {
     def get[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[Option[T]] = {
       onConnectionsRequest.foreach(f ⇒ f())
 
-      Rx {
+      def whenLoaded = {
         val rightRxIndex = _connections.map { list ⇒
           val processed = list.map(f.isDefinedAt)
           processed.indexOf(true) // if None, won't be found
@@ -65,8 +84,10 @@ trait RxConnectionManager {
         }
 
         res.foreach(r ⇒ if (r.nonEmpty) rightRxIndex.kill())
-        res()
+        res
       }
+
+      onLoaded(whenLoaded, None)
     }
 
     def getAll[T](f: PartialFunction[DataHub[_], T])(implicit ctx: Ctx.Owner): Rx[List[T]] = {

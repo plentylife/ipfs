@@ -7,7 +7,7 @@ import life.plenty.model.connection.{DataHub, Id}
 import rx.{Rx, Var}
 import model._
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 trait ConnectionManager[CT] {self: Hub ⇒
@@ -18,6 +18,7 @@ trait ConnectionManager[CT] {self: Hub ⇒
     onConnectionAddedOperations +:= op
   }
 
+  // this must remain lazy for the database use
   def connections: Rx[List[DataHub[_]]] = _connections
 
   object sc {

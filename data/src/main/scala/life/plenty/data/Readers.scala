@@ -76,22 +76,16 @@ object DbReader {
       case e: DocDoesNotExist ⇒ console.error(s"Failed loading on ID `$id`"); throw e
     }
 
-    className flatMap (cName ⇒ {
+    className map (cName ⇒ {
       console.println(s"DbReader is constructing $cName $id")
-      val potentials: Stream[Future[Hub]] = availableClasses.flatMap(f ⇒ {
+      val potentials: Stream[Hub] = availableClasses.flatMap(f ⇒ {
         try {
           val h = f(cName)
-          val res: Option[Future[Hub]] = h map { o ⇒
-            // fixme use setID
-            val idCon = Id(id)
-            idCon.tmpMarker = DbMarker
-
-            // have to wait on id!!
-            o.addConnection(idCon) map {_ ⇒
-              val exH = Cache.put(o) // this gives back the existing
-              data.getWriterModule(exH).setDbDoc(dbDoc)
-              exH
-            }
+          val res: Option[Hub] = h map { o ⇒
+            o.setId(id)
+            val exH = Cache.put(o) // this gives back the existing
+            data.getWriterModule(exH).setDbDoc(dbDoc)
+            exH
           }
           res
         } catch {
@@ -103,7 +97,7 @@ object DbReader {
       potentials.headOption match {
         case None ⇒ console.error(s"Could not find loader with class ${cName}")
           throw new MissingDbClassLoader(cName)
-        case Some(f) ⇒ f
+        case Some(h) ⇒ h
       }
 
     })
@@ -180,9 +174,10 @@ class DbDataHubReaderModule(override val hub: DataHub[_]) extends DbReaderModule
   override def onConnectionsRequest(): Unit = Unit
 
   // load once there is an id
-  hub.onSetId {id ⇒
-    load()
-  }
+  // fixme. was this necessary?
+//  hub.onSetId {id ⇒
+//    load()
+//  }
 }
 
 class DbReaderModule(override val hub: Hub) extends ActionOnConnectionsRequest with
@@ -194,10 +189,14 @@ ActionOnFinishDataLoad {
 //  private lazy val allCons = hub.connections.map(_.map(_.id))
   lazy val dbDoc = data.getWriterModule(hub).dbDoc // get should never trip
 
+  val idP = Promise[Unit]()
+  hub.onSetId(_ ⇒ idP.success())
+
   override def onConnectionsRequest(): Unit = {
 //      console.println(s"Reader got request to load ${hub.getClass} with ${hub.sc.all}")
       // so since this will have to happen before the writer gets to us, we just skip the exists check
-      load()
+
+      idP.future foreach {_ ⇒ load()}
   }
 
   protected def load() = synchronized {
@@ -208,7 +207,7 @@ ActionOnFinishDataLoad {
       console.println(s"Reader loading ${hub} ${hub.id}")
 
       dbDoc.getData map { data ⇒
-        val existingIds = hub.connections.now.map(_.id)
+        val existingIds = hub.sc.all.map(_.id)
         // the reverse is important -- making sure that we are loading the oldest first
         val unloadedIds = data.connections.toList.filterNot(existingIds.contains).reverse
         connectionsLeftToLoad() = unloadedIds.size
@@ -222,6 +221,11 @@ ActionOnFinishDataLoad {
         case e: DocDoesNotExist ⇒ connectionsLeftToLoad() = 0
       }
 
+      onFinishLoad {() ⇒
+//        hub.loadedRx.update(true)
+        hub.loadComplete.success()
+      }
+
       dbDoc.onRemoteConnectionChange(loadConnection)
     }
 
@@ -231,7 +235,9 @@ ActionOnFinishDataLoad {
     console.trace(s"Reader trying to load connection for ${hub} ${hub.id} with id ${id}")
     val p = Promise[Unit]()
     // playing with setTimeout to allow for ui rendering
+    // fixme remove
     js.timers.setTimeout(10) {
+
       DataHubReader.read(id) flatMap { c ⇒
         console.trace(s"Reader loaded connection for ${hub} ${c.id} -- $id")
         val f = hub.addConnection(c)
@@ -243,6 +249,7 @@ ActionOnFinishDataLoad {
           console.error(e)
           e.printStackTrace()
       } onComplete(_ ⇒ p.success())
+
     }
 
     p.future
@@ -251,7 +258,7 @@ ActionOnFinishDataLoad {
   override def onFinishLoad(f: () ⇒ Unit): Unit = {
     val finishRx: Rx[Boolean] = Rx {
       console.trace(s"finish load waiting in $hub ${hub.id}")
-      load()
+      load() // fixme what is the point of this load?
       if (connectionsLeftToLoad() == 0) {
         console.trace(s"finish load executing in $hub ${hub.id}")
         f(); true

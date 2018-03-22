@@ -14,7 +14,7 @@ import life.plenty.ui.filters.{BasicSpaceDisplayOrder, FundsCheckErrorCatcher, R
 
 package object ui {
 
-  val console = new Console(true, true, _prefix = "UI")
+  val console = new Console(false, true, _prefix = "UI")
   val thanks = "\u20B8"
 
   def initialize(): Unit = {

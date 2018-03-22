@@ -70,7 +70,9 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
         model.console.trace(s"Funds check on vote $connection")
         Try {
           // the dataloaders must be present
-            v.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
+            v.loadCompleted foreach (_ ⇒ {
+              println(s"VOTE CONS ${v.sc.all} ${v.rx.cons}")
+              println(s"PARENT ${v.parentAnswer}")
               v.parentAnswer.now match {
                 case Some(c) ⇒ val w = new Wallet(hub, c)
                   if (w.getUsableVotes.now - Math.abs(v.getAmount.now.get) >= 0) {
