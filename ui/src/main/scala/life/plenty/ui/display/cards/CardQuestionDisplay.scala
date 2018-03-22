@@ -71,7 +71,7 @@ class CardQuestionDisplay(hub: Question) extends CardQuestionDisplayBase(hub) {
 class CardSignupQuestionDisplay(hub: SignupQuestion) extends CardQuestionDisplayBase(hub) {
   @dom
   private def users: Binding[Node] = {
-    val users = hub.getFeed({case c: Contribution ⇒ c}).depMap(c ⇒ c.creator)
+    val users = hub.getFeed({case c: Contribution ⇒ c}).depMap(c ⇒ c.creatorFeed)
 
     println("Users")
     hub.getFeed({case c: Contribution ⇒ c}).dump("U:")

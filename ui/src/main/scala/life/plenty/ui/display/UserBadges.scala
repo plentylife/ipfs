@@ -4,6 +4,7 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub.User
 import life.plenty.model.hub.definition.Hub
+import life.plenty.ui.display.utils.DomValStream
 import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule, jdenticon}
 import org.scalajs.dom.Node
 import life.plenty.ui.display.utils.Helpers._
@@ -20,7 +21,7 @@ object FullUserBadge extends SimpleDisplayModule[User]{
   override def  html(hub: User): Binding[Node] = {
     <div class="user-badge">
       {Identicon.generate(hub).bind}
-      {hub.getName.dom.bind}
+      {new DomValStream(hub.name).dom.bind}
       <script>
         jdenticon.update('.{Identicon.iconId(hub)}')
       </script>

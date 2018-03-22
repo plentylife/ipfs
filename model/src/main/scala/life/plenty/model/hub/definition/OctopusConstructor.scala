@@ -50,10 +50,13 @@ trait OctopusConstructor {
     cid + hid
   }
 
+  @deprecated
   lazy val getCreationTime: Rx[Option[Long]] = rx.get({ case CreationTime(t) ⇒ t })
 
+  @deprecated
   lazy val getCreator: Rx[Option[User]] = rx.get({ case Creator(t) ⇒ t })
-  lazy val creator = getInsertFeed.collect({ case Creator(t) ⇒ t })
+  lazy val creatorFeed = getInsertFeed.collect({ case Creator(t) ⇒ t })
+  lazy val creator = lc.ex({ case Creator(t) ⇒ t })
 
   private var _required: Set[() ⇒ Rx[Option[_]]] = Set(() ⇒ getCreator)
 

@@ -78,7 +78,7 @@ object GraphOp {
       val branches: Observable[Observable[GraphOp[M]]] = feed.map {
         case op@Insert(elem) ⇒
           val depObs = mapFunction(op.value)
-          depObs.lastF.flatMap(dep ⇒ {
+          val resObs = depObs.flatMap(dep ⇒ {
             // inserting the new value, and removing the old
             val in = Insert(dep)
             var obsList = List[GraphOp[M]](in)
@@ -87,6 +87,9 @@ object GraphOp {
             lastInserts += op.value → dep
             Observable.fromIterable(obsList)
           })
+          resObs.dump("DML RES").subscribe()
+          depObs.dump("DML DEP").subscribe()
+          resObs
         case op@Remove(elem) ⇒ lastInserts.get(elem).map(lastElem ⇒ {
           // get the last element of the scanned feed (all the elements depending on the Insert that pushed this elem
           val feed = Observable.coeval(Coeval(Remove(lastElem)))
@@ -99,8 +102,7 @@ object GraphOp {
 
       val single: Observable[GraphOp[M]] = branches.flatten
       println("DEP MAP LAST")
-      println(branches)
-      single.dump("DML").subscribe()
+      single.dump("DML SINGLE").subscribe()
       println("--")
 
       single
@@ -116,10 +118,13 @@ object GraphOp {
     })
 
     def scanToList: Observable[List[T]] = feed.scan(List.empty[T]){ (list, op) ⇒
-      op match {
+      val res = op match {
         case Remove(what) ⇒ list diff List(what)
         case Insert(what) ⇒ what :: list
       }
+
+      println(s"SCANED TO LIST $res")
+      res
     }
   }
 
@@ -149,16 +154,21 @@ case class Remove[+T](value: T) extends GraphOp[T]
 
 trait ConnectionFeed {
   self: ConnectionManager ⇒
-  val (feedSub, feed) = Observable.multicast[GraphOp[DataHub[_]]](MulticastStrategy.publish)
+  lazy val (feedSub, feed) = Observable.multicast[GraphOp[DataHub[_]]](MulticastStrategy.publish)
+
+  var dumped = false
 
   def onInsert(con: DataHub[_]): Unit = {
     if (con.isActive) {
       val in = Insert(con)
-      feedSub.onNext(in)
+      val ack = feedSub.onNext(in)
+      println(s"INSERTED $this --> $con [$ack]")
+      println(feed, feedSub)
     }
 
     con.loadCompleted foreach {_ ⇒
       con.isRemoved.foreach { r ⇒
+        println(s"CHECKING IF SHOULD REMOVE $con")
         val op = if (r) {
           Remove(con)
         } else {
@@ -168,11 +178,16 @@ trait ConnectionFeed {
       }
     }
 
+    if (!dumped) {
+      dumped = true
+      feed.dump(s"CONS IN ${this}").subscribe()
+    }
   }
 
   def getFeed: Observable[GraphOp[DataHub[_]]] = {
     self.onConnectionsRequest.foreach(f ⇒ f())
     val existing: List[GraphOp[DataHub[_]]] = connections map { h ⇒ Insert(h: DataHub[_]) }
+    println(s"EXISTING TO FEED $existing")
     val existingObs: Observable[GraphOp[DataHub[_]]] = Observable.fromIterable(existing)
     existingObs ++ feed
   }
@@ -183,6 +198,9 @@ trait ConnectionFeed {
 
   def getInsertFeed: Observable[DataHub[_]] = {
     getFeed.collect({ case Insert(h) ⇒ h })
+  }
+  def getInsertFeed[T](extractor: PartialFunction[DataHub[_], T]): Observable[T]  = {
+    getInsertFeed.collect(extractor)
   }
 
   val isRemoved = feed.collect {

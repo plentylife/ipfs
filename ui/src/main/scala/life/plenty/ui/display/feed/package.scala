@@ -36,7 +36,7 @@ package object feed {
       val parent = DeprecatedGraphExtractors.getParent(hub)
 
       <div class={"feed " + cssClass} id={hub.id}>
-        {SimpleDisplayModule.html(FullUserBadge, hub.creator).bind} {actionHtml(action(hub)).bind}
+        {SimpleDisplayModule.html(FullUserBadge, hub.creatorFeed).bind} {actionHtml(action(hub)).bind}
           <p class="action-target-text">{new DomValStream(actionTarget(hub)).dom.bind}</p>
       </div>
     }

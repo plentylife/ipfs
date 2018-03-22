@@ -7,6 +7,7 @@ import rx.Rx
 import scala.collection.immutable
 import scala.concurrent.Future
 import life.plenty.model.hub.definition.GraphOp._
+import monix.reactive.Observable
 trait Answer extends Space with WithParent[Space] {
   addToRequired(getBody)
 

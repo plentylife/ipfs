@@ -15,7 +15,7 @@ package object model {
   type RxConsList = Rx[List[DataHub[_]]]
 
 
-  val console = new Console(false, true, "Model")
+  val console = new Console(true, true, "Model")
   private var _hasher: Hash = _
   private var _defaultCreator: Option[User] = None
 

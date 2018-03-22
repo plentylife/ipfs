@@ -2,8 +2,9 @@ package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{DbReader, DbReaderModule, ShareDB, Main ⇒ dataMain}
+import life.plenty.model.connection.Child
 import life.plenty.model.hub._
-import life.plenty.model.hub.definition.Hub
+import life.plenty.model.hub.definition.{Hub, Insert, Remove}
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
 import life.plenty.ui.display.actions.CreateSpace
 import life.plenty.ui.display.{Help, LoadIndicator, Login, Modal}
@@ -122,4 +123,7 @@ object Main {
 
   @JSExport
   def load(id: String) = DbReader.read(id)
+
+  @JSExport
+  def insert(id: String) = data.Cache.getOctopus(id).get.onInsert(Child(null))
 }

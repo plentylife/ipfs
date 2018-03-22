@@ -7,6 +7,7 @@ import life.plenty.model.hub.definition.Module
 
 class ActionUpDownVote(override val hub: Answer) extends Module[Answer] {
   def up() = {
+    println(s"added new vote to $hub")
     val v = new Vote
     v.asNew(Amount(1), Parent(hub))
   }

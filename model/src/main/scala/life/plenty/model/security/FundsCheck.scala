@@ -71,7 +71,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
         Try {
           // the dataloaders must be present
             v.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
-              v.parentAnswer.now match {
+              v.parentAnswerRx.now match {
                 case Some(c) ⇒ val w = new Wallet(hub, c)
                   if (w.getUsableVotes.now - Math.abs(v.getAmountRx.now.get) >= 0) {
                     promise.success()

@@ -43,7 +43,7 @@ class SignupQuestionSpaceLayout(override val hub: Space) extends TopSpaceLayout(
   lazy val proposalsWithBody: Observable[GraphOp[(Proposal, Boolean)]] =
     new GraphOpsStream(allProposals).depMap(p ⇒ p.body.map(p → _.isEmpty))
   lazy val signers = proposalsWithBody.depMap({
-    case (p, isEmpty) ⇒ if (isEmpty) p.creator else Observable.empty[User]
+    case (p, isEmpty) ⇒ if (isEmpty) p.creatorFeed else Observable.empty[User]
   })
 
   /** OLD */

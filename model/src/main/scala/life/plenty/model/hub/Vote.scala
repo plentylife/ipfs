@@ -3,23 +3,25 @@ package life.plenty.model.hub
 import life.plenty.model
 import life.plenty.model.connection.{Child, Parent, RootParent}
 import life.plenty.model.utils._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class Vote() extends WithAmount {
 
   @deprecated
   lazy val sizeAndDirection = getAmountRx
-  lazy val parentAnswer = rx.get({ case Parent(a: Answer) ⇒ a })
-
-  lazy val amount =
+  @deprecated
+  lazy val parentAnswerRx = rx.get({ case Parent(a: Answer) ⇒ a })
+  lazy val parentAnswer = lc.ex({ case Parent(a: Answer) ⇒ a })
 
   addToRequired(sizeAndDirection)
-  addToRequired(parentAnswer)
+  addToRequired(parentAnswerRx)
 
   onNew {
-    getCreator.addConnection(Child(this), () ⇒ {
-      parentAnswer.addConnection(Child(this))
-      model.console.trace(s"New vote added as a child to ${parentAnswer.now} | ${parentAnswer.now.get.sc.lazyAll}")
-    })
+    // should not be empty
+    creator.get.addConnection(Child(this)) foreach {_ ⇒
+      parentAnswer.get.addConnection(Child(this))
+      model.console.trace(s"New vote added as a child to ${parentAnswer} | ${parentAnswer.get.lc.lazyAll}")
+    }
 
   }
 }

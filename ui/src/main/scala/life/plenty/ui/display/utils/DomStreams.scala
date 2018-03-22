@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.DataHub
 import life.plenty.model.hub.definition.{GraphOp, Hub, Insert, Remove}
-import life.plenty.ui.model.DisplayModel
+import life.plenty.ui.model.{DisplayModel, SimpleDisplayModule}
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive.Observable
 import org.scalajs.dom.Node
@@ -41,6 +41,12 @@ class DomValStream[T](val stream: Observable[T]) {
 }
 
 object DomValStream {
+  class DisplayDom[T](stream: Observable[T], module: SimpleDisplayModule[T]) {
+    def dom: Binding[Node] = {
+      new BindingDom(new DomValStream(stream map {module.html})).dom
+    }
+  }
+
   implicit class ImplicitStringDom[T <% String](dv: Observable[T]) {
     def dom: Binding[String] = {
       new StringDom(new DomValStream(dv)).dom

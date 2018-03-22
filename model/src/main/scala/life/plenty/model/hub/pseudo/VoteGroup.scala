@@ -13,7 +13,7 @@ case class VoteGroup(created: Long, answer: Answer, votes: List[Vote])
 object VoteGroup {
   def groupByAnswer(list: List[Hub])(implicit ctx: Ctx.Owner): Rx[List[VoteGroup]] = Rx {
     val withParent = list collect {case v: Vote ⇒ v} map {h ⇒
-      val p = h.parentAnswer.filter(_.nonEmpty)
+      val p = h.parentAnswerRx.filter(_.nonEmpty)
       h → p()
     }
     // so we have to group by answer and creator
@@ -38,7 +38,7 @@ object VoteGroup {
       t()
     } collect {case Some(t) ⇒ t}
     votes.headOption flatMap  {
-          _.parentAnswer() map {
+          _.parentAnswerRx() map {
             p ⇒ VoteGroup(created.min, p, votes)
           }
     }

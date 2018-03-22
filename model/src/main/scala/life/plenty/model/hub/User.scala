@@ -32,8 +32,12 @@ trait User extends Hub {
     throw new NotImplementedError(s"this method not supposed to be used for users. Connections ${_connections}")
   }
 
+  @deprecated
   def getName: Rx[Option[String]] = rx.get({ case Name(n: String) ⇒ n })
+  lazy val name = getInsertFeed({ case Name(n: String) ⇒ n })
+  @deprecated
   def getEmail: Rx[Option[String]] = rx.get({ case Email(n: String) ⇒ n })
+  lazy val email = getInsertFeed({ case Email(n: String) ⇒ n })
 
   def getNameOrEmpty: Rx[String] = getName.map(_.getOrElse(""))
 

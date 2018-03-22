@@ -2,10 +2,12 @@ package life.plenty.model.hub
 
 import life.plenty.model
 import life.plenty.model.connection.{Amount, Child, Parent, RootParent}
-import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.DeprecatedGraphExtractors
+import life.plenty.model.hub.definition.{Hub, Insert}
+import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.DeprecatedGraphExtractors
 import rx.Rx
 import life.plenty.model.hub.definition.GraphOp._
+import monix.reactive.Observable
 
 trait WithParent[T <: Hub] extends WithOptParent[T] {
   addToRequired(getParent)
@@ -35,7 +37,9 @@ trait WithAmount extends Hub {
   @deprecated
   def getAmountOrZeroRx: Rx[Int] = getAmountRx.map(_.getOrElse(0))
 
-  def getAmountOrZero = getFeed({case Amount(a) ⇒ a}).map(op ⇒ numericOp(op)).sumF
+  //Observable.fromIterable(List(Insert(0)))
+  def getAmountOrZero = (   Observable.fromIterable(List(Insert(0))) ++ getFeed({case Amount(a) ⇒ a}))
+    .map(op ⇒ numericOp(op)).scan(0)(_ + _)
 //  def getAmountFeed = getFeed({case Amount(a) ⇒ a})
 }
 

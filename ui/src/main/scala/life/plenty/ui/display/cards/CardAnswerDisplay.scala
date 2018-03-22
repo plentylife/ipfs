@@ -1,18 +1,21 @@
 package life.plenty.ui.display.cards
 
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.hub.{Answer, Contribution, Proposal}
+import life.plenty.model.connection.Child
+import life.plenty.model.hub.{Answer, Contribution, Proposal, Vote}
 import life.plenty.model.utils.DeprecatedGraphExtractors
 import life.plenty.model.utils.GraphUtils._
+import life.plenty.ui.display.FullUserBadge
 import life.plenty.ui.display.actions.{AnswerControls, CardControls}
 import life.plenty.ui.display.info.AnswerInfo
 import life.plenty.ui.display.meta.LayoutModule
-import life.plenty.ui.display.utils.CardNavigation
+import life.plenty.ui.display.utils.{CardNavigation, DomValStream}
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.ModuleOverride
 import org.scalajs.dom.Node
 import scalaz.std.list._
 import scalaz.std.option._
+import monix.execution.Scheduler.Implicits.global
 
 //{displayModules(siblingModules.withFilter(_.isInstanceOf[SpaceActionsBar]), "card-space-menu").bind}
 
@@ -20,6 +23,11 @@ class CardAnswerDisplay(override val hub: Answer) extends LayoutModule[Answer] w
   override def doDisplay() = true
   private val creator = new OptBindableHub(hub.getCreator, this)
   private lazy val isConfirmed: BasicBindable[Boolean] = DeprecatedGraphExtractors.markedConfirmed(hub)
+
+  hub.getFeed({case Child(v: Vote) ⇒ v}).dump("ANSWER").subscribe()
+  hub.getFeed({case Child(v: Vote) ⇒ v}).flatMap(_.value.getAmountOrZero).dump("AMOUNT").subscribe()
+  hub.voteSum.dump("SUM").subscribe()
+
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
@@ -37,8 +45,8 @@ class CardAnswerDisplay(override val hub: Answer) extends LayoutModule[Answer] w
           if (hub.isInstanceOf[Contribution]) "contribution" else ""}
           </h5>
           <div class="card-subtitle">
-            {creator.dom.bind}
-            <span>{hub.votesRx.dom.bind} votes</span>
+            {new DomValStream(hub.creatorFeed map {FullUserBadge.html}).dom.bind}
+            <span>{new DomValStream(hub.voteSum).dom.bind} votes</span>
             {displayModules(siblingModules.withFilter(_.isInstanceOf[AnswerInfo]), "modules").bind}
           </div>
         </span>
