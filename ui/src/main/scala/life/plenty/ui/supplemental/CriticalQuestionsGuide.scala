@@ -6,9 +6,11 @@ import life.plenty.model.RxOpt
 import life.plenty.model.connection.Critical
 import life.plenty.model.hub.Question
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils
+import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui
-import life.plenty.ui.display.{CardQuestionDisplayBase, Modal}
+import life.plenty.ui.display.Modal
+import life.plenty.ui.display.cards.CardQuestionDisplayBase
 import life.plenty.ui.display.utils.Helpers.ListBindable
 import life.plenty.ui.model.{Router, UiContext}
 import org.scalajs.dom.{Event, Node}

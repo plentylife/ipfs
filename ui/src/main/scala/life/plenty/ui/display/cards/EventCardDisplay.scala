@@ -1,15 +1,15 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.cards
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub.{Event, User}
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
 import life.plenty.ui.display.meta.{ChildDisplay, NoDisplay}
-import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model._
+import life.plenty.ui.model.{DisplayModule, _}
 import org.scalajs.dom.raw.{MouseEvent, Node}
 import rx.Rx
 
+@deprecated("don't use for now. might come back to life")
 class EventCardDisplay(override val hub: Event) extends DisplayModule[Event] {
   override def update(): Unit = Unit
 

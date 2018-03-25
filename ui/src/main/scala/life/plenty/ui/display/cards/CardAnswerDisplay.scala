@@ -1,8 +1,8 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.cards
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub.{Answer, Contribution, Proposal}
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphExtractors
 import life.plenty.model.utils.GraphUtils._
 import life.plenty.ui.display.actions.{AnswerControls, CardControls}
 import life.plenty.ui.display.info.AnswerInfo
@@ -11,7 +11,6 @@ import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.ModuleOverride
 import org.scalajs.dom.Node
-
 import scalaz.std.list._
 import scalaz.std.option._
 

@@ -1,4 +1,4 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.unused
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
@@ -6,12 +6,12 @@ import life.plenty.model.actions.ActionAddDescription
 import life.plenty.model.connection.Body
 import life.plenty.model.hub.Space
 import life.plenty.ui.display.utils.Helpers
-import life.plenty.ui.model.DisplayModule
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.{DisplayModel, DisplayModule, UiContext}
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.{Event, Node}
 import rx.Obs
 
+@deprecated("maybe will be used again one day")
 class DescriptionDisplay(override val hub: Space) extends DisplayModule[Space] {
   private var obs: Obs = null
 

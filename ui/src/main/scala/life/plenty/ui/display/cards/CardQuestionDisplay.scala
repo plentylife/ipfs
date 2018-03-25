@@ -1,15 +1,12 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.cards
 
-import com.thoughtworks.binding.Binding.BindingSeq
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub.{Answer, Question, SignupQuestion, User}
-import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphExtractors
 import life.plenty.model.utils.GraphUtils._
-import life.plenty.ui.display.actions.SpaceActionsBar
+import life.plenty.ui.display.InlineQuestionDisplay
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
-import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model._
 import org.scalajs.dom.{Event, Node}

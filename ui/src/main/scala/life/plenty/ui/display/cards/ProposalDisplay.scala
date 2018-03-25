@@ -1,22 +1,21 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.cards
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionUpDownVote
 import life.plenty.model.hub._
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.actions.{ChangeParent, ConfirmActionDisplay, EditSpace}
-import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model.{DisplayModel, UiContext}
+import life.plenty.ui.model.{DisplayModel, DisplayModule}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
 import rx.Obs
-
 import scalaz.std.list._
 import scalaz.std.option._
 //import life.plenty.ui.model.DisplayModel.intToStr
 
+@deprecated
 class ProposalDisplay(override val hub: Proposal) extends DisplayModule[Proposal] {
   private var obs: Obs = null
 

@@ -1,4 +1,4 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.cards
 
 import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
@@ -6,9 +6,8 @@ import life.plenty.model.actions.ActionGiveThanks
 import life.plenty.model.hub.{Contribution, User}
 import life.plenty.ui
 import life.plenty.ui.display.actions.{ChangeParent, EditSpace}
-import life.plenty.ui.model.DisplayModule
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model.UiContext
+import life.plenty.ui.model.{DisplayModule, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.html.Input
 import org.scalajs.dom.raw.Node
@@ -16,6 +15,7 @@ import rx.{Obs, Rx}
 
 import scala.util.{Failure, Success, Try}
 
+@deprecated
 class ContributionDisplay(override val hub: Contribution) extends DisplayModule[Contribution] {
   //  protected val body = Var[String](withinOctopus.body())
   private val tipsCollected = Var(0)

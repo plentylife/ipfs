@@ -1,22 +1,18 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.cards
 
-import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.DbReaderModule
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.{Contribution, Members, Space, User}
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui
-import life.plenty.ui.display.actions.AnswerControls
-import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
-import life.plenty.ui.model.DisplayModule
-import life.plenty.ui.display.utils.Helpers.{BasicBindable, BindableModule, OptBindableProperty}
-import life.plenty.ui.model.{ComplexModuleOverride, DisplayModel, ModuleOverride, UiContext}
+import life.plenty.ui.display.utils.Helpers.{BasicBindable, BindableModule, _}
+import life.plenty.ui.display.{FullUserBadge, Help}
+import life.plenty.ui.model.{DisplayModule, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
-import rx.{Ctx, Obs, Rx, Var ⇒ rxVar}
-import life.plenty.ui.display.utils.Helpers._
+import rx.{Ctx, Rx, Var ⇒ rxVar}
 import scalaz.std.list._
 
 class MembersCardDisplay(override val hub: Members) extends DisplayModule[Members] with CardNavigation {

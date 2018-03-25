@@ -13,7 +13,7 @@ import life.plenty.ui.display.actions.OpenButton
 import life.plenty.ui.display.meta.LayoutModule
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.display.{CardQuestionDisplayBase, FullUserBadge, InlineQuestionDisplay}
+import life.plenty.ui.display.{FullUserBadge, InlineQuestionDisplay}
 import life.plenty.ui.model._
 import org.scalajs.dom.{Event, Node}
 import rx.async._
