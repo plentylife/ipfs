@@ -62,7 +62,7 @@ object DbReader {
   def read(id: String): Future[Hub] = {
     data.console.trace(s"Reading hub with id `${id}`")
     // from cache
-    val fromCache = HubCache.getOctopus(id)
+    val fromCache = HubCache.getHub(id)
     if (fromCache.nonEmpty) {
       data.console.println(s"Read ${id} from cache")
       return Future(fromCache.get)

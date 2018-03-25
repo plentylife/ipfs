@@ -19,7 +19,7 @@ class DbInsertConnectionOp(h: Hub) extends DbInsertOp {
 object DbWriter {
   def writeInitial(o: Hub, doc: Option[DocWrapper] = None): Future[Unit] = synchronized {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
-    if (HubCache.getOctopus(o.id).nonEmpty) {
+    if (HubCache.getHub(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
       return Future{}
     } else {

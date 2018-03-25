@@ -25,7 +25,7 @@ object Main {
     ModuleRegistry add { case o: DataHub[_] ⇒ new DbDataHubReaderModule(o) }
 
     // just to add the user into the cache
-    ModuleRegistry add { case o: SecureUser ⇒ new SecureUserDbReaderModule(o) }
+//    ModuleRegistry add { case o: SecureUser ⇒ new SecureUserDbReaderModule(o) }
     ModuleRegistry add { case o: SecureUser ⇒ new SecureUserDbWriterModule(o) }
 
 //     fixme. as soon as datahubs become more sophisticated

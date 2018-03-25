@@ -17,7 +17,7 @@ object HubCache {
 
   /** @return the existing hub, or the new hub*/
   def put(hub: Hub): Hub = synchronized {
-    val existing = getOctopus(hub.id)
+    val existing = getHub(hub.id)
     if (existing.isEmpty) {
       hubCache.put(hub.id, hub)
       if (lastAddedRx.now != hub) lastAddedRx() = hub
@@ -41,7 +41,7 @@ object HubCache {
 
   def getDataHub(id: String) = synchronized {dataHubCache.get(id)}
 
-  def getOctopus(id: String): Option[Hub] = synchronized {
+  def getHub(id: String): Option[Hub] = synchronized {
     hubCache.get(id)
   }
 

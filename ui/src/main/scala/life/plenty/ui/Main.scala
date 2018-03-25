@@ -99,7 +99,7 @@ object Main {
 
   @JSExport
   def logConnections(of: String) = {
-    val h = data.HubCache.getOctopus(of) orElse data.HubCache.getDataHub(of)
+    val h = data.HubCache.getHub(of) orElse data.HubCache.getDataHub(of)
     println(h.get.rx.cons.now.mkString("\n"))
     println("raw")
     println(s"${

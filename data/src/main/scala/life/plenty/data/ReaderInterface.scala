@@ -23,8 +23,8 @@ object ReaderInterface extends ReaderSpec {
     def get = loadIndicator
   }
 
-  def loadConnections(hub: Hub): Unit = {
-    val dbDoc = DocCache.get(hub)
+  def loadConnections(hub: Hub): Unit = hub.hasSetId foreach {_ ⇒
+  val dbDoc = DocCache.get(hub)
 
     dbDoc.subscribe
     console.println(s"Reader loading ${hub} ${hub.id}")
@@ -39,7 +39,7 @@ object ReaderInterface extends ReaderSpec {
       LoadIndicator.notify(unloadedIds.size)
       var leftToLoad = unloadedIds.size
       unloadedIds map loadConnection foreach {_ foreach {
-        c ⇒ console.trace(s"Reader trying to loaded connection for ${hub} ${hub.id} -- $c")
+        c ⇒ console.trace(s"Reader loaded connection for ${hub} ${hub.id} -- $c")
           LoadIndicator.notify(-1); leftToLoad -= 1
           hub.addConnection(c)
           if (leftToLoad <= 0) hub.loadHasComplete()
