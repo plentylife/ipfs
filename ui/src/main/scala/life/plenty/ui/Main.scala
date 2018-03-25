@@ -54,7 +54,6 @@ object Main {
       Router.router.state.bind.hubId match {
         case Some(id) ⇒
           println(s"UI loading ${id}")
-          LoadIndicator.forceOpen()
           DbReader.read(id) foreach { hub ⇒
             println(s"UI loaded $id as $hub")
             UiContext.setPointer(hub)
