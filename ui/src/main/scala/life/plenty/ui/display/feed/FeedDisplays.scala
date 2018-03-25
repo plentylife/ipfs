@@ -6,7 +6,7 @@ import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.ui
 import life.plenty.ui.display.FullUserBadge
-import life.plenty.ui.display.utils.CardNavigation
+import life.plenty.ui.display.utils.{CardNavigation, FutureList}
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule}
 import org.scalajs.dom.Node
@@ -57,7 +57,7 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
   override def html(hub: Transaction): Binding[Node] = {
     println(s"DISPLAYING ${this}")
 
-    val amount = new BindableProperty(hub.getAmountOrZero)(a ⇒ a + ui.thanks)
+    val amount = new BindableProperty(hub.getAmountOrZeroRx)(a ⇒ a + ui.thanks)
 
     <div class={"feed " + cssClass} id={hub.id}>
       {SimpleDisplayModule.html(FullUserBadge, hub.getFrom).bind} {actionHtml(action).bind}
@@ -73,13 +73,13 @@ trait FeedVoteGroupDisplayImpl {self: FeedDisplay[VoteGroup] ⇒
   override def html(what: VoteGroup): Binding[Node] = {
     implicit val ctx = Ctx.Owner.Unsafe
     val uv = VoteGroup.countByUser(what.votes)
-    val uvb = new ListBindable(uv map {_.toList})
+    val uvb = new FutureList(uv)
 
     <div class="feed vote-group">
       <p class="vote-group-title">Proposal <span class="proposal-body">{what.answer.getBody.dom.bind}</span> received
         votes</p>
       <p class="vote-group-body">
-        {for(uve <- uvb()) yield voteEntry(uve._1, uve._2).bind}
+        {for(uve <- uvb.v) yield voteEntry(uve._1, uve._2).bind}
       </p>
     </div>
   }

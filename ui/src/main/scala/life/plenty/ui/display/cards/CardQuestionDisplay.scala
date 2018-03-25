@@ -2,7 +2,7 @@ package life.plenty.ui.display.cards
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub.{Answer, Question, SignupQuestion, User}
-import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphExtractorsDEP
 import life.plenty.model.utils.GraphUtils._
 import life.plenty.ui.display.InlineQuestionDisplay
 import life.plenty.ui.display.meta.LayoutModule
@@ -19,7 +19,7 @@ object CardQuestionDisplayBase {
   @dom
   def html(hub: Question, body: List[Binding[Node]], onclick: (Event) ⇒ Unit): Binding[Node] = {
     implicit val ctx = hub.ctx
-    val isConfirmed: BasicBindable[Boolean] = GraphExtractors.markedConfirmed(hub)
+    val isConfirmed: BasicBindable[Boolean] = GraphExtractorsDEP.markedConfirmed(hub)
     val confirmedCss = if (isConfirmed().bind) " confirmed " else ""
 
     <div class={"card d-inline-flex flex-column question " + confirmedCss} id={hub.id}>
@@ -47,7 +47,7 @@ object CardQuestionDisplayBase {
 abstract class CardQuestionDisplayBase(override val hub: Question) extends LayoutModule[Question] with CardNavigation {
   override def doDisplay() = true
 
-  private lazy val isConfirmed: BasicBindable[Boolean] = GraphExtractors.markedConfirmed(hub)
+  private lazy val isConfirmed: BasicBindable[Boolean] = GraphExtractorsDEP.markedConfirmed(hub)
 
   @dom
   override protected def generateHtml(): Binding[Node] = {

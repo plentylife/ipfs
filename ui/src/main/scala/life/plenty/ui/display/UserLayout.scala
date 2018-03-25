@@ -6,7 +6,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Parent
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.{GraphExtractors, GraphUtils}
+import life.plenty.model.utils.{GraphExtractorsDEP, GraphUtils}
 import life.plenty.ui
 import life.plenty.ui.display.feed.SpaceFeedDisplay
 import life.plenty.ui.display.utils.DomRenderListSingleModule
@@ -57,7 +57,7 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
     <div class={"top-space-layout user-feed"}>
       <div class="layout-header">
         <h3 class={titleClasses}>
-          {GraphExtractors.getName(hub).dom.bind}
+          {GraphExtractorsDEP.getName(hub).dom.bind}
         </h3>
       </div>
 

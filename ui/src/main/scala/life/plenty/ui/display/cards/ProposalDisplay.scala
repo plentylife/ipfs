@@ -4,7 +4,7 @@ import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionUpDownVote
 import life.plenty.model.hub._
-import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphExtractorsDEP
 import life.plenty.ui.display.actions.{ChangeParent, ConfirmActionDisplay, EditSpace}
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{DisplayModel, DisplayModule}
@@ -30,7 +30,7 @@ class ProposalDisplay(override val hub: Proposal) extends DisplayModule[Proposal
     .getTopModule({ case
     m: ConfirmActionDisplay ⇒ m
   }), this)
-  private lazy val isConfirmed = GraphExtractors.markedConfirmed(hub): BasicBindable[Boolean]
+  private lazy val isConfirmed = GraphExtractorsDEP.markedConfirmed(hub): BasicBindable[Boolean]
 
   private lazy val creatorNameRx = hub.getCreator.map(_.map(_.getNameOrEmpty()))
 

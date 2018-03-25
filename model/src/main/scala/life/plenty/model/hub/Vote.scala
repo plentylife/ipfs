@@ -4,18 +4,22 @@ import life.plenty.model
 import life.plenty.model.connection.{Child, Parent, RootParent}
 import life.plenty.model.utils._
 
+import scala.concurrent.Future
+
 class Vote() extends WithAmount {
 
   lazy val sizeAndDirection = getAmount
-  lazy val parentAnswer = rx.get({ case Parent(a: Answer) ⇒ a })
+  @deprecated
+  lazy val parentAnswerRx = rx.get({ case Parent(a: Answer) ⇒ a })
+  lazy val parentAnswer: Future[Option[Answer]] = get({ case Parent(a: Answer) ⇒ a })
 
   addToRequired(sizeAndDirection)
-  addToRequired(parentAnswer)
+  addToRequired(parentAnswerRx)
 
   onNew {
     getCreator.addConnection(Child(this), () ⇒ {
-      parentAnswer.addConnection(Child(this))
-      model.console.trace(s"New vote added as a child to ${parentAnswer.now} | ${parentAnswer.now.get.sc.all}")
+      parentAnswerRx.addConnection(Child(this))
+      model.console.trace(s"New vote added as a child to ${parentAnswerRx.now} | ${parentAnswerRx.now.get.sc.all}")
     })
 
   }
@@ -38,7 +42,7 @@ class VoteAllowance() extends WithAmount {
 
         existing.forEach(t ⇒ {
           from.addConnection(Child(this))
-          val rp = GraphExtractors.getRootParentOrSelf(t).now
+          val rp = GraphExtractorsDEP.getRootParentOrSelf(t).now
           this.addConnection(RootParent(rp))
 
           model.console.trace(s"VoteAllowance given to user ${from.id} ${t.id} | root p ${rp}")

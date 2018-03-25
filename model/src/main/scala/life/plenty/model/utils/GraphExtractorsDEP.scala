@@ -10,7 +10,7 @@ import rx.{Ctx, Rx}
 import scala.concurrent.Future
 import scala.language.postfixOps
 
-object GraphExtractors {
+object GraphExtractorsDEP {
   def getParent(o: Hub)(implicit ctx: Ctx.Owner) = o.rx.get({ case Parent(p: Hub) ⇒ p })
 
   private def getRootParentConnection(o: Hub)(implicit ctx: Ctx.Owner) = o.rx.get({ case c@RootParent(_) ⇒ c })

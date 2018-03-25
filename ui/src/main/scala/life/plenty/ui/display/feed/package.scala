@@ -5,7 +5,7 @@ import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.model.utils.GraphUtils
-import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphExtractorsDEP
 import life.plenty.ui.display.utils.Helpers.{BindableHtmlProperty, OptBindableHtmlProperty, OptBindableHub, OptBindableProperty}
 import life.plenty.ui.model._
 import org.scalajs.dom.Node
@@ -31,7 +31,7 @@ package object feed {
       println(s"DISPLAYING ${this}")
 
       implicit val c = hub.ctx
-      val parent = GraphExtractors.getParent(hub)
+      val parent = GraphExtractorsDEP.getParent(hub)
       val atb = new BindableHtmlProperty(actionTarget(hub, c), actionTargetHtml)
       val ab = new BindableHtmlProperty(action(hub), actionHtml)
 

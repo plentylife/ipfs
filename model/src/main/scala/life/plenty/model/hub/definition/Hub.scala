@@ -7,7 +7,7 @@ import life.plenty.model.connection.MarkerEnum.MarkerEnum
 import life.plenty.model.connection._
 import life.plenty.model.modifiers.{ModuleFilters, RxConnectionFilters}
 import life.plenty.model.hub.User
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractorsDEP
 import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
 
@@ -47,7 +47,7 @@ trait Hub extends HubConstructor with ConnectionManager[Any] with RxConnectionMa
     }
   }
 
-  lazy val isActive = GraphExtractors.isActive(this)
+  lazy val isActive = GraphExtractorsDEP.isActive(this)
   def inactivate() = if (isActive.now) {
     val c = Inactive(new Date().getTime)
     c.asNew()

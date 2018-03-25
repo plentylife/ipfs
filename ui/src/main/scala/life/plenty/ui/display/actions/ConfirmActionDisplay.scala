@@ -3,7 +3,7 @@ package life.plenty.ui.display.actions
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.ActionAddConfirmedMarker
 import life.plenty.model.hub.Space
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractorsDEP
 import life.plenty.ui.model.DisplayModel.ActionDisplay
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node
@@ -12,7 +12,7 @@ import rx.Obs
 class ConfirmActionDisplay(override val hub: Space) extends ActionDisplay[Space] {
 
   private lazy val actionConfirm = hub.getTopModule({ case a: ActionAddConfirmedMarker ⇒ a })
-  private lazy val isConfirmed = GraphExtractors.markedConfirmed(hub)
+  private lazy val isConfirmed = GraphExtractorsDEP.markedConfirmed(hub)
   private var obs: Obs = null
 
   override def update(): Unit = {

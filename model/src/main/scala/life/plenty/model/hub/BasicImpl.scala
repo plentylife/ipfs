@@ -2,7 +2,7 @@ package life.plenty.model.hub
 
 import life.plenty.model.connection.Parent
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractorsDEP
 import rx.Rx
 
 trait Question extends Space with WithParent[Space] {

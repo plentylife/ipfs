@@ -7,7 +7,7 @@ import life.plenty.model.connection.Critical
 import life.plenty.model.hub.Question
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.GraphUtils
-import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphExtractorsDEP
 import life.plenty.ui
 import life.plenty.ui.display.Modal
 import life.plenty.ui.display.cards.CardQuestionDisplayBase
@@ -56,8 +56,8 @@ object CriticalQuestionsGuide {
   }
 
   private def filterSingleCritical(q: Question)(): Rx[Option[Question]] = {
-    val hasCreated = GraphExtractors.getAllCreatedByInSpace(q, UiContext.getUser) // shouldn't be null
-    val isFinalized = GraphExtractors.markedConfirmed(q)
+    val hasCreated = GraphExtractorsDEP.getAllCreatedByInSpace(q, UiContext.getUser) // shouldn't be null
+    val isFinalized = GraphExtractorsDEP.markedConfirmed(q)
     Rx {
       if (isFinalized() || hasCreated().exists(_.getHolder != q)) None else Some(q)
     }

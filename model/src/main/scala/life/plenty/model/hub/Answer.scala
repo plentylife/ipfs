@@ -40,7 +40,7 @@ class Contribution extends Answer {
   private lazy val transactions = rx.getAll({ case Child(t: Transaction) ⇒ t })
   // check this might fail
   lazy val tips: Rx[Int] = Rx {
-    (0 :: transactions().map({ t ⇒ t.getAmountOrZero() })).sum
+    (0 :: transactions().map({ t ⇒ t.getAmountOrZeroRx() })).sum
   }
 
   // fixme make tips just count

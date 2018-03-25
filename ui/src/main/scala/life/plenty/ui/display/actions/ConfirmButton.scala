@@ -4,7 +4,7 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.actions.{ActionAddConfirmedMarker, ActionGiveThanks}
 import life.plenty.model.connection.{Marker, MarkerEnum}
 import life.plenty.model.hub.{Contribution, Space}
-import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractors
+import life.plenty.model.utils.GraphUtils; import life.plenty.model.utils.GraphExtractorsDEP
 import life.plenty.ui
 import life.plenty.ui.display.actions.labeltraits.MenuAction
 import life.plenty.ui.display.utils.ModalFormAction
@@ -18,7 +18,7 @@ class ConfirmButton(override val hub: Space) extends ActionDisplay[Space] with M
 
   private lazy val module: Option[ActionAddConfirmedMarker] = hub
     .getTopModule({ case m: ActionAddConfirmedMarker => m })
-  private lazy val isConfirmed = GraphExtractors.markedConfirmed(hub)
+  private lazy val isConfirmed = GraphExtractorsDEP.markedConfirmed(hub)
   private var obs: Obs = null
 
   override def update(): Unit = {

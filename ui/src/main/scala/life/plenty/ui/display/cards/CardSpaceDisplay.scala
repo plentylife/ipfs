@@ -2,7 +2,7 @@ package life.plenty.ui.display.cards
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub.{Question, Space}
-import life.plenty.model.utils.GraphExtractors.getBody
+import life.plenty.model.utils.GraphExtractorsDEP.getBody
 import life.plenty.ui.display.InlineQuestionDisplay
 import life.plenty.ui.display.actions.{AnswerControls, CardControls}
 import life.plenty.ui.display.meta.LayoutModule

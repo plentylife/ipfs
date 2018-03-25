@@ -1,31 +1,24 @@
 package life.plenty.ui.display.feed
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import com.thoughtworks.binding.Binding.{Var, Vars}
+import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.{Child, Marker}
 import life.plenty.model.hub.Space
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.model.utils.GraphUtils.collectDownTree
-import life.plenty.model.utils.GraphExtractors
 import life.plenty.ui.display.actions.OpenButton
-import life.plenty.ui.display.meta.LayoutModule
-import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.display.{FullUserBadge, InlineQuestionDisplay}
 import life.plenty.ui.model._
 import org.scalajs.dom.{Event, Node}
-import rx.async._
-import rx.async.Platform._
 
-import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   def fits(what: Any) = what.isInstanceOf[Space]
 
   def display(what: Any): Binding[Node] = {
-   FeedModuleDirectory get what map {m ⇒ m.html(what)} getOrElse DisplayModel.nospan
+    FeedModuleDirectory get what map { m ⇒ m.html(what) } getOrElse DisplayModel.nospan
   }
 
   @dom
@@ -36,19 +29,15 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
     val aggregated = collectDownTree[Hub](hub, matchBy = {
       case Child(h: Hub) ⇒ h
       case m: Marker ⇒ m
-    },allowedPath = {case Child(h: Hub) ⇒ h})
-
-//    val aggregatedB: ListBindable[Object] = new ListBindable(aggregated)
-//    val aggregatedB: ListBindable[Object] = new ListBindable(aggregated map {
-//      list ⇒
-//        val additional = VoteGroup.groupByAnswer(list)
-//        list ::: additional()
-//    })
+    }, allowedPath = {case Child(h: Hub) ⇒ h}) flatMap { list ⇒
+      val additional = VoteGroup.groupByAnswer(list)
+      additional map {list ::: _}
+    }
 
     val bindList = Vars[Object]()
     aggregated.foreach(ags ⇒ bindList.value.insertAll(0, ags))
 
-    val cssClass = ""
+    val cssClass = if (bindList.bind.isEmpty) "d-none" else ""
 
     <div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>
       <span class="d-flex header-block">
