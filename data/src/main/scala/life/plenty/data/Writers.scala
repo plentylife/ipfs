@@ -19,12 +19,12 @@ class DbInsertConnectionOp(h: Hub) extends DbInsertOp {
 object DbWriter {
   def writeInitial(o: Hub, doc: Option[DocWrapper] = None): Future[Unit] = synchronized {
     console.println(s"OctopusWriter octopus ${o} ${o.id} ${o.sc.all}")
-    if (Cache.getOctopus(o.id).nonEmpty) {
+    if (HubCache.getOctopus(o.id).nonEmpty) {
       console.println(s"OctopusWriter skipping octopus ${o} since it is in cache")
       return Future{}
     } else {
       // fixme this is danegerous because it does not check for success of the write
-      Cache.put(o)
+      HubCache.put(o)
       o.tmpMarker = DbMarker
     }
 
@@ -99,18 +99,7 @@ object DbWriter {
 }
 
 class DbWriterModule(override val hub: Hub) extends ActionAfterGraphTransform {
-  private var _dbDoc: DocWrapper = null
-  protected[data] def dbDoc = if (_dbDoc != null) _dbDoc else {
-    _dbDoc = new DocWrapper(hub.id)
-    _dbDoc
-  }
-
-  // as a preventitive measure from having too many docs kick aroud
-  /** @return the doc that is actively used */
-  protected[data] def setDbDoc(doc: DocWrapper): DocWrapper = {
-    if (_dbDoc == null) _dbDoc = doc
-    _dbDoc
-  }
+  protected[data] def dbDoc = getDoc(hub)
 
   console.trace(s"DbWriter Module instantiated in ${hub.getClass.getSimpleName} ${this.getClass}")
 

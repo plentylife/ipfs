@@ -40,7 +40,7 @@ class FundsCheck(override val hub: User) extends ActionOnGraphTransform {
         model.console.trace(s"Funds check on transaction $t ${t.id}")
         Try {
           // the dataloaders must be present
-            t.getTopModule({case m: ActionOnFinishDataLoad ⇒ m}).get.onFinishLoad(() ⇒ {
+            t.whenLoadComplete foreach (_ ⇒ {
 //              model.console.trace("Funds check finish load")
               t.getFrom.now match {
                 case Some(from) ⇒

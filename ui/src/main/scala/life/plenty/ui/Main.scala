@@ -84,7 +84,7 @@ object Main {
 
   @JSExport
   def unloaded() = {
-    data.Cache.hubCache.foreach(entry ⇒ {
+    data.HubCache.hubCache.foreach(entry ⇒ {
       val (_, o) = entry
       o.getTopModule({ case m: DbReaderModule ⇒ m }).foreach {
         m ⇒
@@ -99,7 +99,7 @@ object Main {
 
   @JSExport
   def logConnections(of: String) = {
-    val h = data.Cache.getOctopus(of) orElse data.Cache.getDataHub(of)
+    val h = data.HubCache.getOctopus(of) orElse data.HubCache.getDataHub(of)
     println(h.get.rx.cons.now.mkString("\n"))
     println("raw")
     println(s"${
@@ -112,7 +112,7 @@ object Main {
 
   @JSExport
   def inCache() = {
-    val cs = data.Cache.hubCache.values.toList ::: data.Cache.dataHubCache.values.toList
+    val cs = data.HubCache.hubCache.values.toList ::: data.HubCache.dataHubCache.values.toList
     for (c ← cs) {
       println(c)
     }

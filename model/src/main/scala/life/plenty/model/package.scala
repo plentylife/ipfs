@@ -6,6 +6,7 @@ import life.plenty.model.connection.DataHub
 import life.plenty.model.modifiers.{AnswerVoteOrder, InactiveFilter}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
+import life.plenty.model.interfaces.ReaderSpec
 import life.plenty.model.security.FundsCheck
 import life.plenty.model.utils.{Console, Hash}
 import rx.Rx
@@ -26,6 +27,8 @@ package object model {
   def defaultCreator_=(u: User) = _defaultCreator = Option(u)
 
   def defaultCreator = _defaultCreator
+
+  def setReaderInterface(i: ReaderSpec) = ReaderSpec.interface = i
 
   def initialize(): Unit = {
     println("Model is adding modules to registry")

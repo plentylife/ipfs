@@ -59,16 +59,16 @@ object DbReader {
 
   /**
     * @throws DocDoesNotExist */
-  def read(id: String, doc: Option[DocWrapper] = None): Future[Hub] = {
+  def read(id: String): Future[Hub] = {
     data.console.trace(s"Reading hub with id `${id}`")
     // from cache
-    val fromCache = Cache.getOctopus(id)
+    val fromCache = HubCache.getOctopus(id)
     if (fromCache.nonEmpty) {
       data.console.println(s"Read ${id} from cache")
       return Future(fromCache.get)
     }
 
-    val dbDoc = doc getOrElse new DocWrapper(id)
+    val dbDoc = DocCache.get(id)
 
     val className: Future[String] = dbDoc.getData map { data ⇒
       data.`class`
@@ -83,8 +83,7 @@ object DbReader {
           val h = f(cName)
           val res: Option[Hub] = h map { o ⇒
             o.setId(id)
-            val exH = Cache.put(o) // this gives back the existing
-            data.getWriterModule(exH).setDbDoc(dbDoc)
+            val exH = HubCache.put(o) // this gives back the existing
             exH
           }
           res
@@ -128,12 +127,12 @@ object DataHubReader {
 
 
   def read(id: String): Future[DataHub[_]] = {
-    val existing = Cache.getDataHub(id)
+    val existing = HubCache.getDataHub(id)
     if (existing.nonEmpty) {
       return Future(existing.get)
     }
 
-    val dbDoc = new DocWrapper(id)
+    val dbDoc = DocCache.get(id)
 
     dbDoc.getData flatMap {data ⇒
       val jsHub = data.asInstanceOf[JsDataHub]
@@ -155,8 +154,7 @@ object DataHubReader {
           h.tmpMarker = DbMarker
           // todo. if this works, modify id getter
           h.setId(id)
-          val r = Cache.put(id, h)
-          setDoc(r, dbDoc)
+          val r = HubCache.put(id, h)
           r
         case _ ⇒ throw new MissingDbClassLoader(jsHub.`class`)
       }
@@ -166,8 +164,9 @@ object DataHubReader {
 
 // todo create a module for user that filters out everything but transactions
 
-class SecureUserDbReaderModule(u: SecureUser) extends DbReaderModule(u) {
-  Cache.put(u)
+//class SecureUserDbReaderModule(u: SecureUser) extends DbReaderModule(u) {
+class SecureUserDbReaderModule(u: SecureUser) {
+  HubCache.put(u)
 }
 
 /** Datahubs should load right away, to see active/inactive status */
@@ -188,16 +187,10 @@ ActionOnFinishDataLoad {
   var instantiated = false
   val connectionsLeftToLoad = Var(-1)
 //  private lazy val allCons = hub.connections.map(_.map(_.id))
-  lazy val dbDoc = data.getWriterModule(hub).dbDoc // get should never trip
-
-  val idP = Promise[Unit]()
-  hub.onSetId(_ ⇒ idP.success())
+  lazy val dbDoc = getDoc(hub)
 
   override def onConnectionsRequest(): Unit = {
-//      console.println(s"Reader got request to load ${hub.getClass} with ${hub.sc.all}")
-      // so since this will have to happen before the writer gets to us, we just skip the exists check
-
-      idP.future foreach {_ ⇒ load()}
+      hub.hasSetId foreach {_ ⇒ load()}
   }
 
   protected def load() = synchronized {
@@ -266,16 +259,5 @@ ActionOnFinishDataLoad {
       } else false
     }
     finishRx.foreach(b ⇒ if (b) {finishRx.kill()})
-  }
-}
-
-object DbReaderModule {
-  def onFinishLoad(o: Hub, f: () ⇒ Unit) = {
-    implicit val _ctx = o.ctx
-    o.onModulesLoad {
-      o.getTopModule({ case m: DbReaderModule ⇒ m }).foreach {
-        m ⇒ m.onFinishLoad(f)
-      }
-    }
   }
 }

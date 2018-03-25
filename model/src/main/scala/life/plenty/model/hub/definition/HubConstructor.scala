@@ -27,8 +27,11 @@ trait HubConstructor {
     gid
   }
 
+  private lazy val idPromise: Promise[Unit] = Promise()
+  lazy val hasSetId = idPromise.future
   def setId(_id: String) = {
     addConnectionForced(Id(_id).inst)
+    idPromise.success()
     onSetIdFunctions foreach {f ⇒ f(_id)}
     onSetIdFunctions = Nil
   }

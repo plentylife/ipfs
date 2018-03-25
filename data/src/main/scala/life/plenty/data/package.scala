@@ -6,7 +6,7 @@ import life.plenty.model.utils.Console
 import scala.scalajs.js
 
 package object data {
-  val console = new Console(false, true, "DB")
+  val console = new Console(true, true, "DB")
 
   var db: ShareDB = null
 
@@ -14,8 +14,6 @@ package object data {
   def getWriterModule(hub: Hub) = hub.getTopModule({case m: DbWriterModule => m}).get
 
   /** is not safe, but should never fail */
-  def getDoc(h: Hub): DocWrapper = getWriterModule(h).dbDoc
-  /** is not safe, but should never fail */
-  def setDoc(h: Hub, doc: DocWrapper): DocWrapper = getWriterModule(h).setDbDoc(doc)
+  def getDoc(h: Hub): DocWrapper = DocCache.get(h)
 
 }

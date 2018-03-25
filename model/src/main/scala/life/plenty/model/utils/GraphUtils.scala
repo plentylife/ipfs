@@ -92,6 +92,7 @@ object GraphUtils {
   def hasParentInChain(hub: Hub, parents: List[Hub])(implicit ctx: Ctx.Owner): Future[Boolean] = {
     if (parents contains hub) Future(true) else {
       hub.whenLoadComplete flatMap { _ ⇒
+        println(s"PIC $hub")
         hub.sc.ex({ case Parent(p: Hub) ⇒ p }) match {
             case Some(p) ⇒ hasParentInChain(p, parents)
             case None ⇒ Future(false)

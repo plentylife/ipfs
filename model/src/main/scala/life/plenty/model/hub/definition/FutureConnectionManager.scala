@@ -1,6 +1,8 @@
 package life.plenty.model.hub.definition
 
 import life.plenty.model.connection.DataHub
+import life.plenty.model.interfaces.ReaderSpec
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 
@@ -14,7 +16,8 @@ trait FutureConnectionManager {self: Hub ⇒
   // fixme just do a direct call to db singleton
   def whenLoadComplete: Future[Hub] = {
     if (!hasCalledDb) {
-      onConnectionsRequest.foreach(f ⇒ f())
+      println(s"WLC")
+      ReaderSpec.interface.loadConnections(this)
       hasCalledDb = true
     }
     loadCompletePromise.future.map(_ ⇒ self)

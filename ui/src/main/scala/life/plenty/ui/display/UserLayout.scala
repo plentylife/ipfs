@@ -37,7 +37,9 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
 
   def getTopMemberships: Future[List[Space]] = {
     val ms = getMemberships
+    println(s"GTM $ms")
     ms flatMap { list ⇒
+      println(s"GTM c $list")
       val spaces = list.collect({ case h: Space ⇒ h })
       val withParents = spaces.map(
         s ⇒ GraphUtils.hasParentInChain(s, spaces filterNot {_ == s}) map {s → _}
@@ -76,6 +78,7 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
   override def update(): Unit = {
     membershipsList.value.clear()
     getTopMemberships map {list =>
+      println(s"TOP MEMBERSHIPS $list")
       membershipsList.value.insertAll(0, list)
     }
   }

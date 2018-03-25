@@ -1,5 +1,6 @@
 package life.plenty.ui.display.cards
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.DbReaderModule
 import life.plenty.model.hub.definition.Hub
@@ -23,11 +24,11 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
   override def update(): Unit = {
     // fixme this will need to go
     if (!addedCurrentUser) {
-      DbReaderModule.onFinishLoad(hub, () ⇒ {
+      hub.whenLoadComplete foreach {_ ⇒
         ui.console.trace(s"Trying to add member ${UiContext.userVar.value} to $hub")
         hub.addMember(UiContext.userVar.value)
         addedCurrentUser = true
-      })
+      }
     }
   }
 

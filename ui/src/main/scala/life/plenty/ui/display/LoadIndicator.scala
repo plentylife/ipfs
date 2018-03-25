@@ -19,7 +19,7 @@ object LoadIndicator {
 
   //  lazy val cachedGunReader =
 
-  data.Cache.lastAddedRx.foreach { o ⇒
+  data.HubCache.lastAddedRx.foreach { o ⇒
     if (o != null) {
       o.onModulesLoad {
         o.getTopModule({ case r: DbReaderModule ⇒ r }).foreach { reader =>

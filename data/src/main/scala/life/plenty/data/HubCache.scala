@@ -6,7 +6,8 @@ import rx.{Ctx, Var}
 
 import scala.collection.mutable
 
-object Cache {
+/* todo This should be moved to the model */
+object HubCache {
   private implicit val ctx = Ctx.Owner.safe()
 
   val hubCache = mutable.Map[String, Hub]()
