@@ -6,6 +6,7 @@ import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.model.utils.GraphUtils
 import life.plenty.model.utils.GraphExtractorsDEP
+import life.plenty.ui.display.utils.{FutureDom, FutureVar}
 import life.plenty.ui.display.utils.Helpers.{BindableHtmlProperty, OptBindableHtmlProperty, OptBindableHub, OptBindableProperty}
 import life.plenty.ui.model._
 import org.scalajs.dom.Node
@@ -19,8 +20,8 @@ package object feed {
 
   sealed trait FeedDisplaySimple[T <: Hub] extends FeedDisplay[T] {
 
-    protected def action(hub: T)(implicit ctx: Ctx.Owner): Rx[String]
-    protected def actionTarget(implicit hub:T, ctx: Ctx.Owner): Rx[String]
+    protected def action(hub: T): String
+    protected def actionTarget(implicit hub:T): FutureVar[String]
     protected val cssClass: String
 
     @dom
@@ -32,11 +33,11 @@ package object feed {
 
       implicit val c = hub.ctx
       val parent = GraphExtractorsDEP.getParent(hub)
-      val atb = new BindableHtmlProperty(actionTarget(hub, c), actionTargetHtml)
-      val ab = new BindableHtmlProperty(action(hub), actionHtml)
 
       <div class={"feed " + cssClass} id={hub.id}>
-        {SimpleDisplayModule.html(FullUserBadge, hub.getCreator).bind} {ab.dom.bind} {atb.dom.bind}
+        {SimpleDisplayModule.html(FullUserBadge, hub.getCreator).bind} {actionHtml(action(hub)).bind} {
+          FutureDom.dom(actionTarget(hub), actionTargetHtml).bind
+        }
       </div>
     }
   }

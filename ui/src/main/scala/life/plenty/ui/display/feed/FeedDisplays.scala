@@ -1,12 +1,13 @@
 package life.plenty.ui.display.feed
 
+import life.plenty.model.utils.GraphEx._
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.ui
 import life.plenty.ui.display.FullUserBadge
-import life.plenty.ui.display.utils.{CardNavigation, FutureList}
+import life.plenty.ui.display.utils.{CardNavigation, FutureList, FutureOptVar, FutureVar}
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule}
 import org.scalajs.dom.Node
@@ -16,7 +17,7 @@ import scalaz.std.option._
 import scalaz.std.map._
 
 trait FeedAnswerDisplayImpl {self: FeedDisplaySimple[Answer] ⇒
-  override protected def action(hub: Answer)(implicit ctx: Ctx.Owner) = Rx {
+  override protected def action(hub: Answer) =  {
         hub match {
           case _: Proposal ⇒ "proposed"
           case _: Contribution ⇒ "contributed"
@@ -24,26 +25,26 @@ trait FeedAnswerDisplayImpl {self: FeedDisplaySimple[Answer] ⇒
         }
       }
 
-  override protected def actionTarget(implicit hub:Answer, ctx: Ctx.Owner): Rx[String] = {
-    hub.getBody
+  override protected def actionTarget(implicit hub:Answer): FutureVar[String] = {
+    new FutureOptVar[String](getBody(hub))
   }
 
   override protected val cssClass: String = "answer"
 }
 
 trait FeedQuestionDisplayImpl {self: FeedDisplaySimple[Question] ⇒
-  override protected def action(hub: Question)(implicit ctx: Ctx.Owner) = Rx {"asked"}
-  override protected def actionTarget(implicit hub:Question, ctx: Ctx.Owner): Rx[String] = {
-    hub.getTitle
+  override protected def action(hub: Question) =  {"asked"}
+  override protected def actionTarget(implicit hub:Question): FutureVar[String] = {
+    new FutureOptVar[String](getTitle(hub))
   }
 
   override protected val cssClass: String = "question"
 }
 
 trait FeedSpaceDisplayImpl {self: FeedDisplaySimple[Space] ⇒
-  override protected def action(hub: Space)(implicit ctx: Ctx.Owner) = Rx {"created space"}
-  override protected def actionTarget(implicit hub:Space, ctx: Ctx.Owner): Rx[String] = {
-    hub.getTitle
+  override protected def action(hub: Space) =  {"created space"}
+  override protected def actionTarget(implicit hub:Space): FutureVar[String] = {
+    new FutureOptVar[String](getTitle(hub))
   }
 
   override protected val cssClass: String = "space"
