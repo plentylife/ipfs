@@ -8,7 +8,7 @@ import life.plenty.ui.model.{SimpleDisplayModule, SimpleDisplayModuleDirectory}
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
 
-abstract class DomList[T](list: Rx[List[T]]) {
+abstract class DomRenderList[T](list: Rx[List[T]]) {
   private val inner = Vars[(T, Binding[Node])]()
   private var cache = Map[T, Binding[Node]]()
 
@@ -16,9 +16,9 @@ abstract class DomList[T](list: Rx[List[T]]) {
 
   private def render(what: T): Option[Binding[Node]] = synchronized {
     cache get what match {
-//      case b @ Some(_) ⇒
-//        println(s"Updating map with existing ${what}")
-//        b
+      case b @ Some(_) ⇒
+        println(s"Updating map with existing ${what}")
+        b
       case _ ⇒ val r = getRenderer(what) map {m ⇒ m.html(what)}
         r foreach {r ⇒ cache += (what → r)}
         r
@@ -49,6 +49,6 @@ abstract class DomList[T](list: Rx[List[T]]) {
   def apply(): BindingSeq[Binding[Node]] = inner.map(_._2)
 }
 
-class DomListSingleModule[T](list: Rx[List[T]], simpleDisplayModule: SimpleDisplayModule[T]) extends DomList[T](list) {
+class DomRenderListSingleModule[T](list: Rx[List[T]], simpleDisplayModule: SimpleDisplayModule[T]) extends DomRenderList[T](list) {
   override protected def getRenderer(what: T): Option[SimpleDisplayModule[T]] = Option(simpleDisplayModule)
 }

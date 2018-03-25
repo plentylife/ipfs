@@ -13,6 +13,7 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Future, Promise}
 
+@deprecated
 trait RxConnectionManager {
   self: Hub ⇒
   protected lazy val _connectionsRx: Var[List[Rx[Option[DataHub[_]]]]] =
@@ -22,16 +23,17 @@ trait RxConnectionManager {
 
   private lazy val connectionFilters = getAllModules({ case m: RxConnectionFilters[_] ⇒ m })
 
-  private var onConnectionsRequest: List[() ⇒ Unit] = List()
+  protected var onConnectionsRequest: List[() ⇒ Unit] = List()
   def addOnConnectionRequestFunctions(fList: List[() ⇒ Unit]): Unit = onConnectionsRequest :::= fList
 
 
-  lazy val loadComplete = Promise[Unit]()
   /** triggers load */
-  def loadCompleted: Future[Unit] = {
+  @deprecated
+  def loadCompletedInRx: Future[Unit] = {
     onConnectionsRequest.foreach(f ⇒ f())
-    loadComplete.future
+    loadCompletePromise.future
   }
+  lazy val loadCompletedHub: Future[this.type] = loadCompleted.map(_ ⇒ this)
   lazy val loadCompletedRx = loadCompleted.map { _ ⇒ true}.toRx(false)
 
 
@@ -55,18 +57,7 @@ trait RxConnectionManager {
       })
     }
 
-    var lcFlag = false
-
     def onLoaded[T](whenLoadedDo: ⇒ Rx[T], default: T) = {
-
-//      if (!lcFlag) {
-//        loadCompletedRx foreach {status ⇒
-//          println(s"LC ${self} ${status}")
-//        }
-//        lcFlag = true
-//      }
-
-
         loadCompletedRx flatMap {isLoaded ⇒ if (isLoaded) {
         whenLoadedDo
       } else Rx {default}

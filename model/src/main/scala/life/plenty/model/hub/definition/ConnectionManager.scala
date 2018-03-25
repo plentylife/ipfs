@@ -28,6 +28,8 @@ trait ConnectionManager[CT] {self: Hub ⇒
 
     def ex[T](f: PartialFunction[DataHub[_], T]): Option[T] = sc.all.collectFirst(f)
 
+    def exAll[T](f: PartialFunction[DataHub[_], T]): List[T] = sc.all.collect(f)
+
     def exf[T](f: PartialFunction[DataHub[_], T]): T = ex(f).get
   }
 

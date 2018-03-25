@@ -1,5 +1,7 @@
 package life.plenty.ui.display.feed
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import com.thoughtworks.binding.Binding.{Var, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.{Child, Marker}
 import life.plenty.model.hub.Space
@@ -22,6 +24,10 @@ import scala.concurrent.duration._
 object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
   def fits(what: Any) = what.isInstanceOf[Space]
 
+  def display(what: Any): Binding[Node] = {
+   FeedModuleDirectory get what map {m ⇒ m.html(what)} getOrElse DisplayModel.nospan
+  }
+
   @dom
   def html(hub: Space): Binding[Node] = {
     println(s"CREATED SPACEFEED $hub")
@@ -30,16 +36,17 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
     val aggregated = collectDownTree[Hub](hub, matchBy = {
       case Child(h: Hub) ⇒ h
       case m: Marker ⇒ m
-    },allowedPath = {case Child(h: Hub) ⇒ h}).debounce(1000 milliseconds)
+    },allowedPath = {case Child(h: Hub) ⇒ h})
 
-    val aggregatedB: ListBindable[Binding[Node]] = new ListBindable(aggregated map {
-      list ⇒
-        val additional = VoteGroup.groupByAnswer(list)
-        val fullList = list ::: additional()
-        fullList flatMap {h: Any ⇒
-          FeedModuleDirectory get h map {m ⇒ m.html(h)}
-        } : List[Binding[Node]]
-    })
+//    val aggregatedB: ListBindable[Object] = new ListBindable(aggregated)
+//    val aggregatedB: ListBindable[Object] = new ListBindable(aggregated map {
+//      list ⇒
+//        val additional = VoteGroup.groupByAnswer(list)
+//        list ::: additional()
+//    })
+
+    val bindList = Vars[Object]()
+    aggregated.foreach(ags ⇒ bindList.value.insertAll(0, ags))
 
     val cssClass = ""
 
@@ -57,7 +64,7 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
       </span>
 
       <div class="card-body">
-        {for (b <- aggregatedB()) yield {b.bind}}
+        {for (h <- bindList) yield display(h).bind}
       </div>
 
     </div>

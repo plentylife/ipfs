@@ -1,11 +1,13 @@
 package life.plenty.model.utils
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import life.plenty.model
 import life.plenty.model.connection._
 import life.plenty.model.hub.{Contribution, Members, Space, User}
 import life.plenty.model.hub.definition.Hub
 import rx.{Ctx, Rx, Var}
 
+import scala.concurrent.Future
 import scala.language.postfixOps
 
 object GraphUtils {
@@ -52,17 +54,17 @@ object GraphUtils {
   }
 
   def getAllContributionsInSpace(space: Space)(implicit ctx: Ctx.Owner): Rx[List[Contribution]] = {
-    collectDownTree[Contribution](space, matchBy = {case Child(c: Contribution) ⇒ c},
+    collectDownTreeRx[Contribution](space, matchBy = {case Child(c: Contribution) ⇒ c},
       allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
   }
 
   def getAllChildrenInSpace(space: Space)(implicit ctx: Ctx.Owner): Rx[List[Hub]] = {
-    collectDownTree[Hub](space, matchBy = {case Child(h: Hub) ⇒ h},
+    collectDownTreeRx[Hub](space, matchBy = {case Child(h: Hub) ⇒ h},
       allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
   }
 
   def getAllCreatedByInSpace(space: Space, user: User)(implicit ctx: Ctx.Owner): Rx[List[Creator]] = {
-    collectDownTree[Creator](space, matchBy = {case c @ Creator(u) if u == user ⇒ c},
+    collectDownTreeRx[Creator](space, matchBy = {case c @ Creator(u) if u == user ⇒ c},
       allowedPath = {case Child(h: Hub) ⇒ h}, 1000)
   }
 
@@ -87,15 +89,15 @@ object GraphUtils {
       }
   }
 
-  def hasParentInChain(hub: Hub, parents: List[Hub])(implicit ctx: Ctx.Owner): Rx[Boolean] = Rx {
-    if (parents contains hub) true else {
-      val p = getParent(hub)
-      p() match {
-        case Some(p) ⇒ val pin = hasParentInChain(p, parents)
-          pin()
-        case None ⇒ false
+  def hasParentInChain(hub: Hub, parents: List[Hub])(implicit ctx: Ctx.Owner): Future[Boolean] = {
+    if (parents contains hub) Future(true) else {
+      hub.loadCompleted flatMap {_ ⇒
+        hub.sc.ex({ case Parent(p: Hub) ⇒ p }) match {
+            case Some(p) ⇒ hasParentInChain(p, parents)
+            case None ⇒ Future(false)
+          }
+        }
       }
-    }
   }
 
   import rx.async._
@@ -103,9 +105,10 @@ object GraphUtils {
   import scala.concurrent.duration._
 
   /** @param matchBy should be able to handle [[DataHub]] */
-  def collectDownTree[T <: Hub](in: Hub, matchBy: PartialFunction[DataHub[_], T],
-                      allowedPath: PartialFunction[DataHub[_],Hub], debounceDuration: Int = 0)
-                     (implicit ctx: Ctx.Owner): Rx[List[T]] = Rx {
+  @deprecated
+  def collectDownTreeRx[T <: Hub](in: Hub, matchBy: PartialFunction[DataHub[_], T],
+                                  allowedPath: PartialFunction[DataHub[_],Hub], debounceDuration: Int = 0)
+                                 (implicit ctx: Ctx.Owner): Rx[List[T]] = Rx {
     val pathCons = in.rx.getAll(allowedPath).debounce(debounceDuration millis)
     val _hubs = in.rx.cons.debounce(debounceDuration millis)
     val hubs = _hubs map {list ⇒
@@ -113,33 +116,25 @@ object GraphUtils {
     }
 
     val nextHubs = pathCons() flatMap { h ⇒
-      val r = collectDownTree(h, matchBy, allowedPath)
+      val r = collectDownTreeRx(h, matchBy, allowedPath)
       r()
     }
 
     hubs() ::: nextHubs
   }
 
-//  /** @param matchBy should be able to handle [[DataHub]] */
-//  def collectDownTree[T](in: Hub, matchBy: DataHub[_] ⇒ Rx[Option[T]],
-//                         allowedPath: PartialFunction[DataHub[_],Hub], debounceDuration: Int = 0)
-//                        (implicit ctx: Ctx.Owner): Rx[List[T]] = Rx {
-//    val pathCons = in.rx.getAll(allowedPath).debounce(20000 millis)
-//    val _hubs = in.rx.cons.debounce(20000 millis)
-//    val hubs = _hubs map {list ⇒
-//      println(s"@")
-//      list flatMap {h ⇒ val r = matchBy(h); print('`'); r()}
-//    } debounce(20000 millis)
-//
-//    //    model.console.trace(s"collectDownTree ${pathCons} | $hubs")
-//    println(s"collectDownTree ${in}")
-//    //    println(s"collectDownTree ${in} -->\n\t $hubs || $pathCons ")
-//
-//    val nextHubs = pathCons() flatMap { h ⇒
-//      val r = collectDownTree(h, matchBy, allowedPath)
-//      r()
-//    }
-//
-//    hubs() ::: nextHubs
-//  }
+  /** @param matchBy should be able to handle [[DataHub]] */
+  def collectDownTree[T <: Hub](in: Hub, matchBy: PartialFunction[DataHub[_], T],
+                                  allowedPath: PartialFunction[DataHub[_],Hub]): Future[List[T]] = {
+    val pathCons = in.getAll(allowedPath)
+    val hubs = in.getAll(matchBy)
+
+    val nextHubs = pathCons flatMap { paths ⇒
+      val hs = paths map {p ⇒ collectDownTree(p, matchBy, allowedPath)}
+      Future.sequence(hs) map {_.flatten}
+    }
+
+    for (h ← hubs; nh ← nextHubs) yield h ::: nh
+  }
+
 }

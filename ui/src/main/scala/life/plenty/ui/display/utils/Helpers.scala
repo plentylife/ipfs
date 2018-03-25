@@ -72,15 +72,15 @@ object Helpers {
     implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
     rxv.foreach(l ⇒ {
-//      inner.value.clear()
-//      inner.value.insertAll(0, l)
-      val current = inner.value
+      var current = inner.value
       var i = 0
       current zip l foreach {z ⇒
         val (o, n) = z
-        if (o != n) current.update(i, n)
+        if (o != n) current.insert(i, n)
         i += 1
       }
+
+      current = inner.value
       if (current.size > l.size) {
         current.remove(l.size, current.size - l.size)
       } else if (l.size > current.size) {

@@ -89,7 +89,8 @@ object DbReader {
           }
           res
         } catch {
-          case e: Throwable ⇒ console.error("DBReader failed while reading a connection"); console.error(e);
+          case e: Throwable ⇒
+            console.error("DBReader failed while reading a connection"); console.error(e);
             e.printStackTrace(); None
         }
       })
@@ -223,7 +224,7 @@ ActionOnFinishDataLoad {
 
       onFinishLoad {() ⇒
 //        hub.loadedRx.update(true)
-        hub.loadComplete.success()
+        hub.loadCompletePromise.success()
       }
 
       dbDoc.onRemoteConnectionChange(loadConnection)
@@ -236,7 +237,7 @@ ActionOnFinishDataLoad {
     val p = Promise[Unit]()
     // playing with setTimeout to allow for ui rendering
     // fixme remove
-    js.timers.setTimeout(10) {
+    js.timers.setTimeout(1) {
 
       DataHubReader.read(id) flatMap { c ⇒
         console.trace(s"Reader loaded connection for ${hub} ${c.id} -- $id")
