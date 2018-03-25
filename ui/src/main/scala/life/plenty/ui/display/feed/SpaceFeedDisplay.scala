@@ -3,7 +3,7 @@ package life.plenty.ui.display.feed
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.{Child, Marker}
-import life.plenty.model.hub.Space
+import life.plenty.model.hub.{Members, Space}
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.model.utils.GraphUtils.collectDownTree
@@ -23,13 +23,11 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
 
   @dom
   def html(hub: Space): Binding[Node] = {
-    println(s"CREATED SPACEFEED $hub")
-
     implicit val ctx = hub.ctx
     val aggregated = collectDownTree[Hub](hub, matchBy = {
-      case Child(h: Hub) ⇒ h
+      case Child(h: Hub) if !h.isInstanceOf[Members] ⇒ h
       case m: Marker ⇒ m
-    }, allowedPath = {case Child(h: Hub) ⇒ h}) flatMap { list ⇒
+    }, allowedPath = {case Child(h: Hub) if !h.isInstanceOf[Members] ⇒ h}) flatMap { list ⇒
       val additional = VoteGroup.groupByAnswer(list)
       additional map {list ::: _}
     }
@@ -39,7 +37,9 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
 
     val cssClass = if (bindList.bind.isEmpty) "d-none" else ""
 
-    <div class={"card d-inline-flex flex-column space " + cssClass} id={hub.id}>
+    /* fixme still needs marked confirmed */
+
+    <div class={"card flex-column space " + cssClass} id={hub.id}>
       <span class="d-flex header-block">
         <span class="d-flex title-block" onclick={e: Event ⇒ Router.navigateToHub(hub)}>
           <h5 class="card-title">
