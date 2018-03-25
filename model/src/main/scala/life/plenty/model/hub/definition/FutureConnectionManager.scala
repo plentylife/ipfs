@@ -9,8 +9,10 @@ trait FutureConnectionManager {self: Hub ⇒
 //  lazy val loadCompleteF = loadComplete.future
   private var hasCalledDb = false
 
+  /** Indicate to the hub that it has finished loading */
+  def loadHasComplete(): Unit = loadCompletePromise.success()
   // fixme just do a direct call to db singleton
-  def loadCompleted: Future[Hub] = {
+  def whenLoadComplete: Future[Hub] = {
     if (!hasCalledDb) {
       onConnectionsRequest.foreach(f ⇒ f())
       hasCalledDb = true
@@ -22,12 +24,12 @@ trait FutureConnectionManager {self: Hub ⇒
 
   def get[T](extractor: PartialFunction[DataHub[_], T]): Future[Option[T]] = {
     // fixme check for active
-    loadCompleted map {h ⇒ h.cs.collectFirst(extractor)}
+    whenLoadComplete map { h ⇒ h.cs.collectFirst(extractor)}
   }
 
   def getAll[T](extractor: PartialFunction[DataHub[_], T]): Future[List[T]] = {
     // fixme check for active
-    loadCompleted map {_.cs.collect(extractor)}
+    whenLoadComplete map {_.cs.collect(extractor)}
   }
 
   /** waits for the load */

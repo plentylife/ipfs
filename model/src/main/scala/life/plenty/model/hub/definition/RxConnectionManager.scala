@@ -33,8 +33,8 @@ trait RxConnectionManager {
     onConnectionsRequest.foreach(f ⇒ f())
     loadCompletePromise.future
   }
-  lazy val loadCompletedHub: Future[this.type] = loadCompleted.map(_ ⇒ this)
-  lazy val loadCompletedRx = loadCompleted.map { _ ⇒ true}.toRx(false)
+  lazy val loadCompletedHub: Future[this.type] = whenLoadComplete.map(_ ⇒ this)
+  lazy val loadCompletedRx = whenLoadComplete.map { _ ⇒ true}.toRx(false)
 
 
 

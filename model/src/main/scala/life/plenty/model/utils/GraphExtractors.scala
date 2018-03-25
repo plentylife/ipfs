@@ -36,7 +36,7 @@ object GraphExtractors {
   def getBody(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Body(b) ⇒ b })
   def getName(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Name(b) ⇒ b })
   def getMemberships(u: User)(implicit ctx: Ctx.Owner): Future[Rx[List[Members]]] =
-    u.loadCompleted map {_ ⇒ u.rx.getAll({ case Parent(m: Members) ⇒ m })}
+    u.whenLoadComplete map { _ ⇒ u.rx.getAll({ case Parent(m: Members) ⇒ m })}
 
   def getTitle(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[String]] = h.rx.get({ case Title(b) ⇒ b })
   def getCreationTime(h: Hub)(implicit ctx: Ctx.Owner): Rx[Option[Long]] = h.rx.get({ case CreationTime(b) ⇒ b })

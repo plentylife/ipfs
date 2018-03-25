@@ -13,10 +13,8 @@ import rx.{Rx, Var}
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Random, Success}
 
-trait OctopusConstructor {
+trait HubConstructor {
   self: Hub ⇒
-
-  //  implicit private[this] val ctxConstructor: Ctx.Owner = self.ctx
 
   protected val rand = Random
 
@@ -96,6 +94,7 @@ trait OctopusConstructor {
 
   def asNew(_properties: DataHub[_]*): Future[Unit] = {
     model.console.trace(s"attempting to instantiate ${this.getClass} with creator ${model.defaultCreator}")
+    loadHasComplete() // nothing to load
 
     // has to be first for purposes of creating ids
     val ct = _properties.collectFirst({case ct: CreationTime ⇒ ct}) getOrElse CreationTime(new Date().getTime)

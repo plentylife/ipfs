@@ -12,7 +12,7 @@ import life.plenty.model.{ModuleRegistry, console}
 import rx.{Ctx, Rx, Var}
 
 //with MonixConnectionManager
-trait Hub extends OctopusConstructor with ConnectionManager[Any] with RxConnectionManager with FutureConnectionManager {
+trait Hub extends HubConstructor with ConnectionManager[Any] with RxConnectionManager with FutureConnectionManager {
   implicit val ctx: Ctx.Owner = Ctx.Owner.safe()
 
   protected var _modules: List[Module[Hub]] = List()

@@ -224,7 +224,7 @@ ActionOnFinishDataLoad {
 
       onFinishLoad {() ⇒
 //        hub.loadedRx.update(true)
-        hub.loadCompletePromise.success()
+        hub.loadHasComplete()
       }
 
       dbDoc.onRemoteConnectionChange(loadConnection)

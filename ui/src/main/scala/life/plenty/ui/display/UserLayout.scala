@@ -26,7 +26,7 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
   override def doDisplay(): Boolean = UiContext.pointer.value.exists(_.id == hub.id)
 
   def getMemberships: Future[List[Hub]] = {
-    val ms = hub.loadCompleted map {_ ⇒ hub.sc.exAll({ case Parent(m: Members) ⇒ m })}
+    val ms = hub.whenLoadComplete map { _ ⇒ hub.sc.exAll({ case Parent(m: Members) ⇒ m })}
     ms flatMap { membersList ⇒
       val parentalList = membersList map { m ⇒
         m.loadCompletedHub map {_.sc.ex({ case Parent(p: Hub) ⇒ p })}
