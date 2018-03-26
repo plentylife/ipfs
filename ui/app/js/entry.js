@@ -3,7 +3,7 @@ require("babel-polyfill");
 require('./jsStyling')
 window.sodium = require('libsodium-wrappers-sumo')
 window.Hashes = require('jshashes');
-let sharedb = require('sharedb/lib/client');
+const sharedb = require('sharedb/lib/client');
 
 window.startDB = function(peer) {
   var socket = new WebSocket(peer);

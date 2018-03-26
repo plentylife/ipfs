@@ -19,6 +19,7 @@ trait ShareDB extends js.Object {
 trait ShareDBDoc extends js.Object {
   val `type`: js.Any = js.native // is an object actually
   val data: js.Object = js.native
+  val id: String = js.native
 
   def fetch(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
   def subscribe(errorCb: js.Function1[js.Object, Unit]): Unit = js.native
@@ -46,11 +47,15 @@ trait NativeDbInsertOp extends DbInsertOp
 @JSGlobal
 object ShareDB extends ShareDB
 
-class DocWrapper(id: String) {
+class DocWrapper(_doc: ShareDBDoc) {
   private val db = ShareDB
-  private val doc = db.get("plenty-docs", id)
+  private val id = _doc.id
+  private val doc = _doc
   private var subscription: Future[Unit] = null
   private var _creationFuture: Future[Unit] = Future {}
+
+  def this(id: String) = this(db.get("plenty-docs", id))
+
   // load right away
   //  if (doSubscribe) subscribe
 
