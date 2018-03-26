@@ -8,8 +8,10 @@ import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.utils.{GraphExtractorsDEP, GraphUtils}
 import life.plenty.ui
+import life.plenty.model.utils.GraphEx._
+import life.plenty.ui.display.utils.FutureDom._
 import life.plenty.ui.display.feed.SpaceFeedDisplay
-import life.plenty.ui.display.utils.DomRenderListSingleModule
+import life.plenty.ui.display.utils.{DomRenderListSingleModule, FutureOptVar, FutureVar}
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model._
 import org.scalajs.dom.raw.Node
@@ -57,8 +59,11 @@ class UserLayout(override val hub: User) extends DisplayModule[User] {
     <div class={"top-space-layout user-feed"}>
       <div class="layout-header">
         <h3 class={titleClasses}>
-          {GraphExtractorsDEP.getName(hub).dom.bind}
+          {new FutureOptVar(getName(hub)).bind}
         </h3>
+        <h5 class="sub-title mt-1 ml-2 text-muted">
+          User feed (since last login)
+        </h5>
       </div>
 
       <div class="user-feed">

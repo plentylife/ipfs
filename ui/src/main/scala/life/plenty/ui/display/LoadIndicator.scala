@@ -21,20 +21,6 @@ object LoadIndicator {
     (0 until end).map(_ ⇒ ".").mkString
   }
 
-//  private lazy val _forceOpen = bVar(false)
-//  def forceOpen(): Unit = {
-//    _forceOpen.value_=(true)
-//    autoClose
-//  }
-
-//  private def autoClose: Unit = Future {
-//    js.timers.setTimeout(2000)({
-//      if (left.now <= 0) {
-//        _forceOpen.value_=(false)
-//      } else autoClose
-//    })
-//  }
-
   private val classes = "load-indicator"
 
 //  <div class={if (connectionsLeft.bind <= 0) "d-none " + classes else classes}>
@@ -44,9 +30,7 @@ object LoadIndicator {
 
   @dom
   def show(): Binding[Node] = {
-//    val fo = _forceOpen.bind
-
-    <div class={if (connectionsLeft.bind > 0) classes else "d-none " + classes }>
+    <div class={if (connectionsLeft.bind > 0) classes + " loaded" else "d-none " + classes }>
       <div class="d-inline-flex logo">
         <img src="images/plenty_logo-400.png"/>
       </div>

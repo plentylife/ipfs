@@ -14,4 +14,14 @@ object FutureDom {
     }
   }
 
+  @dom
+  implicit def propertyDom[String](fv: FutureOptVar[String]): Binding[String] = {
+    fv.v.bind match {
+      case Some(v) ⇒ v
+      case _ ⇒ ""
+    }
+  }
+
+
+
 }
