@@ -8,20 +8,20 @@ import scala.concurrent.Future
 trait FutureVar[T] {
   val v = Var[Option[T]](None)
 
-//  val getter: () ⇒ Future[T]
-//
-//  update
-//
-//  def set(f: Future[T])
-//
-//  def update = set(getter())
+  //  val getter: () ⇒ Future[T]
+  //
+  //  update
+  //
+  //  def set(f: Future[T])
+  //
+  //  def update = set(getter())
 }
 
 
 class FutureNakedVar[T](getter: ⇒ Future[T]) extends FutureVar[T] {
   update
 
-  def set(f: Future[T]) = f foreach(n ⇒ v.value_=(Option(n)))
+  def set(f: Future[T]) = f foreach (n ⇒ v.value_=(Option(n)))
 
   def update = set(getter)
 }
@@ -30,14 +30,10 @@ class FutureNakedVar[T](getter: ⇒ Future[T]) extends FutureVar[T] {
 class FutureOptVar[T](getter: ⇒ Future[Option[T]]) extends FutureVar[T] {
   update
 
-  def set(f: Future[Option[T]]) = f foreach(n ⇒ v.value_=(n))
+  def set(f: Future[Option[T]]) = f foreach (n ⇒ v.value_=(n))
 
   def update = set(getter)
 }
-
-//object FutureVar {
-//  implicit class FV[T](getter: () ⇒ Future[T])
-//}
 
 class FutureList[T](getter: ⇒ Future[List[T]]) {
   val v = Vars[T]()
@@ -67,5 +63,5 @@ class FutureList[T](getter: ⇒ Future[List[T]]) {
     })
   }
 
-  def update = set(getter )
+  def update = set(getter)
 }

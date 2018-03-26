@@ -1,29 +1,26 @@
 package life.plenty.ui.display
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import com.thoughtworks.binding.Binding.Vars
+import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.connection.Parent
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
-import life.plenty.model.utils.{GraphExtractorsDEP, GraphUtils}
-import life.plenty.ui
 import life.plenty.model.utils.GraphEx._
-import life.plenty.ui.display.utils.FutureDom._
+import life.plenty.model.utils.GraphUtils
 import life.plenty.ui.display.feed.SpaceFeedDisplay
-import life.plenty.ui.display.utils.{DomRenderListSingleModule, FutureList, FutureOptVar, FutureVar}
-import life.plenty.ui.display.utils.Helpers._
+import life.plenty.ui.display.utils.FutureDom._
+import life.plenty.ui.display.utils.{FutureList, FutureOptVar}
 import life.plenty.ui.model._
 import org.scalajs.dom.raw.Node
-import rx.Rx
 import scalaz.std.list._
 import scalaz.std.option._
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object UserLayout extends SimpleDisplayModule[User] {
   def getMemberships(hub: Hub): Future[List[Hub]] = {
-    val ms = hub.whenLoadComplete map { _ ⇒ hub.sc.exAll({ case Parent(m: Members) ⇒ m })}
+    val ms = hub.whenLoadComplete map { _ ⇒ hub.sc.exAll({ case Parent(m: Members) ⇒ m }) }
     ms flatMap { membersList ⇒
       val parentalList = membersList map { m ⇒
         m.loadCompletedHub map {_.sc.ex({ case Parent(p: Hub) ⇒ p })}
@@ -41,16 +38,16 @@ object UserLayout extends SimpleDisplayModule[User] {
       val withParents = spaces.map(
         s ⇒ GraphUtils.hasParentInChain(s, spaces filterNot {_ == s}) map {s → _}
       )
-      Future.sequence(withParents) map {_.collect{case (s, false) ⇒ s}}
+      Future.sequence(withParents) map {_.collect { case (s, false) ⇒ s }}
     }
   }
 
   @dom
   override def html(what: User): Binding[Node] = {
     val membershipsList = new FutureList[Space](getTopMemberships(what))
+    val membershipsRenders = for (m <- membershipsList.v) yield SpaceFeedDisplay.html(m, null).bind
 
     val titleClasses = "title ml-2 "
-
     <div class={"top-space-layout user-feed"}>
       <div class="layout-header">
         <h3 class={titleClasses}>
@@ -62,14 +59,7 @@ object UserLayout extends SimpleDisplayModule[User] {
       </div>
 
       <div class="user-feed">
-        {try {
-        for (m <- membershipsList.v) yield SpaceFeedDisplay.html(m).bind
-      } catch {
-        case e: Throwable =>
-          ui.console.error("Failed during render inside UserLayout")
-          ui.console.error(e)
-          throw e;
-      }}
+        {membershipsRenders.bind}
       </div>
 
     </div>
