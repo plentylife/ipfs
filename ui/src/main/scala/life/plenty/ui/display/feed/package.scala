@@ -29,11 +29,6 @@ package object feed {
 
     @dom
     override def html(hub: T): Binding[Node] = {
-      println(s"DISPLAYING ${this}")
-
-      implicit val c = hub.ctx
-      val parent = GraphExtractorsDEP.getParent(hub)
-
       <div class={"feed " + cssClass} id={hub.id}>
         {SimpleDisplayModule.html(FullUserBadge, hub.getCreator).bind} {actionHtml(action(hub)).bind} {
           FutureDom.dom(actionTarget(hub), actionTargetHtml).bind
