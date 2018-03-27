@@ -1,6 +1,6 @@
 package life.plenty.ui.emailNotification
 
-import com.thoughtworks.binding.Binding.Vars
+import com.thoughtworks.binding.Binding.{BindingSeq, Vars}
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{DbReader, DbReaderModule, ShareDB, Main ⇒ dataMain}
 import life.plenty.model.hub.User
@@ -45,14 +45,14 @@ object EmailMain {
     mInit()
     ui.initialize()
 
-    EmailStatusManager.turnOn()
+    EmailManager.turnOn()
 
     next()
   }
 
   private var currentUser: User = null
 
-  def send() = {
+  def send(): Unit = {
     val uName = getName(currentUser)
     val uEmail = getEmail(currentUser)
     for (n ← uName; e ← uEmail) {
@@ -60,21 +60,24 @@ object EmailMain {
     }
   }
 
-  def next() = {
+  def next(): Unit = {
     emailNext
     DbReader.read("yv5_7GVnoTxA-DZ_DNvOQ6NhaRJAN_wbfoXpRfdEy8SSAnoMGooxYg") foreach { hub ⇒
       currentUser = hub.asInstanceOf[User]
-      dom.render(document.getElementById("body-container"), emailDom(hub.asInstanceOf[User]))
+
+      val bindings = Vars[Binding[Node]]()
+      dom.render(document.getElementById("body-container"), emailDom(hub.asInstanceOf[User], bindings))
+
+      EmailBuilder.renderings(currentUser) foreach {events ⇒
+        bindings.value.insertAll(0, events)
+        EmailManager.send(events)
+      }
+
     }
   }
 
   @dom
-  def emailDom(user: User): Binding[Node] = {
-    val bindings = Vars[Binding[Node]]()
-    EmailBuilder.renderings(user) foreach {
-      bindings.value.insertAll(0, _)
-    }
-
+  def emailDom(user: User, events: BindingSeq[Binding[Node]]): Binding[Node] = {
     val linkParams = Router.changeHub(user, Router.defaultRoutingParams)
     val hash = Router.toHash(linkParams)
 
@@ -82,7 +85,7 @@ object EmailMain {
       <p>
         <a target="_blank" class="plenty-link" id="link" href={baseUrl + "/" + hash}>View feed on Plenty</a>
       </p>
-      {for(b <- bindings) yield b.bind}
+      {for(b <- events) yield b.bind}
     </div>
   }
 }

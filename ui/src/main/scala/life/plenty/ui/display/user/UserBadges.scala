@@ -5,7 +5,7 @@ import life.plenty.model.hub.User
 import life.plenty.model.utils.GraphEx
 import life.plenty.ui.display.utils.FutureOptVar
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.emailNotification.EmailStatusManager
+import life.plenty.ui.emailNotification.EmailManager
 import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule}
 import org.scalajs.dom.Node
 import org.scalajs.dom.html.Canvas
@@ -50,5 +50,5 @@ object JustTheName extends SimpleDisplayModule[User] {
     propertyDom(new FutureOptVar(GraphEx.getName(what)))
   }
 
-  override def fits(what: Any): Boolean = what.isInstanceOf[User] && EmailStatusManager.isOn
+  override def fits(what: Any): Boolean = what.isInstanceOf[User] && EmailManager.isOn
 }

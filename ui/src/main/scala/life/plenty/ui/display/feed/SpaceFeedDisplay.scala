@@ -9,7 +9,7 @@ import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.model.utils.GraphUtils.collectDownTree
 import life.plenty.ui.display.actions.OpenButton
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.emailNotification.EmailStatusManager
+import life.plenty.ui.emailNotification.EmailManager
 import life.plenty.ui.model._
 import org.scalajs.dom.{Event, Node}
 
@@ -34,16 +34,10 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
 
   @dom
   def html(hub: Space): Binding[Node] = {
-    EmailStatusManager.track(hub.id)
-
     val aggregated = getAggregated(hub)
 
     val bindList = Vars[Object]()
     aggregated.foreach(ags ⇒ bindList.value.insertAll(0, ags))
-
-    aggregated foreach {ags ⇒
-      EmailStatusManager.track(hub.id, ags.nonEmpty)
-    }
 
     val cssClass = if (bindList.bind.isEmpty) "d-none" else ""
 
