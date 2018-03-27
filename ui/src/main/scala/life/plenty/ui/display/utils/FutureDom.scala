@@ -19,6 +19,8 @@ object FutureDom {
     }
   }
 
+  implicit def toOptFutureVar[T](f: Future[Option[T]]): FutureOptVar[T] = new FutureOptVar[T](f)
+
   @dom
   implicit def propertyDom[String](fv: FutureOptVar[String]): Binding[Node] = {
     fv.v.bind match {
