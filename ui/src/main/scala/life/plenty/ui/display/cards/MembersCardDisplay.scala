@@ -9,7 +9,8 @@ import life.plenty.model.utils.GraphExtractorsDEP
 import life.plenty.ui
 import life.plenty.ui.display.utils.CardNavigation
 import life.plenty.ui.display.utils.Helpers.{BasicBindable, BindableModule, _}
-import life.plenty.ui.display.{FullUserBadge, Help}
+import life.plenty.ui.display.Help
+import life.plenty.ui.display.user.FullUserBadge
 import life.plenty.ui.model.{DisplayModule, UiContext}
 import org.scalajs.dom.Event
 import org.scalajs.dom.raw.Node

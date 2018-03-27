@@ -16,4 +16,7 @@ object GraphEx {
   def getEmail(h: Hub): Future[Option[String]] = h.get({ case Email(b) ⇒ b })
   def getTitle(h: Hub): Future[Option[String]] = h.get({ case Title(b) ⇒ b })
 
+  def getTo(h: Hub): Future[Option[User]] = h.get({ case To(b) ⇒ b })
+  def getFrom(h: Hub): Future[Option[User]] = h.get({ case From(b) ⇒ b })
+
 }

@@ -4,14 +4,14 @@ import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
-import life.plenty.model.utils.GraphUtils
-import life.plenty.model.utils.GraphExtractorsDEP
-import life.plenty.ui.display.utils.{FutureDom, FutureVar}
+import life.plenty.model.utils.{GraphEx, GraphExtractorsDEP, GraphUtils}
+import life.plenty.ui.display.user.{FullUserBadge, UserDisplayDirectory}
+import life.plenty.ui.display.utils.{FutureDom, FutureOptVar, FutureVar}
 import life.plenty.ui.display.utils.Helpers.{BindableHtmlProperty, OptBindableHtmlProperty, OptBindableHub, OptBindableProperty}
 import life.plenty.ui.model._
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
-
+import FutureDom._
 package object feed {
   sealed trait FeedDisplay[T] extends SimpleDisplayModule[T] {
     @dom
@@ -29,8 +29,10 @@ package object feed {
 
     @dom
     override def html(hub: T): Binding[Node] = {
+      val creator = new FutureOptVar(GraphEx.getCreator(hub))
+
       <div class={"feed " + cssClass} id={hub.id}>
-        {SimpleDisplayModule.html(FullUserBadge, hub.getCreator).bind} {actionHtml(action(hub)).bind} {
+        {dirDom[User](creator, UserDisplayDirectory).bind} {actionHtml(action(hub)).bind} {
           FutureDom.dom(actionTarget(hub), actionTargetHtml).bind
         }
       </div>
@@ -57,8 +59,8 @@ package object feed {
     override def fits(hub: Any): Boolean = hub.isInstanceOf[VoteGroup]
   }
 
-  object FeedModuleDirectory extends SimpleDisplayModuleDirectory[FeedDisplay[_]] {
-    override val directory: List[FeedDisplay[_]] = List(
+  object FeedModuleDirectory extends SimpleDisplayModuleDirectory[Any] {
+    override val directory:List[SimpleDisplayModule[_]] = List(
       FeedQuestionDisplay, FeedAnswerDisplay, FeedTransactionDisplay, FeedVoteGroupDisplay, FeedSpaceDisplay
     )
   }

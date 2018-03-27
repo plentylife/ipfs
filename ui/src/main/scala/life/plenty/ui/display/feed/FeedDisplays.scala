@@ -6,8 +6,8 @@ import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.ui
-import life.plenty.ui.display.FullUserBadge
-import life.plenty.ui.display.utils.{CardNavigation, FutureList, FutureOptVar, FutureVar}
+import life.plenty.ui.display.user.{FullUserBadge, UserDisplayDirectory}
+import life.plenty.ui.display.utils._
 import life.plenty.ui.display.utils.Helpers._
 import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule}
 import org.scalajs.dom.Node
@@ -15,6 +15,8 @@ import rx.{Ctx, Rx}
 import scalaz.std.list._
 import scalaz.std.option._
 import scalaz.std.map._
+import FutureDom._
+import life.plenty.model.utils.GraphEx
 
 trait FeedAnswerDisplayImpl {self: FeedDisplaySimple[Answer] ⇒
   override protected def action(hub: Answer) =  {
@@ -59,10 +61,12 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
     println(s"DISPLAYING ${this}")
 
     val amount = new BindableProperty(hub.getAmountOrZeroRx)(a ⇒ a + ui.thanks)
+    val toBadge = dirDom(GraphEx.getTo(hub), UserDisplayDirectory)
+    val fromBadge = dirDom(GraphEx.getFrom(hub), UserDisplayDirectory)
 
     <div class={"feed " + cssClass} id={hub.id}>
-      {SimpleDisplayModule.html(FullUserBadge, hub.getFrom).bind} {actionHtml(action).bind}
-      {SimpleDisplayModule.html(FullUserBadge, hub.getTo).bind}
+      {fromBadge.bind} {actionHtml(action).bind}
+      {toBadge.bind}
       <span class="amount">{amount.dom.bind}</span>
     </div>
   }
@@ -86,7 +90,9 @@ trait FeedVoteGroupDisplayImpl {self: FeedDisplay[VoteGroup] ⇒
   }
 
   @dom
-  private def voteEntry(u: User, votes: Int): Binding[Node] = <span>
-    {FullUserBadge.html(u).bind} {actionHtml("voted").bind} {plusMinus(votes).bind}
-  </span>
+  private def voteEntry(u: User, votes: Int): Binding[Node] = {
+  val badge = UserDisplayDirectory.display(u).get
+  <span>
+    {badge.bind} {actionHtml("voted").bind} {plusMinus(votes).bind}
+  </span>}
 }

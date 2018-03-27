@@ -8,6 +8,7 @@ import life.plenty.ui.display._
 import life.plenty.ui.display.actions._
 import life.plenty.ui.display.cards._
 import life.plenty.ui.display.feed.SpaceFeedDisplay
+import life.plenty.ui.display.user.FullUserBadge
 //import life.plenty.ui.display.feed.{FeedAnswerDisplay, FeedQuestionDisplay, FeedSpaceDisplay, SpaceFeedDisplay}
 import life.plenty.ui.display.info.ThanksGiven
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}

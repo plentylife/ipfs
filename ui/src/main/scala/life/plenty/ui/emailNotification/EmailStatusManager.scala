@@ -33,5 +33,6 @@ object EmailStatusManager {
     flagOn = true
   }
 
+  def isOn = flagOn
 
 }

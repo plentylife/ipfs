@@ -60,9 +60,10 @@ object SimpleDisplayModule {
 //  def html[T <: Hub](mh: (SimpleDisplayModule[T], Rx[Option[T]])): Binding[Node] = html(mh._1, mh._2)
 }
 
-trait SimpleDisplayModuleDirectory[L <: SimpleDisplayModule[_]] {
-  val directory : List[L]
+trait SimpleDisplayModuleDirectory[T] {
+  val directory : List[SimpleDisplayModule[_]]
   def get[T](what: T): Option[SimpleDisplayModule[T]] =
     directory find {m ⇒ m.fits(what)} map {_.asInstanceOf[SimpleDisplayModule[T]]}
   def getTogether[T](hub: T): Option[(SimpleDisplayModule[T], T)] = get(hub) map {_ → hub}
+  def display[T](what: T): Option[Binding[Node]] = get(what) map {_.html(what)}
 }

@@ -1,13 +1,14 @@
-package life.plenty.ui.display
+package life.plenty.ui.display.user
 
-import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub.User
-import life.plenty.model.hub.definition.Hub
-import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule, jdenticon}
-import org.scalajs.dom.Node
+import life.plenty.model.utils.GraphEx
+import life.plenty.ui.display.utils.FutureOptVar
 import life.plenty.ui.display.utils.Helpers._
-import org.scalajs.dom.html.{Canvas, Div}
+import life.plenty.ui.emailNotification.EmailStatusManager
+import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule}
+import org.scalajs.dom.Node
+import org.scalajs.dom.html.Canvas
 
 class FullUserBadge(override val hub: User) extends DisplayModule[User] {
   override def update(): Unit = Unit
@@ -40,4 +41,14 @@ object Identicon {
     </canvas>
     c
   }
+}
+
+object JustTheName extends SimpleDisplayModule[User] {
+  import life.plenty.ui.display.utils.FutureDom._
+
+  override def html(what: User): Binding[Node] = {
+    propertyDom(new FutureOptVar(GraphEx.getName(what)))
+  }
+
+  override def fits(what: Any): Boolean = what.isInstanceOf[User] && EmailStatusManager.isOn
 }
