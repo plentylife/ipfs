@@ -9,6 +9,7 @@ import org.scalajs.dom.{Node, StyleSheet}
 import org.scalajs.dom.html.Div
 import org.scalajs.dom.raw.{HTMLAnchorElement, HTMLElement}
 import rx.{Ctx, Rx, Var ⇒ rxVar}
+import monix.execution.Scheduler.Implicits.global
 
 import scala.scalajs.js
 import scala.scalajs.js.timers.SetIntervalHandle
@@ -34,11 +35,9 @@ trait SimpleDisplayModule[T] {
       interval = org.scalajs.dom.window.setInterval(() ⇒ {
         opacity += 0.2
         if (opacity > startingOpacity) opacity = startingOpacity
-        println(s"Opacity $opacity")
         node.asInstanceOf[HTMLElement].style.opacity = opacity.toString
 
         if (opacity >= startingOpacity) {
-          println("Opacity cancel")
           org.scalajs.dom.window.clearInterval(interval)
         }
       }, 100)

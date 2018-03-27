@@ -45,7 +45,7 @@ object UserLayout extends SimpleDisplayModule[User] {
   @dom
   override def html(what: User): Binding[Node] = {
     val membershipsList = new FutureList[Space](getTopMemberships(what))
-    val membershipsRenders = for (m <- membershipsList.v) yield SpaceFeedDisplay.html(m, null).bind
+    val membershipsRenders = for (m <- membershipsList.v) yield SpaceFeedDisplay.html(m).bind
 
     val titleClasses = "title ml-2 "
     <div class={"top-space-layout user-feed"}>

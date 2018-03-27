@@ -13,6 +13,7 @@ object GraphEx {
 
   def getBody(h: Hub): Future[Option[String]] = h.get({ case Body(b) ⇒ b })
   def getName(h: Hub): Future[Option[String]] = h.get({ case Name(b) ⇒ b })
+  def getEmail(h: Hub): Future[Option[String]] = h.get({ case Email(b) ⇒ b })
   def getTitle(h: Hub): Future[Option[String]] = h.get({ case Title(b) ⇒ b })
 
 }
