@@ -22,17 +22,21 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
     FeedModuleDirectory get what map { m ⇒ m.html(what) } getOrElse DisplayModel.nospan
   }
 
-  @dom
-  def html(hub: Space): Binding[Node] = {
-    EmailStatusManager.track(hub.id)
-
-    val aggregated = collectDownTree[Hub](hub, matchBy = {
+  def getAggregated(hub: Hub) = {
+    collectDownTree[Hub](hub, matchBy = {
       case Child(h: Hub) if !h.isInstanceOf[Members] ⇒ h
       case m: Marker ⇒ m
     }, allowedPath = {case Child(h: Hub) if !h.isInstanceOf[Members] ⇒ h}) flatMap { list ⇒
       val additional = VoteGroup.groupByAnswer(list)
       additional map {list ::: _}
     }
+  }
+
+  @dom
+  def html(hub: Space): Binding[Node] = {
+    EmailStatusManager.track(hub.id)
+
+    val aggregated = getAggregated(hub)
 
     val bindList = Vars[Object]()
     aggregated.foreach(ags ⇒ bindList.value.insertAll(0, ags))

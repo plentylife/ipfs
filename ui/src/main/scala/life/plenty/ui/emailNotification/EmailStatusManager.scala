@@ -25,7 +25,7 @@ object EmailStatusManager {
 
   def send() = {
     if (trackingSpaces.valuesIterator.forall(_.nonEmpty)) {
-      if (trackingSpaces.values.exists(_.get)) EmailRenderer.send() else EmailRenderer.next()
+      if (trackingSpaces.values.exists(_.get)) EmailMain.send() else EmailMain.next()
     }
   }
 

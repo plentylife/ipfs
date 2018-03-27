@@ -1,5 +1,6 @@
 package life.plenty.ui.emailNotification
 
+import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{DbReader, DbReaderModule, ShareDB, Main ⇒ dataMain}
 import life.plenty.model.hub.User
@@ -21,7 +22,7 @@ import scala.scalajs.js.Dynamic.global
 import scala.scalajs.js.annotation.{JSExport, JSExportTopLevel}
 
 @JSExportTopLevel("Email")
-object EmailRenderer {
+object EmailMain {
 
   private def emailNext = global.emailNextUserEmail
   private def ready = global.readyToEmailUser
@@ -68,8 +69,12 @@ object EmailRenderer {
 
   @dom
   def emailDom(user: User): Binding[Node] = {
+    val bindings = Vars[Binding[Node]]()
+    EmailBuilder.renderings(user) foreach {
+      bindings.value.insertAll(0, _)
+    }
     <div id="viewport">
-      {UserLayout.html(user).bind}
+      {for(b <- bindings) yield b.bind}
     </div>
   }
 }
