@@ -26,15 +26,16 @@ object EmailMain {
 
   private def emailNext = global.emailNextUserEmail
   private def ready = global.readyToEmailUser
+  private var baseUrl: String = _
 
   @JSExport
-  def render(db: ShareDB): Unit = {
+  def render(db: ShareDB, _baseUrl: String): Unit = {
     if (js.isUndefined(emailNext) || js.isUndefined(ready)) {
       println("Missing interface functions for sending emails")
       return
     }
 
-    println("Creating email")
+    baseUrl = _baseUrl
     data.console.active = false
     ui.console.active = false
     modelConsole.active = false
@@ -73,7 +74,14 @@ object EmailMain {
     EmailBuilder.renderings(user) foreach {
       bindings.value.insertAll(0, _)
     }
+
+    val linkParams = Router.changeHub(user, Router.defaultRoutingParams)
+    val hash = Router.toHash(linkParams)
+
     <div id="viewport">
+      <p>
+        <a target="_blank" class="plenty-link" id="link" href={baseUrl + "/" + hash}>View feed on Plenty</a>
+      </p>
       {for(b <- bindings) yield b.bind}
     </div>
   }

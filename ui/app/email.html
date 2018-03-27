@@ -5,11 +5,37 @@
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
   <!--<link rel="stylesheet" type="text/css" href="css/main.css">-->
   <!--<link href="iconic/font/css/open-iconic-bootstrap.css" rel="stylesheet">-->
+  <style>
+    #body-container {
+      /*padding-top: 1em;*/
+    }
+    .feed {
+      /*border-bottom: 1px #ececec solid;*/
+      padding-bottom: 5px
+    }
+    .vote-group-body {
+      padding-left: 1em;
+    }
+    .action-text {
+      font-weight: bold;
+    }
+    .proposal-body {
+      background-color: rgba(34, 139, 34, 0.07);
+      margin-right: 5px;
+    }
+
+  </style>
 
 </head>
 <body>
   <div id="email-container">
     <img src="http://about.plenty.life/etc/plenty_logo_3b_header_low_res.png" id="logo" height="50" />
+
+    <p>
+      This is a summary of what has happened on Plenty since your last login.
+      You can always email back at this address if you have any questions or comments.
+    </p>
+
     <div id="body-container"></div>
   </div>
 
@@ -17,7 +43,7 @@
   <script src="https://cdn.jsdelivr.net/npm/jdenticon@1.8.0" async></script>
   <script type="text/javascript" src="../target/scala-2.12/ui-fastopt.js"></script>
   <script type="text/javascript">
-      Email.render(startDB("ws://127.0.0.1:8080/"))
+      Email.render(startDB("ws://127.0.0.1:8080/"), "http://plenty.life")
   </script>
 
 </body>

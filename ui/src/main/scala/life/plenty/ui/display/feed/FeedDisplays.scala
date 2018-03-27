@@ -58,11 +58,11 @@ trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
 
   @dom
   override def html(hub: Transaction): Binding[Node] = {
-    println(s"DISPLAYING ${this}")
+    println(s"DISPLAYING TRANSACTION ${this}")
 
     val amount = new BindableProperty(hub.getAmountOrZeroRx)(a ⇒ a + ui.thanks)
     val toBadge = dirDom(GraphEx.getTo(hub), UserDisplayDirectory)
-    val fromBadge = dirDom(GraphEx.getFrom(hub), UserDisplayDirectory)
+    val fromBadge = dirDom(GraphEx.getTransactionFrom(hub), UserDisplayDirectory)
 
     <div class={"feed " + cssClass} id={hub.id}>
       {fromBadge.bind} {actionHtml(action).bind}
@@ -81,18 +81,18 @@ trait FeedVoteGroupDisplayImpl {self: FeedDisplay[VoteGroup] ⇒
     val uvb = new FutureList(uv)
 
     <div class="feed vote-group">
-      <p class="vote-group-title">Proposal <span class="proposal-body">{what.answer.getBody.dom.bind}</span> received
-        votes</p>
-      <p class="vote-group-body">
+      <div class="vote-group-title">proposal <span class="proposal-body">{what.answer.getBody.dom.bind}</span> received
+        votes</div>
+      <div class="vote-group-body">
         {for(uve <- uvb.v) yield voteEntry(uve._1, uve._2).bind}
-      </p>
+      </div>
     </div>
   }
 
   @dom
   private def voteEntry(u: User, votes: Int): Binding[Node] = {
   val badge = UserDisplayDirectory.display(u).get
-  <span>
+  <div>
     {badge.bind} {actionHtml("voted").bind} {plusMinus(votes).bind}
-  </span>}
+  </div>}
 }

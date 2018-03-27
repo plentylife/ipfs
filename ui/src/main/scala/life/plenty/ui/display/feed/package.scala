@@ -25,7 +25,7 @@ package object feed {
     protected val cssClass: String
 
     @dom
-    private def actionTargetHtml(at: String): Binding[Node] = <p class="action-target-text">{at}</p>
+    private def actionTargetHtml(at: String): Binding[Node] = <span class="action-target-text">{at}</span>
 
     @dom
     override def html(hub: T): Binding[Node] = {

@@ -50,6 +50,9 @@ object Router {
   def changeViewState(s: ViewState, routingParams: RoutingParams) =
     routingParams.copy(stateId = s.id)
 
+  def changeHub(hub: Hub, routingParams: RoutingParams) =
+    routingParams.copy(hubId = Option(hub.id))
+
   def navigateToHub(o: Hub) = {
     router.state.value_=(router.state.value.copy(hubId = Option(o.id)))
   }
