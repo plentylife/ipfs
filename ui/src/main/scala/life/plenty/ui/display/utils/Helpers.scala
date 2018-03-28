@@ -35,7 +35,7 @@ object Helpers {
   def plusMinus(v: Int): Binding[Node] = if (v > 0) {
     <span class="positive">+{v}</span>
   } else if (v < 0) {
-    <span class="negative">-{v}</span>
+    <span class="negative">—{Math.abs(v)}</span>
   } else {
     <span>{v}</span>
   }

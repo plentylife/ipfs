@@ -1,5 +1,6 @@
 package life.plenty.ui.display
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
@@ -12,7 +13,10 @@ import life.plenty.ui.model._
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
 import FutureDom._
-import life.plenty.model.connection.Inactive
+import life.plenty.model.connection.{DataHub, Inactive, Marker}
+import life.plenty.model.connection.MarkerEnum._
+import org.scalajs.dom.Event
+
 package object feed {
   sealed trait FeedDisplay[T] extends SimpleDisplayModule[T] {
     @dom
@@ -32,11 +36,18 @@ package object feed {
     override def html(hub: T): Binding[Node] = {
       val creator = new FutureOptVar(GraphEx.getCreator(hub))
 
-      <div class={"feed " + cssClass} id={hub.id}>
+      <div class={"feed " + cssClass} id={hub.id} onclick={onClick(hub) _}>
         {dirDom[User](creator, UserDisplayDirectory).bind} {actionHtml(action(hub)).bind} {
           FutureDom.dom(actionTarget(hub), actionTargetHtml).bind
         }
       </div>
+    }
+
+    private def onClick(hub: Hub)(e: Event) = hub match {
+      case con: DataHub[_] ⇒ Router.navigateToHub(con.getHolder)
+      case _ ⇒ GraphEx.getParent(hub) foreach {
+        _ foreach {p ⇒ Router.navigateToHub(p)}
+      }
     }
   }
 
@@ -56,6 +67,13 @@ package object feed {
     override def fits(hub: Any): Boolean = hub.isInstanceOf[Inactive]
   }
 
+  case object FeedMarkerDisplay extends FeedDisplaySimple[Marker] with FeedMarkerDisplayImpl {
+    override def fits(hub: Any): Boolean = hub match {
+      case m: Marker ⇒ m.value == CONFIRMED
+      case _ ⇒ false
+    }
+  }
+
   case object FeedTransactionDisplay extends FeedDisplay[Transaction] with FeedTransactionDisplayImpl {
     override def fits(hub: Any): Boolean = hub.isInstanceOf[Transaction]
   }
@@ -67,7 +85,7 @@ package object feed {
   object FeedModuleDirectory extends SimpleDisplayModuleDirectory[Any] {
     override val directory:List[SimpleDisplayModule[_]] = List(
       FeedQuestionDisplay, FeedAnswerDisplay, FeedTransactionDisplay, FeedVoteGroupDisplay, FeedSpaceDisplay,
-      FeedDeletedDisplay
+      FeedDeletedDisplay, FeedMarkerDisplay
     )
   }
 

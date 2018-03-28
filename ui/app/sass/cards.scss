@@ -272,6 +272,8 @@ $event-color: #9f8600;
   align-items: center;
   margin-top: $spacer * 0.35;
   margin-bottom: $spacer * 0.35;
+  cursor: pointer;
+
   & > * {
     margin-left: $spacer * 0.25;
     margin-bottom: 0;
@@ -292,7 +294,8 @@ $event-color: #9f8600;
       display: flex;
       flex-direction: column;
       width: 100%;
-      align-items: flex-end;
+      align-items: flex-start;
+      padding-left: 1em;
 
       & > * {
         display: flex;
@@ -306,6 +309,10 @@ $event-color: #9f8600;
 
   .proposal-body {
     background-color: rgba(119, 136, 153, 0.10);
+  }
+
+  .amount {
+    color: $money-color
   }
 }
 

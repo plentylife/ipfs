@@ -6,6 +6,7 @@ import life.plenty.model.hub.definition.Hub
 import rx.{Ctx, Rx}
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object GraphEx {
   def getCreationTime(h: Hub): Future[Option[Long]] = h.get({ case CreationTime(b) ⇒ b })
@@ -16,6 +17,12 @@ object GraphEx {
   def getName(h: Hub): Future[Option[String]] = h.get({ case Name(b) ⇒ b })
   def getEmail(h: Hub): Future[Option[String]] = h.get({ case Email(b) ⇒ b })
   def getTitle(h: Hub): Future[Option[String]] = h.get({ case Title(b) ⇒ b })
+  def getTitleOrBody(hub: Hub): Future[Option[String]] = {
+    getTitle(hub) flatMap {
+      case optT @ Some(t) if t.nonEmpty ⇒ Future(optT)
+      case _ ⇒ getBody(hub)
+    }
+  }
 
   def getTo(h: Hub): Future[Option[User]] = h.get({ case To(b) ⇒ b })
   def getTransactionFrom(h: Hub): Future[Option[User]] = getCreator(h)

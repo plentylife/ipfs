@@ -22,7 +22,9 @@ class ActionAddConfirmedMarker(override val hub: Hub) extends Module[Hub] {
   private implicit val ctx = hub.ctx
 
   def confirm() = {
-    hub.addConnection(Marker(MarkerEnum.CONFIRMED))
+    val cm = Marker(MarkerEnum.CONFIRMED)
+    cm.asNew()
+    hub.addConnection(cm)
     println(s"added confirm marker ${hub.sc.all}")
     println(s"${hub.rx.cons}")
   }

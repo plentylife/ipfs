@@ -9,17 +9,18 @@ import life.plenty.ui
 import life.plenty.ui.display.user.{FullUserBadge, UserDisplayDirectory}
 import life.plenty.ui.display.utils._
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.model.{DisplayModule, SimpleDisplayModule}
-import org.scalajs.dom.Node
+import life.plenty.ui.model.{DisplayModule, Router, SimpleDisplayModule}
+import org.scalajs.dom.{Event, Node}
 import rx.{Ctx, Rx}
 import scalaz.std.list._
 import scalaz.std.option._
 import scalaz.std.map._
 import FutureDom._
-import life.plenty.model.connection.Inactive
+import life.plenty.model.connection.{Inactive, Marker}
 import life.plenty.model.utils.GraphEx
-import scala.concurrent.ExecutionContext.Implicits.global
+import life.plenty.model.connection.MarkerEnum._
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 trait FeedAnswerDisplayImpl {self: FeedDisplaySimple[Answer] ⇒
@@ -59,7 +60,6 @@ trait FeedSpaceDisplayImpl {self: FeedDisplaySimple[Space] ⇒
 trait FeedDeletedDisplayImpl {self: FeedDisplaySimple[Inactive] ⇒
   override protected def action(hub: Inactive) =  {"deleted"}
   override protected def actionTarget(implicit hub:Inactive): FutureVar[String] = {
-    println(s"DELETED ${hub.getHolder} ${hub.getHolder.sc.all}")
     new FutureOptVar[String](getTitle(hub.getHolder) flatMap {
       case optT @ Some(t) if t.nonEmpty ⇒ Future(optT)
       case _ ⇒ getBody(hub.getHolder)
@@ -69,24 +69,44 @@ trait FeedDeletedDisplayImpl {self: FeedDisplaySimple[Inactive] ⇒
   override protected val cssClass: String = "deleted"
 }
 
+trait FeedMarkerDisplayImpl {self: FeedDisplaySimple[Marker] ⇒
+  override protected def action(hub: Marker) =  {"marked " + {hub.value match {
+    case CONFIRMED ⇒ "final"
+  }}}
+  override protected def actionTarget(implicit hub:Marker): FutureVar[String] = {
+    new FutureOptVar[String](getTitleOrBody(hub.getHolder))
+  }
+
+  override protected val cssClass: String = "marked"
+}
+
 trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
   private val action = "gave"
   private val cssClass: String = "transaction"
 
   @dom
   override def html(hub: Transaction): Binding[Node] = {
-    println(s"DISPLAYING TRANSACTION ${this}")
-
     val amount = new BindableProperty(hub.getAmountOrZeroRx)(a ⇒ a + ui.thanks)
     val toBadge = dirDom(GraphEx.getTo(hub), UserDisplayDirectory)
     val fromBadge = dirDom(GraphEx.getTransactionFrom(hub), UserDisplayDirectory)
 
-    <div class={"feed " + cssClass} id={hub.id}>
+    <div class={"feed " + cssClass} id={hub.id} onclick={onClick(hub) _}>
       {fromBadge.bind} {actionHtml(action).bind}
       {toBadge.bind}
       <span class="amount">{amount.dom.bind}</span>
     </div>
   }
+
+  private def onClick(t: Transaction)(e: Event) = {
+    t.getOnContribution foreach {
+      _ foreach {contribution: Contribution ⇒
+        getParent(contribution) foreach {_ foreach {p ⇒
+          Router.navigateToHub(p)
+        }}
+      }
+    }
+  }
+
 }
 
 trait FeedVoteGroupDisplayImpl {self: FeedDisplay[VoteGroup] ⇒
@@ -97,13 +117,19 @@ trait FeedVoteGroupDisplayImpl {self: FeedDisplay[VoteGroup] ⇒
     val uv = VoteGroup.countByUser(what.votes)
     val uvb = new FutureList(uv)
 
-    <div class="feed vote-group">
+    <div class="feed vote-group" onclick={onClick(what.answer) _}>
       <div class="vote-group-title">proposal <span class="proposal-body">{what.answer.getBody.dom.bind}</span> received
         votes</div>
       <div class="vote-group-body">
         {for(uve <- uvb.v) yield voteEntry(uve._1, uve._2).bind}
       </div>
     </div>
+  }
+
+  private def onClick(hub: Hub)(e: Event) = {
+    getParent(hub) foreach {
+      _ foreach {p ⇒ Router.navigateToHub(p)}
+    }
   }
 
   @dom

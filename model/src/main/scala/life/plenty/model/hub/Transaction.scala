@@ -7,11 +7,13 @@ import life.plenty.model.utils._
 import scala.concurrent.Future
 
 class Transaction() extends WithAmount {
-  addToRequired(getOnContribution)
+  addToRequired(getOnContributionRx)
 
   def getTo = rx.get({ case To(u) ⇒ u })
 
-  def getOnContribution = rx.get({ case Parent(c: Contribution) ⇒ c })
+  @deprecated
+  def getOnContributionRx = rx.get({ case Parent(c: Contribution) ⇒ c })
+  def getOnContribution = get({ case Parent(c: Contribution) ⇒ c })
 
   def getFrom = getCreator
 
@@ -38,7 +40,7 @@ class Transaction() extends WithAmount {
     getFrom.addConnection(Child(this), execOnSuccess = () ⇒ {
       model.console.trace(s"Transaction added with id ${this.id} ")
       getTo.addConnection(Child(this))
-      getOnContribution.addConnection(Child(this))
+      getOnContributionRx.addConnection(Child(this))
     })
   }
 
