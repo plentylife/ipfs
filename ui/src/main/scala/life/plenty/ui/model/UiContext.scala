@@ -1,8 +1,10 @@
 package life.plenty.ui.model
+import java.util.Date
+
 import com.thoughtworks.binding.Binding
 import com.thoughtworks.binding.Binding.Var
 import life.plenty.data.DbReader
-import life.plenty.model.connection.{Creator, Email, Id, Name}
+import life.plenty.model.connection._
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.security.SecureUser
@@ -34,6 +36,8 @@ object UiContext {
 
   def setUser(u: User) = {
     userVar.value_=(u)
+    val ll = LastLogin(new Date().getTime)
+    u.addConnection(ll)
     ui.console.trace(s"UiContext has set userVar set to ${userVar.value} ${userVar.value.id}")
   }
 

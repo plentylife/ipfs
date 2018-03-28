@@ -64,3 +64,11 @@ case class CreationTime(time: Long) extends DataHub[Long] {
 object CreationTime extends InstantiateFromStringByApply[CreationTime] {
   override def instantiate(from: String): Option[CreationTime] = ConnectionsUtils.strToLong(from, CreationTime(_))
 }
+
+case class LastLogin(time: Long) extends DataHub[Long] {
+  override def value: Long = time
+}
+
+object LastLogin extends InstantiateFromStringByApply[LastLogin] {
+  override def instantiate(from: String): Option[LastLogin] = ConnectionsUtils.strToLong(from, LastLogin(_))
+}

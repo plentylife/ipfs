@@ -111,7 +111,7 @@ object DbReader {
 object DataHubReader {
   private val leafReaders = Stream[(String, String) ⇒ Option[DataHub[_]]](
     Title(_, _), Body(_, _), Amount(_, _), Id(_, _), Name(_, _), CreationTime(_, _), Marker(_, _),
-    Active(_, _), Inactive(_, _), Email(_, _)
+    Active(_, _), Inactive(_, _), Email(_, _), LastLogin(_,_)
   )
 
   private val hubReaders = Stream[(String, Hub) ⇒ Option[DataHub[_]]](
