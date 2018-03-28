@@ -65,7 +65,7 @@ class MenuBar(override val hub: Hub) extends LayoutModule[Hub] {
         {for (m <- menuActionsDisplays) yield m.bind}
       </div>
       <div class="links">
-        <span onclick={(e: Event) ⇒ Router.navigateToHub(UiContext.getUser)}>open feed</span>
+        <span onclick={(e: Event) ⇒ Router.navigateToHub(UiContext.getUser)}>user feed</span>
       </div>
     </div>
   }

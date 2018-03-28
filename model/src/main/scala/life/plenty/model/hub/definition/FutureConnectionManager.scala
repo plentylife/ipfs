@@ -18,7 +18,6 @@ trait FutureConnectionManager {
   // fixme just do a direct call to db singleton
   def whenLoadComplete: Future[Hub] = {
     if (!hasCalledDb) {
-      println(s"WLC")
       ReaderSpec.interface.loadConnections(this)
       hasCalledDb = true
     }
