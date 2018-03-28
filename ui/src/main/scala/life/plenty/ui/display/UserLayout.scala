@@ -31,9 +31,7 @@ object UserLayout extends SimpleDisplayModule[User] {
 
   def getTopMemberships(hub: Hub): Future[List[Space]] = {
     val ms = getMemberships(hub)
-    println(s"GTM $ms")
     ms flatMap { list ⇒
-      println(s"GTM c $list")
       val spaces = list.collect({ case h: Space ⇒ h })
       val withParents = spaces.map(
         s ⇒ GraphUtils.hasParentInChain(s, spaces filterNot {_ == s}) map {s → _}
@@ -44,8 +42,13 @@ object UserLayout extends SimpleDisplayModule[User] {
 
   @dom
   override def html(what: User): Binding[Node] = {
+    val nonEmptyFeed = Var(false)
     val membershipsList = new FutureList[Space](getTopMemberships(what))
-    val membershipsRenders = for (m <- membershipsList.v) yield SpaceFeedDisplay.html(m).bind
+    val membershipsRenders = for (m <- membershipsList.v) yield {
+      val feed = SpaceFeedDisplay.getAggregated(m)
+      feed foreach {f ⇒ if (f.nonEmpty) nonEmptyFeed.value_=(true)}
+      SpaceFeedDisplay.html(m, feed).bind
+    }
 
     val titleClasses = "title ml-2 "
     <div class={"top-space-layout user-feed"}>
@@ -60,6 +63,7 @@ object UserLayout extends SimpleDisplayModule[User] {
 
       <div class="user-feed">
         {membershipsRenders.bind}
+        {if (!nonEmptyFeed.bind) <p class="no-feed">nothing new in your feed</p> else DisplayModel.nospan.bind}
       </div>
 
     </div>

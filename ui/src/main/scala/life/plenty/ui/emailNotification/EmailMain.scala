@@ -63,6 +63,7 @@ object EmailMain {
       println(s"Received id $id")
       DbReader.read(id.toString) foreach { hub ⇒
         currentUser = hub.asInstanceOf[User]
+        UiContext.setUser(currentUser)
 
         val bindings = Vars[Binding[Node]]()
         dom.render(document.getElementById("body-container"), emailDom(hub.asInstanceOf[User], bindings))

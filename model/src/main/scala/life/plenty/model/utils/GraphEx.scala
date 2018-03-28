@@ -24,6 +24,8 @@ object GraphEx {
     }
   }
 
+  def getLastLogin(h: Hub): Future[Option[Long]] = h.get({ case LastLogin(b) ⇒ b })
+
   def getTo(h: Hub): Future[Option[User]] = h.get({ case To(b) ⇒ b })
   def getTransactionFrom(h: Hub): Future[Option[User]] = getCreator(h)
 

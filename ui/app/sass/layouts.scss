@@ -153,6 +153,10 @@
 
 .top-space-layout.user-feed {
   flex-direction: column;
+  .no-feed {
+    margin-top: 1em;
+    @extend .text-muted;
+  }
 }
 
 //.top-space-layout.contributing-signup {

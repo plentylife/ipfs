@@ -53,6 +53,10 @@ object Router {
   def changeHub(hub: Hub, routingParams: RoutingParams) =
     routingParams.copy(hubId = Option(hub.id))
 
+  def getHubLink(hub: Hub) = {
+    toHash(changeHub(hub, router.state.value))
+  }
+
   def navigateToHub(o: Hub) = {
     router.state.value_=(router.state.value.copy(hubId = Option(o.id)))
   }
