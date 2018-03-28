@@ -1,5 +1,6 @@
 package life.plenty
 
+import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.model._
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
@@ -9,6 +10,9 @@ import life.plenty.ui.display.actions._
 import life.plenty.ui.display.cards._
 import life.plenty.ui.display.feed.SpaceFeedDisplay
 import life.plenty.ui.display.user.FullUserBadge
+import org.scalajs.dom.Node
+
+import scala.xml.Elem
 //import life.plenty.ui.display.feed.{FeedAnswerDisplay, FeedQuestionDisplay, FeedSpaceDisplay, SpaceFeedDisplay}
 import life.plenty.ui.display.info.ThanksGiven
 import life.plenty.ui.display.meta.{ChildDisplay, ModularDisplay}
@@ -18,6 +22,9 @@ package object ui {
 
   val console = new Console(false, true, _prefix = "UI")
   val thanks = "\u20B8"
+
+  @dom
+  def plenty: Binding[Node] = <span class="plenty-name">Plenty</span>
 
   def initialize(): Unit = {
     println("UI is adding modules into registry")

@@ -94,3 +94,24 @@
     }
   }
 }
+
+.tutorial-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
+  .header-img {
+    height: 5em;
+    margin-bottom: 1em;
+  }
+  audio {
+    width: 100%
+  }
+  .vision-link {
+    font-size: 1.5em;
+  }
+}
+
+.plenty-name {
+  font-family: 'Comfortaa', sans-serif;
+}

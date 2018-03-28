@@ -21,6 +21,7 @@ import scala.concurrent.Future
 object UiContext {
   val userVar: Var[User] = Var(null)
   private var lastLogin: Option[Long] = None
+  private var _isNewUser = false
   private val _pointer: Var[Option[Hub]] = Var(None)
   val pointerRx: rxVar[Option[Hub]] = rxVar(None)
 
@@ -41,6 +42,7 @@ object UiContext {
   } else {
     GraphEx.getLastLogin(getUser)
   }
+  def isNewUser = _isNewUser
 
   def setUser(u: User) = {
     userVar.value_=(u)
@@ -80,6 +82,7 @@ object UiContext {
     if (name != null && email != null && name.nonEmpty && email.nonEmpty) {
       println(s"createAndSetUser $name $email ${user.id}")
       user.asNew(Name(name), Email(email)) foreach {_ ⇒
+        _isNewUser = true
         setUser(user)
       }
     } else {

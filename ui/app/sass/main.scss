@@ -5,6 +5,7 @@ $theme-colors: (
 $confirmed-color: rgba(36, 82, 30, 0.8);
 $money-color: #34ce57;
 $negative-balance-color: #ce4759;
+$max-reading-width: 800px;
 
 @import "../node_modules/bootstrap/scss/bootstrap";
 
@@ -97,6 +98,9 @@ body, #body-container {
   bottom: 0;
   background-color: white;
   flex-direction: column;
+  padding: 1em;
+  display: flex;
+  justify-content: center;
 }
 
 .main-help {

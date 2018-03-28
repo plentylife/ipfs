@@ -42,11 +42,8 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
     UiContext.getLastLogin flatMap {ll ⇒
       val lastLogin: Long = ll getOrElse 0L
 
-      println(s"Filtering on last login ${new Date(lastLogin)}")
-
       val withDiff = list map {h ⇒
         getCreationTime(h) map {ct ⇒
-          println(s"F: ${ct.getOrElse(-1L) - lastLogin} ${ct map {new Date(_)}} [$h]")
           h → (ct.getOrElse(-1L) - lastLogin)
         }
       }

@@ -50,7 +50,7 @@ object Main {
       println(s"Setting default creator to ${UiContext.userVar.bind}")
       defaultCreator_=(UiContext.userVar.bind)
 
-//      IntroTutorial(UiContext.userVar.bind)
+      IntroTutorial(UiContext.userVar.bind)
       CriticalQuestionsGuide.apply()
 
       Router.router.state.bind.hubId match {
