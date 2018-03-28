@@ -23,35 +23,37 @@ object ReaderInterface extends ReaderSpec {
     def get = loadIndicator
   }
 
-  def loadConnections(hub: Hub): Unit = hub.hasSetId foreach {_ ⇒
-  val dbDoc = DocCache.get(hub)
+  def loadConnections(hub: Hub): Unit = {
+    hub.hasSetId foreach {_ ⇒
+      val dbDoc = DocCache.get(hub)
 
-    dbDoc.subscribe
-    console.println(s"Reader loading ${hub} ${hub.id}")
+      dbDoc.subscribe
+      console.println(s"Reader loading ${hub} ${hub.id}")
 
-    dbDoc.getData map { data ⇒
-      val existingIds = hub.sc.all.map(_.id)
-      // the reverse is important -- making sure that we are loading the oldest first
-      val unloadedIds = data.connections.toList.filterNot(existingIds.contains).reverse
+      dbDoc.getData map { data ⇒
+        val existingIds = hub.sc.all.map(_.id)
+        // the reverse is important -- making sure that we are loading the oldest first
+        val unloadedIds = data.connections.toList.filterNot(existingIds.contains).reverse
 
-      console.trace(s"Reader has connections to load for $hub ${hub.id} $unloadedIds")
+        console.trace(s"Reader has connections to load for $hub ${hub.id} $unloadedIds")
 
-      LoadIndicator.notify(unloadedIds.size)
-      var leftToLoad = unloadedIds.size
-      if (leftToLoad <= 0) hub.loadHasComplete() // in case there are non to load
-      unloadedIds map loadConnection foreach {_ foreach {
-        c ⇒ console.trace(s"Reader loaded connection for ${hub} ${hub.id} -- $c")
-          LoadIndicator.notify(-1); leftToLoad -= 1
-          hub.addConnection(c)
-          if (leftToLoad <= 0) hub.loadHasComplete()
-      }}
+        LoadIndicator.notify(unloadedIds.size)
+        var leftToLoad = unloadedIds.size
+        if (leftToLoad <= 0) hub.loadHasComplete() // in case there are non to load
+        unloadedIds map loadConnection foreach {_ foreach {
+          c ⇒ console.trace(s"Reader loaded connection for ${hub} ${hub.id} -- $c")
+            LoadIndicator.notify(-1); leftToLoad -= 1
+            hub.addConnection(c)
+            if (leftToLoad <= 0) hub.loadHasComplete()
+        }}
+      }
+
+      def loadAndAdd(id: String) = {
+        console.trace(s"Reader trying to load connection for ${hub} ${hub.id} with id ${id}")
+        loadConnection(id) foreach hub.addConnection
+      }
+      dbDoc.onRemoteConnectionChange(loadAndAdd)
     }
-
-    def loadAndAdd(id: String) = {
-      console.trace(s"Reader trying to load connection for ${hub} ${hub.id} with id ${id}")
-      loadConnection(id) foreach hub.addConnection
-    }
-    dbDoc.onRemoteConnectionChange(loadAndAdd)
   }
 
   private def loadConnection(id: String): Future[DataHub[_]] = {

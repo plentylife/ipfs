@@ -35,6 +35,7 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
 
   @dom
   override protected def generateHtml(): Binding[Node] = {
+    ui.console.trace("Displaying MembersCard")
     <div class="card d-inline-flex members" id={hub.id}>
       <span class="d-flex header-block">
         <span class="d-flex title-block">
@@ -51,7 +52,7 @@ class MembersCardDisplay(override val hub: Members) extends DisplayModule[Member
     </div>
   }
 
-  private val contributions: Rx[List[Contribution]] = Rx {hub.getParent() match {
+  private lazy val contributions: Rx[List[Contribution]] = Rx {hub.getParent() match {
     case Some(p: Space) ⇒ val l = GraphExtractorsDEP.getAllContributionsInSpace(p); l()
     case _ ⇒ List()
   }}
