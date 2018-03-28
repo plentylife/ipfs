@@ -12,6 +12,7 @@ import life.plenty.ui.model._
 import org.scalajs.dom.Node
 import rx.{Ctx, Rx}
 import FutureDom._
+import life.plenty.model.connection.Inactive
 package object feed {
   sealed trait FeedDisplay[T] extends SimpleDisplayModule[T] {
     @dom
@@ -51,6 +52,10 @@ package object feed {
     override def fits(hub: Any): Boolean = hub.isInstanceOf[Space]
   }
 
+  case object FeedDeletedDisplay extends FeedDisplaySimple[Inactive] with FeedDeletedDisplayImpl {
+    override def fits(hub: Any): Boolean = hub.isInstanceOf[Inactive]
+  }
+
   case object FeedTransactionDisplay extends FeedDisplay[Transaction] with FeedTransactionDisplayImpl {
     override def fits(hub: Any): Boolean = hub.isInstanceOf[Transaction]
   }
@@ -61,7 +66,8 @@ package object feed {
 
   object FeedModuleDirectory extends SimpleDisplayModuleDirectory[Any] {
     override val directory:List[SimpleDisplayModule[_]] = List(
-      FeedQuestionDisplay, FeedAnswerDisplay, FeedTransactionDisplay, FeedVoteGroupDisplay, FeedSpaceDisplay
+      FeedQuestionDisplay, FeedAnswerDisplay, FeedTransactionDisplay, FeedVoteGroupDisplay, FeedSpaceDisplay,
+      FeedDeletedDisplay
     )
   }
 

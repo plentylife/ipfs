@@ -2,14 +2,13 @@ package life.plenty.ui.display.feed
 
 import com.thoughtworks.binding.Binding.Vars
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.connection.{Child, Marker}
+import life.plenty.model.connection.{Child, Inactive, Marker}
 import life.plenty.model.hub.{Members, Space}
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.hub.pseudo.VoteGroup
 import life.plenty.model.utils.GraphUtils.collectDownTree
 import life.plenty.ui.display.actions.OpenButton
 import life.plenty.ui.display.utils.Helpers._
-import life.plenty.ui.emailNotification.EmailManager
 import life.plenty.ui.model._
 import org.scalajs.dom.{Event, Node}
 
@@ -26,6 +25,7 @@ object SpaceFeedDisplay extends SimpleDisplayModule[Space] {
     collectDownTree[Hub](hub, matchBy = {
       case Child(h: Hub) if !h.isInstanceOf[Members] ⇒ h
       case m: Marker ⇒ m
+      case ia: Inactive ⇒ ia
     }, allowedPath = {case Child(h: Hub) if !h.isInstanceOf[Members] ⇒ h}) flatMap { list ⇒
       val additional = VoteGroup.groupByAnswer(list)
       additional map {list ::: _}

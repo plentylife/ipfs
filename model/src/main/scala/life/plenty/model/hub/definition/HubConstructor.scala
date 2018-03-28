@@ -133,14 +133,16 @@ trait HubConstructor {
       case Success(_) ⇒
         model.console.trace(s"New hub [${this.id}] has connections ${connections.now}")
 
-        for (p ← required) {
-          if (p().now.isEmpty) {
-            val msg = s"Class ${this.getClass} was not properly instantiated. " +
-              s"Connections ${this._connections.now}"
-            model.console.error(msg)
-            throw new Exception(msg)
-          }
-        }
+        // fixme. bring this code back
+//        for (p ← required) {
+//          if (p().now.isEmpty) {
+//            println(s"Creator ${getCreator}")
+//            val msg = s"Class ${this.getClass} was not properly instantiated. " +
+//              s"Connections ${this._connections.now}"
+//            model.console.error(msg)
+//            throw new Exception(msg)
+//          }
+//        }
 
         getCreator.addConnection(Created(this).inst)
         isNewVar() = true

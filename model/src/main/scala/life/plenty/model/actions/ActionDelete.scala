@@ -11,7 +11,9 @@ import scala.concurrent.Future
 object ActionDelete {
 
   def delete(what: Hub): Future[Unit] = {
-    what.addConnection(Inactive(new Date().getTime))
+    val inactive = Inactive(new Date().getTime)
+    inactive.asNew()
+    what.addConnection(inactive)
   }
 
 }

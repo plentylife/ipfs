@@ -2,6 +2,7 @@ package life.plenty.ui
 
 import com.thoughtworks.binding.{Binding, dom}
 import life.plenty.data.{DbReader, DbReaderModule, ShareDB, Main ⇒ dataMain}
+import life.plenty.model.connection.Inactive
 import life.plenty.model.hub._
 import life.plenty.model.hub.definition.Hub
 import life.plenty.model.{defaultCreator_=, console ⇒ modelConsole, initialize ⇒ mInit}
@@ -119,4 +120,10 @@ object Main {
 
   @JSExport
   def getUrl(spaceId: String) = Router.toHash(Router.defaultRoutingParams.copy(hubId = Option(spaceId)))
+
+  @JSExport
+  def inactive() = {
+    val i = Inactive(0)
+    i.asNew()
+  }
 }

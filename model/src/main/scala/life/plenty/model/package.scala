@@ -45,7 +45,7 @@ package object model {
 
     ModuleRegistry.add { case a: Answer ⇒ new ActionAddConfirmedMarker(a) }
     ModuleRegistry.add { case a: Answer ⇒ new ActionCreateQuestion(a) }
-    ModuleRegistry.add { case a: Answer ⇒ new ActionUpDownVote(a) }
+    ModuleRegistry.add { case a: Proposal ⇒ new ActionUpDownVote(a) }
 
     ModuleRegistry.add { case o: Contribution ⇒ new ActionGiveThanks(o) }
 

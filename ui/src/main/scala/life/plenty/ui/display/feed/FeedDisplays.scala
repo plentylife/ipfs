@@ -16,7 +16,11 @@ import scalaz.std.list._
 import scalaz.std.option._
 import scalaz.std.map._
 import FutureDom._
+import life.plenty.model.connection.Inactive
 import life.plenty.model.utils.GraphEx
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.concurrent.Future
 
 trait FeedAnswerDisplayImpl {self: FeedDisplaySimple[Answer] ⇒
   override protected def action(hub: Answer) =  {
@@ -50,6 +54,19 @@ trait FeedSpaceDisplayImpl {self: FeedDisplaySimple[Space] ⇒
   }
 
   override protected val cssClass: String = "space"
+}
+
+trait FeedDeletedDisplayImpl {self: FeedDisplaySimple[Inactive] ⇒
+  override protected def action(hub: Inactive) =  {"deleted"}
+  override protected def actionTarget(implicit hub:Inactive): FutureVar[String] = {
+    println(s"DELETED ${hub.getHolder} ${hub.getHolder.sc.all}")
+    new FutureOptVar[String](getTitle(hub.getHolder) flatMap {
+      case optT @ Some(t) if t.nonEmpty ⇒ Future(optT)
+      case _ ⇒ getBody(hub.getHolder)
+    })
+  }
+
+  override protected val cssClass: String = "deleted"
 }
 
 trait FeedTransactionDisplayImpl {self: FeedDisplay[Transaction] ⇒
