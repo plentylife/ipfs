@@ -10,6 +10,7 @@ import scala.concurrent.Future
 object GraphEx {
   def getCreationTime(h: Hub): Future[Option[Long]] = h.get({ case CreationTime(b) ⇒ b })
   def getCreator(h: Hub) = h.get({ case Creator(t) ⇒ t })
+  def getParent(h: Hub): Future[Option[Hub]] = h.get({ case Parent(b: Hub) ⇒ b })
 
   def getBody(h: Hub): Future[Option[String]] = h.get({ case Body(b) ⇒ b })
   def getName(h: Hub): Future[Option[String]] = h.get({ case Name(b) ⇒ b })

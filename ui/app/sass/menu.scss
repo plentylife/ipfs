@@ -67,13 +67,20 @@
   }
 
   .actions {
-    margin-top: $spacer * 1.5
+    margin-top: $spacer * 1.0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    & > * {
+      margin-top: $spacer * 0.5
+    }
   }
 
   .links {
     margin-top: $spacer * 1.5;
     & > * {
-      color: #974bde;
+      color: #b382de;
       cursor: pointer;
       text-decoration: underline;
     }

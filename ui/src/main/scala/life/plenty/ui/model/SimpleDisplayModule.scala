@@ -1,33 +1,28 @@
 package life.plenty.ui.model
 
-import com.thoughtworks.binding.Binding.Var
 import com.thoughtworks.binding.{Binding, dom}
-import life.plenty.model.hub.definition.Hub
 import life.plenty.ui.display.utils.Helpers._
-import monix.reactive.Observable
-import org.scalajs.dom.{Node, StyleSheet}
-import org.scalajs.dom.html.Div
-import org.scalajs.dom.raw.{HTMLAnchorElement, HTMLElement}
-import rx.{Ctx, Rx, Var ⇒ rxVar}
 import monix.execution.Scheduler.Implicits.global
-
-import scala.scalajs.js
-import scala.scalajs.js.timers.SetIntervalHandle
+import monix.reactive.Observable
+import org.scalajs.dom.Node
+import org.scalajs.dom.raw.HTMLElement
 
 trait SimpleDisplayModule[T] {
   def html(what: T): Binding[Node]
+
   def htmlOpt(what: Any): Option[Binding[Node]] =
     if (fits(what)) Option(html(what.asInstanceOf[T])) else None
+
   def fits(what: Any): Boolean
 
   @dom
   def html(what: T, changed: Observable[T]): Binding[Node] = {
     val node = html(what).bind
 
-    changed.collect({case c if c == what ⇒ true}).foreach(_ ⇒ {
+    changed.collect({ case c if c == what ⇒ true }).foreach(_ ⇒ {
       val startingOpacity = {
         val op = node.asInstanceOf[HTMLElement].style.opacity
-          if (op.isEmpty) 1.0 else op.toDouble
+        if (op.isEmpty) 1.0 else op.toDouble
       }
       node.asInstanceOf[HTMLElement].style.opacity = 0
       var opacity = 0.0
@@ -47,23 +42,15 @@ trait SimpleDisplayModule[T] {
   }
 }
 
-object SimpleDisplayModule {
-  @dom
-  def html[T](module: SimpleDisplayModule[T], hub: Rx[Option[T]]): Binding[Node] = {
-    val hb: BasicBindable[Option[T]] = hub
-    hb().bind match {
-      case Some(h) ⇒ module.html(h).bind
-      case None ⇒ DisplayModel.nospan.bind
-    }
-  }
-
-//  def html[T <: Hub](mh: (SimpleDisplayModule[T], Rx[Option[T]])): Binding[Node] = html(mh._1, mh._2)
-}
 
 trait SimpleDisplayModuleDirectory[T] {
-  val directory : List[SimpleDisplayModule[_]]
+  val directory: List[SimpleDisplayModule[_]]
+
   def get[T](what: T): Option[SimpleDisplayModule[T]] =
-    directory find {m ⇒ m.fits(what)} map {_.asInstanceOf[SimpleDisplayModule[T]]}
-  def getTogether[T](hub: T): Option[(SimpleDisplayModule[T], T)] = get(hub) map {_ → hub}
+    directory find { m ⇒ m.fits(what) } map {_.asInstanceOf[SimpleDisplayModule[T]]}
+
+  def getAll[T](what: T): List[SimpleDisplayModule[T]] =
+    directory filter { m ⇒ m.fits(what) } map {_.asInstanceOf[SimpleDisplayModule[T]]}
+
   def display[T](what: T): Option[Binding[Node]] = get(what) map {_.html(what)}
 }

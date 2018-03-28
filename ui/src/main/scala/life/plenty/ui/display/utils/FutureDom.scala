@@ -46,5 +46,11 @@ object FutureDom {
     }
   }
 
-
+  @dom
+  def depDom(on: FutureVar[Boolean], html: ⇒ Binding[Node]): Binding[Node] = {
+    on.v.bind match {
+      case Some(v) if v == true ⇒ html.bind
+      case _ ⇒ DisplayModel.nospan.bind
+    }
+  }
 }
