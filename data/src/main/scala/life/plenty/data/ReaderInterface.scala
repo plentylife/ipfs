@@ -38,6 +38,7 @@ object ReaderInterface extends ReaderSpec {
 
       LoadIndicator.notify(unloadedIds.size)
       var leftToLoad = unloadedIds.size
+      if (leftToLoad <= 0) hub.loadHasComplete() // in case there are non to load
       unloadedIds map loadConnection foreach {_ foreach {
         c ⇒ console.trace(s"Reader loaded connection for ${hub} ${hub.id} -- $c")
           LoadIndicator.notify(-1); leftToLoad -= 1
