@@ -1,3 +1,12 @@
+### March 29th, 2018
+Um. I haven't been tracking changes. 
+Suffice to say some major developments in terms of basic architecture -- slowly remving Rx's and replacing them with 
+Futures and Monix Observables sprinkled around.
+
+- Email notifications (major feature)
+- Critical questions (major feature)
+- Loads of small changes
+
 ### March 2nd, 2018
 
 - Improved scrolling and added zoom in the main section of the app
